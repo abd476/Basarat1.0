@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name">BASARAT</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_markets">Markets</string>
+    <string name="nav_portfolio">Portfolio</string>
+    <string name="nav_ai">AI</string>
+    <string name="nav_you">You</string>
+
+    <!-- Onboarding Step 1 -->
+    <string name="onboarding_title_1">Intelligent tools for\nsmart stock decisions</string>
+    <string name="onboarding_subtitle_1">Track PSX indices, evaluate trends, and access\nreal-time market intelligence</string>
+
+    <!-- Onboarding Step 2 (From Screenshot) -->
+    <string name="onboarding_title_2">Customized instant\nanalysis for you</string>
+    <string name="onboarding_subtitle_2">Real-time market analytics and automated daily\nmarket intelligence reports</string>
+
+    <!-- Onboarding Step 3 (From Screenshot) -->
+    <string name="onboarding_title_3">Trusted security of\nstock market app</string>
+    <string name="onboarding_subtitle_3">Regulated and compliant framework ensuring\nend-to-end security for your assets</string>
+
+    <!-- Onboarding Actions -->
+    <string name="onboarding_skip">SKIP</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_get_started">Get Started</string>
+
+    <!-- Auth Titles & Subtitles -->
+    <string name="welcome_back_title">Welcome back</string>
+    <string name="welcome_back_subtitle">Access your orders, wishlist, and\nexclusive offers by logging in.</string>
+    <string name="signup_title">Sign up Account</string>
+    <string name="signup_subtitle">Join now for a faster, smarter\nshopping experience.</string>
+
+    <!-- Auth Fields & Labels -->
+    <string name="label_name">Name</string>
+    <string name="hint_name">Enter you name</string>
+    <string name="label_email">Email</string>
+    <string name="hint_email">Enter you email</string>
+    <string name="label_password">Password</string>
+    <string name="hint_password">Enter you password</string>
+    <string name="remember_me">Remember me</string>
+    <string name="forgot_password">Forgot password?</string>
+
+    <!-- Actions & Social -->
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="or_divider">OR</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="continue_with_apple">Continue with Apple</string>
+    <string name="dont_have_account">Don\'t have an account?</string>
+    <string name="already_have_account">Already have an account?</string>
+</resources>
