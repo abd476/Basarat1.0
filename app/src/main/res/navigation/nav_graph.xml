@@ -66,12 +66,26 @@
         android:id="@+id/nav_home"
         android:name="com.fyp.basarattradeinvest.feature.markets.MarketDashboardFragment"
         android:label="Markets"
-        tools:layout="@layout/fragment_market_dashboard" />
+        tools:layout="@layout/fragment_market_dashboard">
+        <action
+            android:id="@+id/action_marketDashboard_to_shariahScreening"
+            app:destination="@id/shariahScreeningFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_markets"
         android:name="com.fyp.basarattradeinvest.feature.markets.MarketDashboardFragment"
         android:label="Markets"
-        tools:layout="@layout/fragment_market_dashboard" />
+        tools:layout="@layout/fragment_market_dashboard">
+        <action
+            android:id="@+id/action_markets_to_shariahScreening"
+            app:destination="@id/shariahScreeningFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/shariahScreeningFragment"
+        android:name="com.fyp.basarattradeinvest.feature.shariah.ShariahScreeningFragment"
+        android:label="Shariah Screening"
+        tools:layout="@layout/fragment_shariah_screening" />
 
 </navigation>
