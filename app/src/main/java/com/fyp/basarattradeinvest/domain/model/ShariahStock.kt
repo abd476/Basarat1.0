@@ -2,13 +2,12 @@ package com.fyp.basarattradeinvest.domain.model
 
 data class ShariahStock(
     val symbol: String,
+    val code: String,
     val companyName: String,
     val sector: String,
     val price: Double,
-    val change: Double,
     val changePercent: Double,
-    val complianceScore: Int, // 0 to 100
-    val isKmi30Index: Boolean,
-    val debtRatio: Double,
-    val purificationRate: Double
+    val purificationRate: String,
+    val isKmi30: Boolean = true,
+    val hasDividend: Boolean = true
 )

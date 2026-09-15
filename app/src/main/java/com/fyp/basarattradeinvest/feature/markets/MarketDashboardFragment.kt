@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentMarketDashboardBinding
@@ -33,7 +34,8 @@ class MarketDashboardFragment : Fragment() {
     private val viewModel: MarketDashboardViewModel by viewModels()
 
     private val stockAdapter = MarketStockAdapter { stock ->
-        Toast.makeText(requireContext(), "${stock.symbol}: PKR ${stock.price}", Toast.LENGTH_SHORT).show()
+        val bundle = Bundle().apply { putString("symbol", stock.symbol) }
+        findNavController().navigate(R.id.stockDetailFragment, bundle)
     }
 
     private val sectorAdapter = SectorPerformanceAdapter { sector ->
@@ -108,6 +110,9 @@ class MarketDashboardFragment : Fragment() {
         }
         binding.tvSectorsSeeAll.setOnClickListener {
             Toast.makeText(requireContext(), "Sector Heatmap", Toast.LENGTH_SHORT).show()
+        }
+        binding.chipShariah.setOnClickListener {
+            findNavController().navigate(R.id.shariahScreeningFragment)
         }
     }
 

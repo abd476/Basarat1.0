@@ -52,4 +52,9 @@
     <color name="color_negative_bg">#FEECEB</color>
     <color name="color_ai_bg">#EEF2FF</color>
     <color name="color_shariah_bg">#E8F7F5</color>
+    <color name="color_segment_bg">#E9ECEF</color>
+    <color name="color_segment_active">#FFFFFF</color>
+    <color name="color_chip_selected_bg">#E6F8F3</color>
+    <color name="color_chip_selected_stroke">#18B981</color>
+    <color name="color_dividend_orange">#FF9800</color>
 </resources>
