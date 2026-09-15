@@ -34,7 +34,8 @@ class MarketDashboardFragment : Fragment() {
     private val viewModel: MarketDashboardViewModel by viewModels()
 
     private val stockAdapter = MarketStockAdapter { stock ->
-        Toast.makeText(requireContext(), "${stock.symbol}: PKR ${stock.price}", Toast.LENGTH_SHORT).show()
+        val bundle = Bundle().apply { putString("symbol", stock.symbol) }
+        findNavController().navigate(R.id.stockDetailFragment, bundle)
     }
 
     private val sectorAdapter = SectorPerformanceAdapter { sector ->

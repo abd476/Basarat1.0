@@ -70,6 +70,9 @@
         <action
             android:id="@+id/action_marketDashboard_to_shariahScreening"
             app:destination="@id/shariahScreeningFragment" />
+        <action
+            android:id="@+id/action_marketDashboard_to_stockDetail"
+            app:destination="@id/stockDetailFragment" />
     </fragment>
 
     <fragment
@@ -80,12 +83,30 @@
         <action
             android:id="@+id/action_markets_to_shariahScreening"
             app:destination="@id/shariahScreeningFragment" />
+        <action
+            android:id="@+id/action_markets_to_stockDetail"
+            app:destination="@id/stockDetailFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/shariahScreeningFragment"
         android:name="com.fyp.basarattradeinvest.feature.shariah.ShariahScreeningFragment"
         android:label="Shariah Screening"
-        tools:layout="@layout/fragment_shariah_screening" />
+        tools:layout="@layout/fragment_shariah_screening">
+        <action
+            android:id="@+id/action_shariah_to_stockDetail"
+            app:destination="@id/stockDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stockDetailFragment"
+        android:name="com.fyp.basarattradeinvest.feature.stock.detail.StockDetailFragment"
+        android:label="Stock Detail"
+        tools:layout="@layout/fragment_stock_detail">
+        <argument
+            android:name="symbol"
+            app:argType="string"
+            android:defaultValue="SARCO" />
+    </fragment>
 
 </navigation>

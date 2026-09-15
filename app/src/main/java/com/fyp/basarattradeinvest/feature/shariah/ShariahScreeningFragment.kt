@@ -34,7 +34,8 @@ class ShariahScreeningFragment : Fragment() {
 
     private val stockAdapter by lazy {
         ShariahStockAdapter { stock ->
-            Toast.makeText(requireContext(), "${stock.symbol} - ${stock.companyName}", Toast.LENGTH_SHORT).show()
+            val bundle = Bundle().apply { putString("symbol", stock.symbol) }
+            findNavController().navigate(R.id.stockDetailFragment, bundle)
         }
     }
 
