@@ -107,6 +107,20 @@
             android:name="symbol"
             app:argType="string"
             android:defaultValue="SARCO" />
+        <action
+            android:id="@+id/action_stockDetail_to_stockAnalysis"
+            app:destination="@id/stockAnalysisFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stockAnalysisFragment"
+        android:name="com.fyp.basarattradeinvest.feature.stock.analysis.StockAnalysisFragment"
+        android:label="Stock Analysis"
+        tools:layout="@layout/fragment_stock_analysis">
+        <argument
+            android:name="symbol"
+            app:argType="string"
+            android:defaultValue="LUCK" />
     </fragment>
 
 </navigation>

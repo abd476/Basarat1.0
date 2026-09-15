@@ -186,6 +186,16 @@ class StockDetailFragment : Fragment() {
 
         // Section Tabs
         binding.tabSectionQuotes.setOnClickListener { viewModel.setSection("Quotes") }
+        binding.tabSectionAnalysis.setOnClickListener {
+            val currentState = viewModel.uiState.value
+            val symbol = if (currentState is StockDetailUiState.Success) {
+                currentState.detail.symbol
+            } else {
+                arguments?.getString("symbol") ?: "SARCO"
+            }
+            val bundle = androidx.core.os.bundleOf("symbol" to symbol)
+            findNavController().navigate(R.id.action_stockDetail_to_stockAnalysis, bundle)
+        }
         binding.tabSectionNews.setOnClickListener { viewModel.setSection("News") }
         binding.tabSectionProfile.setOnClickListener { viewModel.setSection("Profile") }
 
@@ -354,6 +364,7 @@ class StockDetailFragment : Fragment() {
     private fun updateSectionTabs(selected: String) {
         val sections = listOf(
             Triple(binding.tvTabQuotes, binding.indicatorQuotes, "Quotes"),
+            Triple(binding.tvTabAnalysis, binding.indicatorAnalysis, "Analysis"),
             Triple(binding.tvTabNews, binding.indicatorNews, "News"),
             Triple(binding.tvTabProfile, binding.indicatorProfile, "Profile")
         )
