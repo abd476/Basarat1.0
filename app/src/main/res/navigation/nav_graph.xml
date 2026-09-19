@@ -73,6 +73,9 @@
         <action
             android:id="@+id/action_marketDashboard_to_stockDetail"
             app:destination="@id/stockDetailFragment" />
+        <action
+            android:id="@+id/action_marketDashboard_to_newsEvents"
+            app:destination="@id/newsEventsFragment" />
     </fragment>
 
     <fragment
@@ -86,6 +89,9 @@
         <action
             android:id="@+id/action_markets_to_stockDetail"
             app:destination="@id/stockDetailFragment" />
+        <action
+            android:id="@+id/action_markets_to_newsEvents"
+            app:destination="@id/newsEventsFragment" />
     </fragment>
 
     <fragment
@@ -95,6 +101,16 @@
         tools:layout="@layout/fragment_shariah_screening">
         <action
             android:id="@+id/action_shariah_to_stockDetail"
+            app:destination="@id/stockDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newsEventsFragment"
+        android:name="com.fyp.basarattradeinvest.feature.news.NewsEventsFragment"
+        android:label="News &amp; Events"
+        tools:layout="@layout/fragment_news_events">
+        <action
+            android:id="@+id/action_newsEvents_to_stockDetail"
             app:destination="@id/stockDetailFragment" />
     </fragment>
 
@@ -110,6 +126,9 @@
         <action
             android:id="@+id/action_stockDetail_to_stockAnalysis"
             app:destination="@id/stockAnalysisFragment" />
+        <action
+            android:id="@+id/action_stockDetail_to_chartFullscreen"
+            app:destination="@id/chartFullscreenFragment" />
     </fragment>
 
     <fragment
@@ -117,6 +136,17 @@
         android:name="com.fyp.basarattradeinvest.feature.stock.analysis.StockAnalysisFragment"
         android:label="Stock Analysis"
         tools:layout="@layout/fragment_stock_analysis">
+        <argument
+            android:name="symbol"
+            app:argType="string"
+            android:defaultValue="LUCK" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/chartFullscreenFragment"
+        android:name="com.fyp.basarattradeinvest.feature.stock.chart.ChartFullscreenFragment"
+        android:label="Historical Chart"
+        tools:layout="@layout/fragment_chart_fullscreen">
         <argument
             android:name="symbol"
             app:argType="string"

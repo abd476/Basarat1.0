@@ -114,6 +114,9 @@ class MarketDashboardFragment : Fragment() {
         binding.chipShariah.setOnClickListener {
             findNavController().navigate(R.id.shariahScreeningFragment)
         }
+        binding.chipNews.setOnClickListener {
+            findNavController().navigate(R.id.newsEventsFragment)
+        }
     }
 
     private fun observeUiState() {

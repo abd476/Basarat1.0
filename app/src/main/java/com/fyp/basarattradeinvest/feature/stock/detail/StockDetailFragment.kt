@@ -48,6 +48,7 @@ class StockDetailFragment : Fragment() {
 
     private var candleChart: CandleStickChart? = null
     private var volumeChart: BarChart? = null
+    private var currentSymbol: String = "SARCO"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,8 +66,8 @@ class StockDetailFragment : Fragment() {
         observeUiState()
 
         // Load from navigation arguments
-        val symbol = arguments?.getString("symbol") ?: "SARCO"
-        viewModel.loadStock(symbol)
+        currentSymbol = arguments?.getString("symbol") ?: "SARCO"
+        viewModel.loadStock(currentSymbol)
     }
 
     // ───────────────────────────────
@@ -210,7 +211,8 @@ class StockDetailFragment : Fragment() {
             Toast.makeText(requireContext(), "Chart type settings", Toast.LENGTH_SHORT).show()
         }
         binding.ivFullscreen.setOnClickListener {
-            Toast.makeText(requireContext(), "Fullscreen chart", Toast.LENGTH_SHORT).show()
+            val bundle = Bundle().apply { putString("symbol", currentSymbol) }
+            findNavController().navigate(R.id.chartFullscreenFragment, bundle)
         }
     }
 
