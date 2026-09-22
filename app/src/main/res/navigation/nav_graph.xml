@@ -193,6 +193,15 @@
         <action
             android:id="@+id/action_profileFragment_to_changePasswordFragment"
             app:destination="@id/changePasswordFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_riskProfileFragment"
+            app:destination="@id/riskProfileFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_notificationPreferencesFragment"
+            app:destination="@id/notificationPreferencesFragment" />
     </fragment>
 
     <fragment
@@ -200,5 +209,23 @@
         android:name="com.fyp.basarattradeinvest.feature.profile.ChangePasswordFragment"
         android:label="Change Password"
         tools:layout="@layout/fragment_change_password" />
+
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.fyp.basarattradeinvest.feature.profile.EditProfileFragment"
+        android:label="Edit Profile"
+        tools:layout="@layout/fragment_edit_profile" />
+
+    <fragment
+        android:id="@+id/riskProfileFragment"
+        android:name="com.fyp.basarattradeinvest.feature.profile.RiskProfileFragment"
+        android:label="Risk &amp; Investment Profile"
+        tools:layout="@layout/fragment_risk_profile" />
+
+    <fragment
+        android:id="@+id/notificationPreferencesFragment"
+        android:name="com.fyp.basarattradeinvest.feature.profile.NotificationPreferencesFragment"
+        android:label="Notification Preferences"
+        tools:layout="@layout/fragment_notification_preferences" />
 
 </navigation>

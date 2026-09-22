@@ -36,6 +36,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.forgotPasswordFragment,
                 R.id.resetPasswordFragment,
                 R.id.changePasswordFragment,
+                R.id.editProfileFragment,
+                R.id.riskProfileFragment,
+                R.id.notificationPreferencesFragment,
                 R.id.chartFullscreenFragment -> {
                     binding.bottomNavigation.visibility = View.GONE
                 }

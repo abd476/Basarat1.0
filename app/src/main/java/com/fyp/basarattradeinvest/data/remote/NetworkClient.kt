@@ -48,4 +48,8 @@ object NetworkClient {
     val authApiService: AuthApiService by lazy {
         retrofit.create(AuthApiService::class.java)
     }
+
+    val usersApiService: com.fyp.basarattradeinvest.data.remote.api.UsersApiService by lazy {
+        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.UsersApiService::class.java)
+    }
 }

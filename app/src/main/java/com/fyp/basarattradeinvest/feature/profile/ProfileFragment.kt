@@ -14,9 +14,11 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentProfileBinding
+import com.fyp.basarattradeinvest.domain.model.UserProfile
 import com.fyp.basarattradeinvest.feature.auth.AuthUiState
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class ProfileFragment : Fragment() {
 
@@ -46,6 +48,18 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
+        binding.btnEditProfile.setOnClickListener {
+            findNavController().navigate(R.id.action_profileFragment_to_editProfileFragment)
+        }
+
+        binding.cardRiskProfile.setOnClickListener {
+            findNavController().navigate(R.id.action_profileFragment_to_riskProfileFragment)
+        }
+
+        binding.cardNotificationPrefs.setOnClickListener {
+            findNavController().navigate(R.id.action_profileFragment_to_notificationPreferencesFragment)
+        }
+
         binding.cardChangePassword.setOnClickListener {
             findNavController().navigate(R.id.action_profileFragment_to_changePasswordFragment)
         }
@@ -69,18 +83,35 @@ class ProfileFragment : Fragment() {
     private fun observeData() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Collect Live Profile State
                 launch {
-                    viewModel.userState.collect { user ->
-                        if (user != null) {
-                            binding.tvUserName.text = user.fullName?.takeIf { it.isNotBlank() } ?: "BASARAT Trader"
-                            binding.tvUserEmail.text = user.email
-                        } else {
-                            binding.tvUserName.text = "BASARAT Trader"
-                            binding.tvUserEmail.text = "Active Trader"
+                    viewModel.profileUiState.collect { state ->
+                        when (state) {
+                            is ProfileUiState.Loading -> {
+                                // Keep showing existing userState data if available
+                            }
+                            is ProfileUiState.Success -> {
+                                populateProfileData(state.profile)
+                            }
+                            is ProfileUiState.Error -> {
+                                // Silent degradation to cached user session
+                            }
                         }
                     }
                 }
 
+                // Fallback / Session Cache
+                launch {
+                    viewModel.userState.collect { user ->
+                        if (user != null && binding.tvUserName.text.isBlank()) {
+                            binding.tvUserName.text = user.fullName?.takeIf { it.isNotBlank() } ?: "BASARAT Trader"
+                            binding.tvUserEmail.text = user.email
+                            binding.tvUserHandle.text = "@${user.username ?: "trader"}"
+                        }
+                    }
+                }
+
+                // Collect Logout State
                 launch {
                     viewModel.logoutUiState.collect { state ->
                         when (state) {
@@ -99,8 +130,7 @@ class ProfileFragment : Fragment() {
                                 binding.tvLogoutLabel.visibility = View.VISIBLE
                                 binding.btnLogout.isEnabled = true
                                 Toast.makeText(requireContext(), "Signed out successfully", Toast.LENGTH_SHORT).show()
-                                
-                                // Navigate to Login and clear entire back stack to prevent going back to authenticated screens
+
                                 val navOptions = NavOptions.Builder()
                                     .setPopUpTo(R.id.nav_graph, true)
                                     .build()
@@ -119,6 +149,30 @@ class ProfileFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun populateProfileData(profile: UserProfile) {
+        binding.tvUserName.text = profile.fullName?.takeIf { it.isNotBlank() } ?: "BASARAT Trader"
+        binding.tvUserEmail.text = profile.email
+        val verifiedBadge = if (profile.isVerified) " ✓ Verified" else ""
+        binding.tvUserHandle.text = "@${profile.username}$verifiedBadge"
+
+        // Format risk tolerance badge
+        val riskText = profile.riskTolerance?.replace("_", " ")?.capitalizeWords() ?: "Not Configured"
+        binding.tvBadgeRisk.text = riskText
+
+        // Format horizon badge
+        val horizonText = profile.investmentHorizon?.replace("_", " ")?.capitalizeWords() ?: "Not Set"
+        binding.tvBadgeHorizon.text = horizonText
+
+        // Update sectors summary if present
+        if (profile.sectorPreferences.isNotEmpty()) {
+            binding.tvRiskSummary.text = "${profile.sectorPreferences.size} preferred sectors configured"
+        }
+    }
+
+    private fun String.capitalizeWords(): String = split(" ").joinToString(" ") { word ->
+        word.lowercase(Locale.ROOT).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
     }
 
     override fun onDestroyView() {
