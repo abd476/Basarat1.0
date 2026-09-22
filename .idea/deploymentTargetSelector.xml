@@ -4,11 +4,14 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-09-18T11:57:36.312485900Z">
+        <DropdownSelection timestamp="2026-09-22T13:21:56.741922300Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\abdul\.android\avd\Pixel_8.avd" />
+              <DeviceId pluginId="FirebaseDirectAccess" identifier="reservation=projects/antitheft-c40b1/deviceSessions/session-aexvv4kpkou3a" />
             </handle>
+            <template>
+              <DeviceId pluginId="FirebaseDirectAccess" type="TEMPLATE" identifier="model_id=blazer/36" />
+            </template>
           </Target>
         </DropdownSelection>
         <DialogSelection />

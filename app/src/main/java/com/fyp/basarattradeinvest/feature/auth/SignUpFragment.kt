@@ -120,14 +120,19 @@ class SignUpFragment : Fragment() {
                             binding.pbLoading.visibility = View.GONE
                             binding.tvSignUpLabel.visibility = View.VISIBLE
                             binding.btnSignUp.isEnabled = true
-                            findNavController().navigate(R.id.action_signUpFragment_to_homeFragment)
+                            Toast.makeText(
+                                requireContext(),
+                                state.message ?: "Registration successful! Please sign in with your credentials.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            findNavController().navigate(R.id.action_signUpFragment_to_loginFragment)
                             viewModel.resetState()
                         }
                         is AuthUiState.Error -> {
                             binding.pbLoading.visibility = View.GONE
                             binding.tvSignUpLabel.visibility = View.VISIBLE
                             binding.btnSignUp.isEnabled = true
-                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_LONG).show()
                             viewModel.resetState()
                         }
                     }

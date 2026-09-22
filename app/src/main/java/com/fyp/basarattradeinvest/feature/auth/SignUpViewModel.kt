@@ -2,35 +2,61 @@ package com.fyp.basarattradeinvest.feature.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
+import com.fyp.basarattradeinvest.data.repository.AuthRepositoryImpl
+import com.fyp.basarattradeinvest.domain.usecase.auth.SignUpUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class SignUpViewModel : ViewModel() {
+class SignUpViewModel(
+    private val signUpUseCase: SignUpUseCase = SignUpUseCase(AuthRepositoryImpl())
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
     fun signUp(name: String, email: String, password: String) {
-        if (name.isBlank()) {
+        val trimmedName = name.trim()
+        val trimmedEmail = email.trim()
+
+        if (trimmedName.isBlank()) {
             _uiState.value = AuthUiState.Error("Please enter your name")
             return
         }
-        if (email.isBlank()) {
+        if (trimmedEmail.isBlank()) {
             _uiState.value = AuthUiState.Error("Please enter your email")
             return
         }
-        if (password.length < 6) {
-            _uiState.value = AuthUiState.Error("Password must be at least 6 characters")
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(trimmedEmail).matches()) {
+            _uiState.value = AuthUiState.Error("Please enter a valid email address")
+            return
+        }
+        if (password.length < 8) {
+            _uiState.value = AuthUiState.Error("Password must be at least 8 characters")
             return
         }
 
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
-            delay(1000)
-            _uiState.value = AuthUiState.Success(userEmail = email)
+            val result = signUpUseCase(
+                email = trimmedEmail,
+                password = password,
+                fullName = trimmedName
+            )
+            result.fold(
+                onSuccess = { message ->
+                    _uiState.value = AuthUiState.Success(
+                        message = message,
+                        userEmail = trimmedEmail
+                    )
+                },
+                onFailure = { throwable ->
+                    _uiState.value = AuthUiState.Error(
+                        throwable.message ?: "Sign up failed. Please try again."
+                    )
+                }
+            )
         }
     }
 

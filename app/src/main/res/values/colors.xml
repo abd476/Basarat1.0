@@ -57,4 +57,9 @@
     <color name="color_chip_selected_bg">#E6F8F3</color>
     <color name="color_chip_selected_stroke">#18B981</color>
     <color name="color_dividend_orange">#FF9800</color>
+
+    <!-- Semantic Aliases for Components -->
+    <color name="color_brand_primary">@color/color_basarat_green</color>
+    <color name="color_border">@color/color_divider</color>
+    <color name="color_down">@color/color_negative</color>
 </resources>

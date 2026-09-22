@@ -1,5 +1,8 @@
 package com.fyp.basarattradeinvest.data.remote
 
+import com.fyp.basarattradeinvest.core.network.AuthInterceptor
+import com.fyp.basarattradeinvest.core.network.TokenAuthenticator
+import com.fyp.basarattradeinvest.data.remote.api.AuthApiService
 import com.fyp.basarattradeinvest.data.remote.api.MarketApiService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -9,17 +12,27 @@ import java.util.concurrent.TimeUnit
 
 object NetworkClient {
 
-    // Base URL for the BASARAT backend API (can be configured via BuildConfig / env)
-    private const val BASE_URL = "https://api.basarat.pk/"
+    // Live backend OpenAPI source of truth
+    const val BASE_URL = "https://basarat-fyp-official.onrender.com/"
 
+    // Sanitized logging interceptor: redacts sensitive Authorization headers & tokens
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
+        redactHeader("Authorization")
+        redactHeader("Cookie")
+        redactHeader("Set-Cookie")
     }
 
+    private val authInterceptor = AuthInterceptor()
+    private val tokenAuthenticator = TokenAuthenticator(BASE_URL)
+
     private val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor(authInterceptor)
         .addInterceptor(loggingInterceptor)
-        .connectTimeout(15, TimeUnit.SECONDS)
-        .readTimeout(15, TimeUnit.SECONDS)
+        .authenticator(tokenAuthenticator)
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
         .build()
 
     private val retrofit = Retrofit.Builder()
@@ -30,5 +43,9 @@ object NetworkClient {
 
     val marketApiService: MarketApiService by lazy {
         retrofit.create(MarketApiService::class.java)
+    }
+
+    val authApiService: AuthApiService by lazy {
+        retrofit.create(AuthApiService::class.java)
     }
 }

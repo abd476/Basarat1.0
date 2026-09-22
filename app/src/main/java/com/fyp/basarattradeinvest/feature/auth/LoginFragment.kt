@@ -88,7 +88,7 @@ class LoginFragment : Fragment() {
         }
 
         binding.tvForgotPassword.setOnClickListener {
-            Toast.makeText(requireContext(), "Forgot password flow", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_loginFragment_to_forgotPasswordFragment)
         }
 
         binding.btnGoogleSignIn.setOnClickListener {
