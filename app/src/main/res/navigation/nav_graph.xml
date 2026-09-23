@@ -287,4 +287,65 @@
         android:label="Recommendation Settings"
         tools:layout="@layout/fragment_recommendation_settings" />
 
+    <!-- Portfolio Destinations -->
+    <fragment
+        android:id="@+id/nav_portfolio"
+        android:name="com.fyp.basarattradeinvest.feature.portfolio.main.PortfolioMainFragment"
+        android:label="Portfolio"
+        tools:layout="@layout/fragment_portfolio_main">
+        <action
+            android:id="@+id/action_portfolio_to_holdingDetail"
+            app:destination="@id/holdingDetailFragment" />
+        <action
+            android:id="@+id/action_portfolio_to_transactionHistory"
+            app:destination="@id/transactionHistoryFragment" />
+        <action
+            android:id="@+id/action_portfolio_to_transactionDetail"
+            app:destination="@id/transactionDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/holdingDetailFragment"
+        android:name="com.fyp.basarattradeinvest.feature.portfolio.holding.HoldingDetailFragment"
+        android:label="Holding Detail"
+        tools:layout="@layout/fragment_holding_detail">
+        <argument
+            android:name="symbol"
+            app:argType="string"
+            android:defaultValue="LUCK" />
+        <action
+            android:id="@+id/action_holdingDetail_to_stockDetail"
+            app:destination="@id/stockDetailFragment" />
+        <action
+            android:id="@+id/action_holdingDetail_to_stockAnalysis"
+            app:destination="@id/stockAnalysisFragment" />
+        <action
+            android:id="@+id/action_holdingDetail_to_stockRecommendationDetail"
+            app:destination="@id/stockRecommendationDetailFragment" />
+        <action
+            android:id="@+id/action_holdingDetail_to_transactionDetail"
+            app:destination="@id/transactionDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/transactionHistoryFragment"
+        android:name="com.fyp.basarattradeinvest.feature.portfolio.transactions.TransactionHistoryFragment"
+        android:label="Transaction History"
+        tools:layout="@layout/fragment_transaction_history">
+        <action
+            android:id="@+id/action_transactionHistory_to_transactionDetail"
+            app:destination="@id/transactionDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/transactionDetailFragment"
+        android:name="com.fyp.basarattradeinvest.feature.portfolio.transactions.TransactionDetailFragment"
+        android:label="Transaction Detail"
+        tools:layout="@layout/fragment_transaction_detail">
+        <argument
+            android:name="transaction_id"
+            app:argType="string"
+            android:defaultValue="" />
+    </fragment>
+
 </navigation>
