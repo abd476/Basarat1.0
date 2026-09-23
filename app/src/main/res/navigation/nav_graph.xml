@@ -173,6 +173,20 @@
             android:name="symbol"
             app:argType="string"
             android:defaultValue="LUCK" />
+        <action
+            android:id="@+id/action_stockAnalysis_to_sentiment"
+            app:destination="@id/sentimentFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/sentimentFragment"
+        android:name="com.fyp.basarattradeinvest.feature.sentiment.SentimentFragment"
+        android:label="Sentiment Analysis"
+        tools:layout="@layout/fragment_sentiment">
+        <argument
+            android:name="symbol"
+            app:argType="string"
+            android:defaultValue="OGDC" />
     </fragment>
 
     <fragment

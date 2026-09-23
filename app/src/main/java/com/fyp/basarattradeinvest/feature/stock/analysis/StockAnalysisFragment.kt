@@ -77,6 +77,13 @@ class StockAnalysisFragment : Fragment() {
             viewModel.selectTab(AnalysisTab.FORECAST)
         }
 
+        binding.btnTabSentiment.setOnClickListener {
+            // Sentiment navigates to dedicated SentimentFragment
+            val symbol = arguments?.getString("symbol") ?: "LUCK"
+            val bundle = androidx.core.os.bundleOf("symbol" to symbol)
+            findNavController().navigate(R.id.action_stockAnalysis_to_sentiment, bundle)
+        }
+
         // Horizon selection pills
         binding.btnHorizon1d.setOnClickListener {
             viewModel.selectHorizon("1D")
@@ -213,13 +220,15 @@ class StockAnalysisFragment : Fragment() {
         val primaryText = ContextCompat.getColor(requireContext(), R.color.color_text_primary)
         val secondaryText = ContextCompat.getColor(requireContext(), R.color.color_text_secondary)
 
-        // Reset all 3 tabs
+        // Reset all 3 content tabs (Sentiment is navigation-only, no local content)
         binding.btnTabTechnical.background = null
         binding.tvTabTechnicalText.setTextColor(secondaryText)
         binding.btnTabFundamentals.background = null
         binding.tvTabFundamentalsText.setTextColor(secondaryText)
         binding.btnTabForecast.background = null
         binding.tvTabForecastText.setTextColor(secondaryText)
+        binding.btnTabSentiment.background = null
+        binding.tvTabSentimentText.setTextColor(secondaryText)
 
         when (tab) {
             AnalysisTab.TECHNICAL -> {
@@ -245,6 +254,15 @@ class StockAnalysisFragment : Fragment() {
                 binding.layoutTechnicalContent.visibility = View.GONE
                 binding.layoutFundamentalsContent.visibility = View.GONE
                 binding.layoutForecastContent.visibility = View.VISIBLE
+            }
+            AnalysisTab.SENTIMENT -> {
+                // Navigation-only tab — content shown in SentimentFragment
+                binding.btnTabSentiment.background = activeBg
+                binding.tvTabSentimentText.setTextColor(primaryText)
+
+                binding.layoutTechnicalContent.visibility = View.GONE
+                binding.layoutFundamentalsContent.visibility = View.GONE
+                binding.layoutForecastContent.visibility = View.GONE
             }
         }
     }

@@ -179,7 +179,7 @@
                 android:background="@drawable/bg_segmented_container"
                 android:orientation="horizontal"
                 android:padding="3dp"
-                android:weightSum="3">
+                android:weightSum="4">
 
                 <!-- Technical Analysis Tab -->
                 <LinearLayout
@@ -199,7 +199,7 @@
                         android:layout_height="wrap_content"
                         android:text="Technical"
                         android:textColor="@color/color_text_primary"
-                        android:textSize="13sp"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -221,7 +221,7 @@
                         android:layout_height="wrap_content"
                         android:text="Fundamentals"
                         android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -243,7 +243,29 @@
                         android:layout_height="wrap_content"
                         android:text="Forecast"
                         android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Sentiment Tab (navigates to SentimentFragment) -->
+                <LinearLayout
+                    android:id="@+id/btn_tab_sentiment"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/transparent"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_tab_sentiment_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sentiment"
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>

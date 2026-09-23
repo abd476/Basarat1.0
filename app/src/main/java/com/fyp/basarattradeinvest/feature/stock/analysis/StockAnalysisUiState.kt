@@ -25,7 +25,8 @@ sealed interface StockAnalysisUiState {
 enum class AnalysisTab {
     TECHNICAL,
     FUNDAMENTALS,
-    FORECAST
+    FORECAST,
+    SENTIMENT
 }
 
 sealed interface ForecastSectionState {
