@@ -6,6 +6,10 @@ data class MarketSentiment(
     val positivePercent: Int,
     val neutralPercent: Int,
     val negativePercent: Int,
-    val newsCount: Int,
-    val aiSummary: String
+    val newsCount: Int = 0,
+    val aiSummary: String = "",
+    val advanceDeclineRatio: Double = 0.0,
+    val advancing: Int = 0,
+    val declining: Int = 0,
+    val unchanged: Int = 0
 )
