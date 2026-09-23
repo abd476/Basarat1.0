@@ -56,6 +56,10 @@ class ProfileFragment : Fragment() {
             findNavController().navigate(R.id.action_profileFragment_to_riskProfileFragment)
         }
 
+        binding.cardEngineWeights.setOnClickListener {
+            findNavController().navigate(R.id.recommendationSettingsFragment)
+        }
+
         binding.cardNotificationPrefs.setOnClickListener {
             findNavController().navigate(R.id.action_profileFragment_to_notificationPreferencesFragment)
         }
