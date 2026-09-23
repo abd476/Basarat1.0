@@ -3,7 +3,11 @@ package com.fyp.basarattradeinvest.feature.stock.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.data.repository.StockRepositoryImpl
+import com.fyp.basarattradeinvest.domain.model.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.StockTrade
 import com.fyp.basarattradeinvest.domain.repository.StockRepository
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,25 +30,31 @@ class StockDetailViewModel(
         viewModelScope.launch {
             _uiState.value = StockDetailUiState.Loading
 
-            val detailResult = repository.getStockDetail(symbol)
-            val chartResult = repository.getChartData(symbol, currentTimeframe)
-            val tradesResult = repository.getRecentTrades(symbol)
+            coroutineScope {
+                val detailDeferred = async { repository.getStockOverview(symbol) }
+                val chartDeferred = async { repository.getPriceHistory(symbol, currentTimeframe) }
+                val tradesDeferred = async { repository.getRecentTrades(symbol) }
 
-            if (detailResult.isSuccess) {
-                val detail = detailResult.getOrThrow()
-                val candles = chartResult.getOrDefault(emptyList())
-                val trades = tradesResult.getOrDefault(emptyList())
+                val detailResult = detailDeferred.await()
+                val chartResult = chartDeferred.await()
+                val tradesResult = tradesDeferred.await()
 
-                _uiState.value = StockDetailUiState.Success(
-                    detail = detail,
-                    candles = candles,
-                    trades = trades,
-                    selectedTimeframe = currentTimeframe,
-                    selectedSection = currentSection,
-                    selectedSubPill = currentSubPill
-                )
-            } else {
-                _uiState.value = StockDetailUiState.Error("Unable to load stock details for $symbol")
+                if (detailResult.isSuccess) {
+                    val detail = detailResult.getOrThrow()
+                    val candles = chartResult.getOrDefault(emptyList())
+                    val trades = tradesResult.getOrDefault(emptyList())
+
+                    _uiState.value = StockDetailUiState.Success(
+                        detail = detail,
+                        candles = candles,
+                        trades = trades,
+                        selectedTimeframe = currentTimeframe,
+                        selectedSection = currentSection,
+                        selectedSubPill = currentSubPill
+                    )
+                } else {
+                    _uiState.value = StockDetailUiState.Error("Unable to load stock details for $symbol")
+                }
             }
         }
     }
@@ -55,7 +65,7 @@ class StockDetailViewModel(
         viewModelScope.launch {
             val currentState = _uiState.value
             if (currentState is StockDetailUiState.Success) {
-                val chartResult = repository.getChartData(currentSymbol, timeframe)
+                val chartResult = repository.getPriceHistory(currentSymbol, timeframe)
                 val candles = chartResult.getOrDefault(emptyList())
                 _uiState.value = currentState.copy(
                     candles = candles,

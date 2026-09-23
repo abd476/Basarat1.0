@@ -1,10 +1,14 @@
 package com.fyp.basarattradeinvest.data.repository
 
+import com.fyp.basarattradeinvest.data.mapper.StocksDtoMapper
+import com.fyp.basarattradeinvest.data.remote.NetworkClient
+import com.fyp.basarattradeinvest.data.remote.api.StocksApiService
 import com.fyp.basarattradeinvest.domain.model.CandleEntry
 import com.fyp.basarattradeinvest.domain.model.FundamentalMetrics
 import com.fyp.basarattradeinvest.domain.model.PivotPoints
 import com.fyp.basarattradeinvest.domain.model.StockAnalysis
 import com.fyp.basarattradeinvest.domain.model.StockDetail
+import com.fyp.basarattradeinvest.domain.model.StockSearchResult
 import com.fyp.basarattradeinvest.domain.model.StockTrade
 import com.fyp.basarattradeinvest.domain.model.TechnicalAnalysis
 import com.fyp.basarattradeinvest.domain.model.TechnicalIndicator
@@ -15,7 +19,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
-class StockRepositoryImpl : StockRepository {
+class StockRepositoryImpl(
+    private val apiService: StocksApiService = NetworkClient.stocksApiService
+) : StockRepository {
 
     private val stockDatabase = mapOf(
         "SARCO" to StockDetail(
@@ -80,12 +86,99 @@ class StockRepositoryImpl : StockRepository {
         )
     )
 
-    override suspend fun getStockDetail(symbol: String): Result<StockDetail> = withContext(Dispatchers.IO) {
+    override suspend fun searchStocks(query: String, limit: Int): Result<List<StockSearchResult>> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.searchStocks(query = query, limit = limit)
+            if (response.isSuccessful && response.body() != null) {
+                val results = response.body()!!.results.map { StocksDtoMapper.mapSearchResult(it) }
+                Result.success(results)
+            } else {
+                fallbackSearch(query)
+            }
+        } catch (e: Exception) {
+            fallbackSearch(query)
+        }
+    }
+
+    private fun fallbackSearch(query: String): Result<List<StockSearchResult>> {
+        val q = query.trim().uppercase()
+        val localMatches = stockDatabase.values
+            .filter { it.symbol.contains(q, ignoreCase = true) || it.companyName.contains(q, ignoreCase = true) }
+            .map { StockSearchResult(symbol = it.symbol, name = it.companyName, sector = it.sector) }
+        return Result.success(localMatches)
+    }
+
+    override suspend fun getStockOverview(symbol: String): Result<StockDetail> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.getStockOverview(symbol)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(StocksDtoMapper.mapOverviewToStockDetail(response.body()!!))
+            } else {
+                fallbackStockDetail(symbol)
+            }
+        } catch (e: Exception) {
+            fallbackStockDetail(symbol)
+        }
+    }
+
+    override suspend fun getPriceHistory(symbol: String, range: String): Result<List<CandleEntry>> = withContext(Dispatchers.IO) {
+        try {
+            // Ensure range matches regex ^(1D|1W|1M|1Y)$
+            val validRange = when (range.uppercase()) {
+                "1D", "DAILY" -> "1D"
+                "1W", "WEEKLY" -> "1W"
+                "1Y", "YEARLY" -> "1Y"
+                else -> "1M"
+            }
+            val response = apiService.getPriceHistory(symbol = symbol, range = validRange)
+            if (response.isSuccessful && response.body() != null) {
+                val candles = StocksDtoMapper.mapPriceHistoryToCandles(response.body()!!)
+                if (candles.isNotEmpty()) {
+                    Result.success(candles)
+                } else {
+                    getChartData(symbol, range)
+                }
+            } else {
+                getChartData(symbol, range)
+            }
+        } catch (e: Exception) {
+            getChartData(symbol, range)
+        }
+    }
+
+    override suspend fun getTechnicalIndicators(symbol: String): Result<TechnicalAnalysis> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.getTechnicalIndicators(symbol)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(StocksDtoMapper.mapTechnicalIndicators(response.body()!!))
+            } else {
+                fallbackTechnicalAnalysis(symbol)
+            }
+        } catch (e: Exception) {
+            fallbackTechnicalAnalysis(symbol)
+        }
+    }
+
+    override suspend fun getFundamentals(symbol: String): Result<FundamentalMetrics> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.getFundamentals(symbol)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(StocksDtoMapper.mapFundamentals(response.body()!!))
+            } else {
+                fallbackFundamentals(symbol)
+            }
+        } catch (e: Exception) {
+            fallbackFundamentals(symbol)
+        }
+    }
+
+    override suspend fun getStockDetail(symbol: String): Result<StockDetail> = getStockOverview(symbol)
+
+    private fun fallbackStockDetail(symbol: String): Result<StockDetail> {
         val stock = stockDatabase[symbol.uppercase()]
-        if (stock != null) {
+        return if (stock != null) {
             Result.success(stock)
         } else {
-            // Generate a generic fallback for unknown symbols
             Result.success(
                 StockDetail(
                     symbol = symbol.uppercase(), code = "0000",
@@ -107,10 +200,11 @@ class StockRepositoryImpl : StockRepository {
         val basePrice = stock?.price?.toFloat() ?: 100f
 
         val count = when (timeframe) {
-            "1D" -> 78        // 5-min candles for 6.5hr trading day
-            "Daily" -> 90     // 90 daily candles
-            "Weekly" -> 104   // 2 years of weekly candles
-            "1M" -> 60        // 5 years of monthly candles
+            "1D" -> 78
+            "Daily" -> 90
+            "Weekly", "1W" -> 104
+            "1M" -> 60
+            "1Y" -> 120
             else -> 90
         }
 
@@ -136,21 +230,22 @@ class StockRepositoryImpl : StockRepository {
 
     private fun generateMockCandles(basePrice: Float, count: Int, timeframe: String): List<CandleEntry> {
         val candles = mutableListOf<CandleEntry>()
-        var currentPrice = basePrice * 1.4f  // Start higher for downtrend effect
+        var currentPrice = basePrice * 1.4f
         val now = System.currentTimeMillis()
 
         val intervalMs = when (timeframe) {
-            "1D" -> 5 * 60 * 1000L            // 5 min
-            "Daily" -> 24 * 60 * 60 * 1000L   // 1 day
-            "Weekly" -> 7 * 24 * 60 * 60 * 1000L  // 1 week
-            "1M" -> 30L * 24 * 60 * 60 * 1000L    // ~1 month
+            "1D" -> 5 * 60 * 1000L
+            "Daily" -> 24 * 60 * 60 * 1000L
+            "Weekly", "1W" -> 7 * 24 * 60 * 60 * 1000L
+            "1M" -> 30L * 24 * 60 * 60 * 1000L
+            "1Y" -> 365L * 24 * 60 * 60 * 1000L
             else -> 24 * 60 * 60 * 1000L
         }
 
         for (i in count downTo 1) {
             val timestamp = now - (i * intervalMs)
             val volatility = currentPrice * 0.035f
-            val change = (Random.nextFloat() - 0.52f) * volatility  // Slight downward bias
+            val change = (Random.nextFloat() - 0.52f) * volatility
             val open = currentPrice
             val close = (currentPrice + change).coerceAtLeast(basePrice * 0.3f)
             val high = maxOf(open, close) + Random.nextFloat() * volatility * 0.5f
@@ -173,6 +268,38 @@ class StockRepositoryImpl : StockRepository {
     }
 
     override suspend fun getStockAnalysis(symbol: String): Result<StockAnalysis> = withContext(Dispatchers.IO) {
+        val overviewRes = getStockOverview(symbol)
+        val techRes = getTechnicalIndicators(symbol)
+        val fundRes = getFundamentals(symbol)
+
+        val detail = overviewRes.getOrDefault(
+            stockDatabase[symbol] ?: StockDetail(
+                symbol = symbol, code = "0000", companyName = "$symbol Limited",
+                sector = "Equity", price = 412.80, changeAmount = 12.40, changePercent = 3.10,
+                marketStatus = "Open", lastUpdated = "15/09-12:00:00",
+                open = 405.00, high = 418.00, low = 403.50, close = 412.80,
+                volume = 1250000, avgVolume = 980000, high52Week = 450.00, low52Week = 280.00,
+                marketCap = "120.5B", pe = 8.45, eps = 48.85
+            )
+        )
+
+        val technical = techRes.getOrDefault(fallbackTechnicalAnalysis(symbol).getOrThrow())
+        val fundamentals = fundRes.getOrDefault(fallbackFundamentals(symbol).getOrThrow())
+
+        Result.success(
+            StockAnalysis(
+                symbol = detail.symbol,
+                companyName = detail.companyName,
+                price = detail.price,
+                changeAmount = detail.changeAmount,
+                changePercent = detail.changePercent,
+                technical = technical,
+                fundamentals = fundamentals
+            )
+        )
+    }
+
+    private fun fallbackTechnicalAnalysis(symbol: String): Result<TechnicalAnalysis> {
         val detail = stockDatabase[symbol] ?: StockDetail(
             symbol = symbol, code = "0000", companyName = "$symbol Limited",
             sector = "Equity", price = 412.80, changeAmount = 12.40, changePercent = 3.10,
@@ -181,10 +308,8 @@ class StockRepositoryImpl : StockRepository {
             volume = 1250000, avgVolume = 980000, high52Week = 450.00, low52Week = 280.00,
             marketCap = "120.5B", pe = 8.45, eps = 48.85
         )
-
         val price = detail.price
 
-        // Deterministic Technical Analysis
         val oscillators = listOf(
             TechnicalIndicator("RSI (14)", "Relative Strength", "62.40", TechnicalSignal.NEUTRAL),
             TechnicalIndicator("MACD (12,26,9)", "Bullish Crossover", "+5.12", TechnicalSignal.BUY),
@@ -212,51 +337,53 @@ class StockRepositoryImpl : StockRepository {
             s3 = price * 0.945
         )
 
-        val technical = TechnicalAnalysis(
-            summary = TechnicalSummary(
-                overallSignal = TechnicalSignal.STRONG_BUY,
-                buyCount = 15,
-                neutralCount = 4,
-                sellCount = 1
-            ),
-            oscillators = oscillators,
-            movingAverages = movingAverages,
-            pivotPoints = pivotPoints
+        return Result.success(
+            TechnicalAnalysis(
+                summary = TechnicalSummary(
+                    overallSignal = TechnicalSignal.STRONG_BUY,
+                    buyCount = 15,
+                    neutralCount = 4,
+                    sellCount = 1
+                ),
+                oscillators = oscillators,
+                movingAverages = movingAverages,
+                pivotPoints = pivotPoints
+            )
+        )
+    }
+
+    private fun fallbackFundamentals(symbol: String): Result<FundamentalMetrics> {
+        val detail = stockDatabase[symbol] ?: StockDetail(
+            symbol = symbol, code = "0000", companyName = "$symbol Limited",
+            sector = "Equity", price = 412.80, changeAmount = 12.40, changePercent = 3.10,
+            marketStatus = "Open", lastUpdated = "15/09-12:00:00",
+            open = 405.00, high = 418.00, low = 403.50, close = 412.80,
+            volume = 1250000, avgVolume = 980000, high52Week = 450.00, low52Week = 280.00,
+            marketCap = "120.5B", pe = 8.45, eps = 48.85
         )
 
-        // Deterministic Fundamental Analysis
-        val fundamentals = FundamentalMetrics(
-            peRatio = detail.pe,
-            sectorPeAvg = 11.2,
-            forwardPe = 7.60,
-            pbRatio = 1.32,
-            evEbitda = 5.18,
-            pegRatio = 0.72,
-            eps = detail.eps,
-            roe = 22.4,
-            roa = 14.8,
-            dividendYield = 5.25,
-            netProfitMargin = 19.4,
-            debtToEquity = 0.38,
-            currentRatio = 1.85,
-            quickRatio = 1.42,
-            interestCoverage = 8.4,
-            revenueTTM = "PKR 142.6 B",
-            revenueGrowthYoY = 18.2,
-            netIncomeTTM = "PKR 27.6 B",
-            netIncomeGrowthYoY = 24.1,
-            freeCashFlowTTM = "PKR 18.9 B"
-        )
-
-        Result.success(
-            StockAnalysis(
-                symbol = detail.symbol,
-                companyName = detail.companyName,
-                price = detail.price,
-                changeAmount = detail.changeAmount,
-                changePercent = detail.changePercent,
-                technical = technical,
-                fundamentals = fundamentals
+        return Result.success(
+            FundamentalMetrics(
+                peRatio = detail.pe,
+                sectorPeAvg = 11.2,
+                forwardPe = 7.60,
+                pbRatio = 1.32,
+                evEbitda = 5.18,
+                pegRatio = 0.72,
+                eps = detail.eps,
+                roe = 22.4,
+                roa = 14.8,
+                dividendYield = 5.25,
+                netProfitMargin = 19.4,
+                debtToEquity = 0.38,
+                currentRatio = 1.85,
+                quickRatio = 1.42,
+                interestCoverage = 8.4,
+                revenueTTM = "PKR 142.6 B",
+                revenueGrowthYoY = 18.2,
+                netIncomeTTM = "PKR 27.6 B",
+                netIncomeGrowthYoY = 24.1,
+                freeCashFlowTTM = "PKR 18.9 B"
             )
         )
     }

@@ -231,6 +231,20 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- Recommendation Button -->
+                <TextView
+                    android:id="@+id/btn_recommendation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/bg_badge_teal"
+                    android:gravity="center"
+                    android:paddingHorizontal="10dp"
+                    android:text="AI Rec"
+                    android:textColor="@color/color_shariah_teal"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
                 <!-- Favorite Icon -->
                 <ImageView
                     android:id="@+id/iv_favorite"

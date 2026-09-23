@@ -174,6 +174,12 @@ class StockDetailFragment : Fragment() {
             Toast.makeText(requireContext(), "Added to watchlist", Toast.LENGTH_SHORT).show()
         }
 
+        // AI Recommendation
+        binding.btnRecommendation.setOnClickListener {
+            val bundle = Bundle().apply { putString("symbol", currentSymbol) }
+            findNavController().navigate(R.id.action_stockDetail_to_recommendationDetail, bundle)
+        }
+
         // Timeframe tabs
         val timeframeTabs = listOf(
             binding.tab1d to "1D",
