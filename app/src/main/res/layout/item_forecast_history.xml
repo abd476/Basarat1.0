@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    app:cardBackgroundColor="@color/color_surface_elevated"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/color_divider"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="14dp">
+
+        <!-- Top Row: Target Date & Predicted Date -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_target_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/color_text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                tools:text="Target: 2026-03-24" />
+
+            <TextView
+                android:id="@+id/tv_predicted_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_text_secondary"
+                android:textSize="11sp"
+                tools:text="Made: 2026-03-23" />
+        </LinearLayout>
+
+        <!-- Middle Row: Predicted Direction Badge + Confidence -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_predicted_direction_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_positive"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                android:textColor="@color/color_positive"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                tools:text="BULLISH" />
+
+            <TextView
+                android:id="@+id/tv_confidence"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:textColor="@color/color_text_secondary"
+                android:textSize="12sp"
+                tools:text="Confidence: 84%" />
+
+            <!-- Outcome Badge: Correct / Incorrect / Pending -->
+            <TextView
+                android:id="@+id/tv_outcome_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_strong_buy"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                android:textColor="@color/color_basarat_green"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                tools:text="CORRECT" />
+        </LinearLayout>
+
+        <!-- Bottom Row: Actual Outcome Details -->
+        <TextView
+            android:id="@+id/tv_actual_outcome_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/color_text_secondary"
+            android:textSize="11sp"
+            tools:text="Actual outcome: Bullish" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

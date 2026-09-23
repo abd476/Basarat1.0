@@ -179,7 +179,7 @@
                 android:background="@drawable/bg_segmented_container"
                 android:orientation="horizontal"
                 android:padding="3dp"
-                android:weightSum="2">
+                android:weightSum="3">
 
                 <!-- Technical Analysis Tab -->
                 <LinearLayout
@@ -197,7 +197,7 @@
                         android:id="@+id/tv_tab_technical_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Technical Analysis"
+                        android:text="Technical"
                         android:textColor="@color/color_text_primary"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -220,6 +220,28 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Fundamentals"
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Forecast Tab -->
+                <LinearLayout
+                    android:id="@+id/btn_tab_forecast"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/transparent"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_tab_forecast_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Forecast"
                         android:textColor="@color/color_text_secondary"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -1748,6 +1770,809 @@
                             android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
+            </LinearLayout>
+
+            <!-- ============================================== -->
+            <!-- 6. TAB 3: FORECAST & PERFORMANCE CONTENT       -->
+            <!-- ============================================== -->
+            <LinearLayout
+                android:id="@+id/layout_forecast_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <!-- 6A. HORIZON SELECTOR (1D | 1W | 1M) -->
+                <LinearLayout
+                    android:id="@+id/layout_horizon_selector"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Forecast Horizon:"
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/bg_segmented_container"
+                        android:orientation="horizontal"
+                        android:padding="2dp">
+
+                        <TextView
+                            android:id="@+id/btn_horizon_1d"
+                            android:layout_width="44dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_segmented_tab_active"
+                            android:gravity="center"
+                            android:text="1D"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/btn_horizon_1w"
+                            android:layout_width="44dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/transparent"
+                            android:gravity="center"
+                            android:text="1W"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/btn_horizon_1m"
+                            android:layout_width="44dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/transparent"
+                            android:gravity="center"
+                            android:text="1M"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- 6B. LOADING STATE -->
+                <LinearLayout
+                    android:id="@+id/layout_forecast_loading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="24dp"
+                    android:visibility="gone">
+
+                    <ProgressBar
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:indeterminateTint="@color/color_basarat_green" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Analyzing neural &amp; boosted ML models..."
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- 6C. ERROR STATE -->
+                <LinearLayout
+                    android:id="@+id/layout_forecast_error"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_card_clean"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="24dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tv_forecast_error_msg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Unable to load forecast data"
+                        android:textColor="@color/color_negative"
+                        android:textSize="13sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_forecast_retry"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="12dp"
+                        android:text="Retry Forecast"
+                        android:textAllCaps="false"
+                        app:backgroundTint="@color/color_button_primary_bg"
+                        app:cornerRadius="8dp" />
+                </LinearLayout>
+
+                <!-- 6D. SUCCESS STATE CONTAINER -->
+                <LinearLayout
+                    android:id="@+id/layout_forecast_success"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <!-- PROMINENT ML FORECAST CARD -->
+                    <LinearLayout
+                        android:id="@+id/card_forecast_prominent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_card_clean"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:letterSpacing="0.04"
+                                android:text="ML FORECAST"
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_forecast_dates"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp"
+                                tools:text="Target: 2026-03-24" />
+                        </LinearLayout>
+
+                        <!-- Direction & Signal Rating Row -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_forecast_direction_badge"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_badge_positive"
+                                android:paddingHorizontal="14dp"
+                                android:paddingVertical="5dp"
+                                android:text="BULLISH"
+                                android:textColor="@color/color_positive"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_forecast_signal_rating"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:background="@drawable/bg_badge_strong_buy"
+                                android:paddingHorizontal="12dp"
+                                android:paddingVertical="5dp"
+                                android:text="STRONG BUY"
+                                android:textColor="@color/color_basarat_green"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_forecast_confidence"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:gravity="end"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                tools:text="84% Confidence" />
+                        </LinearLayout>
+
+                        <!-- Model Version & Gate Reason -->
+                        <TextView
+                            android:id="@+id/tv_forecast_meta"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="11sp"
+                            tools:text="Model: Ensemble • Decision: agree(bullish)" />
+
+                        <!-- Price Targets & Risk Metrics Table -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_marginTop="12dp"
+                            android:background="@color/color_divider" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="horizontal"
+                            android:weightSum="3">
+
+                            <!-- Target Price -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Target Price"
+                                    android:textColor="@color/color_text_secondary"
+                                    android:textSize="11sp" />
+
+                                <TextView
+                                    android:id="@+id/tv_forecast_target_price"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:textColor="@color/color_positive"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold"
+                                    tools:text="PKR 435.50" />
+
+                                <TextView
+                                    android:id="@+id/tv_forecast_upside_pct"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/color_positive"
+                                    android:textSize="11sp"
+                                    tools:text="+5.5%" />
+                            </LinearLayout>
+
+                            <!-- Stop Loss -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Stop Loss"
+                                    android:textColor="@color/color_text_secondary"
+                                    android:textSize="11sp" />
+
+                                <TextView
+                                    android:id="@+id/tv_forecast_stop_loss"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:textColor="@color/color_negative"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold"
+                                    tools:text="PKR 398.00" />
+
+                                <TextView
+                                    android:id="@+id/tv_forecast_downside_pct"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/color_negative"
+                                    android:textSize="11sp"
+                                    tools:text="-3.6%" />
+                            </LinearLayout>
+
+                            <!-- Risk / Reward -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="end"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Risk / Reward"
+                                    android:textColor="@color/color_text_secondary"
+                                    android:textSize="11sp" />
+
+                                <TextView
+                                    android:id="@+id/tv_forecast_risk_reward"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:textColor="@color/color_text_primary"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold"
+                                    tools:text="1.53" />
+
+                                <TextView
+                                    android:id="@+id/tv_forecast_current_price"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/color_text_secondary"
+                                    android:textSize="11sp"
+                                    tools:text="Ref: PKR 412.80" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- PROBABILITY DISTRIBUTION CARD -->
+                    <LinearLayout
+                        android:id="@+id/card_forecast_probabilities"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_card_clean"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Probability Distribution"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <!-- Multi-color distribution meter -->
+                        <LinearLayout
+                            android:id="@+id/layout_prob_meter"
+                            android:layout_width="match_parent"
+                            android:layout_height="8dp"
+                            android:layout_marginTop="12dp"
+                            android:clipToOutline="true"
+                            android:orientation="horizontal"
+                            android:weightSum="100">
+
+                            <View
+                                android:id="@+id/bar_prob_bullish"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="55"
+                                android:background="@color/color_positive" />
+
+                            <View
+                                android:layout_width="2dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/color_background" />
+
+                            <View
+                                android:id="@+id/bar_prob_sideways"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="25"
+                                android:background="@color/color_neutral" />
+
+                            <View
+                                android:layout_width="2dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/color_background" />
+
+                            <View
+                                android:id="@+id/bar_prob_bearish"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="20"
+                                android:background="@color/color_negative" />
+                        </LinearLayout>
+
+                        <!-- Legend & Values -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_prob_bullish_val"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Bullish: 55%"
+                                android:textColor="@color/color_positive"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_prob_sideways_val"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="Sideways: 25%"
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_prob_bearish_val"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="end"
+                                android:text="Bearish: 20%"
+                                android:textColor="@color/color_negative"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- MODEL ENSEMBLE BREAKDOWN (GRU vs XGBoost) CARD -->
+                    <LinearLayout
+                        android:id="@+id/card_model_breakdown"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_card_clean"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ensemble Model Breakdown"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <!-- GRU Model Row -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="GRU (Deep Neural Net)"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_gru_direction"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:background="@drawable/bg_badge_positive"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="2dp"
+                                android:text="BULLISH"
+                                android:textColor="@color/color_positive"
+                                android:textSize="10sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_gru_pcts"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:gravity="end"
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp"
+                                tools:text="45% Bull • 25% Bear • Gap 20.0pp" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@color/color_divider" />
+
+                        <!-- XGBoost Model Row -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="XGBoost (Boosted Trees)"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_xgb_direction"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:background="@drawable/bg_badge_positive"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="2dp"
+                                android:text="BULLISH"
+                                android:textColor="@color/color_positive"
+                                android:textSize="10sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_xgb_pcts"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:gravity="end"
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp"
+                                tools:text="40% Bull • 32% Bear • Gap 7.2pp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- MARKET CONTEXT CARD -->
+                    <LinearLayout
+                        android:id="@+id/card_market_context"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_card_clean"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Market &amp; Relative Context"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="PSX Market Return (5D / 20D)"
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/tv_context_market_returns"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="+1.2% / +3.4%" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Stock vs Market (20D Relative)"
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/tv_context_stock_relative"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="-9.2% relative" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- UNCERTAINTY NOTICE -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_card_clean"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Informational Decision-Support"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="ML forecasts and signal ratings are algorithmic statistical estimates and not financial guarantees or investment advice. Always evaluate risk tolerance and apply stop-loss limits."
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <!-- SECTION DIVIDER -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="20dp"
+                        android:background="@color/color_divider" />
+
+                    <!-- ============================================== -->
+                    <!-- HISTORICAL ACCURACY & PERFORMANCE SECTION     -->
+                    <!-- ============================================== -->
+                    <LinearLayout
+                        android:id="@+id/layout_history_section"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingTop="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:letterSpacing="0.04"
+                            android:text="HISTORICAL FORECAST ACCURACY"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <!-- Accuracy Summary Card -->
+                        <LinearLayout
+                            android:id="@+id/card_history_accuracy_summary"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/bg_card_clean"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="16dp">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Overall Accuracy"
+                                    android:textColor="@color/color_text_secondary"
+                                    android:textSize="12sp" />
+
+                                <TextView
+                                    android:id="@+id/tv_history_accuracy_val"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:textColor="@color/color_basarat_green"
+                                    android:textSize="22sp"
+                                    android:textStyle="bold"
+                                    tools:text="68.5%" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="end"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Scored Predictions"
+                                    android:textColor="@color/color_text_secondary"
+                                    android:textSize="12sp" />
+
+                                <TextView
+                                    android:id="@+id/tv_history_count_val"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:textColor="@color/color_text_primary"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold"
+                                    tools:text="30 Records" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <!-- History Loading State -->
+                        <ProgressBar
+                            android:id="@+id/history_progress"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="16dp"
+                            android:indeterminateTint="@color/color_basarat_green"
+                            android:visibility="gone" />
+
+                        <!-- History Error State -->
+                        <LinearLayout
+                            android:id="@+id/layout_history_error"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:id="@+id/tv_history_error_msg"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Unable to load forecast history"
+                                android:textColor="@color/color_negative"
+                                android:textSize="12sp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn_history_retry"
+                                android:layout_width="wrap_content"
+                                android:layout_height="36dp"
+                                android:layout_marginTop="6dp"
+                                android:text="Retry History"
+                                android:textAllCaps="false"
+                                android:textSize="11sp"
+                                app:backgroundTint="@color/color_button_primary_bg"
+                                app:cornerRadius="6dp" />
+                        </LinearLayout>
+
+                        <!-- History Empty State -->
+                        <TextView
+                            android:id="@+id/tv_history_empty"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:gravity="center"
+                            android:text="No historical predictions recorded for this stock yet."
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="13sp"
+                            android:visibility="gone" />
+
+                        <!-- History List -->
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_forecast_history"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:nestedScrollingEnabled="false" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
             </LinearLayout>
 
         </LinearLayout>
