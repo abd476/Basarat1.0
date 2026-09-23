@@ -68,4 +68,8 @@ object NetworkClient {
     val portfolioApiService: com.fyp.basarattradeinvest.data.remote.api.PortfolioApiService by lazy {
         retrofit.create(com.fyp.basarattradeinvest.data.remote.api.PortfolioApiService::class.java)
     }
+
+    val riskApiService: com.fyp.basarattradeinvest.data.remote.api.RiskApiService by lazy {
+        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.RiskApiService::class.java)
+    }
 }

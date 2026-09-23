@@ -302,6 +302,9 @@
         <action
             android:id="@+id/action_portfolio_to_transactionDetail"
             app:destination="@id/transactionDetailFragment" />
+        <action
+            android:id="@+id/action_portfolio_to_riskAnalytics"
+            app:destination="@id/riskAnalyticsFragment" />
     </fragment>
 
     <fragment
@@ -325,6 +328,9 @@
         <action
             android:id="@+id/action_holdingDetail_to_transactionDetail"
             app:destination="@id/transactionDetailFragment" />
+        <action
+            android:id="@+id/action_holdingDetail_to_riskAnalytics"
+            app:destination="@id/riskAnalyticsFragment" />
     </fragment>
 
     <fragment
@@ -347,5 +353,11 @@
             app:argType="string"
             android:defaultValue="" />
     </fragment>
+
+    <fragment
+        android:id="@+id/riskAnalyticsFragment"
+        android:name="com.fyp.basarattradeinvest.feature.risk.RiskAnalyticsFragment"
+        android:label="Risk Analytics"
+        tools:layout="@layout/fragment_risk_analytics" />
 
 </navigation>

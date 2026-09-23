@@ -113,6 +113,13 @@ class PortfolioMainFragment : Fragment() {
             viewModel.loadPortfolio(forceRefresh = true)
         }
 
+        binding.btnRiskAnalytics.setOnClickListener {
+            findNavController().navigate(R.id.action_portfolio_to_riskAnalytics)
+        }
+        binding.tabRisk.setOnClickListener {
+            findNavController().navigate(R.id.action_portfolio_to_riskAnalytics)
+        }
+
         // Tabs
         binding.tabHoldings.setOnClickListener { viewModel.selectTab(0) }
         binding.tabPnl.setOnClickListener { viewModel.selectTab(1) }
