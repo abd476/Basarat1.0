@@ -142,6 +142,9 @@ class MarketDashboardFragment : Fragment() {
         binding.layoutIndex2.setOnClickListener {
             findNavController().navigate(R.id.shariahScreeningFragment)
         }
+        binding.chipCommunity.setOnClickListener {
+            findNavController().navigate(R.id.communityProfileFragment)
+        }
         binding.chipNews.setOnClickListener {
             findNavController().navigate(R.id.newsEventsFragment)
         }

@@ -6,6 +6,7 @@
     <string name="nav_markets">Markets</string>
     <string name="nav_portfolio">Portfolio</string>
     <string name="nav_ai">AI</string>
+    <string name="nav_community">Community</string>
     <string name="nav_you">You</string>
 
     <!-- Onboarding Step 1 -->
@@ -69,4 +70,15 @@
     <string name="tab_shariah_criteria">Screening Criteria</string>
     <string name="tab_dividend_purification">Dividend Purification</string>
     <string name="shariah_disclaimer">Automated quantitative check adhering to PSX KMI methodology. Does not constitute a certified fatwa.</string>
+
+    <!-- Community Module -->
+    <string name="title_community">Community</string>
+    <string name="title_community_profile">Community Profile</string>
+    <string name="title_followers">Followers</string>
+    <string name="title_following">Following</string>
+    <string name="title_community_notifications">Community Notifications</string>
+    <string name="empty_posts">No published posts yet</string>
+    <string name="empty_followers">No followers yet</string>
+    <string name="empty_following">Not following anyone yet</string>
+    <string name="empty_community_notifications">You\'re all caught up!\nNo community notifications</string>
 </resources>

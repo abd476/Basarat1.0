@@ -92,4 +92,8 @@ object NetworkClient {
     val shariahApiService: com.fyp.basarattradeinvest.data.remote.api.ShariahApiService by lazy {
         retrofit.create(com.fyp.basarattradeinvest.data.remote.api.ShariahApiService::class.java)
     }
+
+    val communityApiService: com.fyp.basarattradeinvest.data.remote.api.CommunityApiService by lazy {
+        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.CommunityApiService::class.java)
+    }
 }

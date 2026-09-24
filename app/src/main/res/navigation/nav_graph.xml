@@ -96,6 +96,12 @@
         <action
             android:id="@+id/action_marketDashboard_to_notifications"
             app:destination="@id/notificationsFragment" />
+        <action
+            android:id="@+id/action_marketDashboard_to_communityProfile"
+            app:destination="@id/communityProfileFragment" />
+        <action
+            android:id="@+id/action_marketDashboard_to_communityNotifications"
+            app:destination="@id/communityNotificationsFragment" />
     </fragment>
 
     <fragment
@@ -278,6 +284,12 @@
         <action
             android:id="@+id/action_profileFragment_to_notificationsFragment"
             app:destination="@id/notificationsFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_communityProfileFragment"
+            app:destination="@id/communityProfileFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_communityNotificationsFragment"
+            app:destination="@id/communityNotificationsFragment" />
     </fragment>
 
     <fragment
@@ -422,5 +434,51 @@
         android:name="com.fyp.basarattradeinvest.feature.notifications.NotificationsFragment"
         android:label="Notifications"
         tools:layout="@layout/fragment_notifications" />
+
+    <!-- Community Destinations -->
+    <fragment
+        android:id="@+id/communityProfileFragment"
+        android:name="com.fyp.basarattradeinvest.feature.community.profile.CommunityProfileFragment"
+        android:label="Community Profile"
+        tools:layout="@layout/fragment_community_profile">
+        <argument
+            android:name="user_id"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_communityProfile_to_followers"
+            app:destination="@id/communityFollowersFragment" />
+        <action
+            android:id="@+id/action_communityProfile_to_notifications"
+            app:destination="@id/communityNotificationsFragment" />
+        <action
+            android:id="@+id/action_communityProfile_to_stockDetail"
+            app:destination="@id/stockDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/communityFollowersFragment"
+        android:name="com.fyp.basarattradeinvest.feature.community.follow.CommunityFollowersFragment"
+        android:label="Followers &amp; Following"
+        tools:layout="@layout/fragment_community_follow_list">
+        <argument
+            android:name="user_id"
+            app:argType="string"
+            android:defaultValue="me" />
+        <argument
+            android:name="is_following"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <action
+            android:id="@+id/action_communityFollowers_to_profile"
+            app:destination="@id/communityProfileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/communityNotificationsFragment"
+        android:name="com.fyp.basarattradeinvest.feature.community.notifications.CommunityNotificationsFragment"
+        android:label="Community Notifications"
+        tools:layout="@layout/fragment_community_notifications" />
 
 </navigation>
