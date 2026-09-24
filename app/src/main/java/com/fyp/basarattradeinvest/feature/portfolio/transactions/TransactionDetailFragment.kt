@@ -26,7 +26,7 @@ class TransactionDetailFragment : Fragment() {
     private var _binding: FragmentTransactionDetailBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: TransactionDetailViewModel by viewModels()
+    private val viewModel: TransactionDetailViewModel by viewModels { TransactionDetailViewModel.Factory() }
     private var transactionId: String = ""
     private var currentTransaction: PortfolioTransaction? = null
 

@@ -35,7 +35,7 @@ class PortfolioMainFragment : Fragment() {
     private var _binding: FragmentPortfolioMainBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: PortfolioMainViewModel by viewModels()
+    private val viewModel: PortfolioMainViewModel by viewModels { PortfolioMainViewModel.Factory() }
 
     private lateinit var holdingAdapter: HoldingAdapter
     private lateinit var stockAllocationAdapter: AllocationBarAdapter

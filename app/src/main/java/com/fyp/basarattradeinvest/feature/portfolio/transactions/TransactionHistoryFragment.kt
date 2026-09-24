@@ -27,7 +27,7 @@ class TransactionHistoryFragment : Fragment() {
     private var _binding: FragmentTransactionHistoryBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: TransactionHistoryViewModel by viewModels()
+    private val viewModel: TransactionHistoryViewModel by viewModels { TransactionHistoryViewModel.Factory() }
     private lateinit var adapter: TransactionAdapter
 
     override fun onCreateView(

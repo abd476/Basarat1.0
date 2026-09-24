@@ -1,6 +1,7 @@
 package com.fyp.basarattradeinvest.feature.portfolio.holding
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.data.repository.PortfolioRepositoryImpl
 import com.fyp.basarattradeinvest.domain.repository.PortfolioRepository
@@ -14,9 +15,23 @@ class HoldingDetailViewModel(
     private val getHoldingDetailUseCase: GetHoldingDetailUseCase
 ) : ViewModel() {
 
-    constructor(repository: PortfolioRepository = PortfolioRepositoryImpl()) : this(
+    constructor() : this(PortfolioRepositoryImpl())
+
+    constructor(repository: PortfolioRepository) : this(
         GetHoldingDetailUseCase(repository)
     )
+
+    class Factory(
+        private val repository: PortfolioRepository = PortfolioRepositoryImpl()
+    ) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(HoldingDetailViewModel::class.java)) {
+                return HoldingDetailViewModel(repository) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+        }
+    }
 
     private val _uiState = MutableStateFlow<HoldingDetailUiState>(HoldingDetailUiState.Loading)
     val uiState: StateFlow<HoldingDetailUiState> = _uiState.asStateFlow()

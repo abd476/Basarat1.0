@@ -1,6 +1,7 @@
 package com.fyp.basarattradeinvest.feature.portfolio.main
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.data.repository.PortfolioRepositoryImpl
 import com.fyp.basarattradeinvest.domain.model.portfolio.PortfolioAllocation
@@ -29,14 +30,27 @@ class PortfolioMainViewModel(
     private val getTransactionsUseCase: GetTransactionsUseCase
 ) : ViewModel() {
 
-    // Convenience constructor for ViewModelProvider without factory
-    constructor(repository: PortfolioRepository = PortfolioRepositoryImpl()) : this(
+    constructor() : this(PortfolioRepositoryImpl())
+
+    constructor(repository: PortfolioRepository) : this(
         getOverviewUseCase = GetPortfolioOverviewUseCase(repository),
         getPnLUseCase = GetPortfolioPnLUseCase(repository),
         getAllocationUseCase = GetPortfolioAllocationUseCase(repository),
         getPerformanceUseCase = GetPortfolioPerformanceUseCase(repository),
         getTransactionsUseCase = GetTransactionsUseCase(repository)
     )
+
+    class Factory(
+        private val repository: PortfolioRepository = PortfolioRepositoryImpl()
+    ) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(PortfolioMainViewModel::class.java)) {
+                return PortfolioMainViewModel(repository) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+        }
+    }
 
     private val _uiState = MutableStateFlow<PortfolioMainUiState>(PortfolioMainUiState.Loading)
     val uiState: StateFlow<PortfolioMainUiState> = _uiState.asStateFlow()

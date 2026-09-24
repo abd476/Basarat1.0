@@ -27,7 +27,7 @@ class HoldingDetailFragment : Fragment() {
     private var _binding: FragmentHoldingDetailBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: HoldingDetailViewModel by viewModels()
+    private val viewModel: HoldingDetailViewModel by viewModels { HoldingDetailViewModel.Factory() }
     private var symbol: String = "LUCK"
     private lateinit var transactionAdapter: TransactionAdapter
 

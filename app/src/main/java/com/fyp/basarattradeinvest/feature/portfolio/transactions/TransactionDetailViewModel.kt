@@ -1,6 +1,7 @@
 package com.fyp.basarattradeinvest.feature.portfolio.transactions
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.data.repository.PortfolioRepositoryImpl
 import com.fyp.basarattradeinvest.domain.repository.PortfolioRepository
@@ -16,10 +17,24 @@ class TransactionDetailViewModel(
     private val deleteUseCase: DeleteTransactionUseCase
 ) : ViewModel() {
 
-    constructor(repository: PortfolioRepository = PortfolioRepositoryImpl()) : this(
+    constructor() : this(PortfolioRepositoryImpl())
+
+    constructor(repository: PortfolioRepository) : this(
         getDetailUseCase = GetTransactionDetailUseCase(repository),
         deleteUseCase = DeleteTransactionUseCase(repository)
     )
+
+    class Factory(
+        private val repository: PortfolioRepository = PortfolioRepositoryImpl()
+    ) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(TransactionDetailViewModel::class.java)) {
+                return TransactionDetailViewModel(repository) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+        }
+    }
 
     private val _uiState = MutableStateFlow<TransactionDetailUiState>(TransactionDetailUiState.Loading)
     val uiState: StateFlow<TransactionDetailUiState> = _uiState.asStateFlow()
