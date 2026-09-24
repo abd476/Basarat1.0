@@ -40,7 +40,7 @@
                 android:background="@drawable/bg_badge_shariah_compliant"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="3dp"
-                android:textColor="#14A89B"
+                android:textColor="@color/color_shariah_teal"
                 android:textSize="11sp"
                 android:textStyle="bold"
                 tools:text="PASSED ✓" />

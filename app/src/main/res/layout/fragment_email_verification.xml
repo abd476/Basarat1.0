@@ -183,7 +183,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="Verify Email"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -193,7 +193,7 @@
                 android:layout_height="24dp"
                 android:layout_gravity="center"
                 android:indeterminate="true"
-                android:indeterminateTint="#FFFFFF"
+                android:indeterminateTint="@color/white"
                 android:visibility="gone" />
         </FrameLayout>
 

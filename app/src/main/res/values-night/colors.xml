@@ -52,4 +52,11 @@
     <color name="color_chip_selected_bg">#0D2821</color>
     <color name="color_chip_selected_stroke">#18B981</color>
     <color name="color_dividend_orange">#FF9800</color>
+
+    <!-- Semantic Aliases for Components (Dark Mode) -->
+    <color name="color_brand_green">#00B894</color>
+    <color name="color_brand_primary">@color/color_basarat_green</color>
+    <color name="color_border">@color/color_divider</color>
+    <color name="color_down">@color/color_negative</color>
+    <color name="color_loading_overlay">#B307111F</color>
 </resources>

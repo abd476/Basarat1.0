@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="BASARAT AI"
-            android:textColor="#4F7CFF"
+            android:textColor="@color/color_ai_blue"
             android:textSize="11sp"
             android:textStyle="bold"
             android:letterSpacing="0.05"
@@ -31,7 +31,7 @@
             android:id="@+id/tvAssistantMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#111827"
+            android:textColor="@color/color_text_primary"
             android:textSize="14sp"
             android:lineSpacingExtra="4dp" />
 
@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="●●●"
-            android:textColor="#4F7CFF"
+            android:textColor="@color/color_ai_blue"
             android:textSize="12sp"
             android:letterSpacing="0.3"
             android:visibility="gone"
@@ -52,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:textColor="#98A2B3"
+            android:textColor="@color/color_text_tertiary"
             android:textSize="11sp"
             android:layout_marginTop="4dp" />
 

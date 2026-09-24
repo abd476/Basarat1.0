@@ -1330,7 +1330,7 @@
         android:contentDescription="AI Chat Assistant"
         android:src="@drawable/ic_chat_assistant"
         app:backgroundTint="@color/color_basarat_green"
-        app:tint="#FFFFFF"
+        app:tint="@color/white"
         app:elevation="6dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

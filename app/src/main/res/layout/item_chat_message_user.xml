@@ -20,7 +20,7 @@
             android:id="@+id/tvUserMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#111827"
+            android:textColor="@color/color_text_primary"
             android:textSize="14sp"
             android:lineSpacingExtra="4dp" />
 
@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:textColor="#98A2B3"
+            android:textColor="@color/color_text_tertiary"
             android:textSize="11sp"
             android:layout_marginTop="4dp" />
 

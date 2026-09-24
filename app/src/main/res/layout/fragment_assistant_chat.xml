@@ -5,17 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFFFFF">
+    android:background="@color/color_background">
 
     <!-- Top App Bar -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#FFFFFF"
+        android:background="@color/color_background"
         android:elevation="1dp"
         app:navigationIcon="@drawable/ic_arrow_back"
-        app:titleTextColor="#111827"
+        app:navigationIconTint="@color/color_text_primary"
+        app:titleTextColor="@color/color_text_primary"
         app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         app:title="AI Assistant" />
 
@@ -32,7 +33,7 @@
             android:layout_height="48dp"
             android:layout_gravity="center"
             android:visibility="gone"
-            android:indeterminateTint="#00B894" />
+            android:indeterminateTint="@color/color_basarat_green" />
 
         <!-- Error state -->
         <LinearLayout
@@ -48,7 +49,7 @@
                 android:id="@+id/tvErrorMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#EF4444"
+                android:textColor="@color/color_negative"
                 android:textSize="14sp"
                 android:gravity="center" />
 
@@ -58,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:text="Retry"
                 android:layout_marginTop="16dp"
-                app:backgroundTint="#00B894" />
+                app:backgroundTint="@color/color_basarat_green" />
 
         </LinearLayout>
 
@@ -77,13 +78,14 @@
                 android:layout_height="64dp"
                 android:src="@drawable/ic_nav_ai"
                 android:contentDescription="AI"
-                android:alpha="0.5" />
+                app:tint="@color/color_ai_blue"
+                android:alpha="0.7" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="BASARAT AI Assistant"
-                android:textColor="#111827"
+                android:textColor="@color/color_text_primary"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp" />
@@ -92,7 +94,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Ask me about PSX stocks, market analysis, portfolio insights, and investment strategies."
-                android:textColor="#667085"
+                android:textColor="@color/color_text_secondary"
                 android:textSize="14sp"
                 android:gravity="center"
                 android:layout_marginTop="8dp"
@@ -102,7 +104,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="This is a decision-support tool. Not investment advice."
-                android:textColor="#98A2B3"
+                android:textColor="@color/color_text_tertiary"
                 android:textSize="12sp"
                 android:gravity="center"
                 android:layout_marginTop="12dp"
@@ -134,9 +136,9 @@
             android:visibility="gone"
             app:icon="@drawable/ic_close"
             app:iconSize="14dp"
-            app:iconTint="#EF4444"
-            app:strokeColor="#EF4444"
-            android:textColor="#EF4444" />
+            app:iconTint="@color/color_negative"
+            app:strokeColor="@color/color_negative"
+            android:textColor="@color/color_negative" />
 
         <!-- Regenerate button (shows after last assistant message) -->
         <com.google.android.material.button.MaterialButton
@@ -151,8 +153,9 @@
             android:visibility="gone"
             app:icon="@drawable/ic_regenerate"
             app:iconSize="16dp"
-            app:strokeColor="#E8ECEA"
-            android:textColor="#667085" />
+            app:iconTint="@color/color_text_secondary"
+            app:strokeColor="@color/color_divider"
+            android:textColor="@color/color_text_secondary" />
 
     </FrameLayout>
 
@@ -160,7 +163,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#E8ECEA" />
+        android:background="@color/color_divider" />
 
     <!-- Message composer -->
     <LinearLayout
@@ -170,7 +173,7 @@
         android:orientation="horizontal"
         android:padding="12dp"
         android:gravity="center_vertical"
-        android:background="#FFFFFF">
+        android:background="@color/color_surface">
 
         <EditText
             android:id="@+id/etMessage"
@@ -179,8 +182,8 @@
             android:layout_weight="1"
             android:background="@drawable/bg_chat_input"
             android:hint="Ask about PSX stocks..."
-            android:textColorHint="#98A2B3"
-            android:textColor="#111827"
+            android:textColorHint="@color/color_input_hint"
+            android:textColor="@color/color_text_primary"
             android:textSize="14sp"
             android:paddingHorizontal="16dp"
             android:paddingVertical="12dp"
@@ -194,6 +197,7 @@
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:src="@drawable/ic_send"
+            app:tint="@color/white"
             android:background="@drawable/bg_send_button"
             android:contentDescription="Send message"
             android:layout_marginStart="8dp"

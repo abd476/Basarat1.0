@@ -63,4 +63,5 @@
     <color name="color_brand_primary">@color/color_basarat_green</color>
     <color name="color_border">@color/color_divider</color>
     <color name="color_down">@color/color_negative</color>
+    <color name="color_loading_overlay">#99FFFFFF</color>
 </resources>

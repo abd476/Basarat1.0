@@ -41,7 +41,7 @@
             android:layout_weight="1"
             android:backgroundTint="@color/color_positive"
             android:text="BUY"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:textSize="13sp"
             app:cornerRadius="8dp" />
 

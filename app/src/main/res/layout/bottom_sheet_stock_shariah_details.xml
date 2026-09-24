@@ -58,7 +58,7 @@
                         android:background="@drawable/bg_badge_shariah_compliant"
                         android:paddingHorizontal="10dp"
                         android:paddingVertical="4dp"
-                        android:textColor="#14A89B"
+                        android:textColor="@color/color_shariah_teal"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         tools:text="KMI-30 Compliant ✓" />

@@ -5,17 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFFFFF">
+    android:background="@color/color_background">
 
     <!-- Top App Bar -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#FFFFFF"
+        android:background="@color/color_background"
         android:elevation="1dp"
         app:title="AI Assistant"
-        app:titleTextColor="#111827"
+        app:titleTextColor="@color/color_text_primary"
         app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
 
     <!-- Content area -->
@@ -31,7 +31,7 @@
             android:layout_height="48dp"
             android:layout_gravity="center"
             android:visibility="gone"
-            android:indeterminateTint="#00B894" />
+            android:indeterminateTint="@color/color_basarat_green" />
 
         <!-- Empty state -->
         <LinearLayout
@@ -48,13 +48,14 @@
                 android:layout_height="80dp"
                 android:src="@drawable/ic_nav_ai"
                 android:contentDescription="AI Assistant"
-                android:alpha="0.4" />
+                app:tint="@color/color_ai_blue"
+                android:alpha="0.7" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="No conversations yet"
-                android:textColor="#111827"
+                android:textColor="@color/color_text_primary"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp" />
@@ -63,7 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Start a conversation with your AI investment assistant"
-                android:textColor="#667085"
+                android:textColor="@color/color_text_secondary"
                 android:textSize="14sp"
                 android:gravity="center"
                 android:layout_marginTop="8dp"
@@ -85,7 +86,7 @@
                 android:id="@+id/tvErrorMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#EF4444"
+                android:textColor="@color/color_negative"
                 android:textSize="14sp"
                 android:gravity="center" />
 
@@ -95,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:text="Retry"
                 android:layout_marginTop="16dp"
-                app:backgroundTint="#00B894" />
+                app:backgroundTint="@color/color_basarat_green" />
 
         </LinearLayout>
 
@@ -121,8 +122,8 @@
         android:layout_margin="16dp"
         android:src="@drawable/ic_add"
         android:contentDescription="New Conversation"
-        app:backgroundTint="#00B894"
-        app:tint="#FFFFFF"
+        app:backgroundTint="@color/color_basarat_green"
+        app:tint="@color/white"
         app:layout_anchor="@id/rvConversations"
         app:layout_anchorGravity="bottom|end" />
 
