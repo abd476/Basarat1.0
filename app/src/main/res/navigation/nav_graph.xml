@@ -90,6 +90,9 @@
         <action
             android:id="@+id/action_marketDashboard_to_recommendations"
             app:destination="@id/recommendationsFragment" />
+        <action
+            android:id="@+id/action_marketDashboard_to_alerts"
+            app:destination="@id/alertsFragment" />
     </fragment>
 
     <fragment
@@ -112,6 +115,9 @@
         <action
             android:id="@+id/action_markets_to_recommendations"
             app:destination="@id/recommendationsFragment" />
+        <action
+            android:id="@+id/action_markets_to_alerts"
+            app:destination="@id/alertsFragment" />
     </fragment>
 
     <fragment
@@ -178,6 +184,9 @@
         <action
             android:id="@+id/action_stockDetail_to_articleDetail"
             app:destination="@id/newsArticleDetailFragment" />
+        <action
+            android:id="@+id/action_stockDetail_to_alerts"
+            app:destination="@id/alertsFragment" />
     </fragment>
 
     <fragment
@@ -257,6 +266,9 @@
         <action
             android:id="@+id/action_profileFragment_to_notificationPreferencesFragment"
             app:destination="@id/notificationPreferencesFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_alertsFragment"
+            app:destination="@id/alertsFragment" />
     </fragment>
 
     <fragment
@@ -389,5 +401,11 @@
         android:name="com.fyp.basarattradeinvest.feature.risk.RiskAnalyticsFragment"
         android:label="Risk Analytics"
         tools:layout="@layout/fragment_risk_analytics" />
+
+    <fragment
+        android:id="@+id/alertsFragment"
+        android:name="com.fyp.basarattradeinvest.feature.alerts.AlertsFragment"
+        android:label="Alerts"
+        tools:layout="@layout/fragment_alerts" />
 
 </navigation>

@@ -64,6 +64,10 @@ class ProfileFragment : Fragment() {
             findNavController().navigate(R.id.action_profileFragment_to_notificationPreferencesFragment)
         }
 
+        binding.cardAlerts.setOnClickListener {
+            findNavController().navigate(R.id.action_profileFragment_to_alertsFragment)
+        }
+
         binding.cardChangePassword.setOnClickListener {
             findNavController().navigate(R.id.action_profileFragment_to_changePasswordFragment)
         }

@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.editProfileFragment,
                 R.id.riskProfileFragment,
                 R.id.notificationPreferencesFragment,
+                R.id.alertsFragment,
                 R.id.chartFullscreenFragment -> {
                     binding.bottomNavigation.visibility = View.GONE
                 }
