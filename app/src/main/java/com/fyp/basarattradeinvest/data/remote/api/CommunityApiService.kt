@@ -3,6 +3,7 @@ package com.fyp.basarattradeinvest.data.remote.api
 import com.fyp.basarattradeinvest.data.remote.dto.community.CommunityFollowListResponseDto
 import com.fyp.basarattradeinvest.data.remote.dto.community.CommunityNotificationsListResponseDto
 import com.fyp.basarattradeinvest.data.remote.dto.community.CommunityPostListResponseDto
+import com.fyp.basarattradeinvest.data.remote.dto.community.CommunityPostResponseDto
 import com.fyp.basarattradeinvest.data.remote.dto.community.CommunityProfileResponseDto
 import com.fyp.basarattradeinvest.data.remote.dto.community.CommunityUnreadCountResponseDto
 import retrofit2.Response
@@ -99,4 +100,88 @@ interface CommunityApiService {
      */
     @POST("api/v1/community/notifications/read-all")
     suspend fun markAllNotificationsAsRead(): Response<Unit>
+
+    // ==========================================
+    // ADMIN COMMUNITY / MODERATION ENDPOINTS
+    // ==========================================
+
+    /**
+     * GET /api/v1/admin/community/reports
+     * Get reports for admin review.
+     */
+    @GET("api/v1/admin/community/reports")
+    suspend fun getAdminReports(
+        @Query("status") status: String? = null,
+        @Query("post_id") postId: String? = null,
+        @Query("comment_id") commentId: String? = null,
+        @Query("limit") limit: Int? = 50,
+        @Query("offset") offset: Int? = 0
+    ): Response<com.google.gson.JsonElement>
+
+    /**
+     * PATCH /api/v1/admin/community/reports/{report_id}
+     * Update report status (PENDING, DISMISSED, REVIEWED)
+     */
+    @retrofit2.http.PATCH("api/v1/admin/community/reports/{report_id}")
+    suspend fun updateReportStatus(
+        @Path("report_id") reportId: String,
+        @retrofit2.http.Body body: com.fyp.basarattradeinvest.data.remote.dto.community.CommunityReportStatusUpdateRequest
+    ): Response<com.google.gson.JsonElement>
+
+    /**
+     * GET /api/v1/admin/community/posts/{post_id}
+     * Get post for admin review
+     */
+    @GET("api/v1/admin/community/posts/{post_id}")
+    suspend fun getAdminPost(
+        @Path("post_id") postId: String
+    ): Response<CommunityPostResponseDto>
+
+    /**
+     * DELETE /api/v1/admin/community/posts/{post_id}
+     * Delete a post (admin) - 204 No Content
+     */
+    @retrofit2.http.DELETE("api/v1/admin/community/posts/{post_id}")
+    suspend fun deleteAdminPost(
+        @Path("post_id") postId: String
+    ): Response<Unit>
+
+    /**
+     * POST /api/v1/admin/community/posts/{post_id}/restore
+     * Restore a temporarily hidden post - 204 No Content
+     */
+    @POST("api/v1/admin/community/posts/{post_id}/restore")
+    suspend fun restoreAdminPost(
+        @Path("post_id") postId: String
+    ): Response<Unit>
+
+    /**
+     * POST /api/v1/admin/community/posts/{post_id}/remove
+     * Directly remove a post (admin) - 204 No Content
+     */
+    @POST("api/v1/admin/community/posts/{post_id}/remove")
+    suspend fun removeAdminPost(
+        @Path("post_id") postId: String
+    ): Response<Unit>
+
+    /**
+     * DELETE /api/v1/admin/community/comments/{comment_id}
+     * Delete a comment (admin) - 204 No Content
+     */
+    @retrofit2.http.DELETE("api/v1/admin/community/comments/{comment_id}")
+    suspend fun deleteAdminComment(
+        @Path("comment_id") commentId: String
+    ): Response<Unit>
+
+    /**
+     * GET /api/v1/admin/community/moderation-actions
+     * Get moderation audit log
+     */
+    @GET("api/v1/admin/community/moderation-actions")
+    suspend fun getModerationActions(
+        @Query("post_id") postId: String? = null,
+        @Query("comment_id") commentId: String? = null,
+        @Query("limit") limit: Int? = 50
+    ): Response<com.google.gson.JsonElement>
 }
+

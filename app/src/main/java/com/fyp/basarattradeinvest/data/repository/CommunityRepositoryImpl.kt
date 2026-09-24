@@ -155,6 +155,187 @@ class CommunityRepositoryImpl(
     }
 
     // ───────────────────────────────
+    // Admin / Moderation operations
+    // ───────────────────────────────
+
+    override suspend fun getAdminReports(
+        status: String?,
+        postId: String?,
+        commentId: String?,
+        limit: Int,
+        offset: Int
+    ): Result<List<com.fyp.basarattradeinvest.domain.model.community.CommunityReport>> {
+        return try {
+            val response = apiService.getAdminReports(status, postId, commentId, limit, offset)
+            when (response.code()) {
+                200 -> {
+                    val element = response.body()
+                    val dtoList = parseReportsJson(element)
+                    val domainReports = dtoList.map { CommunityDtoMapper.mapReportDtoToDomain(it) }
+                    Result.success(domainReports)
+                }
+                401 -> Result.failure(IllegalStateException("Unauthorized. Please log in again."))
+                403 -> Result.failure(SecurityException("Access Denied: Administrator or Moderator privileges are required."))
+                404 -> Result.failure(NoSuchElementException("Reports endpoint not found."))
+                else -> Result.failure(Exception("Failed to fetch admin reports: ${response.code()} ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateReportStatus(reportId: String, status: String): Result<Unit> {
+        return try {
+            val body = com.fyp.basarattradeinvest.data.remote.dto.community.CommunityReportStatusUpdateRequest(status = status)
+            val response = apiService.updateReportStatus(reportId, body)
+            when (response.code()) {
+                200, 204 -> Result.success(Unit)
+                401 -> Result.failure(IllegalStateException("Unauthorized."))
+                403 -> Result.failure(SecurityException("Access Denied: Administrator or Moderator privileges are required."))
+                404 -> Result.failure(NoSuchElementException("Report with ID $reportId not found."))
+                422 -> Result.failure(IllegalArgumentException("Validation error: Invalid report status $status"))
+                else -> Result.failure(Exception("Failed to update report status: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getAdminPost(postId: String): Result<CommunityPost> {
+        return try {
+            val response = apiService.getAdminPost(postId)
+            when (response.code()) {
+                200 -> {
+                    val body = response.body() ?: return Result.failure(NoSuchElementException("Post not found."))
+                    Result.success(CommunityDtoMapper.mapPostDtoToDomain(body))
+                }
+                401 -> Result.failure(IllegalStateException("Unauthorized."))
+                403 -> Result.failure(SecurityException("Access Denied: Administrator or Moderator privileges are required."))
+                404 -> Result.failure(NoSuchElementException("Post with ID $postId not found."))
+                else -> Result.failure(Exception("Failed to fetch post for admin review: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun deleteAdminPost(postId: String): Result<Unit> {
+        return try {
+            val response = apiService.deleteAdminPost(postId)
+            when (response.code()) {
+                200, 204 -> Result.success(Unit)
+                401 -> Result.failure(IllegalStateException("Unauthorized."))
+                403 -> Result.failure(SecurityException("Access Denied: Administrator or Moderator privileges are required."))
+                404 -> Result.failure(NoSuchElementException("Post with ID $postId not found."))
+                else -> Result.failure(Exception("Failed to delete post: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun restoreAdminPost(postId: String): Result<Unit> {
+        return try {
+            val response = apiService.restoreAdminPost(postId)
+            when (response.code()) {
+                200, 204 -> Result.success(Unit)
+                401 -> Result.failure(IllegalStateException("Unauthorized."))
+                403 -> Result.failure(SecurityException("Access Denied: Administrator or Moderator privileges are required."))
+                404 -> Result.failure(NoSuchElementException("Post with ID $postId not found."))
+                else -> Result.failure(Exception("Failed to restore post: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun removeAdminPost(postId: String): Result<Unit> {
+        return try {
+            val response = apiService.removeAdminPost(postId)
+            when (response.code()) {
+                200, 204 -> Result.success(Unit)
+                401 -> Result.failure(IllegalStateException("Unauthorized."))
+                403 -> Result.failure(SecurityException("Access Denied: Administrator or Moderator privileges are required."))
+                404 -> Result.failure(NoSuchElementException("Post with ID $postId not found."))
+                else -> Result.failure(Exception("Failed to remove post: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun deleteAdminComment(commentId: String): Result<Unit> {
+        return try {
+            val response = apiService.deleteAdminComment(commentId)
+            when (response.code()) {
+                200, 204 -> Result.success(Unit)
+                401 -> Result.failure(IllegalStateException("Unauthorized."))
+                403 -> Result.failure(SecurityException("Access Denied: Administrator or Moderator privileges are required."))
+                404 -> Result.failure(NoSuchElementException("Comment with ID $commentId not found."))
+                else -> Result.failure(Exception("Failed to delete comment: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getModerationActions(
+        postId: String?,
+        commentId: String?,
+        limit: Int
+    ): Result<List<com.fyp.basarattradeinvest.domain.model.community.ModerationAction>> {
+        return try {
+            val response = apiService.getModerationActions(postId, commentId, limit)
+            when (response.code()) {
+                200 -> {
+                    val element = response.body()
+                    val dtoList = parseActionsJson(element)
+                    val domainActions = dtoList.map { CommunityDtoMapper.mapModerationActionDtoToDomain(it) }
+                    Result.success(domainActions)
+                }
+                401 -> Result.failure(IllegalStateException("Unauthorized."))
+                403 -> Result.failure(SecurityException("Access Denied: Administrator or Moderator privileges are required."))
+                else -> Result.failure(Exception("Failed to fetch moderation actions: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    private fun parseReportsJson(element: com.google.gson.JsonElement?): List<com.fyp.basarattradeinvest.data.remote.dto.community.CommunityReportDto> {
+        if (element == null || element.isJsonNull) return emptyList()
+        val gson = com.google.gson.Gson()
+        return try {
+            if (element.isJsonArray) {
+                gson.fromJson(element, Array<com.fyp.basarattradeinvest.data.remote.dto.community.CommunityReportDto>::class.java).toList()
+            } else if (element.isJsonObject) {
+                gson.fromJson(element, com.fyp.basarattradeinvest.data.remote.dto.community.CommunityReportListResponseDto::class.java).reportList
+            } else {
+                emptyList()
+            }
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
+
+    private fun parseActionsJson(element: com.google.gson.JsonElement?): List<com.fyp.basarattradeinvest.data.remote.dto.community.ModerationActionDto> {
+        if (element == null || element.isJsonNull) return emptyList()
+        val gson = com.google.gson.Gson()
+        return try {
+            if (element.isJsonArray) {
+                gson.fromJson(element, Array<com.fyp.basarattradeinvest.data.remote.dto.community.ModerationActionDto>::class.java).toList()
+            } else if (element.isJsonObject) {
+                gson.fromJson(element, com.fyp.basarattradeinvest.data.remote.dto.community.ModerationActionsListResponseDto::class.java).actionList
+            } else {
+                emptyList()
+            }
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
+
+
+    // ───────────────────────────────
     // Fallback Data Providers
     // ───────────────────────────────
 

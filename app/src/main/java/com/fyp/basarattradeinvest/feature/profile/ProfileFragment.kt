@@ -84,6 +84,10 @@ class ProfileFragment : Fragment() {
             findNavController().navigate(R.id.action_profileFragment_to_changePasswordFragment)
         }
 
+        binding.cardAdminModeration.setOnClickListener {
+            findNavController().navigate(R.id.action_profileFragment_to_adminCommunityHub)
+        }
+
         binding.btnLogout.setOnClickListener {
             showLogoutConfirmationDialog()
         }

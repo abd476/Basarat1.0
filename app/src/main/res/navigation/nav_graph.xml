@@ -305,6 +305,9 @@
         <action
             android:id="@+id/action_profileFragment_to_communityNotificationsFragment"
             app:destination="@id/communityNotificationsFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_adminCommunityHub"
+            app:destination="@id/adminCommunityHubFragment" />
     </fragment>
 
     <fragment
@@ -514,6 +517,38 @@
         tools:layout="@layout/fragment_assistant_chat">
         <argument
             android:name="conversation_id"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+
+    <!-- Admin Community Moderation Destinations -->
+    <fragment
+        android:id="@+id/adminCommunityHubFragment"
+        android:name="com.fyp.basarattradeinvest.feature.community.admin.AdminCommunityHubFragment"
+        android:label="Community Moderation"
+        tools:layout="@layout/fragment_admin_community_hub">
+        <action
+            android:id="@+id/action_adminCommunityHub_to_reportDetail"
+            app:destination="@id/adminReportDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/adminReportDetailFragment"
+        android:name="com.fyp.basarattradeinvest.feature.community.admin.AdminReportDetailFragment"
+        android:label="Report Review"
+        tools:layout="@layout/fragment_admin_report_detail">
+        <argument
+            android:name="report_id"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="post_id"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="comment_id"
             app:argType="string"
             app:nullable="true"
             android:defaultValue="@null" />

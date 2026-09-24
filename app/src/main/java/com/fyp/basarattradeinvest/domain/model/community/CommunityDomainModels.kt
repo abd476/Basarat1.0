@@ -106,3 +106,76 @@ data class CommunityNotificationList(
 data class CommunityUnreadCount(
     val unreadCount: Int
 )
+
+/**
+ * Report Status enum matching OpenAPI ReportStatus
+ */
+enum class ReportStatusEnum(val value: String) {
+    PENDING("PENDING"),
+    DISMISSED("DISMISSED"),
+    REVIEWED("REVIEWED");
+
+    companion object {
+        fun fromValue(value: String?): ReportStatusEnum {
+            return entries.firstOrNull { it.value.equals(value, ignoreCase = true) } ?: PENDING
+        }
+    }
+}
+
+/**
+ * Post Status enum matching OpenAPI PostStatus
+ */
+enum class ModerationPostStatus(val value: String) {
+    PUBLISHED("PUBLISHED"),
+    TEMPORARILY_HIDDEN("TEMPORARILY_HIDDEN"),
+    DELETED("DELETED");
+
+    companion object {
+        fun fromValue(value: String?): ModerationPostStatus {
+            return entries.firstOrNull { it.value.equals(value, ignoreCase = true) } ?: PUBLISHED
+        }
+    }
+}
+
+/**
+ * Admin Community Report domain model
+ */
+data class CommunityReport(
+    val id: String,
+    val postId: String?,
+    val commentId: String?,
+    val reporterId: String?,
+    val reporterUsername: String?,
+    val reason: String,
+    val status: ReportStatusEnum,
+    val targetContent: String?,
+    val targetAuthorUsername: String?,
+    val createdAt: String,
+    val updatedAt: String?
+) {
+    val isPostReport: Boolean
+        get() = !postId.isNullOrBlank()
+
+    val isCommentReport: Boolean
+        get() = !commentId.isNullOrBlank()
+
+    val targetTypeLabel: String
+        get() = if (isPostReport) "Post" else if (isCommentReport) "Comment" else "Content"
+}
+
+/**
+ * Moderation Action audit log domain model
+ */
+data class ModerationAction(
+    val id: String,
+    val action: String,
+    val moderatorId: String?,
+    val moderatorUsername: String?,
+    val postId: String?,
+    val commentId: String?,
+    val reportId: String?,
+    val reason: String?,
+    val details: String?,
+    val createdAt: String
+)
+

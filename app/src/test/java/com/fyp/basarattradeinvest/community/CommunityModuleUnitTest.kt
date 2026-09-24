@@ -204,6 +204,76 @@ class CommunityModuleUnitTest {
             if (shouldFail) return Response.error(500, "{\"detail\":\"Internal Error\"}".toResponseBody("application/json".toMediaTypeOrNull()))
             return Response.success(Unit)
         }
+
+        override suspend fun getAdminReports(
+            status: String?,
+            postId: String?,
+            commentId: String?,
+            limit: Int?,
+            offset: Int?
+        ): Response<com.google.gson.JsonElement> {
+            if (shouldFail) return Response.error(500, "{\"detail\":\"Internal Error\"}".toResponseBody("application/json".toMediaTypeOrNull()))
+            return Response.success(com.google.gson.JsonArray())
+        }
+
+        override suspend fun updateReportStatus(
+            reportId: String,
+            body: com.fyp.basarattradeinvest.data.remote.dto.community.CommunityReportStatusUpdateRequest
+        ): Response<com.google.gson.JsonElement> {
+            if (shouldFail) return Response.error(500, "{\"detail\":\"Internal Error\"}".toResponseBody("application/json".toMediaTypeOrNull()))
+            return Response.success(com.google.gson.JsonObject())
+        }
+
+        override suspend fun getAdminPost(postId: String): Response<CommunityPostResponseDto> {
+            if (shouldFail) return Response.error(404, "{\"detail\":\"Not Found\"}".toResponseBody("application/json".toMediaTypeOrNull()))
+            return Response.success(
+                CommunityPostResponseDto(
+                    id = postId,
+                    authorId = "author-1",
+                    postType = "GENERAL",
+                    stockSymbol = null,
+                    content = "Admin post",
+                    imageUrl = null,
+                    likeCount = 0,
+                    commentCount = 0,
+                    reportCount = 0,
+                    status = "PUBLISHED",
+                    removedReason = null,
+                    likedByMe = false,
+                    createdAt = "2026-09-24T10:00:00Z",
+                    updatedAt = "2026-09-24T10:00:00Z"
+                )
+            )
+        }
+
+        override suspend fun deleteAdminPost(postId: String): Response<Unit> {
+            if (shouldFail) return Response.error(500, "{\"detail\":\"Internal Error\"}".toResponseBody("application/json".toMediaTypeOrNull()))
+            return Response.success(Unit)
+        }
+
+        override suspend fun restoreAdminPost(postId: String): Response<Unit> {
+            if (shouldFail) return Response.error(500, "{\"detail\":\"Internal Error\"}".toResponseBody("application/json".toMediaTypeOrNull()))
+            return Response.success(Unit)
+        }
+
+        override suspend fun removeAdminPost(postId: String): Response<Unit> {
+            if (shouldFail) return Response.error(500, "{\"detail\":\"Internal Error\"}".toResponseBody("application/json".toMediaTypeOrNull()))
+            return Response.success(Unit)
+        }
+
+        override suspend fun deleteAdminComment(commentId: String): Response<Unit> {
+            if (shouldFail) return Response.error(500, "{\"detail\":\"Internal Error\"}".toResponseBody("application/json".toMediaTypeOrNull()))
+            return Response.success(Unit)
+        }
+
+        override suspend fun getModerationActions(
+            postId: String?,
+            commentId: String?,
+            limit: Int?
+        ): Response<com.google.gson.JsonElement> {
+            if (shouldFail) return Response.error(500, "{\"detail\":\"Internal Error\"}".toResponseBody("application/json".toMediaTypeOrNull()))
+            return Response.success(com.google.gson.JsonArray())
+        }
     }
 
     private lateinit var fakeApi: FakeCommunityApiService

@@ -34,4 +34,32 @@ interface CommunityRepository {
     suspend fun markNotificationAsRead(notificationId: String): Result<Unit>
 
     suspend fun markAllNotificationsAsRead(): Result<Unit>
+
+    // Admin / Moderation operations
+    suspend fun getAdminReports(
+        status: String? = null,
+        postId: String? = null,
+        commentId: String? = null,
+        limit: Int = 50,
+        offset: Int = 0
+    ): Result<List<com.fyp.basarattradeinvest.domain.model.community.CommunityReport>>
+
+    suspend fun updateReportStatus(reportId: String, status: String): Result<Unit>
+
+    suspend fun getAdminPost(postId: String): Result<com.fyp.basarattradeinvest.domain.model.community.CommunityPost>
+
+    suspend fun deleteAdminPost(postId: String): Result<Unit>
+
+    suspend fun restoreAdminPost(postId: String): Result<Unit>
+
+    suspend fun removeAdminPost(postId: String): Result<Unit>
+
+    suspend fun deleteAdminComment(commentId: String): Result<Unit>
+
+    suspend fun getModerationActions(
+        postId: String? = null,
+        commentId: String? = null,
+        limit: Int = 50
+    ): Result<List<com.fyp.basarattradeinvest.domain.model.community.ModerationAction>>
 }
+

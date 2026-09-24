@@ -45,7 +45,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.communityFollowersFragment,
                 R.id.communityNotificationsFragment,
                 R.id.assistantConversationsFragment,
-                R.id.assistantChatFragment -> {
+                R.id.assistantChatFragment,
+                R.id.adminCommunityHubFragment,
+                R.id.adminReportDetailFragment -> {
                     binding.bottomNavigation.visibility = View.GONE
                 }
                 else -> {

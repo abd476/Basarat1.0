@@ -111,4 +111,36 @@ object CommunityDtoMapper {
             unreadCount = dto.totalUnread
         )
     }
+
+    fun mapReportDtoToDomain(dto: com.fyp.basarattradeinvest.data.remote.dto.community.CommunityReportDto): com.fyp.basarattradeinvest.domain.model.community.CommunityReport {
+        return com.fyp.basarattradeinvest.domain.model.community.CommunityReport(
+            id = dto.id,
+            postId = dto.postId,
+            commentId = dto.commentId,
+            reporterId = dto.reporterId ?: dto.userId,
+            reporterUsername = dto.reporterUsername,
+            reason = dto.reason,
+            status = com.fyp.basarattradeinvest.domain.model.community.ReportStatusEnum.fromValue(dto.status),
+            targetContent = dto.targetContent,
+            targetAuthorUsername = dto.targetAuthorUsername,
+            createdAt = dto.createdAt,
+            updatedAt = dto.updatedAt
+        )
+    }
+
+    fun mapModerationActionDtoToDomain(dto: com.fyp.basarattradeinvest.data.remote.dto.community.ModerationActionDto): com.fyp.basarattradeinvest.domain.model.community.ModerationAction {
+        return com.fyp.basarattradeinvest.domain.model.community.ModerationAction(
+            id = dto.id,
+            action = dto.effectiveAction,
+            moderatorId = dto.moderatorId,
+            moderatorUsername = dto.moderatorUsername,
+            postId = dto.postId,
+            commentId = dto.commentId,
+            reportId = dto.reportId,
+            reason = dto.reason,
+            details = dto.details,
+            createdAt = dto.effectiveTimestamp
+        )
+    }
 }
+
