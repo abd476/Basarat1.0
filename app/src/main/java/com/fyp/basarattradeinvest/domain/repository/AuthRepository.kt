@@ -2,6 +2,7 @@ package com.fyp.basarattradeinvest.domain.repository
 
 import com.fyp.basarattradeinvest.domain.model.AuthSession
 import com.fyp.basarattradeinvest.domain.model.User
+import com.fyp.basarattradeinvest.domain.model.VerifyResetCodeResult
 
 interface AuthRepository {
 
@@ -9,6 +10,15 @@ interface AuthRepository {
         email: String,
         password: String,
         fullName: String?
+    ): Result<String>
+
+    suspend fun verifyEmail(
+        email: String,
+        code: String
+    ): Result<AuthSession>
+
+    suspend fun resendVerification(
+        email: String
     ): Result<String>
 
     suspend fun login(
@@ -24,17 +34,24 @@ interface AuthRepository {
 
     suspend fun forgotPassword(
         email: String
-    ): Result<Unit>
+    ): Result<String>
+
+    suspend fun verifyResetCode(
+        email: String,
+        code: String
+    ): Result<VerifyResetCodeResult>
 
     suspend fun resetPassword(
-        token: String,
-        newPassword: String
-    ): Result<Unit>
+        resetToken: String,
+        newPassword: String,
+        confirmPassword: String? = null
+    ): Result<String>
 
     suspend fun changePassword(
         currentPassword: String,
-        newPassword: String
-    ): Result<Unit>
+        newPassword: String,
+        confirmPassword: String? = null
+    ): Result<String>
 
     fun isUserAuthenticated(): Boolean
 

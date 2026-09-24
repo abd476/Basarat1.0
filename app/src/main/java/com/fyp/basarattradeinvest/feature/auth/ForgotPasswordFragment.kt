@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -21,6 +22,7 @@ class ForgotPasswordFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: ForgotPasswordViewModel by viewModels()
+    private var lastEnteredEmail: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,12 +45,15 @@ class ForgotPasswordFragment : Fragment() {
         }
 
         binding.btnSubmit.setOnClickListener {
-            val email = binding.etEmail.text?.toString().orEmpty()
+            val email = binding.etEmail.text?.toString().orEmpty().trim()
+            lastEnteredEmail = email
             viewModel.requestPasswordReset(email)
         }
 
         binding.tvHaveTokenLink.setOnClickListener {
-            findNavController().navigate(R.id.action_forgotPasswordFragment_to_resetPasswordFragment)
+            val email = binding.etEmail.text?.toString().orEmpty().trim()
+            val bundle = bundleOf(VerifyResetCodeFragment.ARG_EMAIL to email)
+            findNavController().navigate(R.id.action_forgotPasswordFragment_to_verifyResetCodeFragment, bundle)
         }
     }
 
@@ -73,10 +78,17 @@ class ForgotPasswordFragment : Fragment() {
                             binding.btnSubmit.isEnabled = true
                             Toast.makeText(
                                 requireContext(),
-                                state.message ?: "Reset link dispatched to your email.",
-                                Toast.LENGTH_LONG
+                                state.message ?: "Reset code sent to your email.",
+                                Toast.LENGTH_SHORT
                             ).show()
-                            findNavController().navigate(R.id.action_forgotPasswordFragment_to_resetPasswordFragment)
+                            
+                            val bundle = bundleOf(
+                                VerifyResetCodeFragment.ARG_EMAIL to (state.userEmail ?: lastEnteredEmail)
+                            )
+                            findNavController().navigate(
+                                R.id.action_forgotPasswordFragment_to_verifyResetCodeFragment,
+                                bundle
+                            )
                             viewModel.resetState()
                         }
                         is AuthUiState.Error -> {

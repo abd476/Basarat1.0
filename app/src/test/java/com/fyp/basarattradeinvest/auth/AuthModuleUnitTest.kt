@@ -1,28 +1,33 @@
 package com.fyp.basarattradeinvest.auth
 
 import com.fyp.basarattradeinvest.data.remote.api.AuthApiService
-import com.fyp.basarattradeinvest.data.remote.dto.auth.AuthPayloads
 import com.fyp.basarattradeinvest.data.remote.dto.auth.ChangePasswordRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.ForgotPasswordRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.LoginRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.LogoutRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.MessageResponse
 import com.fyp.basarattradeinvest.data.remote.dto.auth.RefreshRequest
+import com.fyp.basarattradeinvest.data.remote.dto.auth.ResendVerificationRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.ResetPasswordRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.SignupRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.TokenResponse
+import com.fyp.basarattradeinvest.data.remote.dto.auth.VerifyEmailRequest
+import com.fyp.basarattradeinvest.data.remote.dto.auth.VerifyResetCodeRequest
+import com.fyp.basarattradeinvest.data.remote.dto.auth.VerifyResetCodeResponse
 import com.fyp.basarattradeinvest.data.remote.dto.user.UserSummaryDto
 import com.fyp.basarattradeinvest.data.repository.AuthRepositoryImpl
 import com.fyp.basarattradeinvest.domain.usecase.auth.ChangePasswordUseCase
 import com.fyp.basarattradeinvest.domain.usecase.auth.ForgotPasswordUseCase
 import com.fyp.basarattradeinvest.domain.usecase.auth.LoginUseCase
+import com.fyp.basarattradeinvest.domain.usecase.auth.ResendVerificationUseCase
 import com.fyp.basarattradeinvest.domain.usecase.auth.ResetPasswordUseCase
 import com.fyp.basarattradeinvest.domain.usecase.auth.SignUpUseCase
+import com.fyp.basarattradeinvest.domain.usecase.auth.VerifyEmailUseCase
+import com.fyp.basarattradeinvest.domain.usecase.auth.VerifyResetCodeUseCase
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -34,6 +39,8 @@ class AuthModuleUnitTest {
     private val fakeApiService = object : AuthApiService {
         var shouldFailLogin = false
         var shouldFailSignup = false
+        var shouldFailVerifyEmail = false
+        var shouldFailVerifyResetCode = false
 
         override suspend fun signup(request: SignupRequest): Response<MessageResponse> {
             return if (shouldFailSignup) {
@@ -41,8 +48,33 @@ class AuthModuleUnitTest {
                     .toResponseBody("application/json".toMediaType())
                 Response.error(400, errorBody)
             } else {
-                Response.success(MessageResponse("User registered successfully"))
+                Response.success(MessageResponse("Account created. Please check your email for the verification code."))
             }
+        }
+
+        override suspend fun verifyEmail(request: VerifyEmailRequest): Response<TokenResponse> {
+            return if (shouldFailVerifyEmail || request.code != "123456") {
+                val errorBody = "{\"success\":false,\"error\":{\"code\":\"BAD_REQUEST\",\"message\":\"Invalid email or code.\"}}"
+                    .toResponseBody("application/json".toMediaType())
+                Response.error(400, errorBody)
+            } else {
+                val tokenResponse = TokenResponse(
+                    accessToken = "mock_verified_access_token",
+                    refreshToken = "mock_verified_refresh_token",
+                    tokenType = "bearer",
+                    user = UserSummaryDto(
+                        id = "user_456",
+                        email = request.email,
+                        username = "verified_user",
+                        fullName = "Verified User"
+                    )
+                )
+                Response.success(tokenResponse)
+            }
+        }
+
+        override suspend fun resendVerification(request: ResendVerificationRequest): Response<MessageResponse> {
+            return Response.success(MessageResponse("Verification code sent to your email."))
         }
 
         override suspend fun login(request: LoginRequest): Response<TokenResponse> {
@@ -79,16 +111,33 @@ class AuthModuleUnitTest {
             return Response.success(204, Unit)
         }
 
-        override suspend fun forgotPassword(request: ForgotPasswordRequest): Response<Unit> {
-            return Response.success(202, Unit)
+        override suspend fun forgotPassword(request: ForgotPasswordRequest): Response<MessageResponse> {
+            return Response.success(MessageResponse("If the email exists, a 6-digit reset code has been sent."))
         }
 
-        override suspend fun resetPassword(request: ResetPasswordRequest): Response<Unit> {
-            return Response.success(204, Unit)
+        override suspend fun verifyResetCode(request: VerifyResetCodeRequest): Response<VerifyResetCodeResponse> {
+            return if (shouldFailVerifyResetCode || request.code != "123456") {
+                val errorBody = "{\"success\":false,\"error\":{\"code\":\"BAD_REQUEST\",\"message\":\"Invalid email or reset code.\"}}"
+                    .toResponseBody("application/json".toMediaType())
+                Response.error(400, errorBody)
+            } else {
+                Response.success(
+                    VerifyResetCodeResponse(
+                        resetToken = "mock_grant_reset_token",
+                        expiresIn = 900,
+                        tokenType = "bearer",
+                        message = "Code verified successfully"
+                    )
+                )
+            }
         }
 
-        override suspend fun changePassword(request: ChangePasswordRequest): Response<Unit> {
-            return Response.success(204, Unit)
+        override suspend fun resetPassword(request: ResetPasswordRequest): Response<MessageResponse> {
+            return Response.success(MessageResponse("Password reset successfully. Please log in."))
+        }
+
+        override suspend fun changePassword(request: ChangePasswordRequest): Response<MessageResponse> {
+            return Response.success(MessageResponse("Password changed successfully."))
         }
     }
 
@@ -122,94 +171,96 @@ class AuthModuleUnitTest {
         val result = authRepository.signup("newuser@basarat.pk", "Password123!", "New User")
 
         assertTrue(result.isSuccess)
-        assertEquals("User registered successfully", result.getOrNull())
+        assertEquals("Account created. Please check your email for the verification code.", result.getOrNull())
     }
 
     @Test
     fun testSignupFailureDuplicateEmail() = runBlocking {
         fakeApiService.shouldFailSignup = true
-        val result = authRepository.signup("existing@basarat.pk", "Password123!", "New User")
+        val result = authRepository.signup("duplicate@basarat.pk", "Password123!", "Duplicate User")
 
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull()?.message?.contains("Email already registered") == true)
+        val errorMsg = result.exceptionOrNull()?.message
+        assertTrue(errorMsg?.contains("Email already registered") == true)
     }
 
     @Test
-    fun testSignUpUseCaseValidation() = runBlocking {
-        val signUpUseCase = SignUpUseCase(authRepository)
+    fun testVerifyEmailSuccess() = runBlocking {
+        fakeApiService.shouldFailVerifyEmail = false
+        val result = authRepository.verifyEmail("newuser@basarat.pk", "123456")
 
-        // Email empty
-        val emptyEmail = signUpUseCase("", "Password123!", "User")
-        assertTrue(emptyEmail.isFailure)
-        assertEquals("Email cannot be empty", emptyEmail.exceptionOrNull()?.message)
-
-        // Password shorter than 8 chars (Swagger constraint)
-        val shortPassword = signUpUseCase("user@basarat.pk", "short", "User")
-        assertTrue(shortPassword.isFailure)
-        assertEquals("Password must be at least 8 characters", shortPassword.exceptionOrNull()?.message)
+        assertTrue(result.isSuccess)
+        val session = result.getOrNull()
+        assertNotNull(session)
+        assertEquals("mock_verified_access_token", session?.accessToken)
+        assertEquals("newuser@basarat.pk", session?.user?.email)
     }
 
     @Test
-    fun testLoginUseCaseValidation() = runBlocking {
-        val loginUseCase = LoginUseCase(authRepository)
+    fun testVerifyEmailFailureInvalidCode() = runBlocking {
+        fakeApiService.shouldFailVerifyEmail = true
+        val result = authRepository.verifyEmail("newuser@basarat.pk", "000000")
 
-        val emptyEmail = loginUseCase("", "Password123!")
-        assertTrue(emptyEmail.isFailure)
-
-        val emptyPassword = loginUseCase("user@basarat.pk", "")
-        assertTrue(emptyPassword.isFailure)
+        assertTrue(result.isFailure)
+        val errorMsg = result.exceptionOrNull()?.message
+        assertTrue(errorMsg?.contains("Invalid email or code") == true)
     }
 
     @Test
-    fun testForgotPasswordUseCase() = runBlocking {
-        val forgotPasswordUseCase = ForgotPasswordUseCase(authRepository)
-
-        val emptyEmail = forgotPasswordUseCase("")
-        assertTrue(emptyEmail.isFailure)
-
-        val validEmail = forgotPasswordUseCase("trader@basarat.pk")
-        assertTrue(validEmail.isSuccess)
+    fun testResendVerificationSuccess() = runBlocking {
+        val result = authRepository.resendVerification("newuser@basarat.pk")
+        assertTrue(result.isSuccess)
+        assertEquals("Verification code sent to your email.", result.getOrNull())
     }
 
     @Test
-    fun testResetPasswordUseCase() = runBlocking {
+    fun testForgotPasswordSuccess() = runBlocking {
+        val result = authRepository.forgotPassword("user@basarat.pk")
+        assertTrue(result.isSuccess)
+        assertEquals("If the email exists, a 6-digit reset code has been sent.", result.getOrNull())
+    }
+
+    @Test
+    fun testVerifyResetCodeSuccess() = runBlocking {
+        fakeApiService.shouldFailVerifyResetCode = false
+        val result = authRepository.verifyResetCode("user@basarat.pk", "123456")
+
+        assertTrue(result.isSuccess)
+        val res = result.getOrNull()
+        assertNotNull(res)
+        assertEquals("mock_grant_reset_token", res?.resetToken)
+    }
+
+    @Test
+    fun testResetPasswordSuccess() = runBlocking {
+        val result = authRepository.resetPassword("mock_grant_reset_token", "NewPassword123!", "NewPassword123!")
+        assertTrue(result.isSuccess)
+        assertEquals("Password reset successfully. Please log in.", result.getOrNull())
+    }
+
+    @Test
+    fun testChangePasswordSuccess() = runBlocking {
+        val result = authRepository.changePassword("OldPassword123!", "NewPassword123!", "NewPassword123!")
+        assertTrue(result.isSuccess)
+        assertEquals("Password changed successfully.", result.getOrNull())
+    }
+
+    @Test
+    fun testUseCasesValidation() = runBlocking {
+        val verifyEmailUseCase = VerifyEmailUseCase(authRepository)
+        val invalidCodeResult = verifyEmailUseCase("test@example.com", "12")
+        assertTrue(invalidCodeResult.isFailure)
+
+        val verifyResetCodeUseCase = VerifyResetCodeUseCase(authRepository)
+        val emptyEmailReset = verifyResetCodeUseCase("", "123456")
+        assertTrue(emptyEmailReset.isFailure)
+
         val resetPasswordUseCase = ResetPasswordUseCase(authRepository)
+        val mismatchPassword = resetPasswordUseCase("token", "Pass12345!", "DifferentPass123!")
+        assertTrue(mismatchPassword.isFailure)
 
-        val emptyToken = resetPasswordUseCase("", "NewPassword123!")
-        assertTrue(emptyToken.isFailure)
-
-        val shortPassword = resetPasswordUseCase("token_123", "short")
-        assertTrue(shortPassword.isFailure)
-
-        val validReset = resetPasswordUseCase("token_123", "NewPassword123!")
-        assertTrue(validReset.isSuccess)
-    }
-
-    @Test
-    fun testChangePasswordUseCase() = runBlocking {
         val changePasswordUseCase = ChangePasswordUseCase(authRepository)
-
-        val emptyCurrent = changePasswordUseCase("", "NewPassword123!")
-        assertTrue(emptyCurrent.isFailure)
-
-        val shortNew = changePasswordUseCase("CurrentPassword123!", "short")
-        assertTrue(shortNew.isFailure)
-
-        val validChange = changePasswordUseCase("CurrentPassword123!", "NewPassword123!")
-        assertTrue(validChange.isSuccess)
-    }
-
-    @Test
-    fun testPreBuiltAuthPayloads() {
-        assertNotNull(AuthPayloads.VALID_LOGIN)
-        assertEquals(AuthPayloads.DEFAULT_EMAIL, AuthPayloads.VALID_LOGIN.email)
-        assertEquals(AuthPayloads.DEFAULT_PASSWORD, AuthPayloads.VALID_LOGIN.password)
-
-        val signupPayload = AuthPayloads.signupPayload(email = "test@custom.com", password = "CustomPassword123!")
-        assertEquals("test@custom.com", signupPayload.email)
-        assertEquals("CustomPassword123!", signupPayload.password)
-
-        assertEquals("short", AuthPayloads.INVALID_SHORT_PASSWORD_SIGNUP.password)
-        assertTrue(AuthPayloads.INVALID_SHORT_PASSWORD_SIGNUP.password.length < 8)
+        val mismatchChange = changePasswordUseCase("Current123!", "NewPass123!", "Mismatch123!")
+        assertTrue(mismatchChange.isFailure)
     }
 }

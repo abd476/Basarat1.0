@@ -16,7 +16,7 @@ class SignUpViewModel(
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
-    fun signUp(name: String, email: String, password: String) {
+    fun signUp(name: String, email: String, password: String, confirmPassword: String? = null) {
         val trimmedName = name.trim()
         val trimmedEmail = email.trim()
 
@@ -34,6 +34,10 @@ class SignUpViewModel(
         }
         if (password.length < 8) {
             _uiState.value = AuthUiState.Error("Password must be at least 8 characters")
+            return
+        }
+        if (confirmPassword != null && password != confirmPassword) {
+            _uiState.value = AuthUiState.Error("Passwords do not match")
             return
         }
 

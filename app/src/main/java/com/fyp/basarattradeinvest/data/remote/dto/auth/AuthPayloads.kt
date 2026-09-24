@@ -111,12 +111,12 @@ object AuthPayloads {
         token: String = DUMMY_RESET_TOKEN,
         newPassword: String = DEFAULT_NEW_PASSWORD
     ) = ResetPasswordRequest(
-        token = token,
+        resetToken = token,
         newPassword = newPassword
     )
 
     val DUMMY_RESET_PASSWORD = ResetPasswordRequest(
-        token = DUMMY_RESET_TOKEN,
+        resetToken = DUMMY_RESET_TOKEN,
         newPassword = DEFAULT_NEW_PASSWORD
     )
 

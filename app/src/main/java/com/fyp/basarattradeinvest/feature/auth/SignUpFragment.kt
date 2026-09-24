@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -58,7 +59,7 @@ class SignUpFragment : Fragment() {
                 binding.etPassword.transformationMethod = PasswordTransformationMethod.getInstance()
                 binding.ivTogglePassword.setImageResource(R.drawable.ic_eye)
             }
-            binding.etPassword.setSelection(binding.etPassword.text.length)
+            binding.etPassword.setSelection(binding.etPassword.text?.length ?: 0)
         }
     }
 
@@ -89,7 +90,7 @@ class SignUpFragment : Fragment() {
         }
 
         binding.tvForgotPassword.setOnClickListener {
-            Toast.makeText(requireContext(), "Forgot password flow", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_loginFragment_to_forgotPasswordFragment)
         }
 
         binding.btnGoogleSignUp.setOnClickListener {
@@ -122,10 +123,13 @@ class SignUpFragment : Fragment() {
                             binding.btnSignUp.isEnabled = true
                             Toast.makeText(
                                 requireContext(),
-                                state.message ?: "Registration successful! Please sign in with your credentials.",
+                                state.message ?: "Account created! Please check your email for the verification code.",
                                 Toast.LENGTH_LONG
                             ).show()
-                            findNavController().navigate(R.id.action_signUpFragment_to_loginFragment)
+
+                            val targetEmail = state.userEmail ?: binding.etEmail.text?.toString().orEmpty().trim()
+                            val bundle = bundleOf(EmailVerificationFragment.ARG_EMAIL to targetEmail)
+                            findNavController().navigate(R.id.action_signUpFragment_to_emailVerificationFragment, bundle)
                             viewModel.resetState()
                         }
                         is AuthUiState.Error -> {

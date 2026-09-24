@@ -6,9 +6,13 @@ import com.fyp.basarattradeinvest.data.remote.dto.auth.LoginRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.LogoutRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.MessageResponse
 import com.fyp.basarattradeinvest.data.remote.dto.auth.RefreshRequest
+import com.fyp.basarattradeinvest.data.remote.dto.auth.ResendVerificationRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.ResetPasswordRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.SignupRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.TokenResponse
+import com.fyp.basarattradeinvest.data.remote.dto.auth.VerifyEmailRequest
+import com.fyp.basarattradeinvest.data.remote.dto.auth.VerifyResetCodeRequest
+import com.fyp.basarattradeinvest.data.remote.dto.auth.VerifyResetCodeResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -16,13 +20,23 @@ import retrofit2.http.POST
 /**
  * Retrofit service definition for BASARAT Authentication endpoints.
  * Defined strictly according to OpenAPI / Swagger contract at:
- * https://basarat-fyp-official.onrender.com/docs
+ * http://16.16.26.247:8000/docs
  */
 interface AuthApiService {
 
     @POST("api/v1/auth/signup")
     suspend fun signup(
         @Body request: SignupRequest
+    ): Response<MessageResponse>
+
+    @POST("api/v1/auth/verify-email")
+    suspend fun verifyEmail(
+        @Body request: VerifyEmailRequest
+    ): Response<TokenResponse>
+
+    @POST("api/v1/auth/resend-verification")
+    suspend fun resendVerification(
+        @Body request: ResendVerificationRequest
     ): Response<MessageResponse>
 
     @POST("api/v1/auth/login")
@@ -43,15 +57,20 @@ interface AuthApiService {
     @POST("api/v1/auth/forgot-password")
     suspend fun forgotPassword(
         @Body request: ForgotPasswordRequest
-    ): Response<Unit>
+    ): Response<MessageResponse>
+
+    @POST("api/v1/auth/verify-reset-code")
+    suspend fun verifyResetCode(
+        @Body request: VerifyResetCodeRequest
+    ): Response<VerifyResetCodeResponse>
 
     @POST("api/v1/auth/reset-password")
     suspend fun resetPassword(
         @Body request: ResetPasswordRequest
-    ): Response<Unit>
+    ): Response<MessageResponse>
 
     @POST("api/v1/auth/change-password")
     suspend fun changePassword(
         @Body request: ChangePasswordRequest
-    ): Response<Unit>
+    ): Response<MessageResponse>
 }

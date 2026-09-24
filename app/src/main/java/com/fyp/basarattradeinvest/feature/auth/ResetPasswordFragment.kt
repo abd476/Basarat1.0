@@ -26,6 +26,17 @@ class ResetPasswordFragment : Fragment() {
 
     private var isNewPasswordVisible = false
     private var isConfirmPasswordVisible = false
+    private var resetToken: String = ""
+
+    companion object {
+        const val ARG_RESET_TOKEN = "arg_reset_token"
+        const val ARG_EMAIL = "arg_email"
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        resetToken = arguments?.getString(ARG_RESET_TOKEN).orEmpty()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,7 +64,7 @@ class ResetPasswordFragment : Fragment() {
                 binding.etNewPassword.transformationMethod = PasswordTransformationMethod.getInstance()
                 binding.ivToggleNewPassword.setImageResource(R.drawable.ic_eye)
             }
-            binding.etNewPassword.setSelection(binding.etNewPassword.text.length)
+            binding.etNewPassword.setSelection(binding.etNewPassword.text?.length ?: 0)
         }
 
         binding.ivToggleConfirmPassword.setOnClickListener {
@@ -65,7 +76,7 @@ class ResetPasswordFragment : Fragment() {
                 binding.etConfirmPassword.transformationMethod = PasswordTransformationMethod.getInstance()
                 binding.ivToggleConfirmPassword.setImageResource(R.drawable.ic_eye)
             }
-            binding.etConfirmPassword.setSelection(binding.etConfirmPassword.text.length)
+            binding.etConfirmPassword.setSelection(binding.etConfirmPassword.text?.length ?: 0)
         }
     }
 
@@ -75,10 +86,9 @@ class ResetPasswordFragment : Fragment() {
         }
 
         binding.btnResetPassword.setOnClickListener {
-            val token = binding.etToken.text?.toString().orEmpty()
             val newPassword = binding.etNewPassword.text?.toString().orEmpty()
             val confirmPassword = binding.etConfirmPassword.text?.toString().orEmpty()
-            viewModel.resetPassword(token, newPassword, confirmPassword)
+            viewModel.resetPassword(resetToken, newPassword, confirmPassword)
         }
     }
 
@@ -103,7 +113,7 @@ class ResetPasswordFragment : Fragment() {
                             binding.btnResetPassword.isEnabled = true
                             Toast.makeText(
                                 requireContext(),
-                                state.message ?: "Password reset successfully! Please log in.",
+                                state.message ?: "Password reset successfully! Please sign in.",
                                 Toast.LENGTH_LONG
                             ).show()
                             findNavController().navigate(R.id.action_resetPasswordFragment_to_loginFragment)

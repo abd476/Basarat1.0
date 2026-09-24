@@ -15,6 +15,21 @@ data class SignupRequest(
     val fullName: String? = null
 )
 
+// POST /api/v1/auth/verify-email Request
+data class VerifyEmailRequest(
+    @SerializedName("email")
+    val email: String,
+
+    @SerializedName("code")
+    val code: String
+)
+
+// POST /api/v1/auth/resend-verification Request
+data class ResendVerificationRequest(
+    @SerializedName("email")
+    val email: String
+)
+
 // POST /api/v1/auth/login Request
 data class LoginRequest(
     @SerializedName("email")
@@ -42,13 +57,46 @@ data class ForgotPasswordRequest(
     val email: String
 )
 
+// POST /api/v1/auth/verify-reset-code Request
+data class VerifyResetCodeRequest(
+    @SerializedName("email")
+    val email: String,
+
+    @SerializedName("code")
+    val code: String
+)
+
+// Response from POST /api/v1/auth/verify-reset-code (200 OK)
+data class VerifyResetCodeResponse(
+    @SerializedName("reset_token")
+    val resetToken: String,
+
+    @SerializedName("expires_in")
+    val expiresIn: Int = 900,
+
+    @SerializedName("token_type")
+    val tokenType: String = "bearer",
+
+    @SerializedName("message")
+    val message: String? = null
+)
+
 // POST /api/v1/auth/reset-password Request
 data class ResetPasswordRequest(
-    @SerializedName("token")
-    val token: String,
+    @SerializedName("reset_token")
+    val resetToken: String? = null,
+
+    @SerializedName("email")
+    val email: String? = null,
+
+    @SerializedName("code")
+    val code: String? = null,
 
     @SerializedName("new_password")
-    val newPassword: String
+    val newPassword: String,
+
+    @SerializedName("confirm_password")
+    val confirmPassword: String? = null
 )
 
 // POST /api/v1/auth/change-password Request
@@ -57,10 +105,13 @@ data class ChangePasswordRequest(
     val currentPassword: String,
 
     @SerializedName("new_password")
-    val newPassword: String
+    val newPassword: String,
+
+    @SerializedName("confirm_password")
+    val confirmPassword: String? = null
 )
 
-// Response from /api/v1/auth/login and /api/v1/auth/refresh
+// Response from /api/v1/auth/login, /api/v1/auth/refresh, /api/v1/auth/verify-email
 data class TokenResponse(
     @SerializedName("access_token")
     val accessToken: String,
@@ -75,7 +126,7 @@ data class TokenResponse(
     val user: UserSummaryDto? = null
 )
 
-// Response from /api/v1/auth/signup (201 Created)
+// Response from /api/v1/auth/signup, /resend-verification, /forgot-password, /reset-password, /change-password
 data class MessageResponse(
     @SerializedName("message")
     val message: String

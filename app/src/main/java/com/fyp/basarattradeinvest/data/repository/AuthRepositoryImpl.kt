@@ -9,10 +9,14 @@ import com.fyp.basarattradeinvest.data.remote.dto.auth.ForgotPasswordRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.LoginRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.LogoutRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.RefreshRequest
+import com.fyp.basarattradeinvest.data.remote.dto.auth.ResendVerificationRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.ResetPasswordRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.SignupRequest
+import com.fyp.basarattradeinvest.data.remote.dto.auth.VerifyEmailRequest
+import com.fyp.basarattradeinvest.data.remote.dto.auth.VerifyResetCodeRequest
 import com.fyp.basarattradeinvest.domain.model.AuthSession
 import com.fyp.basarattradeinvest.domain.model.User
+import com.fyp.basarattradeinvest.domain.model.VerifyResetCodeResult
 import com.fyp.basarattradeinvest.domain.repository.AuthRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -35,7 +39,74 @@ class AuthRepositoryImpl(
                 )
             )
             if (response.isSuccessful) {
-                val message = response.body()?.message ?: "User registered successfully"
+                val message = response.body()?.message ?: "Account created. Please check your email for the verification code."
+                Result.success(message)
+            } else {
+                val error = NetworkErrorParser.parseError(response)
+                Result.failure(Exception(error))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun verifyEmail(
+        email: String,
+        code: String
+    ): Result<AuthSession> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.verifyEmail(
+                VerifyEmailRequest(
+                    email = email,
+                    code = code
+                )
+            )
+            if (response.isSuccessful) {
+                val body = response.body() ?: return@withContext Result.failure(Exception("Empty verification response from server"))
+                
+                SessionManager.saveSession(
+                    accessToken = body.accessToken,
+                    refreshToken = body.refreshToken,
+                    userId = body.user?.id?.toString(),
+                    email = body.user?.email ?: email,
+                    fullName = body.user?.fullName
+                )
+
+                val user = body.user?.let {
+                    User(
+                        id = it.id.toString(),
+                        email = it.email,
+                        username = it.username,
+                        fullName = it.fullName
+                    )
+                } ?: User(id = "", email = email)
+
+                Result.success(
+                    AuthSession(
+                        accessToken = body.accessToken,
+                        refreshToken = body.refreshToken,
+                        tokenType = body.tokenType,
+                        user = user
+                    )
+                )
+            } else {
+                val error = NetworkErrorParser.parseError(response)
+                Result.failure(Exception(error))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun resendVerification(
+        email: String
+    ): Result<String> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.resendVerification(
+                ResendVerificationRequest(email = email)
+            )
+            if (response.isSuccessful) {
+                val message = response.body()?.message ?: "Verification code sent to your email."
                 Result.success(message)
             } else {
                 val error = NetworkErrorParser.parseError(response)
@@ -146,11 +217,12 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun forgotPassword(email: String): Result<Unit> = withContext(Dispatchers.IO) {
+    override suspend fun forgotPassword(email: String): Result<String> = withContext(Dispatchers.IO) {
         try {
             val response = apiService.forgotPassword(ForgotPasswordRequest(email))
             if (response.isSuccessful) {
-                Result.success(Unit)
+                val msg = response.body()?.message ?: "If the email exists, a 6-digit reset code has been sent."
+                Result.success(msg)
             } else {
                 val error = NetworkErrorParser.parseError(response)
                 Result.failure(Exception(error))
@@ -160,11 +232,52 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun resetPassword(token: String, newPassword: String): Result<Unit> = withContext(Dispatchers.IO) {
+    override suspend fun verifyResetCode(
+        email: String,
+        code: String
+    ): Result<VerifyResetCodeResult> = withContext(Dispatchers.IO) {
         try {
-            val response = apiService.resetPassword(ResetPasswordRequest(token, newPassword))
+            val response = apiService.verifyResetCode(
+                VerifyResetCodeRequest(
+                    email = email,
+                    code = code
+                )
+            )
             if (response.isSuccessful) {
-                Result.success(Unit)
+                val body = response.body() ?: return@withContext Result.failure(Exception("Empty response from reset code verification"))
+                Result.success(
+                    VerifyResetCodeResult(
+                        resetToken = body.resetToken,
+                        expiresIn = body.expiresIn,
+                        tokenType = body.tokenType,
+                        message = body.message
+                    )
+                )
+            } else {
+                val error = NetworkErrorParser.parseError(response)
+                Result.failure(Exception(error))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun resetPassword(
+        resetToken: String,
+        newPassword: String,
+        confirmPassword: String?
+    ): Result<String> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.resetPassword(
+                ResetPasswordRequest(
+                    resetToken = resetToken,
+                    newPassword = newPassword,
+                    confirmPassword = confirmPassword ?: newPassword
+                )
+            )
+            if (response.isSuccessful) {
+                val msg = response.body()?.message ?: "Password reset successfully. Please log in."
+                Result.success(msg)
             } else {
                 val error = NetworkErrorParser.parseError(response)
                 Result.failure(Exception(error))
@@ -176,17 +289,20 @@ class AuthRepositoryImpl(
 
     override suspend fun changePassword(
         currentPassword: String,
-        newPassword: String
-    ): Result<Unit> = withContext(Dispatchers.IO) {
+        newPassword: String,
+        confirmPassword: String?
+    ): Result<String> = withContext(Dispatchers.IO) {
         try {
             val response = apiService.changePassword(
                 ChangePasswordRequest(
                     currentPassword = currentPassword,
-                    newPassword = newPassword
+                    newPassword = newPassword,
+                    confirmPassword = confirmPassword ?: newPassword
                 )
             )
             if (response.isSuccessful) {
-                Result.success(Unit)
+                val msg = response.body()?.message ?: "Password changed successfully."
+                Result.success(msg)
             } else {
                 val error = NetworkErrorParser.parseError(response)
                 Result.failure(Exception(error))

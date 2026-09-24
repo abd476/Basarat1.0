@@ -16,10 +16,10 @@ class ResetPasswordViewModel(
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
-    fun resetPassword(token: String, newPassword: String, confirmPassword: String) {
-        val trimmedToken = token.trim()
+    fun resetPassword(resetToken: String, newPassword: String, confirmPassword: String) {
+        val trimmedToken = resetToken.trim()
         if (trimmedToken.isBlank()) {
-            _uiState.value = AuthUiState.Error("Please enter the reset token received via email")
+            _uiState.value = AuthUiState.Error("Reset token grant is missing. Please restart the reset process.")
             return
         }
         if (newPassword.length < 8) {
@@ -33,16 +33,16 @@ class ResetPasswordViewModel(
 
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
-            val result = resetPasswordUseCase(trimmedToken, newPassword)
+            val result = resetPasswordUseCase(trimmedToken, newPassword, confirmPassword)
             result.fold(
-                onSuccess = {
+                onSuccess = { message ->
                     _uiState.value = AuthUiState.Success(
-                        message = "Password successfully reset! Please sign in with your new password."
+                        message = message.ifBlank { "Password successfully reset! Please sign in with your new password." }
                     )
                 },
                 onFailure = { throwable ->
                     _uiState.value = AuthUiState.Error(
-                        throwable.message ?: "Failed to reset password. Please verify the token."
+                        throwable.message ?: "Failed to reset password. The grant may have expired."
                     )
                 }
             )

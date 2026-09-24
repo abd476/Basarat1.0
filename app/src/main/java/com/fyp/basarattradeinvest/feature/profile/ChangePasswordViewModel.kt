@@ -33,11 +33,11 @@ class ChangePasswordViewModel(
 
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
-            val result = changePasswordUseCase(currentPassword, newPassword)
+            val result = changePasswordUseCase(currentPassword, newPassword, confirmPassword)
             result.fold(
-                onSuccess = {
+                onSuccess = { message ->
                     _uiState.value = AuthUiState.Success(
-                        message = "Password updated successfully!"
+                        message = message.ifBlank { "Password updated successfully!" }
                     )
                 },
                 onFailure = { throwable ->
