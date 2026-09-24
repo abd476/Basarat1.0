@@ -11,6 +11,24 @@ import com.fyp.basarattradeinvest.domain.model.community.CommunityUnreadCount
  */
 interface CommunityRepository {
 
+    suspend fun createPost(
+        content: String,
+        postType: String,
+        stockSymbol: String? = null,
+        imageBytes: ByteArray? = null,
+        imageFileName: String? = null,
+        imageMimeType: String? = null
+    ): Result<com.fyp.basarattradeinvest.domain.model.community.CommunityPost>
+
+    suspend fun getCommunityFeed(
+        stockSymbol: String? = null,
+        postType: String? = null,
+        mine: Boolean? = null,
+        following: Boolean? = null,
+        cursor: String? = null,
+        limit: Int? = 20
+    ): Result<CommunityPostList>
+
     suspend fun getMyProfile(): Result<CommunityProfile>
 
     suspend fun getUserProfile(userId: String): Result<CommunityProfile>

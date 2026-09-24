@@ -317,5 +317,21 @@ class AdminCommunityUnitTest {
         override suspend fun getUnreadNotificationCount(): Result<com.fyp.basarattradeinvest.domain.model.community.CommunityUnreadCount> = TODO()
         override suspend fun markNotificationAsRead(notificationId: String): Result<Unit> = TODO()
         override suspend fun markAllNotificationsAsRead(): Result<Unit> = TODO()
+        override suspend fun createPost(
+            content: String,
+            postType: String,
+            stockSymbol: String?,
+            imageBytes: ByteArray?,
+            imageFileName: String?,
+            imageMimeType: String?
+        ): Result<com.fyp.basarattradeinvest.domain.model.community.CommunityPost> = TODO()
+        override suspend fun getCommunityFeed(
+            stockSymbol: String?,
+            postType: String?,
+            mine: Boolean?,
+            following: Boolean?,
+            cursor: String?,
+            limit: Int?
+        ): Result<com.fyp.basarattradeinvest.domain.model.community.CommunityPostList> = TODO()
     }
 }

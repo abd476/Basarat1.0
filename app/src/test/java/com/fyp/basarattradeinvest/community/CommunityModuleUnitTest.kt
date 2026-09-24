@@ -274,6 +274,51 @@ class CommunityModuleUnitTest {
             if (shouldFail) return Response.error(500, "{\"detail\":\"Internal Error\"}".toResponseBody("application/json".toMediaTypeOrNull()))
             return Response.success(com.google.gson.JsonArray())
         }
+
+        override suspend fun createPost(
+            content: okhttp3.RequestBody,
+            postType: okhttp3.RequestBody,
+            stockSymbol: okhttp3.RequestBody?,
+            image: okhttp3.MultipartBody.Part?
+        ): Response<CommunityPostResponseDto> {
+            if (shouldFail) return Response.error(500, "{\"detail\":\"Internal Error\"}".toResponseBody("application/json".toMediaTypeOrNull()))
+            return Response.success(
+                CommunityPostResponseDto(
+                    id = "p-created-1",
+                    authorId = "me-123",
+                    postType = "STOCK",
+                    stockSymbol = "LUCK",
+                    content = "Created post",
+                    imageUrl = null,
+                    likeCount = 0,
+                    commentCount = 0,
+                    reportCount = 0,
+                    status = "PUBLISHED",
+                    removedReason = null,
+                    likedByMe = false,
+                    createdAt = "2026-09-24T18:00:00Z",
+                    updatedAt = "2026-09-24T18:00:00Z"
+                )
+            )
+        }
+
+        override suspend fun getCommunityFeed(
+            stockSymbol: String?,
+            postType: String?,
+            mine: Boolean?,
+            following: Boolean?,
+            cursor: String?,
+            limit: Int?
+        ): Response<CommunityPostListResponseDto> {
+            if (shouldFail) return Response.error(500, "{\"detail\":\"Internal Error\"}".toResponseBody("application/json".toMediaTypeOrNull()))
+            return Response.success(
+                CommunityPostListResponseDto(
+                    posts = emptyList(),
+                    cursor = null,
+                    hasMore = false
+                )
+            )
+        }
     }
 
     private lateinit var fakeApi: FakeCommunityApiService

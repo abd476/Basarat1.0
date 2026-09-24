@@ -6,9 +6,13 @@ import com.fyp.basarattradeinvest.data.remote.dto.community.CommunityPostListRes
 import com.fyp.basarattradeinvest.data.remote.dto.community.CommunityPostResponseDto
 import com.fyp.basarattradeinvest.data.remote.dto.community.CommunityProfileResponseDto
 import com.fyp.basarattradeinvest.data.remote.dto.community.CommunityUnreadCountResponseDto
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -17,6 +21,31 @@ import retrofit2.http.Query
  * Source of truth: live OpenAPI at /api/v1/openapi.json
  */
 interface CommunityApiService {
+
+    /**
+     * Create a new community post (multipart form-data)
+     */
+    @Multipart
+    @POST("api/v1/community/posts")
+    suspend fun createPost(
+        @Part("content") content: RequestBody,
+        @Part("post_type") postType: RequestBody,
+        @Part("stock_symbol") stockSymbol: RequestBody? = null,
+        @Part image: MultipartBody.Part? = null
+    ): Response<CommunityPostResponseDto>
+
+    /**
+     * Get community feed
+     */
+    @GET("api/v1/community/feed")
+    suspend fun getCommunityFeed(
+        @Query("stock_symbol") stockSymbol: String? = null,
+        @Query("post_type") postType: String? = null,
+        @Query("mine") mine: Boolean? = null,
+        @Query("following") following: Boolean? = null,
+        @Query("cursor") cursor: String? = null,
+        @Query("limit") limit: Int? = 20
+    ): Response<CommunityPostListResponseDto>
 
     /**
      * Get user's followers

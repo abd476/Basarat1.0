@@ -283,6 +283,18 @@
                         android:text="No posts published yet"
                         android:textColor="@color/color_text_secondary"
                         android:textSize="14sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_create_first_post"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:backgroundTint="@color/color_brand_primary"
+                        android:text="Create Your First Post"
+                        android:textColor="@android:color/white"
+                        app:cornerRadius="8dp"
+                        app:icon="@drawable/ic_add"
+                        app:iconTint="@android:color/white" />
                 </LinearLayout>
 
                 <!-- Posts List -->
@@ -335,5 +347,19 @@
             android:textColor="@android:color/white"
             app:cornerRadius="8dp" />
     </LinearLayout>
+
+    <!-- Create Post Floating Action Button -->
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_create_post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="20dp"
+        android:backgroundTint="@color/color_brand_primary"
+        android:text="Create Post"
+        android:textColor="@android:color/white"
+        app:elevation="6dp"
+        app:icon="@drawable/ic_add"
+        app:iconTint="@android:color/white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -109,6 +109,22 @@ class CommunityProfileFragment : Fragment() {
             }
             findNavController().navigate(R.id.communityFollowersFragment, bundle)
         }
+
+        binding.fabCreatePost.setOnClickListener {
+            showCreatePostDialog()
+        }
+
+        binding.btnCreateFirstPost.setOnClickListener {
+            showCreatePostDialog()
+        }
+    }
+
+    private fun showCreatePostDialog() {
+        val dialog = com.fyp.basarattradeinvest.feature.community.create.CreatePostBottomSheetDialogFragment.newInstance()
+        dialog.onPostCreated = {
+            viewModel.loadProfile(userId = targetUserId, isRefresh = true)
+        }
+        dialog.show(childFragmentManager, com.fyp.basarattradeinvest.feature.community.create.CreatePostBottomSheetDialogFragment.TAG)
     }
 
     private fun observeUiState() {

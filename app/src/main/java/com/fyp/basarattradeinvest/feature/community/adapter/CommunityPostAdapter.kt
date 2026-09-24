@@ -40,8 +40,16 @@ class CommunityPostAdapter(
             }
 
             // Post author & time
-            binding.tvPostAuthor.text = post.authorId.take(8).let { "Trader #$it" }
+            binding.tvPostAuthor.text = post.authorDisplayName
             binding.tvPostTime.text = formatPostTime(post.createdAt)
+
+            // Post image
+            if (!post.imageUrl.isNullOrBlank()) {
+                binding.ivPostImage.visibility = View.VISIBLE
+                com.fyp.basarattradeinvest.core.ui.ImageLoader.loadImage(binding.ivPostImage, post.imageUrl)
+            } else {
+                binding.ivPostImage.visibility = View.GONE
+            }
 
             // Likes and comments
             binding.tvLikeCount.text = post.likeCount.toString()

@@ -80,11 +80,23 @@ data class CommunityPostResponseDto(
     @SerializedName("author_id")
     val authorId: String,
 
+    @SerializedName("author_username")
+    val authorUsername: String? = null,
+
+    @SerializedName("author_full_name")
+    val authorFullName: String? = null,
+
+    @SerializedName("author_avatar_url")
+    val authorAvatarUrl: String? = null,
+
     @SerializedName("post_type")
     val postType: String,
 
     @SerializedName("stock_symbol")
     val stockSymbol: String? = null,
+
+    @SerializedName("stock_name")
+    val stockName: String? = null,
 
     @SerializedName("content")
     val content: String,

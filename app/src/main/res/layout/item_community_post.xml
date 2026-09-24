@@ -87,6 +87,18 @@
             android:textSize="14sp"
             tools:text="Lucky Cement (LUCK) showing strong support above 880 PKR. Solid cement sector dispatches reported for the month." />
 
+        <!-- Post Image Attachment (if present) -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_post_image"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="12dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.MediumComponent"
+            tools:src="@drawable/logo_basarat"
+            tools:visibility="visible" />
+
         <!-- Engagement Bar: Likes & Comments -->
         <LinearLayout
             android:layout_width="match_parent"

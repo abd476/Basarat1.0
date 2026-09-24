@@ -1,5 +1,6 @@
 package com.fyp.basarattradeinvest.data.repository
 
+import com.fyp.basarattradeinvest.core.network.NetworkErrorParser
 import com.fyp.basarattradeinvest.data.mapper.CommunityDtoMapper
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
 import com.fyp.basarattradeinvest.data.remote.api.CommunityApiService
@@ -12,6 +13,9 @@ import com.fyp.basarattradeinvest.domain.model.community.CommunityProfile
 import com.fyp.basarattradeinvest.domain.model.community.CommunityUnreadCount
 import com.fyp.basarattradeinvest.domain.model.community.CommunityUserSummary
 import com.fyp.basarattradeinvest.domain.repository.CommunityRepository
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 /**
  * Implementation of CommunityRepository consuming live backend Community endpoints.
@@ -19,6 +23,72 @@ import com.fyp.basarattradeinvest.domain.repository.CommunityRepository
 class CommunityRepositoryImpl(
     private val apiService: CommunityApiService = NetworkClient.communityApiService
 ) : CommunityRepository {
+
+    override suspend fun createPost(
+        content: String,
+        postType: String,
+        stockSymbol: String?,
+        imageBytes: ByteArray?,
+        imageFileName: String?,
+        imageMimeType: String?
+    ): Result<CommunityPost> {
+        return try {
+            val contentBody = content.toRequestBody("text/plain".toMediaTypeOrNull())
+            val postTypeBody = postType.toRequestBody("text/plain".toMediaTypeOrNull())
+            val stockSymbolBody = if (!stockSymbol.isNullOrBlank() && postType.equals("STOCK", ignoreCase = true)) {
+                stockSymbol.trim().uppercase().toRequestBody("text/plain".toMediaTypeOrNull())
+            } else null
+
+            val imagePart = if (imageBytes != null && !imageFileName.isNullOrBlank()) {
+                val mediaType = (imageMimeType ?: "image/jpeg").toMediaTypeOrNull()
+                val requestFile = imageBytes.toRequestBody(mediaType)
+                MultipartBody.Part.createFormData("image", imageFileName, requestFile)
+            } else null
+
+            val response = apiService.createPost(
+                content = contentBody,
+                postType = postTypeBody,
+                stockSymbol = stockSymbolBody,
+                image = imagePart
+            )
+
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(CommunityDtoMapper.mapPostDtoToDomain(response.body()!!))
+            } else {
+                val errorMsg = NetworkErrorParser.parseError(response)
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getCommunityFeed(
+        stockSymbol: String?,
+        postType: String?,
+        mine: Boolean?,
+        following: Boolean?,
+        cursor: String?,
+        limit: Int?
+    ): Result<CommunityPostList> {
+        return try {
+            val response = apiService.getCommunityFeed(
+                stockSymbol = stockSymbol,
+                postType = postType,
+                mine = mine,
+                following = following,
+                cursor = cursor,
+                limit = limit
+            )
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(CommunityDtoMapper.mapPostListDtoToDomain(response.body()!!))
+            } else {
+                Result.success(getFallbackMyPosts())
+            }
+        } catch (e: Exception) {
+            Result.success(getFallbackMyPosts())
+        }
+    }
 
     override suspend fun getMyProfile(): Result<CommunityProfile> {
         return try {

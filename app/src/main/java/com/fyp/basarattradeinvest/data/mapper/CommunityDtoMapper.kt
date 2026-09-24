@@ -68,7 +68,11 @@ object CommunityDtoMapper {
             removedReason = dto.removedReason,
             likedByMe = dto.likedByMe,
             createdAt = dto.createdAt,
-            updatedAt = dto.updatedAt
+            updatedAt = dto.updatedAt,
+            authorUsername = dto.authorUsername,
+            authorFullName = dto.authorFullName,
+            authorAvatarUrl = dto.authorAvatarUrl,
+            stockName = dto.stockName
         )
     }
 

@@ -57,10 +57,17 @@ data class CommunityPost(
     val removedReason: String?,
     val likedByMe: Boolean,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
+    val authorUsername: String? = null,
+    val authorFullName: String? = null,
+    val authorAvatarUrl: String? = null,
+    val stockName: String? = null
 ) {
     val isStockPost: Boolean
         get() = !stockSymbol.isNullOrBlank() || postType.equals("STOCK", ignoreCase = true)
+
+    val authorDisplayName: String
+        get() = if (!authorFullName.isNullOrBlank()) authorFullName else if (!authorUsername.isNullOrBlank()) "@$authorUsername" else "Trader #${authorId.take(8)}"
 }
 
 /**
