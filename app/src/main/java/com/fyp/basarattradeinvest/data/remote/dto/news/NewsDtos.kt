@@ -1,6 +1,11 @@
 package com.fyp.basarattradeinvest.data.remote.dto.news
 
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
+import java.lang.reflect.Type
 
 /**
  * News and Events DTOs matching backend OpenAPI schemas.
@@ -59,7 +64,7 @@ data class NewsArticleResponseDto(
     val eventType: String? = null,
 
     @SerializedName("sentiment")
-    val sentiment: String? = null, // "bullish" | "bearish" | "neutral"
+    val sentiment: SentimentInfoDto? = null,
 
     @SerializedName("impact_score")
     val impactScore: Double? = null,
@@ -70,6 +75,56 @@ data class NewsArticleResponseDto(
     @SerializedName("created_at")
     val createdAt: String? = null
 )
+
+@JsonAdapter(SentimentInfoDeserializer::class)
+data class SentimentInfoDto(
+    @SerializedName("label")
+    val label: String? = null,
+
+    @SerializedName("score")
+    val score: Double? = null,
+
+    @SerializedName("method")
+    val method: String? = null
+)
+
+class SentimentInfoDeserializer : JsonDeserializer<SentimentInfoDto?> {
+    override fun deserialize(
+        json: JsonElement?,
+        typeOfT: Type?,
+        context: JsonDeserializationContext?
+    ): SentimentInfoDto? {
+        if (json == null || json.isJsonNull) return null
+        return try {
+            if (json.isJsonObject) {
+                val obj = json.asJsonObject
+                val label = if (obj.has("label") && !obj.get("label").isJsonNull) {
+                    obj.get("label").asString
+                } else null
+
+                val score = if (obj.has("score") && !obj.get("score").isJsonNull) {
+                    try {
+                        obj.get("score").asDouble
+                    } catch (_: Exception) {
+                        null
+                    }
+                } else null
+
+                val method = if (obj.has("method") && !obj.get("method").isJsonNull) {
+                    obj.get("method").asString
+                } else null
+
+                SentimentInfoDto(label = label, score = score, method = method)
+            } else if (json.isJsonPrimitive) {
+                SentimentInfoDto(label = json.asString, score = null, method = null)
+            } else {
+                null
+            }
+        } catch (_: Exception) {
+            null
+        }
+    }
+}
 
 data class SourceInfoDto(
     @SerializedName("key")

@@ -15,13 +15,14 @@ object NewsDtoMapper {
         val primarySymbol = dto.symbols?.firstOrNull()?.symbol ?: "PSX"
         val allSymbols = dto.symbols?.map { it.symbol } ?: emptyList()
         val sourceName = dto.source?.name ?: dto.source?.key ?: "PSX News"
-        val sentimentStr = dto.sentiment?.lowercase(Locale.ROOT) ?: "neutral"
+        val sentimentObj = dto.sentiment
+        val sentimentStr = sentimentObj?.label?.lowercase(Locale.ROOT)
         val label = when (sentimentStr) {
             "bullish", "positive" -> "Bullish"
             "bearish", "negative" -> "Bearish"
             else -> "Neutral"
         }
-        val score = dto.impactScore ?: when (label) {
+        val score = sentimentObj?.score ?: when (label) {
             "Bullish" -> 0.75
             "Bearish" -> -0.50
             else -> 0.0
