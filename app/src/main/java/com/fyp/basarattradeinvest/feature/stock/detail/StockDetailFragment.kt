@@ -222,6 +222,10 @@ class StockDetailFragment : Fragment() {
             val bundle = Bundle().apply { putString("symbol", currentSymbol) }
             findNavController().navigate(R.id.chartFullscreenFragment, bundle)
         }
+        binding.badgeShariah.setOnClickListener {
+            val sheet = com.fyp.basarattradeinvest.feature.shariah.details.StockShariahDetailsBottomSheet.newInstance(currentSymbol)
+            sheet.show(childFragmentManager, "StockShariahDetailsBottomSheet")
+        }
     }
 
     // ───────────────────────────────
@@ -628,6 +632,18 @@ class StockDetailFragment : Fragment() {
             setTextColor(ContextCompat.getColor(context, R.color.color_text_primary))
             textSize = 13f
             setTypeface(null, android.graphics.Typeface.BOLD)
+        }
+
+        if (label.contains("Shariah", ignoreCase = true)) {
+            valueTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_shariah_teal))
+            row.isClickable = true
+            val outVal = android.util.TypedValue()
+            requireContext().theme.resolveAttribute(android.R.attr.selectableItemBackground, outVal, true)
+            row.setBackgroundResource(outVal.resourceId)
+            row.setOnClickListener {
+                val sheet = com.fyp.basarattradeinvest.feature.shariah.details.StockShariahDetailsBottomSheet.newInstance(currentSymbol)
+                sheet.show(childFragmentManager, "StockShariahDetailsBottomSheet")
+            }
         }
 
         row.addView(labelTv)

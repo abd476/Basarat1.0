@@ -61,4 +61,12 @@
     <!-- Notifications Module -->
     <string name="title_notifications">Notifications</string>
     <string name="notifications_inbox">In-App Notifications</string>
+
+    <!-- Shariah Module -->
+    <string name="title_shariah">Shariah Screening</string>
+    <string name="subtitle_shariah">PSX KMI-30 &amp; AAOIFI Compliance</string>
+    <string name="tab_kmi30">KMI-30 Constituents</string>
+    <string name="tab_shariah_criteria">Screening Criteria</string>
+    <string name="tab_dividend_purification">Dividend Purification</string>
+    <string name="shariah_disclaimer">Automated quantitative check adhering to PSX KMI methodology. Does not constitute a certified fatwa.</string>
 </resources>
