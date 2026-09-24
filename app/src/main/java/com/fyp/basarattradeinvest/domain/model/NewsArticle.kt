@@ -10,7 +10,12 @@ data class NewsArticle(
     val sentimentLabel: String, // "Bullish", "Bearish", "Neutral"
     val headline: String,
     val snippet: String,
-    val category: String = "All"
+    val category: String = "All",
+    val url: String? = null,
+    val externalUrl: String? = null,
+    val isOfficial: Boolean = false,
+    val symbols: List<String> = emptyList(),
+    val publishedAt: String? = null
 )
 
 enum class NewsTab {

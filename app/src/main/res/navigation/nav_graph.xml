@@ -142,6 +142,19 @@
         <action
             android:id="@+id/action_newsEvents_to_stockDetail"
             app:destination="@id/stockDetailFragment" />
+        <action
+            android:id="@+id/action_newsEvents_to_articleDetail"
+            app:destination="@id/newsArticleDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newsArticleDetailFragment"
+        android:name="com.fyp.basarattradeinvest.feature.news.detail.NewsArticleDetailFragment"
+        android:label="Article Detail"
+        tools:layout="@layout/fragment_news_article_detail">
+        <argument
+            android:name="articleId"
+            app:argType="string" />
     </fragment>
 
     <fragment
@@ -162,6 +175,9 @@
         <action
             android:id="@+id/action_stockDetail_to_recommendationDetail"
             app:destination="@id/stockRecommendationDetailFragment" />
+        <action
+            android:id="@+id/action_stockDetail_to_articleDetail"
+            app:destination="@id/newsArticleDetailFragment" />
     </fragment>
 
     <fragment

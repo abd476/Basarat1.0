@@ -7,7 +7,8 @@ data class CorporateEvent(
     val companyName: String,
     val eventDate: String,
     val description: String,
-    val bookClosure: String,
+    val bookClosure: String = "",
     val sourceNotice: String = "PSX Official Notice",
-    val category: String = "All"
+    val category: String = "All",
+    val sourceUrl: String? = null
 )

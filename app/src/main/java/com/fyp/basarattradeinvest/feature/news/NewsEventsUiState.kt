@@ -12,7 +12,13 @@ sealed interface NewsEventsUiState {
         val corporateEvents: List<CorporateEvent>,
         val activeTab: NewsTab = NewsTab.MARKET_NEWS,
         val activeCategory: String = "All",
-        val searchQuery: String = ""
+        val searchQuery: String = "",
+        val nextCursor: String? = null,
+        val hasMore: Boolean = false,
+        val isLoadingMore: Boolean = false,
+        val isRefreshing: Boolean = false,
+        val marketStatusText: String? = null,
+        val refreshMessage: String? = null
     ) : NewsEventsUiState
 
     data object Empty : NewsEventsUiState

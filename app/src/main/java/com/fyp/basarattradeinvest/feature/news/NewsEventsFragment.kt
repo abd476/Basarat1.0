@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentNewsEventsBinding
 import com.fyp.basarattradeinvest.domain.model.NewsTab
@@ -32,8 +33,8 @@ class NewsEventsFragment : Fragment() {
 
     private val newsAdapter by lazy {
         NewsArticleAdapter { article ->
-            val bundle = Bundle().apply { putString("symbol", article.symbol) }
-            findNavController().navigate(R.id.stockDetailFragment, bundle)
+            val bundle = Bundle().apply { putString("articleId", article.id) }
+            findNavController().navigate(R.id.action_newsEvents_to_articleDetail, bundle)
         }
     }
 
@@ -61,9 +62,24 @@ class NewsEventsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
+        val lm = LinearLayoutManager(requireContext())
         binding.rvNewsEvents.apply {
-            layoutManager = LinearLayoutManager(requireContext())
+            layoutManager = lm
             adapter = newsAdapter
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    if (dy > 0) {
+                        val visibleItemCount = lm.childCount
+                        val totalItemCount = lm.itemCount
+                        val firstVisibleItemPosition = lm.findFirstVisibleItemPosition()
+
+                        if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount - 3 && totalItemCount > 0) {
+                            viewModel.loadNextPage()
+                        }
+                    }
+                }
+            })
         }
     }
 
@@ -71,6 +87,11 @@ class NewsEventsFragment : Fragment() {
         // Top Back
         binding.ivBack.setOnClickListener {
             findNavController().popBackStack()
+        }
+
+        // Refresh action
+        binding.ivRefresh.setOnClickListener {
+            viewModel.refreshNews()
         }
 
         // Help
@@ -147,12 +168,29 @@ class NewsEventsFragment : Fragment() {
                             binding.rvNewsEvents.visibility = View.GONE
                             binding.layoutEmptyState.visibility = View.GONE
                             binding.layoutErrorState.visibility = View.GONE
+                            binding.progressLoadMore.visibility = View.GONE
                         }
                         is NewsEventsUiState.Success -> {
                             binding.progressLoading.visibility = View.GONE
                             binding.rvNewsEvents.visibility = View.VISIBLE
                             binding.layoutEmptyState.visibility = View.GONE
                             binding.layoutErrorState.visibility = View.GONE
+
+                            // Market Status Banner
+                            if (!state.marketStatusText.isNullOrBlank()) {
+                                binding.layoutMarketStatus.visibility = View.VISIBLE
+                                binding.tvMarketStatus.text = state.marketStatusText
+                            } else {
+                                binding.layoutMarketStatus.visibility = View.GONE
+                            }
+
+                            // Load more progress indicator
+                            binding.progressLoadMore.visibility = if (state.isLoadingMore) View.VISIBLE else View.GONE
+
+                            // Refresh feedback toast if message present
+                            if (!state.refreshMessage.isNullOrBlank() && !state.isRefreshing) {
+                                Toast.makeText(requireContext(), state.refreshMessage, Toast.LENGTH_SHORT).show()
+                            }
 
                             updateTabsUI(state.activeTab)
                             updateFilterPills(state.activeCategory)
@@ -177,12 +215,14 @@ class NewsEventsFragment : Fragment() {
                             binding.rvNewsEvents.visibility = View.GONE
                             binding.layoutEmptyState.visibility = View.VISIBLE
                             binding.layoutErrorState.visibility = View.GONE
+                            binding.progressLoadMore.visibility = View.GONE
                         }
                         is NewsEventsUiState.Error -> {
                             binding.progressLoading.visibility = View.GONE
                             binding.rvNewsEvents.visibility = View.GONE
                             binding.layoutEmptyState.visibility = View.GONE
                             binding.layoutErrorState.visibility = View.VISIBLE
+                            binding.progressLoadMore.visibility = View.GONE
                             binding.tvErrorMessage.text = state.message
                         }
                     }

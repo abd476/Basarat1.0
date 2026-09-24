@@ -23,6 +23,8 @@ import com.fyp.basarattradeinvest.domain.model.CandleEntry
 import com.fyp.basarattradeinvest.domain.model.StockDetail
 import com.fyp.basarattradeinvest.domain.model.StockTrade
 import com.fyp.basarattradeinvest.feature.stock.detail.adapter.TradeAdapter
+import com.fyp.basarattradeinvest.data.repository.NewsRepositoryImpl
+import com.fyp.basarattradeinvest.feature.news.adapter.NewsArticleAdapter
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.CandleStickChart
 import com.github.mikephil.charting.components.XAxis
@@ -538,18 +540,47 @@ class StockDetailFragment : Fragment() {
     }
 
     private fun bindNewsContent(state: StockDetailUiState.Success) {
-        val content = layoutInflater.inflate(R.layout.content_by_price, binding.containerTabContent, false)
-        val container = content.findViewById<android.widget.LinearLayout>(R.id.container_stats)
-        val newsItems = listOf(
-            Pair("${state.detail.symbol} reports quarterly earnings beat", "2h ago"),
-            Pair("PSX trading volume hits 3-month high", "5h ago"),
-            Pair("${state.detail.sector} sector outlook upgraded by analysts", "1d ago"),
-            Pair("${state.detail.symbol} board approves dividend payout", "2d ago")
-        )
-        newsItems.forEach { (headline, time) ->
-            addStatRow(container, headline, time)
+        val sym = state.detail.symbol
+        val rv = RecyclerView(requireContext()).apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            isNestedScrollingEnabled = false
         }
-        binding.containerTabContent.addView(content)
+        val stockNewsAdapter = NewsArticleAdapter { article ->
+            val bundle = Bundle().apply { putString("articleId", article.id) }
+            findNavController().navigate(R.id.action_stockDetail_to_articleDetail, bundle)
+        }
+        rv.adapter = stockNewsAdapter
+        binding.containerTabContent.addView(rv)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = NewsRepositoryImpl().getStockNews(symbol = sym, limit = 10)
+            result.fold(
+                onSuccess = { page ->
+                    if (page.articles.isNotEmpty()) {
+                        stockNewsAdapter.submitList(page.articles)
+                    } else {
+                        val emptyTv = TextView(requireContext()).apply {
+                            text = "No recent news articles found for $sym"
+                            setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_secondary))
+                            textSize = 13f
+                            setPadding(16, 32, 16, 32)
+                        }
+                        binding.containerTabContent.removeAllViews()
+                        binding.containerTabContent.addView(emptyTv)
+                    }
+                },
+                onFailure = {
+                    val errorTv = TextView(requireContext()).apply {
+                        text = "Unable to load news for $sym"
+                        setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_secondary))
+                        textSize = 13f
+                        setPadding(16, 32, 16, 32)
+                    }
+                    binding.containerTabContent.removeAllViews()
+                    binding.containerTabContent.addView(errorTv)
+                }
+            )
+        }
     }
 
     private fun bindProfileContent(state: StockDetailUiState.Success) {

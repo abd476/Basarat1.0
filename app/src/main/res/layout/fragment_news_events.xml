@@ -70,9 +70,20 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
+                android:id="@+id/iv_refresh"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Refresh"
+                android:padding="5dp"
+                android:src="@drawable/ic_refresh"
+                app:tint="@color/color_text_primary" />
+
+            <ImageView
                 android:id="@+id/iv_search"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
+                android:layout_marginStart="6dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Search"
                 android:padding="5dp"
@@ -83,7 +94,7 @@
                 android:id="@+id/iv_help"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="6dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Help"
                 android:padding="5dp"
@@ -91,6 +102,41 @@
                 app:tint="@color/color_text_primary" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Market Status Banner -->
+    <LinearLayout
+        android:id="@+id/layout_market_status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/bg_segmented_container"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="4dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_top_bar"
+        tools:visibility="visible">
+
+        <View
+            android:id="@+id/view_market_status_dot"
+            android:layout_width="7dp"
+            android:layout_height="7dp"
+            android:background="@drawable/bg_badge_positive" />
+
+        <TextView
+            android:id="@+id/tv_market_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
+            android:textColor="@color/color_text_secondary"
+            android:textSize="11sp"
+            tools:text="Market: Regular Session • 09:30 - 15:30 PKT" />
+    </LinearLayout>
 
     <!-- Expandable Search Input Bar (Identical to Shariah Screening) -->
     <LinearLayout
@@ -107,7 +153,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_top_bar"
+        app:layout_constraintTop_toBottomOf="@id/layout_market_status"
         tools:visibility="visible">
 
         <ImageView
@@ -405,5 +451,17 @@
             android:text="Retry"
             android:textColor="@color/white" />
     </LinearLayout>
+
+    <!-- Load More Pagination Indicator -->
+    <ProgressBar
+        android:id="@+id/progress_load_more"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginBottom="8dp"
+        android:indeterminateTint="@color/color_basarat_green"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
