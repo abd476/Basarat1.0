@@ -171,6 +171,11 @@ class StockDetailFragment : Fragment() {
             Toast.makeText(requireContext(), "Share stock", Toast.LENGTH_SHORT).show()
         }
 
+        // Chat Assistant
+        binding.ivChatAssistant.setOnClickListener {
+            findNavController().navigate(R.id.action_stockDetail_to_assistantChat)
+        }
+
         // Favorite
         binding.ivFavorite.setOnClickListener {
             Toast.makeText(requireContext(), "Added to watchlist", Toast.LENGTH_SHORT).show()

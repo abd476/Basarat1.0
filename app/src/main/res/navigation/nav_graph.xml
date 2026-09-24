@@ -102,6 +102,12 @@
         <action
             android:id="@+id/action_marketDashboard_to_communityNotifications"
             app:destination="@id/communityNotificationsFragment" />
+        <action
+            android:id="@+id/action_marketDashboard_to_assistant"
+            app:destination="@id/assistantConversationsFragment" />
+        <action
+            android:id="@+id/action_marketDashboard_to_assistantChat"
+            app:destination="@id/assistantChatFragment" />
     </fragment>
 
     <fragment
@@ -130,6 +136,12 @@
         <action
             android:id="@+id/action_markets_to_notifications"
             app:destination="@id/notificationsFragment" />
+        <action
+            android:id="@+id/action_markets_to_assistant"
+            app:destination="@id/assistantConversationsFragment" />
+        <action
+            android:id="@+id/action_markets_to_assistantChat"
+            app:destination="@id/assistantChatFragment" />
     </fragment>
 
     <fragment
@@ -199,6 +211,9 @@
         <action
             android:id="@+id/action_stockDetail_to_alerts"
             app:destination="@id/alertsFragment" />
+        <action
+            android:id="@+id/action_stockDetail_to_assistantChat"
+            app:destination="@id/assistantChatFragment" />
     </fragment>
 
     <fragment
@@ -480,5 +495,28 @@
         android:name="com.fyp.basarattradeinvest.feature.community.notifications.CommunityNotificationsFragment"
         android:label="Community Notifications"
         tools:layout="@layout/fragment_community_notifications" />
+
+    <!-- AI Assistant Destinations -->
+    <fragment
+        android:id="@+id/assistantConversationsFragment"
+        android:name="com.fyp.basarattradeinvest.feature.assistant.AssistantConversationsFragment"
+        android:label="AI Assistant"
+        tools:layout="@layout/fragment_assistant_conversations">
+        <action
+            android:id="@+id/action_assistantConversations_to_chat"
+            app:destination="@id/assistantChatFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/assistantChatFragment"
+        android:name="com.fyp.basarattradeinvest.feature.assistant.AssistantChatFragment"
+        android:label="AI Assistant"
+        tools:layout="@layout/fragment_assistant_chat">
+        <argument
+            android:name="conversation_id"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
 
 </navigation>

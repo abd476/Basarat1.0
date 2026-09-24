@@ -43,7 +43,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.notificationsFragment,
                 R.id.chartFullscreenFragment,
                 R.id.communityFollowersFragment,
-                R.id.communityNotificationsFragment -> {
+                R.id.communityNotificationsFragment,
+                R.id.assistantConversationsFragment,
+                R.id.assistantChatFragment -> {
                     binding.bottomNavigation.visibility = View.GONE
                 }
                 else -> {

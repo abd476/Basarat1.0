@@ -151,6 +151,10 @@ class MarketDashboardFragment : Fragment() {
         binding.chipRecommendations.setOnClickListener {
             findNavController().navigate(R.id.recommendationsFragment)
         }
+
+        binding.fabChatAssistant.setOnClickListener {
+            findNavController().navigate(R.id.action_marketDashboard_to_assistant)
+        }
     }
 
     private fun observeUiState() {

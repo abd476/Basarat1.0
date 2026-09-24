@@ -93,6 +93,17 @@
                         app:tint="@color/color_text_primary" />
 
                     <ImageView
+                        android:id="@+id/iv_chat_assistant"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="8dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Ask AI Assistant"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_chat_assistant"
+                        app:tint="@color/color_text_primary" />
+
+                    <ImageView
                         android:id="@+id/iv_search"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
