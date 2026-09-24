@@ -34,8 +34,8 @@ class ShariahScreeningFragment : Fragment() {
 
     private val stockAdapter by lazy {
         ShariahStockAdapter { stock ->
-            val bundle = Bundle().apply { putString("symbol", stock.symbol) }
-            findNavController().navigate(R.id.stockDetailFragment, bundle)
+            val sheet = com.fyp.basarattradeinvest.feature.shariah.details.StockShariahDetailsBottomSheet.newInstance(stock.symbol)
+            sheet.show(childFragmentManager, "StockShariahDetailsBottomSheet")
         }
     }
 

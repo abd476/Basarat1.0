@@ -13,9 +13,9 @@
         android:icon="@drawable/ic_nav_portfolio"
         android:title="@string/nav_portfolio" />
     <item
-        android:id="@+id/nav_ai"
-        android:icon="@drawable/ic_nav_ai"
-        android:title="@string/nav_ai" />
+        android:id="@+id/communityProfileFragment"
+        android:icon="@drawable/ic_nav_community"
+        android:title="@string/nav_community" />
     <item
         android:id="@+id/nav_you"
         android:icon="@drawable/ic_nav_you"

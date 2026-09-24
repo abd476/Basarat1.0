@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -21,6 +22,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentLoginBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment() {
@@ -58,7 +60,7 @@ class LoginFragment : Fragment() {
                 binding.etPassword.transformationMethod = PasswordTransformationMethod.getInstance()
                 binding.ivTogglePassword.setImageResource(R.drawable.ic_eye)
             }
-            binding.etPassword.setSelection(binding.etPassword.text.length)
+            binding.etPassword.setSelection(binding.etPassword.text?.length ?: 0)
         }
     }
 
@@ -88,7 +90,7 @@ class LoginFragment : Fragment() {
         }
 
         binding.tvForgotPassword.setOnClickListener {
-            Toast.makeText(requireContext(), "Forgot password flow", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_loginFragment_to_forgotPasswordFragment)
         }
 
         binding.btnGoogleSignIn.setOnClickListener {
@@ -126,7 +128,24 @@ class LoginFragment : Fragment() {
                             binding.pbLoading.visibility = View.GONE
                             binding.tvSignInLabel.visibility = View.VISIBLE
                             binding.btnSignIn.isEnabled = true
-                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+
+                            if (state.message.contains("Email not verified", ignoreCase = true)) {
+                                val enteredEmail = binding.etEmail.text?.toString().orEmpty().trim()
+                                MaterialAlertDialogBuilder(requireContext())
+                                    .setTitle("Email Verification Required")
+                                    .setMessage(state.message)
+                                    .setPositiveButton("Verify Now") { _, _ ->
+                                        val bundle = bundleOf(EmailVerificationFragment.ARG_EMAIL to enteredEmail)
+                                        findNavController().navigate(
+                                            R.id.action_loginFragment_to_emailVerificationFragment,
+                                            bundle
+                                        )
+                                    }
+                                    .setNegativeButton("Cancel", null)
+                                    .show()
+                            } else {
+                                Toast.makeText(requireContext(), state.message, Toast.LENGTH_LONG).show()
+                            }
                             viewModel.resetState()
                         }
                     }

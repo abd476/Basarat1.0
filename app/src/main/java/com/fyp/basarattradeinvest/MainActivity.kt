@@ -29,7 +29,27 @@ class MainActivity : AppCompatActivity() {
         // Show BottomNavigationView only on main app destinations, hide on Splash, Onboarding & Auth screens
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.splashFragment, R.id.onboardingFragment, R.id.loginFragment, R.id.signUpFragment -> {
+                R.id.splashFragment,
+                R.id.onboardingFragment,
+                R.id.loginFragment,
+                R.id.signUpFragment,
+                R.id.emailVerificationFragment,
+                R.id.forgotPasswordFragment,
+                R.id.verifyResetCodeFragment,
+                R.id.resetPasswordFragment,
+                R.id.changePasswordFragment,
+                R.id.editProfileFragment,
+                R.id.riskProfileFragment,
+                R.id.notificationPreferencesFragment,
+                R.id.alertsFragment,
+                R.id.notificationsFragment,
+                R.id.chartFullscreenFragment,
+                R.id.communityFollowersFragment,
+                R.id.communityNotificationsFragment,
+                R.id.assistantConversationsFragment,
+                R.id.assistantChatFragment,
+                R.id.adminCommunityHubFragment,
+                R.id.adminReportDetailFragment -> {
                     binding.bottomNavigation.visibility = View.GONE
                 }
                 else -> {

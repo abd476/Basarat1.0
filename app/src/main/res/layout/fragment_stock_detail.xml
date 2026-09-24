@@ -93,6 +93,17 @@
                         app:tint="@color/color_text_primary" />
 
                     <ImageView
+                        android:id="@+id/iv_chat_assistant"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="8dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Ask AI Assistant"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_chat_assistant"
+                        app:tint="@color/color_text_primary" />
+
+                    <ImageView
                         android:id="@+id/iv_search"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
@@ -230,6 +241,20 @@
                             tools:text="+9.98%" />
                     </LinearLayout>
                 </LinearLayout>
+
+                <!-- Recommendation Button -->
+                <TextView
+                    android:id="@+id/btn_recommendation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/bg_badge_teal"
+                    android:gravity="center"
+                    android:paddingHorizontal="10dp"
+                    android:text="AI Rec"
+                    android:textColor="@color/color_shariah_teal"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
 
                 <!-- Favorite Icon -->
                 <ImageView
@@ -518,7 +543,7 @@
 
             <!-- ======================================= -->
             <!-- 8. BOTTOM SECTION TABS                  -->
-            <!--    Quotes | News● | Profile             -->
+            <!--    Quotes | Analysis | News● | Profile   -->
             <!-- ======================================= -->
             <LinearLayout
                 android:id="@+id/layout_section_tabs"
@@ -526,7 +551,7 @@
                 android:layout_height="44dp"
                 android:orientation="horizontal"
                 android:paddingHorizontal="16dp"
-                android:weightSum="3">
+                android:weightSum="4">
 
                 <!-- Quotes Tab (active) -->
                 <LinearLayout
@@ -554,6 +579,32 @@
                         android:layout_height="2.5dp"
                         android:layout_marginTop="4dp"
                         android:background="@color/color_basarat_green" />
+                </LinearLayout>
+
+                <!-- Analysis Tab (Navigates to Stock Analysis) -->
+                <LinearLayout
+                    android:id="@+id/tab_section_analysis"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_tab_analysis"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Analysis"
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="14sp" />
+
+                    <View
+                        android:id="@+id/indicator_analysis"
+                        android:layout_width="40dp"
+                        android:layout_height="2.5dp"
+                        android:layout_marginTop="4dp"
+                        android:background="@color/transparent" />
                 </LinearLayout>
 
                 <!-- News Tab (with notification dot) -->

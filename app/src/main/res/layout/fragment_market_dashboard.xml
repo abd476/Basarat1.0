@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/swipe_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll_market_dashboard"
@@ -91,6 +95,20 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <ImageView
+                android:id="@+id/iv_top_notifications"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Notifications"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_alert_bell"
+                app:tint="@color/color_text_primary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/iv_top_search"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <ImageView
                 android:id="@+id/iv_top_search"
                 android:layout_width="32dp"
@@ -150,110 +168,172 @@
             android:background="@drawable/bg_card_clean"
             android:padding="16dp">
 
-            <!-- Left Index (KSE-100) -->
+            <!-- 3 Column Indices Header: KSE-100, KSE-30, KMI-30 -->
             <LinearLayout
-                android:id="@+id/layout_index_1"
-                android:layout_width="0dp"
+                android:id="@+id/layout_indices_row"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintEnd_toStartOf="@id/layout_index_2"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
+                <!-- 1. KSE-100 -->
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:id="@+id/layout_index_1"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                    <View
-                        android:layout_width="3dp"
-                        android:layout_height="12dp"
-                        android:layout_marginEnd="6dp"
-                        android:background="#00E5FF" />
-
-                    <TextView
-                        android:id="@+id/tv_index_1_name"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="KSE-100"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="3dp"
+                            android:layout_height="12dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="#00E5FF" />
+
+                        <TextView
+                            android:id="@+id/tv_index_1_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="KSE-100"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_index_1_points"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="85,421.32"
                         android:textColor="@color/color_text_primary"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_index_1_change"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="-142.70 -0.17%"
+                        android:textColor="@color/color_negative"
+                        android:textSize="10sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tv_index_1_points"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="85,421.32"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tv_index_1_change"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="-142.70  -1.30%"
-                    android:textColor="@color/color_negative"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <!-- Right Index (KMI-30) -->
-            <LinearLayout
-                android:id="@+id/layout_index_2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/layout_index_1"
-                app:layout_constraintTop_toTopOf="parent">
-
+                <!-- 2. KSE-30 -->
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:id="@+id/layout_index_3"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="4dp">
 
-                    <View
-                        android:layout_width="3dp"
-                        android:layout_height="12dp"
-                        android:layout_marginEnd="6dp"
-                        android:background="#9D4EDD" />
-
-                    <TextView
-                        android:id="@+id/tv_index_2_name"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="KMI-30"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="3dp"
+                            android:layout_height="12dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="#00B894" />
+
+                        <TextView
+                            android:id="@+id/tv_index_3_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="KSE-30"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_index_3_points"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="26,840.15"
                         android:textColor="@color/color_text_primary"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_index_3_change"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="+78.40 +0.29%"
+                        android:textColor="@color/color_positive"
+                        android:textSize="10sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tv_index_2_points"
-                    android:layout_width="wrap_content"
+                <!-- 3. KMI-30 -->
+                <LinearLayout
+                    android:id="@+id/layout_index_2"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="143,579.19"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tv_index_2_change"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="-53.44  -0.25%"
-                    android:textColor="@color/color_negative"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="3dp"
+                            android:layout_height="12dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="#9D4EDD" />
+
+                        <TextView
+                            android:id="@+id/tv_index_2_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="KMI-30"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_index_2_points"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="143,579.19"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_index_2_change"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="-53.44 -0.04%"
+                        android:textColor="@color/color_negative"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
             </LinearLayout>
 
             <!-- Dual-Line Intraday Canvas Chart -->
@@ -264,7 +344,7 @@
                 android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layout_index_1" />
+                app:layout_constraintTop_toBottomOf="@id/layout_indices_row" />
 
             <!-- Chart Time Stamps (PSX Trading Session) -->
             <LinearLayout
@@ -364,9 +444,10 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_overview_label_1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Value"
+                        android:text="A/D Ratio"
                         android:textColor="@color/color_text_secondary"
                         android:textSize="12sp" />
 
@@ -375,7 +456,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="12.83B"
+                        tools:text="1.42x"
                         android:textColor="@color/color_text_primary"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -388,9 +469,10 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_overview_label_2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Volume"
+                        android:text="Advancing"
                         android:textColor="@color/color_text_secondary"
                         android:textSize="12sp" />
 
@@ -399,8 +481,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="187.14M"
-                        android:textColor="@color/color_text_primary"
+                        tools:text="195"
+                        android:textColor="@color/color_positive"
                         android:textSize="16sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -413,9 +495,10 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_overview_label_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Trades"
+                        android:text="Declining"
                         android:textColor="@color/color_text_secondary"
                         android:textSize="12sp" />
 
@@ -424,8 +507,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="378,731"
-                        android:textColor="@color/color_text_primary"
+                        tools:text="137"
+                        android:textColor="@color/color_negative"
                         android:textSize="16sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -513,6 +596,33 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
+                <!-- Recommendations -->
+                <LinearLayout
+                    android:id="@+id/chip_recommendations"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_feature_chip"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginEnd="6dp"
+                        android:src="@drawable/ic_chip_smart" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Recommendations"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
                 <!-- IPOs -->
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -559,6 +669,60 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Shariah"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Community Hub -->
+                <LinearLayout
+                    android:id="@+id/chip_community"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_feature_chip"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginEnd="6dp"
+                        android:src="@drawable/ic_chip_community" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Community"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- News & Events -->
+                <LinearLayout
+                    android:id="@+id/chip_news"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_feature_chip"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginEnd="6dp"
+                        android:src="@drawable/ic_chip_news" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="News"
                         android:textColor="@color/color_text_primary"
                         android:textSize="12sp"
                         android:textStyle="bold" />
@@ -1005,6 +1169,168 @@
                 tools:listitem="@layout/item_sector_performance" />
         </LinearLayout>
 
+        <!-- 9. Index Constituents Section (PSX Blueprint) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="16dp">
+
+                <TextView
+                    android:id="@+id/tv_constituents_header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Index Constituents \u203A"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_constituents_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Constituents"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Index Selector Tabs: KSE-100, KSE-30, KMI-30 -->
+            <LinearLayout
+                android:id="@+id/layout_constituent_tabs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
+
+                <TextView
+                    android:id="@+id/tab_constituent_kse100"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_market_tab_selected"
+                    android:gravity="center"
+                    android:paddingHorizontal="14dp"
+                    android:text="KSE-100"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tab_constituent_kse30"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_market_tab_unselected"
+                    android:gravity="center"
+                    android:paddingHorizontal="14dp"
+                    android:text="KSE-30"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tab_constituent_kmi30"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_market_tab_unselected"
+                    android:gravity="center"
+                    android:paddingHorizontal="14dp"
+                    android:text="KMI-30 (Shariah)"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <!-- Table Header: Symbol | Price | %Chg -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Symbol"
+                    android:textColor="@color/color_text_tertiary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="85dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="Price"
+                    android:textColor="@color/color_text_tertiary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="75dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="%Chg"
+                    android:textColor="@color/color_text_tertiary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <!-- Constituents RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_constituents"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                tools:itemCount="5"
+                tools:listitem="@layout/item_constituent" />
+
+            <!-- Constituents Empty / Loading View -->
+            <ProgressBar
+                android:id="@+id/pb_constituents_loading"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:layout_marginVertical="16dp"
+                android:indeterminateTint="@color/color_basarat_green"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tv_constituents_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="16dp"
+                android:gravity="center"
+                android:text="No constituents available"
+                android:textColor="@color/color_text_tertiary"
+                android:textSize="13sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- Floating Chat Assistant Action Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_chat_assistant"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="AI Chat Assistant"
+        android:src="@drawable/ic_chat_assistant"
+        app:backgroundTint="@color/color_basarat_green"
+        app:tint="@color/white"
+        app:elevation="6dp" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

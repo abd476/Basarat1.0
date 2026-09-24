@@ -1,5 +1,8 @@
 package com.fyp.basarattradeinvest.data.remote
 
+import com.fyp.basarattradeinvest.core.network.AuthInterceptor
+import com.fyp.basarattradeinvest.core.network.TokenAuthenticator
+import com.fyp.basarattradeinvest.data.remote.api.AuthApiService
 import com.fyp.basarattradeinvest.data.remote.api.MarketApiService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -9,17 +12,27 @@ import java.util.concurrent.TimeUnit
 
 object NetworkClient {
 
-    // Base URL for the BASARAT backend API (can be configured via BuildConfig / env)
-    private const val BASE_URL = "https://api.basarat.pk/"
+    // Live backend OpenAPI source of truth
+    const val BASE_URL = "https://basarat-fyp-official.onrender.com/"
 
+    // Sanitized logging interceptor: redacts sensitive Authorization headers & tokens
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
+        redactHeader("Authorization")
+        redactHeader("Cookie")
+        redactHeader("Set-Cookie")
     }
 
+    private val authInterceptor = AuthInterceptor()
+    private val tokenAuthenticator = TokenAuthenticator(BASE_URL)
+
     private val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor(authInterceptor)
         .addInterceptor(loggingInterceptor)
-        .connectTimeout(15, TimeUnit.SECONDS)
-        .readTimeout(15, TimeUnit.SECONDS)
+        .authenticator(tokenAuthenticator)
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
         .build()
 
     private val retrofit = Retrofit.Builder()
@@ -30,5 +43,61 @@ object NetworkClient {
 
     val marketApiService: MarketApiService by lazy {
         retrofit.create(MarketApiService::class.java)
+    }
+
+    val authApiService: AuthApiService by lazy {
+        retrofit.create(AuthApiService::class.java)
+    }
+
+    val usersApiService: com.fyp.basarattradeinvest.data.remote.api.UsersApiService by lazy {
+        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.UsersApiService::class.java)
+    }
+
+    val forecastApiService: com.fyp.basarattradeinvest.data.remote.api.ForecastApiService by lazy {
+        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.ForecastApiService::class.java)
+    }
+
+    val stocksApiService: com.fyp.basarattradeinvest.data.remote.api.StocksApiService by lazy {
+        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.StocksApiService::class.java)
+    }
+
+    val recommendationsApiService: com.fyp.basarattradeinvest.data.remote.api.RecommendationsApiService by lazy {
+        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.RecommendationsApiService::class.java)
+    }
+
+    val portfolioApiService: com.fyp.basarattradeinvest.data.remote.api.PortfolioApiService by lazy {
+        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.PortfolioApiService::class.java)
+    }
+
+    val riskApiService: com.fyp.basarattradeinvest.data.remote.api.RiskApiService by lazy {
+        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.RiskApiService::class.java)
+    }
+
+    val sentimentApiService: com.fyp.basarattradeinvest.data.remote.api.SentimentApiService by lazy {
+        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.SentimentApiService::class.java)
+    }
+
+    val newsApiService: com.fyp.basarattradeinvest.data.remote.api.NewsApiService by lazy {
+        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.NewsApiService::class.java)
+    }
+
+    val alertsApiService: com.fyp.basarattradeinvest.data.remote.api.AlertsApiService by lazy {
+        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.AlertsApiService::class.java)
+    }
+
+    val notificationsApiService: com.fyp.basarattradeinvest.data.remote.api.NotificationsApiService by lazy {
+        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.NotificationsApiService::class.java)
+    }
+
+    val shariahApiService: com.fyp.basarattradeinvest.data.remote.api.ShariahApiService by lazy {
+        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.ShariahApiService::class.java)
+    }
+
+    val communityApiService: com.fyp.basarattradeinvest.data.remote.api.CommunityApiService by lazy {
+        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.CommunityApiService::class.java)
+    }
+
+    val assistantApiService: com.fyp.basarattradeinvest.data.remote.api.AssistantApiService by lazy {
+        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.AssistantApiService::class.java)
     }
 }

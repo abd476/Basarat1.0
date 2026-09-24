@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="14dp">
+
+        <!-- Header Row: Ticker (with orange D) + Source • Time + FinBERT Sentiment -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Symbol -->
+            <TextView
+                android:id="@+id/tv_news_ticker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                tools:text="LUCK" />
+
+            <TextView
+                android:id="@+id/tv_dividend_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:text="D"
+                android:textColor="@color/color_dividend_orange"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                tools:visibility="visible" />
+
+            <!-- Dot Separator -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="6dp"
+                android:text="•"
+                android:textColor="@color/color_text_tertiary"
+                android:textSize="11sp" />
+
+            <!-- Publisher Source -->
+            <TextView
+                android:id="@+id/tv_news_source"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/color_text_secondary"
+                android:textSize="11sp"
+                tools:text="Business Recorder" />
+
+            <!-- Dot Separator -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="6dp"
+                android:text="•"
+                android:textColor="@color/color_text_tertiary"
+                android:textSize="11sp" />
+
+            <!-- Timestamp -->
+            <TextView
+                android:id="@+id/tv_news_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/color_text_tertiary"
+                android:textSize="11sp"
+                tools:text="25m ago" />
+
+            <!-- Sentiment Badge -->
+            <TextView
+                android:id="@+id/tv_news_sentiment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_badge_positive"
+                android:paddingHorizontal="7dp"
+                android:paddingVertical="2dp"
+                android:textColor="@color/color_positive"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                tools:text="+0.82 Bullish" />
+        </LinearLayout>
+
+        <!-- Headline -->
+        <TextView
+            android:id="@+id/tv_news_headline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:lineSpacingExtra="2dp"
+            android:maxLines="2"
+            android:textColor="@color/color_text_primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="Lucky Cement reports 24% profit surge on robust export volumes and lower energy costs" />
+
+        <!-- Snippet Summary -->
+        <TextView
+            android:id="@+id/tv_news_snippet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:lineSpacingExtra="1dp"
+            android:maxLines="2"
+            android:textColor="@color/color_text_secondary"
+            android:textSize="12sp"
+            tools:text="The company posted unconsolidated net earnings of PKR 27.6B for the fiscal year, driven by higher operational efficiency." />
+
+    </LinearLayout>
+
+    <!-- Hairline Divider (Identical to Shariah Screen) -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/color_divider" />
+
+</LinearLayout>

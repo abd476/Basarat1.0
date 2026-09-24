@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/color_background">
+
+    <!-- Top App Bar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/color_background"
+        android:elevation="1dp"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationIconTint="@color/color_text_primary"
+        app:titleTextColor="@color/color_text_primary"
+        app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        app:title="AI Assistant" />
+
+    <!-- Message list area -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- Loading state -->
+        <ProgressBar
+            android:id="@+id/progressLoading"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:indeterminateTint="@color/color_basarat_green" />
+
+        <!-- Error state -->
+        <LinearLayout
+            android:id="@+id/layoutError"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="32dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvErrorMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_negative"
+                android:textSize="14sp"
+                android:gravity="center" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRetry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Retry"
+                android:layout_marginTop="16dp"
+                app:backgroundTint="@color/color_basarat_green" />
+
+        </LinearLayout>
+
+        <!-- Welcome state (empty new chat) -->
+        <LinearLayout
+            android:id="@+id/layoutWelcome"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="32dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_nav_ai"
+                android:contentDescription="AI"
+                app:tint="@color/color_ai_blue"
+                android:alpha="0.7" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BASARAT AI Assistant"
+                android:textColor="@color/color_text_primary"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ask me about PSX stocks, market analysis, portfolio insights, and investment strategies."
+                android:textColor="@color/color_text_secondary"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:layout_marginTop="8dp"
+                android:layout_marginHorizontal="24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="This is a decision-support tool. Not investment advice."
+                android:textColor="@color/color_text_tertiary"
+                android:textSize="12sp"
+                android:gravity="center"
+                android:layout_marginTop="12dp"
+                android:fontFamily="sans-serif-medium" />
+
+        </LinearLayout>
+
+        <!-- Chat messages -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvMessages"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:visibility="gone"
+            tools:listitem="@layout/item_chat_message_assistant" />
+
+        <!-- Stop Generation button (shows during active streaming) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnStopGenerating"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:text="Stop Generating"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:icon="@drawable/ic_close"
+            app:iconSize="14dp"
+            app:iconTint="@color/color_negative"
+            app:strokeColor="@color/color_negative"
+            android:textColor="@color/color_negative" />
+
+        <!-- Regenerate button (shows after last assistant message) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRegenerate"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:text="Regenerate"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:icon="@drawable/ic_regenerate"
+            app:iconSize="16dp"
+            app:iconTint="@color/color_text_secondary"
+            app:strokeColor="@color/color_divider"
+            android:textColor="@color/color_text_secondary" />
+
+    </FrameLayout>
+
+    <!-- Bottom divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/color_divider" />
+
+    <!-- Message composer -->
+    <LinearLayout
+        android:id="@+id/layoutComposer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical"
+        android:background="@color/color_surface">
+
+        <EditText
+            android:id="@+id/etMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_chat_input"
+            android:hint="Ask about PSX stocks..."
+            android:textColorHint="@color/color_input_hint"
+            android:textColor="@color/color_text_primary"
+            android:textSize="14sp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp"
+            android:maxLines="4"
+            android:inputType="textMultiLine|textCapSentences"
+            android:imeOptions="actionNone"
+            android:importantForAutofill="no" />
+
+        <ImageButton
+            android:id="@+id/btnSend"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:src="@drawable/ic_send"
+            app:tint="@color/white"
+            android:background="@drawable/bg_send_button"
+            android:contentDescription="Send message"
+            android:layout_marginStart="8dp"
+            android:padding="10dp"
+            android:elevation="2dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

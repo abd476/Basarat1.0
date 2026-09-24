@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.fyp.basarattradeinvest.R
+import com.fyp.basarattradeinvest.core.session.SessionManager
 import com.fyp.basarattradeinvest.databinding.FragmentSplashBinding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -29,11 +30,17 @@ class SplashFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        SessionManager.init(requireContext())
+
         viewLifecycleOwner.lifecycleScope.launch {
             // Display splash branding and spinner briefly before navigating
-            delay(1800)
+            delay(1200)
             if (isAdded) {
-                findNavController().navigate(R.id.action_splashFragment_to_onboardingFragment)
+                if (SessionManager.hasValidSession()) {
+                    findNavController().navigate(R.id.action_splashFragment_to_homeFragment)
+                } else {
+                    findNavController().navigate(R.id.action_splashFragment_to_onboardingFragment)
+                }
             }
         }
     }

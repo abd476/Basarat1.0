@@ -29,32 +29,18 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Subtitle -->
-        <TextView
-            android:id="@+id/tv_subtitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:lineSpacingExtra="3dp"
-            android:text="@string/welcome_back_subtitle"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="13sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
         <!-- Email Label -->
         <TextView
             android:id="@+id/tv_email_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
             android:text="@string/label_email"
             android:textColor="@color/color_text_primary"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_subtitle" />
+            tools:layout_editor_absoluteY="144dp" />
 
         <!-- Email Input -->
         <EditText

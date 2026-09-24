@@ -6,6 +6,7 @@
     <string name="nav_markets">Markets</string>
     <string name="nav_portfolio">Portfolio</string>
     <string name="nav_ai">AI</string>
+    <string name="nav_community">Community</string>
     <string name="nav_you">You</string>
 
     <!-- Onboarding Step 1 -->
@@ -49,4 +50,43 @@
     <string name="continue_with_apple">Continue with Apple</string>
     <string name="dont_have_account">Don\'t have an account?</string>
     <string name="already_have_account">Already have an account?</string>
+
+    <!-- Alerts Module -->
+    <string name="title_alerts">Alerts &amp; Notifications</string>
+    <string name="tab_alert_rules">My Rules</string>
+    <string name="tab_alert_history">History</string>
+    <string name="create_alert_rule">Create Alert Rule</string>
+    <string name="edit_alert_rule">Edit Alert Rule</string>
+    <string name="delete_alert_rule">Delete Alert Rule</string>
+
+    <!-- Notifications Module -->
+    <string name="title_notifications">Notifications</string>
+    <string name="notifications_inbox">In-App Notifications</string>
+
+    <!-- Shariah Module -->
+    <string name="title_shariah">Shariah Screening</string>
+    <string name="subtitle_shariah">PSX KMI-30 &amp; AAOIFI Compliance</string>
+    <string name="tab_kmi30">KMI-30 Constituents</string>
+    <string name="tab_shariah_criteria">Screening Criteria</string>
+    <string name="tab_dividend_purification">Dividend Purification</string>
+    <string name="shariah_disclaimer">Automated quantitative check adhering to PSX KMI methodology. Does not constitute a certified fatwa.</string>
+
+    <!-- Community Module -->
+    <string name="title_community">Community</string>
+    <string name="title_community_profile">Community Profile</string>
+    <string name="title_followers">Followers</string>
+    <string name="title_following">Following</string>
+    <string name="title_community_notifications">Community Notifications</string>
+    <string name="empty_posts">No published posts yet</string>
+    <string name="empty_followers">No followers yet</string>
+    <string name="empty_following">Not following anyone yet</string>
+    <string name="empty_community_notifications">You\'re all caught up!\nNo community notifications</string>
+
+    <!-- AI Assistant Module -->
+    <string name="title_assistant">AI Assistant</string>
+    <string name="delete_conversation_title">Delete Conversation</string>
+    <string name="delete_conversation_message">Are you sure you want to delete this conversation? This action cannot be undone.</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="assistant_disclaimer">BASARAT AI provides decision support and informational analysis. It does not constitute financial advisory services.</string>
 </resources>

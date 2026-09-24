@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_background">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_background"
+        app:elevation="0dp">
+
+        <!-- Top Header Navigation Bar -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:paddingHorizontal="16dp">
+
+            <ImageView
+                android:id="@+id/btn_back"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Back"
+                android:padding="6dp"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/color_text_primary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Alerts &amp; Notifications"
+                android:textColor="@color/color_text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btn_header_refresh"
+                app:layout_constraintStart_toEndOf="@id/btn_back"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/btn_header_refresh"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Refresh"
+                android:padding="6dp"
+                android:src="@drawable/ic_refresh"
+                app:tint="@color/color_text_secondary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Two Tabs (Alert Rules vs Triggered Notifications) -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout_alerts"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@color/color_background"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@color/color_brand_primary"
+            app:tabIndicatorFullWidth="true"
+            app:tabIndicatorHeight="3dp"
+            app:tabMode="fixed"
+            app:tabRippleColor="@color/color_surface"
+            app:tabSelectedTextColor="@color/color_brand_primary"
+            app:tabTextAppearance="@android:style/TextAppearance.Medium"
+            app:tabTextColor="@color/color_text_secondary">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="My Rules" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="History" />
+        </com.google.android.material.tabs.TabLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_divider" />
+
+        <!-- History Filter Chips Bar (Visible only on History tab) -->
+        <LinearLayout
+            android:id="@+id/layout_history_filters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_history_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleLine="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_filter_all"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="All Alerts"
+                    android:textSize="12sp" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_filter_unread"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Unread Only"
+                    android:textSize="12sp" />
+            </com.google.android.material.chip.ChipGroup>
+        </LinearLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Main Content with SwipeRefreshLayout -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- 1. Alert Rules List -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_alert_rules"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="8dp"
+                android:paddingBottom="88dp"
+                tools:listitem="@layout/item_alert_rule" />
+
+            <!-- 2. Alert History List -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_alert_history"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="8dp"
+                android:paddingBottom="88dp"
+                android:visibility="gone"
+                tools:listitem="@layout/item_alert_history" />
+
+            <!-- 3. Loading State -->
+            <LinearLayout
+                android:id="@+id/layout_loading"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="gone">
+
+                <ProgressBar
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:indeterminateTint="@color/color_brand_primary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Loading alerts..."
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- 4. Empty State -->
+            <LinearLayout
+                android:id="@+id/layout_empty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingHorizontal="32dp"
+                android:visibility="gone"
+                tools:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/iv_empty_icon"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:src="@drawable/ic_alert_bell"
+                    app:tint="@color/color_text_tertiary" />
+
+                <TextView
+                    android:id="@+id/tv_empty_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="No Alert Rules Yet"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_empty_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="Set price or volume targets to stay updated on market opportunities."
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="14sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_empty_create_rule"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="20dp"
+                    android:backgroundTint="@color/color_button_primary_bg"
+                    android:text="Create First Alert Rule"
+                    android:textAllCaps="false"
+                    android:textColor="@color/color_button_primary_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="12dp" />
+            </LinearLayout>
+
+            <!-- 5. Error State -->
+            <LinearLayout
+                android:id="@+id/layout_error"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingHorizontal="32dp"
+                android:visibility="gone"
+                tools:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_error_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Unable to load alerts. Please check your network connection."
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="15sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_retry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="16dp"
+                    android:backgroundTint="@color/color_brand_primary"
+                    android:text="Retry"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    app:cornerRadius="10dp" />
+            </LinearLayout>
+
+        </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- Floating Action Button to Create New Rule -->
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_create_rule"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="20dp"
+        android:backgroundTint="@color/color_brand_primary"
+        android:text="New Alert"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        app:icon="@drawable/ic_alert_bell"
+        app:iconTint="@color/white" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

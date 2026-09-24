@@ -3,20 +3,21 @@ package com.fyp.basarattradeinvest.feature.shariah
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.data.repository.ShariahRepositoryImpl
-import com.fyp.basarattradeinvest.domain.usecase.GetShariahStocksUseCase
+import com.fyp.basarattradeinvest.domain.model.ShariahStock
+import com.fyp.basarattradeinvest.domain.repository.ShariahRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ShariahScreeningViewModel(
-    private val getShariahStocksUseCase: GetShariahStocksUseCase = GetShariahStocksUseCase(ShariahRepositoryImpl())
+    private val repository: ShariahRepository = ShariahRepositoryImpl()
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ShariahScreeningUiState>(ShariahScreeningUiState.Loading)
     val uiState: StateFlow<ShariahScreeningUiState> = _uiState.asStateFlow()
 
-    private var currentCategory: String = "All Stocks"
+    private var currentCategory: String = "KMI-30"
     private var searchQuery: String = ""
 
     init {
@@ -32,21 +33,25 @@ class ShariahScreeningViewModel(
 
         viewModelScope.launch {
             _uiState.value = ShariahScreeningUiState.Loading
-            val result = getShariahStocksUseCase(category = currentCategory, query = searchQuery)
-            if (result.isSuccess) {
-                val list = result.getOrDefault(emptyList())
-                if (list.isEmpty()) {
-                    _uiState.value = ShariahScreeningUiState.Empty
-                } else {
-                    _uiState.value = ShariahScreeningUiState.Success(
-                        stocks = list,
-                        category = currentCategory,
-                        totalCount = list.size
+            val result = repository.getShariahCompliantStocks(category = currentCategory, query = searchQuery)
+            result.fold(
+                onSuccess = { list ->
+                    if (list.isEmpty()) {
+                        _uiState.value = ShariahScreeningUiState.Empty
+                    } else {
+                        _uiState.value = ShariahScreeningUiState.Success(
+                            stocks = list,
+                            category = currentCategory,
+                            totalCount = list.size
+                        )
+                    }
+                },
+                onFailure = { error ->
+                    _uiState.value = ShariahScreeningUiState.Error(
+                        error.message ?: "Unable to load PSX Shariah compliant stocks."
                     )
                 }
-            } else {
-                _uiState.value = ShariahScreeningUiState.Error("Unable to load PSX Shariah compliant stocks.")
-            }
+            )
         }
     }
 

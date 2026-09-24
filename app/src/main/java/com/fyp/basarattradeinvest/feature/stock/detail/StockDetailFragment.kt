@@ -23,6 +23,8 @@ import com.fyp.basarattradeinvest.domain.model.CandleEntry
 import com.fyp.basarattradeinvest.domain.model.StockDetail
 import com.fyp.basarattradeinvest.domain.model.StockTrade
 import com.fyp.basarattradeinvest.feature.stock.detail.adapter.TradeAdapter
+import com.fyp.basarattradeinvest.data.repository.NewsRepositoryImpl
+import com.fyp.basarattradeinvest.feature.news.adapter.NewsArticleAdapter
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.CandleStickChart
 import com.github.mikephil.charting.components.XAxis
@@ -48,6 +50,7 @@ class StockDetailFragment : Fragment() {
 
     private var candleChart: CandleStickChart? = null
     private var volumeChart: BarChart? = null
+    private var currentSymbol: String = "SARCO"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,8 +68,8 @@ class StockDetailFragment : Fragment() {
         observeUiState()
 
         // Load from navigation arguments
-        val symbol = arguments?.getString("symbol") ?: "SARCO"
-        viewModel.loadStock(symbol)
+        currentSymbol = arguments?.getString("symbol") ?: "SARCO"
+        viewModel.loadStock(currentSymbol)
     }
 
     // ───────────────────────────────
@@ -168,9 +171,20 @@ class StockDetailFragment : Fragment() {
             Toast.makeText(requireContext(), "Share stock", Toast.LENGTH_SHORT).show()
         }
 
+        // Chat Assistant
+        binding.ivChatAssistant.setOnClickListener {
+            findNavController().navigate(R.id.action_stockDetail_to_assistantChat)
+        }
+
         // Favorite
         binding.ivFavorite.setOnClickListener {
             Toast.makeText(requireContext(), "Added to watchlist", Toast.LENGTH_SHORT).show()
+        }
+
+        // AI Recommendation
+        binding.btnRecommendation.setOnClickListener {
+            val bundle = Bundle().apply { putString("symbol", currentSymbol) }
+            findNavController().navigate(R.id.action_stockDetail_to_recommendationDetail, bundle)
         }
 
         // Timeframe tabs
@@ -186,6 +200,16 @@ class StockDetailFragment : Fragment() {
 
         // Section Tabs
         binding.tabSectionQuotes.setOnClickListener { viewModel.setSection("Quotes") }
+        binding.tabSectionAnalysis.setOnClickListener {
+            val currentState = viewModel.uiState.value
+            val symbol = if (currentState is StockDetailUiState.Success) {
+                currentState.detail.symbol
+            } else {
+                arguments?.getString("symbol") ?: "SARCO"
+            }
+            val bundle = androidx.core.os.bundleOf("symbol" to symbol)
+            findNavController().navigate(R.id.action_stockDetail_to_stockAnalysis, bundle)
+        }
         binding.tabSectionNews.setOnClickListener { viewModel.setSection("News") }
         binding.tabSectionProfile.setOnClickListener { viewModel.setSection("Profile") }
 
@@ -200,7 +224,12 @@ class StockDetailFragment : Fragment() {
             Toast.makeText(requireContext(), "Chart type settings", Toast.LENGTH_SHORT).show()
         }
         binding.ivFullscreen.setOnClickListener {
-            Toast.makeText(requireContext(), "Fullscreen chart", Toast.LENGTH_SHORT).show()
+            val bundle = Bundle().apply { putString("symbol", currentSymbol) }
+            findNavController().navigate(R.id.chartFullscreenFragment, bundle)
+        }
+        binding.badgeShariah.setOnClickListener {
+            val sheet = com.fyp.basarattradeinvest.feature.shariah.details.StockShariahDetailsBottomSheet.newInstance(currentSymbol)
+            sheet.show(childFragmentManager, "StockShariahDetailsBottomSheet")
         }
     }
 
@@ -354,6 +383,7 @@ class StockDetailFragment : Fragment() {
     private fun updateSectionTabs(selected: String) {
         val sections = listOf(
             Triple(binding.tvTabQuotes, binding.indicatorQuotes, "Quotes"),
+            Triple(binding.tvTabAnalysis, binding.indicatorAnalysis, "Analysis"),
             Triple(binding.tvTabNews, binding.indicatorNews, "News"),
             Triple(binding.tvTabProfile, binding.indicatorProfile, "Profile")
         )
@@ -519,18 +549,47 @@ class StockDetailFragment : Fragment() {
     }
 
     private fun bindNewsContent(state: StockDetailUiState.Success) {
-        val content = layoutInflater.inflate(R.layout.content_by_price, binding.containerTabContent, false)
-        val container = content.findViewById<android.widget.LinearLayout>(R.id.container_stats)
-        val newsItems = listOf(
-            Pair("${state.detail.symbol} reports quarterly earnings beat", "2h ago"),
-            Pair("PSX trading volume hits 3-month high", "5h ago"),
-            Pair("${state.detail.sector} sector outlook upgraded by analysts", "1d ago"),
-            Pair("${state.detail.symbol} board approves dividend payout", "2d ago")
-        )
-        newsItems.forEach { (headline, time) ->
-            addStatRow(container, headline, time)
+        val sym = state.detail.symbol
+        val rv = RecyclerView(requireContext()).apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            isNestedScrollingEnabled = false
         }
-        binding.containerTabContent.addView(content)
+        val stockNewsAdapter = NewsArticleAdapter { article ->
+            val bundle = Bundle().apply { putString("articleId", article.id) }
+            findNavController().navigate(R.id.action_stockDetail_to_articleDetail, bundle)
+        }
+        rv.adapter = stockNewsAdapter
+        binding.containerTabContent.addView(rv)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = NewsRepositoryImpl().getStockNews(symbol = sym, limit = 10)
+            result.fold(
+                onSuccess = { page ->
+                    if (page.articles.isNotEmpty()) {
+                        stockNewsAdapter.submitList(page.articles)
+                    } else {
+                        val emptyTv = TextView(requireContext()).apply {
+                            text = "No recent news articles found for $sym"
+                            setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_secondary))
+                            textSize = 13f
+                            setPadding(16, 32, 16, 32)
+                        }
+                        binding.containerTabContent.removeAllViews()
+                        binding.containerTabContent.addView(emptyTv)
+                    }
+                },
+                onFailure = {
+                    val errorTv = TextView(requireContext()).apply {
+                        text = "Unable to load news for $sym"
+                        setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_secondary))
+                        textSize = 13f
+                        setPadding(16, 32, 16, 32)
+                    }
+                    binding.containerTabContent.removeAllViews()
+                    binding.containerTabContent.addView(errorTv)
+                }
+            )
+        }
     }
 
     private fun bindProfileContent(state: StockDetailUiState.Success) {
@@ -578,6 +637,18 @@ class StockDetailFragment : Fragment() {
             setTextColor(ContextCompat.getColor(context, R.color.color_text_primary))
             textSize = 13f
             setTypeface(null, android.graphics.Typeface.BOLD)
+        }
+
+        if (label.contains("Shariah", ignoreCase = true)) {
+            valueTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_shariah_teal))
+            row.isClickable = true
+            val outVal = android.util.TypedValue()
+            requireContext().theme.resolveAttribute(android.R.attr.selectableItemBackground, outVal, true)
+            row.setBackgroundResource(outVal.resourceId)
+            row.setOnClickListener {
+                val sheet = com.fyp.basarattradeinvest.feature.shariah.details.StockShariahDetailsBottomSheet.newInstance(currentSymbol)
+                sheet.show(childFragmentManager, "StockShariahDetailsBottomSheet")
+            }
         }
 
         row.addView(labelTv)

@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet_surface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="32dp">
+
+        <!-- Drag handle -->
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_drag_handle" />
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_shariah_symbol"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        tools:text="LUCK" />
+
+                    <TextView
+                        android:id="@+id/tv_shariah_badge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/bg_badge_shariah_compliant"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="4dp"
+                        android:textColor="@color/color_shariah_teal"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:text="KMI-30 Compliant ✓" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_shariah_sector"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="13sp"
+                    tools:text="Cement &amp; Construction Materials • PSX" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/iv_close_sheet"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Close"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_close"
+                app:tint="@color/color_text_secondary" />
+        </LinearLayout>
+
+        <!-- Compliance Meta Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@color/color_surface"
+            android:orientation="horizontal"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Methodology"
+                    android:textColor="@color/color_text_tertiary"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/tv_shariah_method"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    tools:text="AAOIFI &amp; KMI-30" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Compliance Score"
+                    android:textColor="@color/color_text_tertiary"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/tv_shariah_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/color_shariah_teal"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    tools:text="94.5 / 100" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Compliance Summary Banner -->
+        <TextView
+            android:id="@+id/tv_compliance_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_badge_shariah_compliant"
+            android:padding="12dp"
+            android:textColor="@color/color_text_primary"
+            android:textSize="12sp"
+            tools:text="Meets all financial and qualitative screening criteria under the PSX KMI Shariah standard." />
+
+        <!-- Sub Tabs / Section Selector -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tab_criteria"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_chip_filter_selected"
+                android:gravity="center"
+                android:text="Screening Criteria (6)"
+                android:textColor="@color/color_positive"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tab_purification"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_chip_filter_unselected"
+                android:gravity="center"
+                android:text="Purification Calculator"
+                android:textColor="@color/color_text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- CONTAINER 1: Detailed Criteria -->
+        <LinearLayout
+            android:id="@+id/container_criteria_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <ProgressBar
+                android:id="@+id/progress_criteria"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginVertical="16dp"
+                android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_shariah_criteria"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+        </LinearLayout>
+
+        <!-- CONTAINER 2: Purification Calculator -->
+        <LinearLayout
+            android:id="@+id/container_purification_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Dividend purification deducts the non-compliant income portion from dividends as calculated by the official Shariah compliance engine."
+                android:textColor="@color/color_text_secondary"
+                android:textSize="12sp" />
+
+            <!-- Input: Shares Qty -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="Shares Held (Qty)"
+                android:textColor="@color/color_text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                app:boxBackgroundColor="@color/color_surface"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxStrokeColor="@color/color_shariah_teal"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_purification_qty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="e.g. 500"
+                    android:inputType="number"
+                    android:textColor="@color/color_text_primary"
+                    android:textColorHint="@color/color_text_tertiary"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Input: Holding Value -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Total Holding Value (PKR)"
+                android:textColor="@color/color_text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                app:boxBackgroundColor="@color/color_surface"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxStrokeColor="@color/color_shariah_teal"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_purification_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="e.g. 250000.00"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/color_text_primary"
+                    android:textColorHint="@color/color_text_tertiary"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Button: Calculate -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_calculate_purification"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/color_shariah_teal"
+                android:text="Calculate Shariah Purification"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:cornerRadius="10dp" />
+
+            <ProgressBar
+                android:id="@+id/progress_purification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginVertical="12dp"
+                android:visibility="gone" />
+
+            <!-- Result Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_purification_result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/color_surface"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/color_border"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Required Charitable Purification"
+                        android:textColor="@color/color_text_tertiary"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tv_purification_amount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@color/color_shariah_teal"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        tools:text="PKR 300.00" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Purification Rate: "
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tv_purification_rate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            tools:text="0.1200%" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_purification_notes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="11sp"
+                        tools:text="Disburse non-compliant dividend portions to registered charity without intention of personal reward." />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <!-- Religious Disclaimer Notice -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="Disclaimer: Shariah screening is an automated quantitative check adhering to PSX KMI methodology and does not constitute a certified religious ruling (fatwa)."
+            android:textColor="@color/color_text_tertiary"
+            android:textSize="11sp" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

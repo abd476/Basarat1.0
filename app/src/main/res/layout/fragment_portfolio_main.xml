@@ -1,0 +1,832 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_background">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="90dp">
+
+            <!-- Top Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="My Portfolio"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_updated_at"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textColor="@color/color_text_tertiary"
+                        android:textSize="12sp"
+                        tools:text="Updated 2 mins ago" />
+
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_risk_analytics"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="8dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingHorizontal="10dp"
+                    android:text="Risk"
+                    android:textColor="@color/color_brand_primary"
+                    android:textSize="12sp"
+                    app:cornerRadius="8dp"
+                    app:strokeColor="@color/color_brand_primary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_record_trade"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="8dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingHorizontal="10dp"
+                    android:text="Trade"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="12sp"
+                    app:cornerRadius="8dp"
+                    app:strokeColor="@color/color_divider" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_add_transaction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:backgroundTint="@color/color_button_primary_bg"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingHorizontal="12dp"
+                    android:text="+ Add"
+                    android:textColor="@color/color_button_primary_text"
+                    android:textSize="12sp"
+                    app:cornerRadius="8dp" />
+
+            </LinearLayout>
+
+            <!-- Main Portfolio Valuation Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_portfolio_valuation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@color/color_surface"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/color_divider"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TOTAL PORTFOLIO VALUE"
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_total_current_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="32sp"
+                        android:textStyle="bold"
+                        tools:text="PKR 1,425,800.00" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_total_pnl_badge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_badge_buy"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp"
+                            android:textColor="@color/color_positive"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            tools:text="+PKR 175,800 (+14.06%)" />
+
+                        <TextView
+                            android:id="@+id/tv_today_pnl"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="12sp"
+                            tools:text="Today: +PKR 12,450.00" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@color/color_divider" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Total Invested"
+                                android:textColor="@color/color_text_tertiary"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:id="@+id/tv_total_invested"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="15sp"
+                                android:textStyle="bold"
+                                tools:text="PKR 1,250,000" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Active Holdings"
+                                android:textColor="@color/color_text_tertiary"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:id="@+id/tv_holding_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="15sp"
+                                android:textStyle="bold"
+                                tools:text="5 Stocks" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Navigation Tabs (Chips) -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/layout_tab_chips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tab_holdings"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_tab_selected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingHorizontal="14dp"
+                        android:paddingVertical="8dp"
+                        android:text="Holdings"
+                        android:textColor="@color/color_button_primary_text"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tab_pnl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_tab_unselected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingHorizontal="14dp"
+                        android:paddingVertical="8dp"
+                        android:text="P&amp;L Analysis"
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tab_allocation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_tab_unselected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingHorizontal="14dp"
+                        android:paddingVertical="8dp"
+                        android:text="Allocation"
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tab_performance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_tab_unselected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingHorizontal="14dp"
+                        android:paddingVertical="8dp"
+                        android:text="Performance"
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tab_transactions"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_tab_unselected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingHorizontal="14dp"
+                        android:paddingVertical="8dp"
+                        android:text="History"
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tab_risk"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_tab_unselected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingHorizontal="14dp"
+                        android:paddingVertical="8dp"
+                        android:text="Risk Analytics"
+                        android:textColor="@color/color_brand_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+            <!-- SECTION 1: HOLDINGS -->
+            <LinearLayout
+                android:id="@+id/section_holdings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Active Holdings"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_holdings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    tools:listitem="@layout/item_portfolio_holding" />
+
+                <!-- Empty Holdings State -->
+                <LinearLayout
+                    android:id="@+id/layout_empty_holdings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No Active Holdings"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Add your first BUY transaction or completed trade."
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- SECTION 2: P&L BREAKDOWN -->
+            <LinearLayout
+                android:id="@+id/section_pnl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Profit &amp; Loss Breakdown"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/color_surface_elevated"
+                    app:cardCornerRadius="14dp"
+                    app:strokeColor="@color/color_divider"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Realized P&amp;L"
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/tv_pnl_realized"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                tools:text="+PKR 45,000.00" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginVertical="10dp"
+                            android:background="@color/color_divider" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Unrealized P&amp;L"
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/tv_pnl_unrealized"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                tools:text="+PKR 130,800.00" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginVertical="10dp"
+                            android:background="@color/color_divider" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Total Net P&amp;L"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_pnl_total"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="15sp"
+                                android:textStyle="bold"
+                                tools:text="+PKR 175,800.00 (+14.06%)" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginVertical="10dp"
+                            android:background="@color/color_divider" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Today's Change"
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/tv_pnl_today"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                tools:text="+PKR 12,450.00" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <!-- SECTION 3: ALLOCATION -->
+            <LinearLayout
+                android:id="@+id/section_allocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Stock Allocation"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/color_surface_elevated"
+                    app:cardCornerRadius="14dp"
+                    app:strokeColor="@color/color_divider"
+                    app:strokeWidth="1dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_allocation_stock"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:padding="16dp" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="Sector Allocation"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/color_surface_elevated"
+                    app:cardCornerRadius="14dp"
+                    app:strokeColor="@color/color_divider"
+                    app:strokeWidth="1dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_allocation_sector"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:padding="16dp" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <!-- SECTION 4: PERFORMANCE -->
+            <LinearLayout
+                android:id="@+id/section_performance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Portfolio Performance"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <!-- Period selector: 1W, 1M, 3M, 1Y, ALL -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/btn_period_1w"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_tab_unselected"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp"
+                            android:text="1W"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/btn_period_1m"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:background="@drawable/bg_tab_selected"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp"
+                            android:text="1M"
+                            android:textColor="@color/color_button_primary_text"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/btn_period_3m"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:background="@drawable/bg_tab_unselected"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp"
+                            android:text="3M"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/btn_period_1y"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:background="@drawable/bg_tab_unselected"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp"
+                            android:text="1Y"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:cardBackgroundColor="@color/color_surface_elevated"
+                    app:cardCornerRadius="14dp"
+                    app:strokeColor="@color/color_divider"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/tv_perf_points_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="12sp"
+                            tools:text="Showing 30 recorded performance dates" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_performance_points"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:nestedScrollingEnabled="false" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <!-- SECTION 5: TRANSACTIONS OVERVIEW -->
+            <LinearLayout
+                android:id="@+id/section_transactions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Transaction History"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/btn_view_full_history"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="6dp"
+                        android:text="Full Ledger →"
+                        android:textColor="@color/color_basarat_green"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_recent_transactions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false"
+                    tools:listitem="@layout/item_portfolio_transaction" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Loading Overlay -->
+    <FrameLayout
+        android:id="@+id/layout_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_loading_overlay"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/color_basarat_green" />
+
+    </FrameLayout>
+
+    <!-- Error View -->
+    <LinearLayout
+        android:id="@+id/layout_error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_error_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Unable to load portfolio data."
+            android:textColor="@color/color_text_primary"
+            android:textSize="15sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/color_button_primary_bg"
+            android:text="Retry"
+            app:cornerRadius="8dp" />
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

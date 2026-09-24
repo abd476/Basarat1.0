@@ -17,10 +17,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentMarketDashboardBinding
+import com.fyp.basarattradeinvest.domain.model.IndexConstituent
 import com.fyp.basarattradeinvest.domain.model.MarketIndex
 import com.fyp.basarattradeinvest.domain.model.MarketOverview
 import com.fyp.basarattradeinvest.domain.model.MarketSentiment
 import com.fyp.basarattradeinvest.domain.model.SymbolFilterType
+import com.fyp.basarattradeinvest.feature.markets.adapter.ConstituentAdapter
 import com.fyp.basarattradeinvest.feature.markets.adapter.MarketStockAdapter
 import com.fyp.basarattradeinvest.feature.markets.adapter.SectorPerformanceAdapter
 import kotlinx.coroutines.launch
@@ -35,6 +37,11 @@ class MarketDashboardFragment : Fragment() {
 
     private val stockAdapter = MarketStockAdapter { stock ->
         val bundle = Bundle().apply { putString("symbol", stock.symbol) }
+        findNavController().navigate(R.id.stockDetailFragment, bundle)
+    }
+
+    private val constituentAdapter = ConstituentAdapter { constituent ->
+        val bundle = Bundle().apply { putString("symbol", constituent.symbol) }
         findNavController().navigate(R.id.stockDetailFragment, bundle)
     }
 
@@ -64,6 +71,11 @@ class MarketDashboardFragment : Fragment() {
         binding.rvTopSymbols.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = stockAdapter
+        }
+
+        binding.rvConstituents.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = constituentAdapter
         }
 
         binding.rvSectors.apply {
@@ -96,6 +108,16 @@ class MarketDashboardFragment : Fragment() {
             viewModel.setFilter(SymbolFilterType.WATCHLIST)
         }
 
+        binding.tabConstituentKse100.setOnClickListener {
+            viewModel.selectConstituentIndex("KSE-100")
+        }
+        binding.tabConstituentKse30.setOnClickListener {
+            viewModel.selectConstituentIndex("KSE-30")
+        }
+        binding.tabConstituentKmi30.setOnClickListener {
+            viewModel.selectConstituentIndex("KMI-30")
+        }
+
         binding.ivQuoteBannerClose.setOnClickListener {
             binding.bannerRealtimeQuotes.visibility = View.GONE
         }
@@ -105,14 +127,33 @@ class MarketDashboardFragment : Fragment() {
         binding.ivTopMenu.setOnClickListener {
             Toast.makeText(requireContext(), "Menu drawer", Toast.LENGTH_SHORT).show()
         }
+        binding.ivTopNotifications.setOnClickListener {
+            findNavController().navigate(R.id.action_marketDashboard_to_notifications)
+        }
         binding.ivTopSearch.setOnClickListener {
-            Toast.makeText(requireContext(), "Stock search", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.stockSearchFragment)
         }
         binding.tvSectorsSeeAll.setOnClickListener {
             Toast.makeText(requireContext(), "Sector Heatmap", Toast.LENGTH_SHORT).show()
         }
         binding.chipShariah.setOnClickListener {
             findNavController().navigate(R.id.shariahScreeningFragment)
+        }
+        binding.layoutIndex2.setOnClickListener {
+            findNavController().navigate(R.id.shariahScreeningFragment)
+        }
+        binding.chipCommunity.setOnClickListener {
+            findNavController().navigate(R.id.communityProfileFragment)
+        }
+        binding.chipNews.setOnClickListener {
+            findNavController().navigate(R.id.newsEventsFragment)
+        }
+        binding.chipRecommendations.setOnClickListener {
+            findNavController().navigate(R.id.recommendationsFragment)
+        }
+
+        binding.fabChatAssistant.setOnClickListener {
+            findNavController().navigate(R.id.action_marketDashboard_to_assistant)
         }
     }
 
@@ -133,10 +174,12 @@ class MarketDashboardFragment : Fragment() {
                             sectorAdapter.submitList(state.sectors)
                             bindFilterTabs(state.selectedFilter)
                             stockAdapter.submitList(state.topSymbols)
+                            bindConstituents(state.constituents, state.selectedConstituentIndex, state.isConstituentsLoading)
                         }
                         is MarketDashboardUiState.Empty -> {
                             binding.swipeRefreshLayout.isRefreshing = false
                             stockAdapter.submitList(emptyList())
+                            constituentAdapter.submitList(emptyList())
                         }
                         is MarketDashboardUiState.Error -> {
                             binding.swipeRefreshLayout.isRefreshing = false
@@ -149,28 +192,56 @@ class MarketDashboardFragment : Fragment() {
     }
 
     private fun bindIndices(indices: List<MarketIndex>) {
-        if (indices.size >= 2) {
-            val idx1 = indices[0]
-            val idx2 = indices[1]
+        if (indices.isEmpty()) return
 
-            // Index 1 (e.g. KSE-100)
-            binding.tvIndex1Name.text = idx1.name
-            binding.tvIndex1Points.text = String.format(Locale.US, "%,.2f", idx1.currentPoints)
-            val prefix1 = if (idx1.changePercent >= 0) "+" else ""
-            binding.tvIndex1Change.text = String.format(Locale.US, "%.2f  %s%.2f%%", idx1.changePoints, prefix1, idx1.changePercent)
-            val color1 = if (idx1.changePercent >= 0) R.color.color_positive else R.color.color_negative
-            binding.tvIndex1Change.setTextColor(ContextCompat.getColor(requireContext(), color1))
+        val kse100 = indices.firstOrNull {
+            it.name.contains("100", ignoreCase = true) || it.code.contains("100", ignoreCase = true)
+        } ?: indices.getOrNull(0)
 
-            // Index 2 (e.g. KMI-30)
-            binding.tvIndex2Name.text = idx2.name
-            binding.tvIndex2Points.text = String.format(Locale.US, "%,.2f", idx2.currentPoints)
-            val prefix2 = if (idx2.changePercent >= 0) "+" else ""
-            binding.tvIndex2Change.text = String.format(Locale.US, "%.2f  %s%.2f%%", idx2.changePoints, prefix2, idx2.changePercent)
-            val color2 = if (idx2.changePercent >= 0) R.color.color_positive else R.color.color_negative
-            binding.tvIndex2Change.setTextColor(ContextCompat.getColor(requireContext(), color2))
+        val kse30 = indices.firstOrNull {
+            (it.name.contains("KSE-30", ignoreCase = true) || it.code.contains("KSE30", ignoreCase = true)) &&
+                !it.name.contains("KMI", ignoreCase = true)
+        } ?: indices.getOrNull(1)
 
-            // Feed chart
-            binding.chartIntraday.setChartData(idx1.intradayPoints, idx2.intradayPoints)
+        val kmi30 = indices.firstOrNull {
+            it.name.contains("KMI", ignoreCase = true) || it.code.contains("KMI", ignoreCase = true)
+        } ?: indices.getOrNull(2)
+
+        // 1. KSE-100
+        kse100?.let { idx ->
+            binding.tvIndex1Name.text = idx.name
+            binding.tvIndex1Points.text = String.format(Locale.US, "%,.2f", idx.currentPoints)
+            val prefix = if (idx.changePercent >= 0) "+" else ""
+            binding.tvIndex1Change.text = String.format(Locale.US, "%.2f  %s%.2f%%", idx.changePoints, prefix, idx.changePercent)
+            val color = if (idx.changePercent >= 0) R.color.color_positive else R.color.color_negative
+            binding.tvIndex1Change.setTextColor(ContextCompat.getColor(requireContext(), color))
+        }
+
+        // 2. KSE-30
+        kse30?.let { idx ->
+            binding.tvIndex3Name.text = idx.name
+            binding.tvIndex3Points.text = String.format(Locale.US, "%,.2f", idx.currentPoints)
+            val prefix = if (idx.changePercent >= 0) "+" else ""
+            binding.tvIndex3Change.text = String.format(Locale.US, "%.2f  %s%.2f%%", idx.changePoints, prefix, idx.changePercent)
+            val color = if (idx.changePercent >= 0) R.color.color_positive else R.color.color_negative
+            binding.tvIndex3Change.setTextColor(ContextCompat.getColor(requireContext(), color))
+        }
+
+        // 3. KMI-30
+        kmi30?.let { idx ->
+            binding.tvIndex2Name.text = idx.name
+            binding.tvIndex2Points.text = String.format(Locale.US, "%,.2f", idx.currentPoints)
+            val prefix = if (idx.changePercent >= 0) "+" else ""
+            binding.tvIndex2Change.text = String.format(Locale.US, "%.2f  %s%.2f%%", idx.changePoints, prefix, idx.changePercent)
+            val color = if (idx.changePercent >= 0) R.color.color_positive else R.color.color_negative
+            binding.tvIndex2Change.setTextColor(ContextCompat.getColor(requireContext(), color))
+        }
+
+        // Chart Intraday
+        val idx1Points = kse100?.intradayPoints ?: emptyList()
+        val idx2Points = kmi30?.intradayPoints ?: emptyList()
+        if (idx1Points.isNotEmpty() || idx2Points.isNotEmpty()) {
+            binding.chartIntraday.setChartData(idx1Points, idx2Points)
         }
     }
 
@@ -198,7 +269,6 @@ class MarketDashboardFragment : Fragment() {
         binding.tvSentimentScore.text = "${sentiment.overallScore} / 100"
         binding.tvSentimentLabel.text = sentiment.sentimentLabel
 
-        // Adjust sentiment color according to label
         val isBullish = sentiment.sentimentLabel.contains("Bull", ignoreCase = true)
         val isBearish = sentiment.sentimentLabel.contains("Bear", ignoreCase = true)
         val labelColor = when {
@@ -220,7 +290,6 @@ class MarketDashboardFragment : Fragment() {
         binding.tvSentimentPos.text = "Pos ${sentiment.positivePercent}%"
         binding.tvSentimentNeu.text = "Neu ${sentiment.neutralPercent}%"
         binding.tvSentimentNeg.text = "Neg ${sentiment.negativePercent}%"
-       // binding.tvSentimentAiSummary.text = sentiment.aiSummary
     }
 
     private fun bindFilterTabs(selected: SymbolFilterType) {
@@ -246,6 +315,42 @@ class MarketDashboardFragment : Fragment() {
                 tabView.setTextColor(unselectedTextColor)
             }
         }
+    }
+
+    private fun bindConstituents(
+        constituents: List<IndexConstituent>,
+        selectedTab: String,
+        isLoading: Boolean
+    ) {
+        binding.pbConstituentsLoading.visibility = if (isLoading) View.VISIBLE else View.GONE
+        binding.tvConstituentsCount.text = "${constituents.size} Stocks"
+
+        if (!isLoading && constituents.isEmpty()) {
+            binding.tvConstituentsEmpty.visibility = View.VISIBLE
+            binding.rvConstituents.visibility = View.GONE
+        } else {
+            binding.tvConstituentsEmpty.visibility = View.GONE
+            binding.rvConstituents.visibility = View.VISIBLE
+            constituentAdapter.submitList(constituents)
+        }
+
+        val selectedBg = R.drawable.bg_market_tab_selected
+        val unselectedBg = R.drawable.bg_market_tab_unselected
+        val selectedTextColor = ContextCompat.getColor(requireContext(), R.color.white)
+        val unselectedTextColor = ContextCompat.getColor(requireContext(), R.color.color_text_primary)
+
+        val isKse100 = selectedTab.contains("100", ignoreCase = true)
+        val isKse30 = selectedTab.contains("KSE-30", ignoreCase = true) || selectedTab.equals("KSE30", ignoreCase = true)
+        val isKmi30 = selectedTab.contains("KMI", ignoreCase = true)
+
+        binding.tabConstituentKse100.setBackgroundResource(if (isKse100) selectedBg else unselectedBg)
+        binding.tabConstituentKse100.setTextColor(if (isKse100) selectedTextColor else unselectedTextColor)
+
+        binding.tabConstituentKse30.setBackgroundResource(if (isKse30) selectedBg else unselectedBg)
+        binding.tabConstituentKse30.setTextColor(if (isKse30) selectedTextColor else unselectedTextColor)
+
+        binding.tabConstituentKmi30.setBackgroundResource(if (isKmi30) selectedBg else unselectedBg)
+        binding.tabConstituentKmi30.setTextColor(if (isKmi30) selectedTextColor else unselectedTextColor)
     }
 
     override fun onDestroyView() {

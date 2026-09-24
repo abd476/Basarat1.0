@@ -2,20 +2,28 @@ package com.fyp.basarattradeinvest.feature.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
+import com.fyp.basarattradeinvest.data.repository.AuthRepositoryImpl
+import com.fyp.basarattradeinvest.domain.usecase.auth.LoginUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(
+    private val loginUseCase: LoginUseCase = LoginUseCase(AuthRepositoryImpl())
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
     fun signIn(email: String, password: String) {
-        if (email.isBlank()) {
+        val trimmedEmail = email.trim()
+        if (trimmedEmail.isBlank()) {
             _uiState.value = AuthUiState.Error("Please enter your email")
+            return
+        }
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(trimmedEmail).matches()) {
+            _uiState.value = AuthUiState.Error("Please enter a valid email address")
             return
         }
         if (password.isBlank()) {
@@ -25,9 +33,20 @@ class LoginViewModel : ViewModel() {
 
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
-            // Simulate authentication request
-            delay(1000)
-            _uiState.value = AuthUiState.Success(userEmail = email)
+            val result = loginUseCase(trimmedEmail, password)
+            result.fold(
+                onSuccess = { session ->
+                    _uiState.value = AuthUiState.Success(
+                        message = "Welcome back!",
+                        userEmail = session.user?.email ?: trimmedEmail
+                    )
+                },
+                onFailure = { throwable ->
+                    _uiState.value = AuthUiState.Error(
+                        throwable.message ?: "Authentication failed. Please check your credentials."
+                    )
+                }
+            )
         }
     }
 

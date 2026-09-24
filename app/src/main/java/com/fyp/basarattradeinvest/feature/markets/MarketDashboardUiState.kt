@@ -17,6 +17,9 @@ sealed interface MarketDashboardUiState {
         val selectedFilter: SymbolFilterType,
         val sentiment: MarketSentiment,
         val sectors: List<SectorPerformance>,
+        val selectedConstituentIndex: String = "KSE-100",
+        val constituents: List<com.fyp.basarattradeinvest.domain.model.IndexConstituent> = emptyList(),
+        val isConstituentsLoading: Boolean = false,
         val lastUpdated: String
     ) : MarketDashboardUiState
 
