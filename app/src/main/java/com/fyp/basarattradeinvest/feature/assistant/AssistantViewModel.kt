@@ -163,8 +163,9 @@ class AssistantViewModel(
     }
 
     /**
-     * Send a message using the streaming endpoint.
-     * Falls back to standard REST if streaming fails.
+     * Send a message using the real backend SSE streaming endpoint.
+     * Progressively updates a single assistant message in the chat list.
+     * Falls back to standard REST if streaming fails before any chunks arrive.
      */
     fun sendMessage(userMessage: String) {
         val trimmed = userMessage.trim()
@@ -172,94 +173,184 @@ class AssistantViewModel(
 
         val currentState = _chatState.value
         if (currentState !is ChatUiState.Active) return
-        if (currentState.isSending) return // Prevent double-send
+        if (currentState.isSending || currentState.isStreaming) return // Prevent double-send
 
         // Add user message optimistically
         val userMsgItem = ChatMessageItem(
-            id = "temp-user-${System.currentTimeMillis()}",
+            id = "user-${System.currentTimeMillis()}",
             isUser = true,
             content = trimmed,
             timestamp = getCurrentTimestamp()
         )
-        val updatedMessages = currentState.messages + userMsgItem
+
+        // Add a single assistant message in streaming state
+        val assistantMsgId = "assistant-stream-${System.currentTimeMillis()}"
+        val assistantMsgItem = ChatMessageItem(
+            id = assistantMsgId,
+            isUser = false,
+            content = "",
+            timestamp = getCurrentTimestamp(),
+            isStreaming = true
+        )
+
+        val updatedMessages = currentState.messages + userMsgItem + assistantMsgItem
 
         _chatState.value = currentState.copy(
             messages = updatedMessages,
             isSending = true,
+            isStreaming = true,
             streamingContent = "",
             errorMessage = null
         )
 
-        // Use streaming endpoint
+        // Cancel any previous streaming job before starting a new one
+        streamingJob?.cancel()
         streamingJob = viewModelScope.launch {
-            var finalContent = ""
-            var hasReceivedContent = false
+            val accumulated = StringBuilder()
+            var hasReceivedChunk = false
 
             repository.sendMessageStream(trimmed, currentConversationId)
                 .catch { e ->
-                    // Stream failed — fallback to standard REST
-                    sendMessageRest(trimmed, updatedMessages)
+                    if (!hasReceivedChunk) {
+                        fallbackToRest(trimmed, assistantMsgId)
+                    } else {
+                        handleStreamError(e.message ?: "Stream interrupted", assistantMsgId, accumulated.toString())
+                    }
                 }
                 .collect { result ->
                     result.fold(
-                        onSuccess = { accumulatedContent ->
-                            hasReceivedContent = true
-                            finalContent = accumulatedContent
-                            val state = _chatState.value
-                            if (state is ChatUiState.Active) {
-                                _chatState.value = state.copy(
-                                    streamingContent = accumulatedContent
-                                )
+                        onSuccess = { event ->
+                            when (event) {
+                                is com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Start -> {
+                                    if (!event.conversationId.isNullOrBlank()) {
+                                        currentConversationId = event.conversationId
+                                    }
+                                }
+                                is com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Chunk -> {
+                                    hasReceivedChunk = true
+                                    if (!event.conversationId.isNullOrBlank() && currentConversationId == null) {
+                                        currentConversationId = event.conversationId
+                                    }
+                                    accumulated.append(event.chunk)
+                                    val currentText = accumulated.toString()
+                                    updateStreamingMessage(assistantMsgId, currentText, isStreaming = true)
+                                }
+                                is com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Done -> {
+                                    if (!event.conversationId.isNullOrBlank() && currentConversationId == null) {
+                                        currentConversationId = event.conversationId
+                                    }
+                                    val finalText = if (!event.fullResponse.isNullOrBlank()) {
+                                        event.fullResponse
+                                    } else {
+                                        accumulated.toString()
+                                    }
+                                    updateStreamingMessage(assistantMsgId, finalText, isStreaming = false)
+                                }
+                                is com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Error -> {
+                                    if (!hasReceivedChunk) {
+                                        fallbackToRest(trimmed, assistantMsgId)
+                                    } else {
+                                        handleStreamError(event.error, assistantMsgId, accumulated.toString())
+                                    }
+                                }
                             }
                         },
                         onFailure = { error ->
-                            if (!hasReceivedContent) {
-                                // No content received — fallback to REST
-                                sendMessageRest(trimmed, updatedMessages)
-                                return@collect
-                            }
-                            // Error during streaming after partial content
-                            val state = _chatState.value
-                            if (state is ChatUiState.Active) {
-                                _chatState.value = state.copy(
-                                    isSending = false,
-                                    streamingContent = null,
-                                    errorMessage = error.message
-                                )
+                            if (!hasReceivedChunk) {
+                                fallbackToRest(trimmed, assistantMsgId)
+                            } else {
+                                handleStreamError(error.message ?: "Streaming error", assistantMsgId, accumulated.toString())
                             }
                         }
                     )
                 }
+        }
+    }
 
-            // Streaming complete — add final assistant message
-            if (hasReceivedContent && finalContent.isNotEmpty()) {
-                finalizeStreamedMessage(finalContent)
+    /**
+     * Stop active stream generation safely, preserving all content received so far.
+     */
+    fun stopGenerating() {
+        streamingJob?.cancel()
+        streamingJob = null
+        val state = _chatState.value
+        if (state is ChatUiState.Active && (state.isSending || state.isStreaming)) {
+            val updatedMessages = state.messages.map { msg ->
+                if (msg.isStreaming) {
+                    val finalContent = if (msg.content.isBlank()) "[Generation cancelled]" else msg.content
+                    msg.copy(content = finalContent, isStreaming = false)
+                } else msg
             }
+            _chatState.value = state.copy(
+                messages = updatedMessages,
+                isSending = false,
+                isStreaming = false,
+                streamingContent = null
+            )
+        }
+    }
+
+    private fun updateStreamingMessage(messageId: String, content: String, isStreaming: Boolean) {
+        val state = _chatState.value
+        if (state is ChatUiState.Active) {
+            val updatedMessages = state.messages.map { msg ->
+                if (msg.id == messageId) {
+                    msg.copy(content = content, isStreaming = isStreaming)
+                } else msg
+            }
+            _chatState.value = state.copy(
+                messages = updatedMessages,
+                isSending = isStreaming,
+                isStreaming = isStreaming,
+                streamingContent = if (isStreaming) content else null
+            )
+        }
+    }
+
+    private fun handleStreamError(errorMessage: String, messageId: String, receivedText: String) {
+        val state = _chatState.value
+        if (state is ChatUiState.Active) {
+            val updatedMessages = state.messages.map { msg ->
+                if (msg.id == messageId) {
+                    val content = if (receivedText.isNotBlank()) receivedText else "Unable to complete response."
+                    msg.copy(content = content, isStreaming = false)
+                } else msg
+            }
+            _chatState.value = state.copy(
+                messages = updatedMessages,
+                isSending = false,
+                isStreaming = false,
+                streamingContent = null,
+                errorMessage = errorMessage
+            )
         }
     }
 
     /**
      * Fallback: send message via standard REST (non-streaming).
+     * Replaces the empty streaming assistant placeholder with the REST response.
      */
-    private suspend fun sendMessageRest(userMessage: String, currentMessages: List<ChatMessageItem>) {
+    private suspend fun fallbackToRest(userMessage: String, assistantMsgId: String) {
         repository.sendMessage(userMessage, currentConversationId).fold(
             onSuccess = { chatResult ->
-                // Update conversation ID if this was first message
                 if (currentConversationId == null) {
                     currentConversationId = chatResult.conversationId
                 }
 
-                val assistantMsgItem = ChatMessageItem(
-                    id = "rest-${System.currentTimeMillis()}",
-                    isUser = false,
-                    content = chatResult.message,
-                    timestamp = getCurrentTimestamp()
-                )
                 val state = _chatState.value
                 if (state is ChatUiState.Active) {
+                    val updatedMessages = state.messages.map { msg ->
+                        if (msg.id == assistantMsgId) {
+                            msg.copy(
+                                content = chatResult.message,
+                                isStreaming = false
+                            )
+                        } else msg
+                    }
                     _chatState.value = state.copy(
-                        messages = state.messages + assistantMsgItem,
+                        messages = updatedMessages,
                         isSending = false,
+                        isStreaming = false,
                         streamingContent = null,
                         errorMessage = null
                     )
@@ -268,32 +359,18 @@ class AssistantViewModel(
             onFailure = { error ->
                 val state = _chatState.value
                 if (state is ChatUiState.Active) {
+                    // Remove the empty assistant message placeholder if REST also failed
+                    val updatedMessages = state.messages.filter { it.id != assistantMsgId }
                     _chatState.value = state.copy(
+                        messages = updatedMessages,
                         isSending = false,
+                        isStreaming = false,
                         streamingContent = null,
-                        errorMessage = error.message ?: "Failed to send message"
+                        errorMessage = error.message ?: "Failed to get response"
                     )
                 }
             }
         )
-    }
-
-    private fun finalizeStreamedMessage(content: String) {
-        val state = _chatState.value
-        if (state is ChatUiState.Active) {
-            val assistantMsgItem = ChatMessageItem(
-                id = "stream-${System.currentTimeMillis()}",
-                isUser = false,
-                content = content,
-                timestamp = getCurrentTimestamp()
-            )
-            _chatState.value = state.copy(
-                messages = state.messages + assistantMsgItem,
-                isSending = false,
-                streamingContent = null,
-                errorMessage = null
-            )
-        }
     }
 
     fun regenerateLastResponse() {

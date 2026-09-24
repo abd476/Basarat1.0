@@ -26,7 +26,9 @@ class AuthInterceptor : Interceptor {
         val isUnauthenticated = UNAUTHENTICATED_PATHS.any { path.endsWith(it) }
 
         val requestBuilder = request.newBuilder()
-            .header("Accept", "application/json")
+        if (request.header("Accept") == null) {
+            requestBuilder.header("Accept", "application/json")
+        }
 
         if (!isUnauthenticated) {
             val token = SessionManager.getAccessToken()

@@ -121,37 +121,22 @@
             android:visibility="gone"
             tools:listitem="@layout/item_chat_message_assistant" />
 
-        <!-- Streaming indicator overlay (shows during active streaming) -->
-        <LinearLayout
-            android:id="@+id/layoutStreaming"
+        <!-- Stop Generation button (shows during active streaming) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnStopGenerating"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|start"
-            android:orientation="horizontal"
-            android:background="@drawable/bg_chat_bubble_assistant"
-            android:padding="12dp"
-            android:layout_marginStart="16dp"
+            android:layout_height="36dp"
+            android:layout_gravity="bottom|center_horizontal"
             android:layout_marginBottom="8dp"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="BASARAT AI"
-                android:textColor="#4F7CFF"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:layout_marginEnd="8dp" />
-
-            <TextView
-                android:id="@+id/tvStreamingContent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#111827"
-                android:textSize="14sp"
-                android:maxWidth="260dp" />
-
-        </LinearLayout>
+            android:text="Stop Generating"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:icon="@drawable/ic_close"
+            app:iconSize="14dp"
+            app:iconTint="#EF4444"
+            app:strokeColor="#EF4444"
+            android:textColor="#EF4444" />
 
         <!-- Regenerate button (shows after last assistant message) -->
         <com.google.android.material.button.MaterialButton

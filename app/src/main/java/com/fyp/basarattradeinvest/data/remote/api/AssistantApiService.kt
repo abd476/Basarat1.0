@@ -44,6 +44,7 @@ interface AssistantApiService {
      * @Streaming prevents Retrofit from buffering the entire response.
      */
     @Streaming
+    @retrofit2.http.Headers("Accept: text/event-stream")
     @POST("api/v1/assistant/chat/stream")
     suspend fun chatStream(
         @Body request: AssistantChatRequestDto

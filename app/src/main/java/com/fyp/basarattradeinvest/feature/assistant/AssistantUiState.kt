@@ -27,6 +27,7 @@ sealed interface ChatUiState {
         val messages: List<ChatMessageItem>,
         val streamingContent: String? = null,
         val isSending: Boolean = false,
+        val isStreaming: Boolean = false,
         val isRegenerating: Boolean = false,
         val errorMessage: String? = null
     ) : ChatUiState

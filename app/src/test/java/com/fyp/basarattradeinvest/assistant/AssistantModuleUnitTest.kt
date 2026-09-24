@@ -46,7 +46,10 @@ class AssistantModuleUnitTest {
             if (shouldFail) {
                 return Response.error(500, "{\"detail\":\"Stream error\"}".toResponseBody("application/json".toMediaTypeOrNull()))
             }
-            val sseData = "data: {\"chunk\":\"Analysis: \"}\n\ndata: {\"chunk\":\"Market is bullish.\"}\n\ndata: [DONE]\n\n"
+            val sseData = "data: {\"event\":\"start\",\"conversation_id\":\"conv-101\"}\n\n" +
+                    "data: {\"event\":\"chunk\",\"chunk\":\"Analysis: \",\"conversation_id\":\"conv-101\"}\n\n" +
+                    "data: {\"event\":\"chunk\",\"chunk\":\"Market is bullish.\",\"conversation_id\":\"conv-101\"}\n\n" +
+                    "data: {\"event\":\"done\",\"conversation_id\":\"conv-101\",\"full_response\":\"Analysis: Market is bullish.\"}\n\n"
             val body = sseData.toResponseBody("text/event-stream".toMediaTypeOrNull())
             return Response.success(body)
         }
@@ -257,5 +260,86 @@ class AssistantModuleUnitTest {
         val chatResult = result.getOrNull()
         assertNotNull(chatResult)
         assertTrue(chatResult!!.message.contains("Regenerated", ignoreCase = true))
+    }
+
+    @Test
+    fun testSSEParser_BackendEvents() {
+        val repoImpl = repository as AssistantRepositoryImpl
+
+        // 1. Start event
+        val startEvent = repoImpl.parseStreamEvent("{\"event\":\"start\",\"conversation_id\":\"conv-xyz\"}")
+        assertTrue(startEvent is com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Start)
+        assertEquals("conv-xyz", (startEvent as com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Start).conversationId)
+
+        // 2. Chunk event
+        val chunkEvent = repoImpl.parseStreamEvent("{\"event\":\"chunk\",\"chunk\":\"Market is \",\"conversation_id\":\"conv-xyz\"}")
+        assertTrue(chunkEvent is com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Chunk)
+        assertEquals("Market is ", (chunkEvent as com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Chunk).chunk)
+
+        // 3. Done event
+        val doneEvent = repoImpl.parseStreamEvent("{\"event\":\"done\",\"conversation_id\":\"conv-xyz\",\"full_response\":\"Market is bullish.\"}")
+        assertTrue(doneEvent is com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Done)
+        assertEquals("Market is bullish.", (doneEvent as com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Done).fullResponse)
+
+        // 4. Error event
+        val errorEvent = repoImpl.parseStreamEvent("{\"event\":\"error\",\"error\":\"AI service timeout\",\"conversation_id\":\"conv-xyz\"}")
+        assertTrue(errorEvent is com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Error)
+        assertEquals("AI service timeout", (errorEvent as com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Error).error)
+    }
+
+    @Test
+    fun testSSEParser_FallbackFormats() {
+        val repoImpl = repository as AssistantRepositoryImpl
+
+        // Fallback OpenAI delta format
+        val deltaEvent = repoImpl.parseStreamEvent("{\"delta\":{\"content\":\"Delta token\"}}")
+        assertTrue(deltaEvent is com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Chunk)
+        assertEquals("Delta token", (deltaEvent as com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Chunk).chunk)
+
+        // Fallback raw string chunk
+        val rawEvent = repoImpl.parseStreamEvent("Plain unformatted token")
+        assertTrue(rawEvent is com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Chunk)
+        assertEquals("Plain unformatted token", (rawEvent as com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Chunk).chunk)
+    }
+
+    @Test
+    fun testRepository_SendMessageStream_Success() = runBlocking {
+        val events = mutableListOf<com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent>()
+        repository.sendMessageStream("Analyze LUCK").collect { result ->
+            assertTrue(result.isSuccess)
+            events.add(result.getOrNull()!!)
+        }
+
+        assertTrue(events.isNotEmpty())
+        assertTrue(events[0] is com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Start)
+        val chunks = events.filterIsInstance<com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Chunk>()
+        assertEquals(2, chunks.size)
+        assertEquals("Analysis: ", chunks[0].chunk)
+        assertEquals("Market is bullish.", chunks[1].chunk)
+
+        val done = events.filterIsInstance<com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Done>()
+        assertEquals(1, done.size)
+        assertEquals("Analysis: Market is bullish.", done[0].fullResponse)
+    }
+
+    @Test
+    fun testRepository_SendMessageStream_Failure() = runBlocking {
+        fakeApiService.shouldFail = true
+        val results = mutableListOf<Result<com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent>>()
+        repository.sendMessageStream("Analyze LUCK").collect { result ->
+            results.add(result)
+        }
+
+        assertEquals(1, results.size)
+        assertTrue(results[0].isFailure)
+    }
+
+    @Test
+    fun testAssistantMarkdownFormatter() {
+        val raw = "### Market Overview\n**LUCK** is performing well:\n- High volume\n- RSI is 58"
+        val formatted = com.fyp.basarattradeinvest.feature.assistant.AssistantMarkdownFormatter.format(raw)
+        assertTrue(formatted.toString().contains("Market Overview"))
+        assertTrue(formatted.toString().contains("• High volume"))
+        assertTrue(formatted.toString().contains("• RSI is 58"))
     }
 }

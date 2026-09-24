@@ -9,6 +9,7 @@ import com.fyp.basarattradeinvest.data.remote.dto.assistant.AssistantConversatio
 import com.fyp.basarattradeinvest.domain.model.assistant.AssistantChatResult
 import com.fyp.basarattradeinvest.domain.model.assistant.AssistantConversation
 import com.fyp.basarattradeinvest.domain.model.assistant.AssistantConversationWithMessages
+import com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent
 import com.fyp.basarattradeinvest.domain.repository.AssistantRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -51,7 +52,7 @@ class AssistantRepositoryImpl(
     override fun sendMessageStream(
         message: String,
         conversationId: String?
-    ): Flow<Result<String>> = flow {
+    ): Flow<Result<AssistantStreamEvent>> = flow {
         try {
             val request = AssistantChatRequestDto(
                 message = message,
@@ -72,35 +73,33 @@ class AssistantRepositoryImpl(
             }
 
             val reader = BufferedReader(InputStreamReader(body.byteStream()))
-            val accumulated = StringBuilder()
 
             try {
                 var line: String?
                 while (reader.readLine().also { line = it } != null) {
                     val currentLine = line ?: continue
 
-                    // SSE protocol: lines starting with "data: " contain the payload
-                    if (currentLine.startsWith("data: ")) {
-                        val data = currentLine.removePrefix("data: ").trim()
+                    // SSE protocol: lines starting with "data: " or "data:" contain the payload
+                    if (currentLine.startsWith("data:", ignoreCase = true)) {
+                        val data = currentLine.substringAfter("data:").trim()
 
-                        // "[DONE]" signals end of stream (common FastAPI SSE pattern)
+                        if (data.isEmpty()) continue
+
+                        // Direct check for [DONE] token termination
                         if (data == "[DONE]") {
+                            emit(Result.success(AssistantStreamEvent.Done()))
                             break
                         }
 
-                        // Attempt to parse as JSON chunk or treat as plain text
-                        val chunk = parseStreamChunk(data)
-                        if (chunk.isNotEmpty()) {
-                            accumulated.append(chunk)
-                            emit(Result.success(accumulated.toString()))
+                        val streamEvent = parseStreamEvent(data)
+                        if (streamEvent != null) {
+                            emit(Result.success(streamEvent))
+                            if (streamEvent is AssistantStreamEvent.Done) {
+                                break
+                            }
                         }
                     }
-                    // Ignore empty lines (SSE keepalive) and comment lines (starting with ':')
-                }
-
-                // Final emission with the complete accumulated content
-                if (accumulated.isNotEmpty()) {
-                    emit(Result.success(accumulated.toString()))
+                    // SSE comments (':') and blank lines are ignored per SSE spec
                 }
             } finally {
                 reader.close()
@@ -214,26 +213,76 @@ class AssistantRepositoryImpl(
     // ─── SSE Parsing ───
 
     /**
-     * Parses a single SSE data chunk.
-     * Attempts JSON parsing first; falls back to plain text.
+     * Parses a single SSE data payload line according to the backend specification:
+     * - {"event": "start", "conversation_id": "..."}
+     * - {"event": "chunk", "chunk": "token", "conversation_id": "..."}
+     * - {"event": "done", "conversation_id": "...", "full_response": "..."}
+     * - {"event": "error", "error": "...", "conversation_id": "..."}
+     * Also supports generic JSON and fallback raw text chunks.
      */
-    private fun parseStreamChunk(data: String): String {
-        // Try to extract "content" or "message" from JSON
+    internal fun parseStreamEvent(data: String): AssistantStreamEvent? {
         return try {
             val json = com.google.gson.JsonParser.parseString(data).asJsonObject
-            when {
-                json.has("content") -> json.get("content").asString
-                json.has("message") -> json.get("message").asString
-                json.has("text") -> json.get("text").asString
-                json.has("delta") -> {
-                    val delta = json.getAsJsonObject("delta")
-                    delta?.get("content")?.asString ?: ""
+            val eventType = if (json.has("event") && !json.get("event").isJsonNull) {
+                json.get("event").asString
+            } else null
+
+            val convId = if (json.has("conversation_id") && !json.get("conversation_id").isJsonNull) {
+                json.get("conversation_id").asString
+            } else null
+
+            when (eventType) {
+                "start" -> AssistantStreamEvent.Start(convId)
+                "chunk" -> {
+                    val chunkText = when {
+                        json.has("chunk") && !json.get("chunk").isJsonNull -> json.get("chunk").asString
+                        json.has("content") && !json.get("content").isJsonNull -> json.get("content").asString
+                        json.has("text") && !json.get("text").isJsonNull -> json.get("text").asString
+                        else -> ""
+                    }
+                    if (chunkText.isNotEmpty()) AssistantStreamEvent.Chunk(chunkText, convId) else null
                 }
-                else -> data // Treat entire data as text chunk
+                "done" -> {
+                    val fullResponse = if (json.has("full_response") && !json.get("full_response").isJsonNull) {
+                        json.get("full_response").asString
+                    } else null
+                    AssistantStreamEvent.Done(convId, fullResponse)
+                }
+                "error" -> {
+                    val errorMsg = if (json.has("error") && !json.get("error").isJsonNull) {
+                        json.get("error").asString
+                    } else "Streaming error occurred"
+                    AssistantStreamEvent.Error(errorMsg, convId)
+                }
+                else -> {
+                    // Fallback for JSON without explicit "event" field
+                    when {
+                        json.has("chunk") && !json.get("chunk").isJsonNull ->
+                            AssistantStreamEvent.Chunk(json.get("chunk").asString, convId)
+                        json.has("content") && !json.get("content").isJsonNull ->
+                            AssistantStreamEvent.Chunk(json.get("content").asString, convId)
+                        json.has("message") && !json.get("message").isJsonNull ->
+                            AssistantStreamEvent.Chunk(json.get("message").asString, convId)
+                        json.has("text") && !json.get("text").isJsonNull ->
+                            AssistantStreamEvent.Chunk(json.get("text").asString, convId)
+                        json.has("delta") && json.get("delta").isJsonObject -> {
+                            val delta = json.getAsJsonObject("delta")
+                            val content = if (delta.has("content") && !delta.get("content").isJsonNull) {
+                                delta.get("content").asString
+                            } else ""
+                            if (content.isNotEmpty()) AssistantStreamEvent.Chunk(content, convId) else null
+                        }
+                        else -> null
+                    }
+                }
             }
         } catch (e: Exception) {
-            // Not JSON — treat the raw data as a text chunk
-            data
+            // Not JSON — fallback to treating raw string as a text chunk if non-blank
+            if (data.isNotBlank()) {
+                AssistantStreamEvent.Chunk(data)
+            } else {
+                null
+            }
         }
     }
 

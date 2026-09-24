@@ -68,7 +68,13 @@ class ChatMessageAdapter : ListAdapter<ChatMessageItem, RecyclerView.ViewHolder>
         private val streamingIndicator: View = itemView.findViewById(R.id.streamingIndicator)
 
         fun bind(item: ChatMessageItem) {
-            tvContent.text = item.content
+            if (item.content.isEmpty() && item.isStreaming) {
+                tvContent.text = "Analyzing market data..."
+                tvContent.alpha = 0.6f
+            } else {
+                tvContent.text = com.fyp.basarattradeinvest.feature.assistant.AssistantMarkdownFormatter.format(item.content)
+                tvContent.alpha = 1.0f
+            }
             tvTimestamp.text = formatTimestamp(item.timestamp)
             streamingIndicator.visibility = if (item.isStreaming) View.VISIBLE else View.GONE
         }

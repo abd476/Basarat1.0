@@ -63,27 +63,27 @@ class AssistantChatFragment : Fragment() {
         }
     }
 
+    private lateinit var layoutManager: LinearLayoutManager
+
     private fun setupRecyclerView() {
         chatAdapter = ChatMessageAdapter()
-        val layoutManager = LinearLayoutManager(requireContext()).apply {
+        layoutManager = LinearLayoutManager(requireContext()).apply {
             stackFromEnd = true
         }
 
         binding.rvMessages.apply {
-            this.layoutManager = layoutManager
+            this.layoutManager = this@AssistantChatFragment.layoutManager
             adapter = chatAdapter
-            // Auto-scroll when new items are inserted
-            chatAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                    binding.rvMessages.smoothScrollToPosition(chatAdapter.itemCount - 1)
-                }
-            })
         }
     }
 
     private fun setupInput() {
         binding.btnSend.setOnClickListener {
             sendMessage()
+        }
+
+        binding.btnStopGenerating.setOnClickListener {
+            viewModel.stopGenerating()
         }
 
         binding.etMessage.setOnEditorActionListener { _, actionId, _ ->
@@ -134,7 +134,7 @@ class AssistantChatFragment : Fragment() {
                 binding.layoutError.visibility = View.GONE
                 binding.layoutWelcome.visibility = View.GONE
                 binding.rvMessages.visibility = View.GONE
-                binding.layoutStreaming.visibility = View.GONE
+                binding.btnStopGenerating.visibility = View.GONE
                 binding.btnRegenerate.visibility = View.GONE
             }
 
@@ -143,7 +143,7 @@ class AssistantChatFragment : Fragment() {
                 binding.layoutError.visibility = View.VISIBLE
                 binding.layoutWelcome.visibility = View.GONE
                 binding.rvMessages.visibility = View.GONE
-                binding.layoutStreaming.visibility = View.GONE
+                binding.btnStopGenerating.visibility = View.GONE
                 binding.btnRegenerate.visibility = View.GONE
                 binding.tvErrorMessage.text = state.message
             }
@@ -159,41 +159,39 @@ class AssistantChatFragment : Fragment() {
                     }
                 }
 
-                // Show welcome banner if no messages and not streaming
+                // Show welcome banner if no messages
                 val hasMessages = state.messages.isNotEmpty()
-                val isStreaming = !state.streamingContent.isNullOrEmpty()
 
-                if (!hasMessages && !isStreaming) {
+                if (!hasMessages) {
                     binding.layoutWelcome.visibility = View.VISIBLE
                     binding.rvMessages.visibility = View.GONE
                 } else {
                     binding.layoutWelcome.visibility = View.GONE
                     binding.rvMessages.visibility = View.VISIBLE
+
+                    // Smart auto-scroll: only follow new chunks if user is already near the bottom
+                    val lastVisiblePos = layoutManager.findLastVisibleItemPosition()
+                    val totalCount = chatAdapter.itemCount
+                    val isNearBottom = totalCount <= 1 || lastVisiblePos >= totalCount - 2
+
                     chatAdapter.submitList(state.messages) {
-                        if (state.messages.isNotEmpty()) {
+                        if (isNearBottom && state.messages.isNotEmpty()) {
                             binding.rvMessages.scrollToPosition(state.messages.size - 1)
                         }
                     }
                 }
 
-                // Streaming overlay indicator
-                if (isStreaming) {
-                    binding.layoutStreaming.visibility = View.VISIBLE
-                    binding.tvStreamingContent.text = state.streamingContent
-                    if (chatAdapter.itemCount > 0) {
-                        binding.rvMessages.scrollToPosition(chatAdapter.itemCount - 1)
-                    }
-                } else {
-                    binding.layoutStreaming.visibility = View.GONE
-                }
+                // Streaming & Regenerate controls
+                val isStreaming = state.isStreaming
+                binding.btnStopGenerating.visibility = if (isStreaming) View.VISIBLE else View.GONE
 
-                // Composer & Regenerate controls state
-                val isBusy = state.isSending || state.isRegenerating
+                val canRegenerate = !state.isSending && !isStreaming && !state.isRegenerating && state.messages.any { !it.isUser }
+                binding.btnRegenerate.visibility = if (canRegenerate) View.VISIBLE else View.GONE
+
+                // Composer state
+                val isBusy = state.isSending || state.isStreaming || state.isRegenerating
                 binding.btnSend.isEnabled = !isBusy
                 binding.btnSend.alpha = if (isBusy) 0.5f else 1.0f
-
-                val canRegenerate = !isBusy && state.messages.any { !it.isUser }
-                binding.btnRegenerate.visibility = if (canRegenerate) View.VISIBLE else View.GONE
 
                 // Transient error notification
                 state.errorMessage?.let { error ->

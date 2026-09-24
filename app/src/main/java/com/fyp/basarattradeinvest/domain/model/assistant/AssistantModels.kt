@@ -55,3 +55,14 @@ data class AssistantConversationWithMessages(
     val conversation: AssistantConversation,
     val messages: List<AssistantMessage>
 )
+
+/**
+ * Domain events emitted during real SSE streaming from POST /api/v1/assistant/chat/stream.
+ * Matches backend event types: start, chunk, done, error.
+ */
+sealed interface AssistantStreamEvent {
+    data class Start(val conversationId: String?) : AssistantStreamEvent
+    data class Chunk(val chunk: String, val conversationId: String? = null) : AssistantStreamEvent
+    data class Done(val conversationId: String? = null, val fullResponse: String? = null) : AssistantStreamEvent
+    data class Error(val error: String, val conversationId: String? = null) : AssistantStreamEvent
+}

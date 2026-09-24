@@ -3,6 +3,7 @@ package com.fyp.basarattradeinvest.domain.repository
 import com.fyp.basarattradeinvest.domain.model.assistant.AssistantChatResult
 import com.fyp.basarattradeinvest.domain.model.assistant.AssistantConversation
 import com.fyp.basarattradeinvest.domain.model.assistant.AssistantConversationWithMessages
+import com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -14,11 +15,10 @@ interface AssistantRepository {
     suspend fun sendMessage(message: String, conversationId: String? = null): Result<AssistantChatResult>
 
     /**
-     * Send a chat message with streaming (SSE).
-     * Emits accumulated content as chunks arrive.
-     * The final emission is the complete assistant response.
+     * Send a chat message with real SSE streaming.
+     * Emits structured AssistantStreamEvent instances as server-sent events arrive.
      */
-    fun sendMessageStream(message: String, conversationId: String? = null): Flow<Result<String>>
+    fun sendMessageStream(message: String, conversationId: String? = null): Flow<Result<AssistantStreamEvent>>
 
     /** List all user conversations. */
     suspend fun listConversations(limit: Int? = null, offset: Int? = null): Result<List<AssistantConversation>>
