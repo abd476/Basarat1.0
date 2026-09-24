@@ -127,6 +127,9 @@ class MarketDashboardFragment : Fragment() {
         binding.ivTopMenu.setOnClickListener {
             Toast.makeText(requireContext(), "Menu drawer", Toast.LENGTH_SHORT).show()
         }
+        binding.ivTopNotifications.setOnClickListener {
+            findNavController().navigate(R.id.action_marketDashboard_to_notifications)
+        }
         binding.ivTopSearch.setOnClickListener {
             findNavController().navigate(R.id.stockSearchFragment)
         }

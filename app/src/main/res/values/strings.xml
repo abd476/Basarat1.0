@@ -58,4 +58,7 @@
     <string name="edit_alert_rule">Edit Alert Rule</string>
     <string name="delete_alert_rule">Delete Alert Rule</string>
 
+    <!-- Notifications Module -->
+    <string name="title_notifications">Notifications</string>
+    <string name="notifications_inbox">In-App Notifications</string>
 </resources>
