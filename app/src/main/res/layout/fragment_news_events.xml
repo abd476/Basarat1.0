@@ -187,66 +187,6 @@
             app:tint="@color/color_text_secondary" />
     </LinearLayout>
 
-    <!-- Top Segmented Switcher: [ Market News ] [ Corporate Events ] -->
-    <LinearLayout
-        android:id="@+id/layout_category_switcher"
-        android:layout_width="0dp"
-        android:layout_height="36dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="6dp"
-        android:background="@drawable/bg_segmented_container"
-        android:orientation="horizontal"
-        android:padding="3dp"
-        android:weightSum="2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_search_bar">
-
-        <!-- Market News Tab -->
-        <LinearLayout
-            android:id="@+id/btn_tab_market_news"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/bg_segmented_tab_active"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_tab_market_news"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Market News"
-                android:textColor="@color/color_text_primary"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <!-- Corporate Events Tab -->
-        <LinearLayout
-            android:id="@+id/btn_tab_corporate_events"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/transparent"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_tab_corporate_events"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Corporate Events"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </LinearLayout>
-
     <!-- PSX Filter Pills (Matching Shariah & Markets Screens) -->
     <HorizontalScrollView
         android:id="@+id/scroll_filter_pills"
@@ -258,7 +198,7 @@
         android:scrollbars="none"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_category_switcher">
+        app:layout_constraintTop_toBottomOf="@id/layout_search_bar">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -278,6 +218,20 @@
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
+            <!-- General -->
+            <TextView
+                android:id="@+id/chip_general"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_chip_filter_unselected"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="General"
+                android:textColor="@color/color_text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
             <!-- KSE-100 -->
             <TextView
                 android:id="@+id/chip_kse_100"
@@ -288,34 +242,6 @@
                 android:gravity="center"
                 android:paddingHorizontal="16dp"
                 android:text="KSE-100"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <!-- Earnings -->
-            <TextView
-                android:id="@+id/chip_earnings"
-                android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_chip_filter_unselected"
-                android:gravity="center"
-                android:paddingHorizontal="16dp"
-                android:text="Earnings"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <!-- Dividends -->
-            <TextView
-                android:id="@+id/chip_dividends"
-                android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_chip_filter_unselected"
-                android:gravity="center"
-                android:paddingHorizontal="16dp"
-                android:text="Dividends"
                 android:textColor="@color/color_text_secondary"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -358,6 +284,76 @@
                 android:gravity="center"
                 android:paddingHorizontal="16dp"
                 android:text="Technology"
+                android:textColor="@color/color_text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <!-- Oil & Gas -->
+            <TextView
+                android:id="@+id/chip_oil_gas"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_chip_filter_unselected"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="Oil &amp; Gas"
+                android:textColor="@color/color_text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <!-- Fertilizer -->
+            <TextView
+                android:id="@+id/chip_fertilizer"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_chip_filter_unselected"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="Fertilizer"
+                android:textColor="@color/color_text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <!-- Corporate -->
+            <TextView
+                android:id="@+id/chip_corporate"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_chip_filter_unselected"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="Corporate"
+                android:textColor="@color/color_text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <!-- Earnings -->
+            <TextView
+                android:id="@+id/chip_earnings"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_chip_filter_unselected"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="Earnings"
+                android:textColor="@color/color_text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <!-- Dividends -->
+            <TextView
+                android:id="@+id/chip_dividends"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_chip_filter_unselected"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="Dividends"
                 android:textColor="@color/color_text_secondary"
                 android:textSize="12sp"
                 android:textStyle="bold" />

@@ -34,7 +34,7 @@ class NewsArticleAdapter(
 
             binding.tvNewsTicker.text = item.symbol
             binding.tvDividendBadge.visibility = if (item.hasDividend) View.VISIBLE else View.GONE
-            binding.tvNewsSource.text = item.source
+            binding.tvNewsSource.text = if (item.isOfficial) "${item.source} • Official" else item.source
             binding.tvNewsTime.text = item.timestamp
 
             // Sentiment FinBERT Badge

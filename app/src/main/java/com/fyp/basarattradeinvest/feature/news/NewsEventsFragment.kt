@@ -19,8 +19,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentNewsEventsBinding
-import com.fyp.basarattradeinvest.domain.model.NewsTab
-import com.fyp.basarattradeinvest.feature.news.adapter.CorporateEventAdapter
 import com.fyp.basarattradeinvest.feature.news.adapter.NewsArticleAdapter
 import kotlinx.coroutines.launch
 
@@ -35,13 +33,6 @@ class NewsEventsFragment : Fragment() {
         NewsArticleAdapter { article ->
             val bundle = Bundle().apply { putString("articleId", article.id) }
             findNavController().navigate(R.id.action_newsEvents_to_articleDetail, bundle)
-        }
-    }
-
-    private val corporateEventAdapter by lazy {
-        CorporateEventAdapter { event ->
-            val bundle = Bundle().apply { putString("symbol", event.symbol) }
-            findNavController().navigate(R.id.stockDetailFragment, bundle)
         }
     }
 
@@ -126,24 +117,19 @@ class NewsEventsFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // Segmented Switcher [ Market News ] [ Corporate Events ]
-        binding.btnTabMarketNews.setOnClickListener {
-            viewModel.setTab(NewsTab.MARKET_NEWS)
-        }
-
-        binding.btnTabCorporateEvents.setOnClickListener {
-            viewModel.setTab(NewsTab.CORPORATE_EVENTS)
-        }
-
-        // Filter Pills
+        // Filter Pills (Sectors & Corporate Categories)
         val filterMap = mapOf(
             binding.chipAll to "All",
+            binding.chipGeneral to "General",
             binding.chipKse100 to "KSE-100",
-            binding.chipEarnings to "Earnings",
-            binding.chipDividends to "Dividends",
             binding.chipBanks to "Banks",
             binding.chipCement to "Cement",
-            binding.chipTech to "Technology"
+            binding.chipTech to "Technology",
+            binding.chipOilGas to "Oil & Gas",
+            binding.chipFertilizer to "Fertilizer",
+            binding.chipCorporate to "Corporate",
+            binding.chipEarnings to "Earnings",
+            binding.chipDividends to "Dividends"
         )
 
         filterMap.forEach { (view, categoryName) ->
@@ -172,8 +158,6 @@ class NewsEventsFragment : Fragment() {
                         }
                         is NewsEventsUiState.Success -> {
                             binding.progressLoading.visibility = View.GONE
-                            binding.rvNewsEvents.visibility = View.VISIBLE
-                            binding.layoutEmptyState.visibility = View.GONE
                             binding.layoutErrorState.visibility = View.GONE
 
                             // Market Status Banner
@@ -192,22 +176,15 @@ class NewsEventsFragment : Fragment() {
                                 Toast.makeText(requireContext(), state.refreshMessage, Toast.LENGTH_SHORT).show()
                             }
 
-                            updateTabsUI(state.activeTab)
                             updateFilterPills(state.activeCategory)
 
-                            when (state.activeTab) {
-                                NewsTab.MARKET_NEWS -> {
-                                    if (binding.rvNewsEvents.adapter != newsAdapter) {
-                                        binding.rvNewsEvents.adapter = newsAdapter
-                                    }
-                                    newsAdapter.submitList(state.newsArticles)
-                                }
-                                NewsTab.CORPORATE_EVENTS -> {
-                                    if (binding.rvNewsEvents.adapter != corporateEventAdapter) {
-                                        binding.rvNewsEvents.adapter = corporateEventAdapter
-                                    }
-                                    corporateEventAdapter.submitList(state.corporateEvents)
-                                }
+                            if (state.newsArticles.isEmpty()) {
+                                binding.rvNewsEvents.visibility = View.GONE
+                                binding.layoutEmptyState.visibility = View.VISIBLE
+                            } else {
+                                binding.rvNewsEvents.visibility = View.VISIBLE
+                                binding.layoutEmptyState.visibility = View.GONE
+                                newsAdapter.submitList(state.newsArticles)
                             }
                         }
                         is NewsEventsUiState.Empty -> {
@@ -216,6 +193,8 @@ class NewsEventsFragment : Fragment() {
                             binding.layoutEmptyState.visibility = View.VISIBLE
                             binding.layoutErrorState.visibility = View.GONE
                             binding.progressLoadMore.visibility = View.GONE
+
+                            updateFilterPills(state.activeCategory)
                         }
                         is NewsEventsUiState.Error -> {
                             binding.progressLoading.visibility = View.GONE
@@ -231,35 +210,19 @@ class NewsEventsFragment : Fragment() {
         }
     }
 
-    private fun updateTabsUI(activeTab: NewsTab) {
-        val context = requireContext()
-        when (activeTab) {
-            NewsTab.MARKET_NEWS -> {
-                binding.btnTabMarketNews.setBackgroundResource(R.drawable.bg_segmented_tab_active)
-                binding.tvTabMarketNews.setTextColor(ContextCompat.getColor(context, R.color.color_text_primary))
-
-                binding.btnTabCorporateEvents.setBackgroundColor(ContextCompat.getColor(context, R.color.transparent))
-                binding.tvTabCorporateEvents.setTextColor(ContextCompat.getColor(context, R.color.color_text_secondary))
-            }
-            NewsTab.CORPORATE_EVENTS -> {
-                binding.btnTabCorporateEvents.setBackgroundResource(R.drawable.bg_segmented_tab_active)
-                binding.tvTabCorporateEvents.setTextColor(ContextCompat.getColor(context, R.color.color_text_primary))
-
-                binding.btnTabMarketNews.setBackgroundColor(ContextCompat.getColor(context, R.color.transparent))
-                binding.tvTabMarketNews.setTextColor(ContextCompat.getColor(context, R.color.color_text_secondary))
-            }
-        }
-    }
-
     private fun updateFilterPills(selectedCategory: String) {
         val pills = listOf(
             binding.chipAll to "All",
+            binding.chipGeneral to "General",
             binding.chipKse100 to "KSE-100",
-            binding.chipEarnings to "Earnings",
-            binding.chipDividends to "Dividends",
             binding.chipBanks to "Banks",
             binding.chipCement to "Cement",
-            binding.chipTech to "Technology"
+            binding.chipTech to "Technology",
+            binding.chipOilGas to "Oil & Gas",
+            binding.chipFertilizer to "Fertilizer",
+            binding.chipCorporate to "Corporate",
+            binding.chipEarnings to "Earnings",
+            binding.chipDividends to "Dividends"
         )
 
         pills.forEach { (view: TextView, categoryName: String) ->

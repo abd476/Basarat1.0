@@ -72,7 +72,7 @@ object NewsDtoMapper {
         )
     }
 
-    private fun formatRelativeTime(dateString: String?): String {
+    internal fun formatRelativeTime(dateString: String?): String {
         if (dateString.isNullOrBlank()) return "Recent"
         try {
             val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).apply {
@@ -101,7 +101,7 @@ object NewsDtoMapper {
         }
     }
 
-    private fun formatEventDate(dateString: String): String {
+    internal fun formatEventDate(dateString: String): String {
         if (dateString.isBlank()) return "Upcoming"
         try {
             // Check if format is YYYY-MM-DD

@@ -3,9 +3,7 @@ package com.fyp.basarattradeinvest.feature.news
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.data.repository.NewsRepositoryImpl
-import com.fyp.basarattradeinvest.domain.model.CorporateEvent
 import com.fyp.basarattradeinvest.domain.model.NewsArticle
-import com.fyp.basarattradeinvest.domain.model.NewsTab
 import com.fyp.basarattradeinvest.domain.usecase.GetNewsAndEventsUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -21,12 +19,10 @@ class NewsEventsViewModel(
     private val _uiState = MutableStateFlow<NewsEventsUiState>(NewsEventsUiState.Loading)
     val uiState: StateFlow<NewsEventsUiState> = _uiState.asStateFlow()
 
-    private var currentTab: NewsTab = NewsTab.MARKET_NEWS
     private var currentCategory: String = "All"
     private var searchQuery: String = ""
 
     private var cachedNews: MutableList<NewsArticle> = mutableListOf()
-    private var cachedEvents: List<CorporateEvent> = emptyList()
 
     private var nextCursor: String? = null
     private var hasMoreNews: Boolean = false
@@ -41,15 +37,13 @@ class NewsEventsViewModel(
     }
 
     fun loadInitialData() {
-        loadData(tab = currentTab, category = currentCategory, query = searchQuery)
+        loadData(category = currentCategory, query = searchQuery)
     }
 
     fun loadData(
-        tab: NewsTab = currentTab,
         category: String = currentCategory,
         query: String = searchQuery
     ) {
-        currentTab = tab
         currentCategory = category
         searchQuery = query
 
@@ -60,19 +54,14 @@ class NewsEventsViewModel(
             val marketStatusResult = getNewsAndEventsUseCase.getMarketStatusText()
             marketStatusText = marketStatusResult.getOrNull()
 
-            // Fetch News and Events concurrently
             val newsResult = getNewsAndEventsUseCase.getNewsFeed(
                 category = currentCategory,
                 query = searchQuery,
                 cursor = null,
                 limit = 20
             )
-            val eventsResult = getNewsAndEventsUseCase.getEvents(
-                category = currentCategory,
-                query = searchQuery
-            )
 
-            if (newsResult.isSuccess || eventsResult.isSuccess) {
+            if (newsResult.isSuccess) {
                 val newsPage = newsResult.getOrNull()
                 cachedNews.clear()
                 if (newsPage != null) {
@@ -84,20 +73,14 @@ class NewsEventsViewModel(
                     hasMoreNews = false
                 }
 
-                cachedEvents = eventsResult.getOrDefault(emptyList())
-
-                val activeListEmpty = when (currentTab) {
-                    NewsTab.MARKET_NEWS -> cachedNews.isEmpty()
-                    NewsTab.CORPORATE_EVENTS -> cachedEvents.isEmpty()
-                }
-
-                if (activeListEmpty) {
-                    _uiState.value = NewsEventsUiState.Empty
+                if (cachedNews.isEmpty()) {
+                    _uiState.value = NewsEventsUiState.Empty(
+                        activeCategory = currentCategory,
+                        marketStatusText = marketStatusText
+                    )
                 } else {
                     _uiState.value = NewsEventsUiState.Success(
                         newsArticles = cachedNews.toList(),
-                        corporateEvents = cachedEvents,
-                        activeTab = currentTab,
                         activeCategory = currentCategory,
                         searchQuery = searchQuery,
                         nextCursor = nextCursor,
@@ -109,7 +92,6 @@ class NewsEventsViewModel(
                 }
             } else {
                 val errorMsg = newsResult.exceptionOrNull()?.message
-                    ?: eventsResult.exceptionOrNull()?.message
                     ?: "Unable to load PSX news and corporate intelligence."
                 _uiState.value = NewsEventsUiState.Error(errorMsg)
             }
@@ -117,7 +99,6 @@ class NewsEventsViewModel(
     }
 
     fun loadNextPage() {
-        if (currentTab != NewsTab.MARKET_NEWS) return
         if (isLoadingMore || !hasMoreNews || nextCursor.isNullOrBlank()) return
 
         isLoadingMore = true
@@ -149,8 +130,6 @@ class NewsEventsViewModel(
 
                     _uiState.value = NewsEventsUiState.Success(
                         newsArticles = cachedNews.toList(),
-                        corporateEvents = cachedEvents,
-                        activeTab = currentTab,
                         activeCategory = currentCategory,
                         searchQuery = searchQuery,
                         nextCursor = nextCursor,
@@ -161,7 +140,6 @@ class NewsEventsViewModel(
                     )
                 }
             } else {
-                // Keep existing items, just reset loading more
                 if (currentState is NewsEventsUiState.Success) {
                     _uiState.value = currentState.copy(isLoadingMore = false)
                 }
@@ -181,7 +159,6 @@ class NewsEventsViewModel(
             // 1. Trigger manual refresh
             val triggerResult = getNewsAndEventsUseCase.triggerRefresh(force = false)
             if (triggerResult.isSuccess) {
-                // Poll status up to 4 times (delay 1.5s)
                 var attempts = 0
                 while (attempts < 4) {
                     delay(1500)
@@ -196,16 +173,12 @@ class NewsEventsViewModel(
                 }
             }
 
-            // 2. Reload latest feed without losing screen state
+            // 2. Reload latest feed
             val newsResult = getNewsAndEventsUseCase.getNewsFeed(
                 category = currentCategory,
                 query = searchQuery,
                 cursor = null,
                 limit = 20
-            )
-            val eventsResult = getNewsAndEventsUseCase.getEvents(
-                category = currentCategory,
-                query = searchQuery
             )
 
             if (newsResult.isSuccess) {
@@ -217,22 +190,15 @@ class NewsEventsViewModel(
                     hasMoreNews = page.hasMore
                 }
             }
-            if (eventsResult.isSuccess) {
-                cachedEvents = eventsResult.getOrDefault(cachedEvents)
-            }
 
-            val activeListEmpty = when (currentTab) {
-                NewsTab.MARKET_NEWS -> cachedNews.isEmpty()
-                NewsTab.CORPORATE_EVENTS -> cachedEvents.isEmpty()
-            }
-
-            if (activeListEmpty) {
-                _uiState.value = NewsEventsUiState.Empty
+            if (cachedNews.isEmpty()) {
+                _uiState.value = NewsEventsUiState.Empty(
+                    activeCategory = currentCategory,
+                    marketStatusText = marketStatusText
+                )
             } else {
                 _uiState.value = NewsEventsUiState.Success(
                     newsArticles = cachedNews.toList(),
-                    corporateEvents = cachedEvents,
-                    activeTab = currentTab,
                     activeCategory = currentCategory,
                     searchQuery = searchQuery,
                     nextCursor = nextCursor,
@@ -246,38 +212,9 @@ class NewsEventsViewModel(
         }
     }
 
-    fun setTab(tab: NewsTab) {
-        if (currentTab == tab && _uiState.value is NewsEventsUiState.Success) return
-        currentTab = tab
-
-        val activeListEmpty = when (currentTab) {
-            NewsTab.MARKET_NEWS -> cachedNews.isEmpty()
-            NewsTab.CORPORATE_EVENTS -> cachedEvents.isEmpty()
-        }
-
-        if (activeListEmpty && cachedNews.isEmpty() && cachedEvents.isEmpty()) {
-            loadData(tab = currentTab)
-        } else if (activeListEmpty) {
-            _uiState.value = NewsEventsUiState.Empty
-        } else {
-            _uiState.value = NewsEventsUiState.Success(
-                newsArticles = cachedNews.toList(),
-                corporateEvents = cachedEvents,
-                activeTab = currentTab,
-                activeCategory = currentCategory,
-                searchQuery = searchQuery,
-                nextCursor = nextCursor,
-                hasMore = hasMoreNews,
-                isLoadingMore = false,
-                isRefreshing = false,
-                marketStatusText = marketStatusText
-            )
-        }
-    }
-
     fun setCategory(category: String) {
         if (currentCategory.equals(category, ignoreCase = true)) return
-        loadData(tab = currentTab, category = category, query = searchQuery)
+        loadData(category = category, query = searchQuery)
     }
 
     fun onSearchQueryChanged(query: String) {
@@ -285,12 +222,12 @@ class NewsEventsViewModel(
         searchJob = viewModelScope.launch {
             delay(400) // Debounce typing
             if (searchQuery != query) {
-                loadData(tab = currentTab, category = currentCategory, query = query)
+                loadData(category = currentCategory, query = query)
             }
         }
     }
 
     fun retry() {
-        loadData(tab = currentTab, category = currentCategory, query = searchQuery)
+        loadData(category = currentCategory, query = searchQuery)
     }
 }

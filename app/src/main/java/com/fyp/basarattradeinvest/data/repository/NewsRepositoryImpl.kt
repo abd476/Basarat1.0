@@ -25,13 +25,17 @@ class NewsRepositoryImpl(
         limit: Int
     ): Result<NewsFeedPage> = withContext(Dispatchers.IO) {
         try {
-            val normalizedCat = category.trim()
-            val eventTypeParam = when (normalizedCat.lowercase(Locale.ROOT)) {
+            val normalizedCat = category.trim().lowercase(Locale.ROOT)
+            val eventTypeParam = when (normalizedCat) {
                 "earnings" -> "earnings"
                 "dividends" -> "dividend"
                 else -> null
             }
-            val sentimentParam = when (normalizedCat.lowercase(Locale.ROOT)) {
+            val sourceTypeParam = when (normalizedCat) {
+                "corporate" -> "official"
+                else -> null
+            }
+            val sentimentParam = when (normalizedCat) {
                 "bullish" -> "bullish"
                 "bearish" -> "bearish"
                 "neutral" -> "neutral"
@@ -41,13 +45,14 @@ class NewsRepositoryImpl(
             // Combine category filter and text search if needed
             val effectiveQuery = when {
                 query.isNotBlank() -> query.trim()
-                normalizedCat !in listOf("All", "", "Earnings", "Dividends", "Bullish", "Bearish", "Neutral") -> normalizedCat
+                normalizedCat !in listOf("all", "", "corporate", "earnings", "dividends", "bullish", "bearish", "neutral") -> category.trim()
                 else -> null
             }
 
             val response = apiService.getNewsFeed(
                 query = effectiveQuery,
                 eventType = eventTypeParam,
+                sourceType = sourceTypeParam,
                 sentiment = sentimentParam,
                 limit = limit,
                 cursor = cursor
@@ -107,26 +112,59 @@ class NewsRepositoryImpl(
                 symbol = symbol
             )
 
-            if (response.isSuccessful) {
+            var events = if (response.isSuccessful) {
                 val body = response.body()
-                var events = body?.items?.map { NewsDtoMapper.mapEventDtoToDomain(it) } ?: emptyList()
-
-                // If query is present, filter locally
-                if (query.isNotBlank()) {
-                    val q = query.trim().lowercase(Locale.ROOT)
-                    events = events.filter {
-                        it.symbol.lowercase(Locale.ROOT).contains(q) ||
-                                it.companyName.lowercase(Locale.ROOT).contains(q) ||
-                                it.description.lowercase(Locale.ROOT).contains(q) ||
-                                it.eventType.lowercase(Locale.ROOT).contains(q)
-                    }
-                }
-
-                Result.success(events)
+                body?.items?.map { NewsDtoMapper.mapEventDtoToDomain(it) } ?: emptyList()
             } else {
-                val errorMsg = NetworkErrorParser.parseError(response)
-                Result.failure(Exception(errorMsg))
+                emptyList()
             }
+
+            // Fallback: If events calendar is empty or requires authentication,
+            // extract corporate announcements from news feed (isOfficial or has eventType or source is official)
+            if (events.isEmpty()) {
+                val newsRes = apiService.getNewsFeed(
+                    eventType = eventTypeParam,
+                    limit = 30
+                )
+                if (newsRes.isSuccessful) {
+                    val rawItems = newsRes.body()?.items ?: emptyList()
+                    val corporateItems = rawItems.filter {
+                        it.isOfficial == true ||
+                                it.source?.type == "official" ||
+                                (it.eventType != null && it.eventType != "other")
+                    }
+                    val mappedEvents = corporateItems.map { item ->
+                        val sym = item.symbols?.firstOrNull()?.symbol ?: "PSX"
+                        val comp = item.symbols?.firstOrNull()?.name ?: sym
+                        CorporateEvent(
+                            id = item.id,
+                            eventType = (item.eventType ?: "ANNOUNCEMENT").uppercase(Locale.ROOT).replace("_", " "),
+                            symbol = sym,
+                            companyName = comp,
+                            eventDate = NewsDtoMapper.formatRelativeTime(item.publishedAt ?: item.createdAt),
+                            description = item.title,
+                            bookClosure = item.summary.orEmpty(),
+                            sourceNotice = item.source?.name ?: "PSX Official Notice",
+                            category = item.eventType ?: "corporate",
+                            sourceUrl = item.url ?: item.externalUrl
+                        )
+                    }
+                    events = mappedEvents
+                }
+            }
+
+            // If query is present, filter locally
+            if (query.isNotBlank()) {
+                val q = query.trim().lowercase(Locale.ROOT)
+                events = events.filter {
+                    it.symbol.lowercase(Locale.ROOT).contains(q) ||
+                            it.companyName.lowercase(Locale.ROOT).contains(q) ||
+                            it.description.lowercase(Locale.ROOT).contains(q) ||
+                            it.eventType.lowercase(Locale.ROOT).contains(q)
+                }
+            }
+
+            Result.success(events)
         } catch (e: Exception) {
             Result.failure(e)
         }

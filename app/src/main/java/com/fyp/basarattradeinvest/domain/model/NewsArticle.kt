@@ -19,6 +19,6 @@ data class NewsArticle(
 )
 
 enum class NewsTab {
-    MARKET_NEWS,
+    GENERAL_NEWS,
     CORPORATE_EVENTS
 }
