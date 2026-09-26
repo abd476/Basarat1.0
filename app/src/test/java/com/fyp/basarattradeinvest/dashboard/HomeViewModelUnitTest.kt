@@ -68,6 +68,12 @@ class HomeViewModelUnitTest {
     }
 
     @Test
+    fun testHomeViewModelStartsInLoadingState() {
+        val viewModel = com.fyp.basarattradeinvest.feature.dashboard.HomeViewModel(autoLoad = false)
+        assertTrue(viewModel.uiState.value is HomeUiState.Loading)
+    }
+
+    @Test
     fun testHomeUiStateErrorAndLoading() {
         val loading: HomeUiState = HomeUiState.Loading
         assertNotNull(loading)
