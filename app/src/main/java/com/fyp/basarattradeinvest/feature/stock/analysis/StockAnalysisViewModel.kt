@@ -2,12 +2,18 @@ package com.fyp.basarattradeinvest.feature.stock.analysis
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fyp.basarattradeinvest.data.mapper.ForecastDtoMapper
 import com.fyp.basarattradeinvest.data.repository.ForecastRepositoryImpl
+import com.fyp.basarattradeinvest.data.repository.SentimentRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.StockRepositoryImpl
 import com.fyp.basarattradeinvest.domain.repository.ForecastRepository
+import com.fyp.basarattradeinvest.domain.repository.SentimentRepository
 import com.fyp.basarattradeinvest.domain.repository.StockRepository
 import com.fyp.basarattradeinvest.domain.usecase.forecast.GetForecastHistoryUseCase
 import com.fyp.basarattradeinvest.domain.usecase.forecast.GetStockForecastUseCase
+import com.fyp.basarattradeinvest.domain.usecase.sentiment.GetSentimentHistoryUseCase
+import com.fyp.basarattradeinvest.domain.usecase.sentiment.GetSentimentNewsUseCase
+import com.fyp.basarattradeinvest.domain.usecase.sentiment.GetStockSentimentUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,8 +22,12 @@ import kotlinx.coroutines.launch
 class StockAnalysisViewModel(
     private val repository: StockRepository = StockRepositoryImpl(),
     private val forecastRepository: ForecastRepository = ForecastRepositoryImpl(),
+    private val sentimentRepository: SentimentRepository = SentimentRepositoryImpl(),
     private val getStockForecastUseCase: GetStockForecastUseCase = GetStockForecastUseCase(forecastRepository),
-    private val getForecastHistoryUseCase: GetForecastHistoryUseCase = GetForecastHistoryUseCase(forecastRepository)
+    private val getForecastHistoryUseCase: GetForecastHistoryUseCase = GetForecastHistoryUseCase(forecastRepository),
+    private val getStockSentimentUseCase: GetStockSentimentUseCase = GetStockSentimentUseCase(sentimentRepository),
+    private val getSentimentHistoryUseCase: GetSentimentHistoryUseCase = GetSentimentHistoryUseCase(sentimentRepository),
+    private val getSentimentNewsUseCase: GetSentimentNewsUseCase = GetSentimentNewsUseCase(sentimentRepository)
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<StockAnalysisUiState>(StockAnalysisUiState.Loading)
@@ -26,6 +36,7 @@ class StockAnalysisViewModel(
     private var currentSymbol: String = ""
     private var currentTab: AnalysisTab = AnalysisTab.TECHNICAL
     private var currentHorizon: String = "1D"
+    private var currentPriceRange: String = "1M"
 
     fun loadAnalysis(symbol: String) {
         currentSymbol = symbol
@@ -38,13 +49,22 @@ class StockAnalysisViewModel(
                 _uiState.value = StockAnalysisUiState.Success(
                     analysis = analysis,
                     selectedTab = currentTab,
+                    selectedPriceRange = currentPriceRange,
+                    priceHistoryState = PriceHistorySectionState.Loading,
                     selectedHorizon = currentHorizon,
                     forecastState = ForecastSectionState.Loading,
-                    historyState = ForecastHistorySectionState.Loading
+                    historyState = ForecastHistorySectionState.Loading,
+                    sentimentState = StockSentimentSectionState.Loading,
+                    sentimentHistoryState = SentimentHistorySectionState.Loading,
+                    sentimentNewsState = SentimentNewsSectionState.Loading
                 )
-                // Load forecast data
+                // Load price history chart for technical analysis
+                loadPriceHistory(symbol, currentPriceRange)
+                // Preload forecast data
                 loadForecast(symbol, currentHorizon)
                 loadForecastHistory(symbol)
+                // Preload sentiment data
+                loadSentiment(symbol)
             } else {
                 _uiState.value = StockAnalysisUiState.Error(
                     result.exceptionOrNull()?.message ?: "Unable to load stock analysis for $symbol"
@@ -59,14 +79,52 @@ class StockAnalysisViewModel(
         val currentState = _uiState.value
         if (currentState is StockAnalysisUiState.Success) {
             _uiState.value = currentState.copy(selectedTab = tab)
-            if (tab == AnalysisTab.FORECAST) {
-                if (currentState.forecastState is ForecastSectionState.Error || currentState.forecastState is ForecastSectionState.Loading) {
-                    loadForecast(currentSymbol, currentHorizon)
+            when (tab) {
+                AnalysisTab.TECHNICAL -> {
+                    if (currentState.priceHistoryState is PriceHistorySectionState.Error) {
+                        loadPriceHistory(currentSymbol, currentPriceRange)
+                    }
                 }
-                if (currentState.historyState is ForecastHistorySectionState.Error || currentState.historyState is ForecastHistorySectionState.Loading) {
-                    loadForecastHistory(currentSymbol)
+                AnalysisTab.FORECAST -> {
+                    if (currentState.forecastState is ForecastSectionState.Error || currentState.forecastState is ForecastSectionState.Loading) {
+                        loadForecast(currentSymbol, currentHorizon)
+                    }
+                    if (currentState.historyState is ForecastHistorySectionState.Error || currentState.historyState is ForecastHistorySectionState.Loading) {
+                        loadForecastHistory(currentSymbol)
+                    }
+                }
+                AnalysisTab.SENTIMENT -> {
+                    if (currentState.sentimentState is StockSentimentSectionState.Error || currentState.sentimentState is StockSentimentSectionState.Loading) {
+                        loadSentiment(currentSymbol)
+                    }
+                }
+                AnalysisTab.FUNDAMENTALS -> {
+                    // Already populated in analysis.fundamentals
                 }
             }
+        }
+    }
+
+    fun selectPriceRange(range: String) {
+        if (currentPriceRange == range) return
+        currentPriceRange = range
+        val currentState = _uiState.value
+        if (currentState is StockAnalysisUiState.Success) {
+            _uiState.value = currentState.copy(
+                selectedPriceRange = range,
+                priceHistoryState = PriceHistorySectionState.Loading
+            )
+            loadPriceHistory(currentSymbol, range)
+        }
+    }
+
+    fun retryPriceHistory() {
+        if (currentSymbol.isNotEmpty()) {
+            val currentState = _uiState.value
+            if (currentState is StockAnalysisUiState.Success) {
+                _uiState.value = currentState.copy(priceHistoryState = PriceHistorySectionState.Loading)
+            }
+            loadPriceHistory(currentSymbol, currentPriceRange)
         }
     }
 
@@ -103,13 +161,54 @@ class StockAnalysisViewModel(
         }
     }
 
+    fun retrySentiment() {
+        if (currentSymbol.isNotEmpty()) {
+            val currentState = _uiState.value
+            if (currentState is StockAnalysisUiState.Success) {
+                _uiState.value = currentState.copy(
+                    sentimentState = StockSentimentSectionState.Loading,
+                    sentimentHistoryState = SentimentHistorySectionState.Loading,
+                    sentimentNewsState = SentimentNewsSectionState.Loading
+                )
+            }
+            loadSentiment(currentSymbol)
+        }
+    }
+
+    private fun loadPriceHistory(symbol: String, range: String) {
+        viewModelScope.launch {
+            val result = repository.getPriceHistory(symbol, range)
+            val currentState = _uiState.value
+            if (currentState is StockAnalysisUiState.Success) {
+                if (result.isSuccess) {
+                    val candles = result.getOrThrow()
+                    _uiState.value = currentState.copy(
+                        priceHistoryState = if (candles.isEmpty()) {
+                            PriceHistorySectionState.Empty
+                        } else {
+                            PriceHistorySectionState.Success(candles)
+                        }
+                    )
+                } else {
+                    _uiState.value = currentState.copy(
+                        priceHistoryState = PriceHistorySectionState.Error(
+                            result.exceptionOrNull()?.message ?: "Unable to load price history"
+                        )
+                    )
+                }
+            }
+        }
+    }
+
     private fun loadForecast(symbol: String, horizon: String) {
         viewModelScope.launch {
             val result = getStockForecastUseCase(symbol, horizon)
             val currentState = _uiState.value
             if (currentState is StockAnalysisUiState.Success) {
                 if (result.isSuccess) {
-                    val forecast = result.getOrThrow()
+                    val rawForecast = result.getOrThrow()
+                    val livePrice = rawForecast.currentPrice ?: currentState.analysis.price
+                    val forecast = ForecastDtoMapper.recalculateTargets(rawForecast, livePrice)
                     _uiState.value = currentState.copy(
                         forecastState = ForecastSectionState.Success(forecast)
                     )
@@ -142,6 +241,71 @@ class StockAnalysisViewModel(
                     _uiState.value = currentState.copy(
                         historyState = ForecastHistorySectionState.Error(
                             result.exceptionOrNull()?.message ?: "Unable to load forecast history"
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun loadSentiment(symbol: String) {
+        viewModelScope.launch {
+            // 1. Stock sentiment
+            val sentimentRes = getStockSentimentUseCase(symbol)
+            val stateAfterSent = _uiState.value
+            if (stateAfterSent is StockAnalysisUiState.Success) {
+                _uiState.value = if (sentimentRes.isSuccess) {
+                    stateAfterSent.copy(
+                        sentimentState = StockSentimentSectionState.Success(sentimentRes.getOrThrow())
+                    )
+                } else {
+                    stateAfterSent.copy(
+                        sentimentState = StockSentimentSectionState.Error(
+                            sentimentRes.exceptionOrNull()?.message ?: "Unable to load stock sentiment"
+                        )
+                    )
+                }
+            }
+
+            // 2. Sentiment history
+            val historyRes = getSentimentHistoryUseCase(symbol, period = "1M")
+            val stateAfterHist = _uiState.value
+            if (stateAfterHist is StockAnalysisUiState.Success) {
+                _uiState.value = if (historyRes.isSuccess) {
+                    val history = historyRes.getOrThrow()
+                    stateAfterHist.copy(
+                        sentimentHistoryState = if (history.data.isEmpty()) {
+                            SentimentHistorySectionState.Empty
+                        } else {
+                            SentimentHistorySectionState.Success(history)
+                        }
+                    )
+                } else {
+                    stateAfterHist.copy(
+                        sentimentHistoryState = SentimentHistorySectionState.Error(
+                            historyRes.exceptionOrNull()?.message ?: "Unable to load sentiment history"
+                        )
+                    )
+                }
+            }
+
+            // 3. Sentiment news
+            val newsRes = getSentimentNewsUseCase(symbol, page = 1, limit = 15)
+            val stateAfterNews = _uiState.value
+            if (stateAfterNews is StockAnalysisUiState.Success) {
+                _uiState.value = if (newsRes.isSuccess) {
+                    val newsPage = newsRes.getOrThrow()
+                    stateAfterNews.copy(
+                        sentimentNewsState = if (newsPage.items.isEmpty()) {
+                            SentimentNewsSectionState.Empty
+                        } else {
+                            SentimentNewsSectionState.Success(newsPage.items)
+                        }
+                    )
+                } else {
+                    stateAfterNews.copy(
+                        sentimentNewsState = SentimentNewsSectionState.Error(
+                            newsRes.exceptionOrNull()?.message ?: "Unable to load sentiment news"
                         )
                     )
                 }

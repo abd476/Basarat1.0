@@ -27,7 +27,6 @@
                 android:layout_height="56dp"
                 android:paddingHorizontal="12dp">
 
-                <!-- Back Arrow Button -->
                 <ImageView
                     android:id="@+id/iv_back"
                     android:layout_width="36dp"
@@ -41,7 +40,6 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/color_text_primary" />
 
-                <!-- Title: Stock Analysis -->
                 <TextView
                     android:id="@+id/tv_screen_title"
                     android:layout_width="0dp"
@@ -56,7 +54,6 @@
                     app:layout_constraintStart_toEndOf="@id/iv_back"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <!-- Action Icons (Share & Help) -->
                 <LinearLayout
                     android:id="@+id/layout_top_actions"
                     android:layout_width="wrap_content"
@@ -91,10 +88,8 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- ============================================== -->
-            <!-- 2. COMPACT STOCK IDENTITY & PRICE ROW          -->
-            <!--    LUCK                                        -->
-            <!--    Lucky Cement Limited                        -->
-            <!--    PKR 412.80   +3.10%                         -->
+            <!-- 2. STOCK IDENTITY HEADER                       -->
+            <!--    Symbol, Company Name, Real Price & Change   -->
             <!-- ============================================== -->
             <LinearLayout
                 android:id="@+id/layout_stock_identity"
@@ -103,9 +98,8 @@
                 android:orientation="vertical"
                 android:paddingHorizontal="16dp"
                 android:paddingTop="4dp"
-                android:paddingBottom="8dp">
+                android:paddingBottom="10dp">
 
-                <!-- Symbol + Company Name -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -134,7 +128,6 @@
                         tools:text="Lucky Cement Limited" />
                 </LinearLayout>
 
-                <!-- Price + Percentage Change Row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -148,7 +141,7 @@
                         android:layout_height="wrap_content"
                         android:text="--"
                         android:textColor="@color/color_text_primary"
-                        android:textSize="18sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         tools:text="PKR 412.80" />
 
@@ -159,7 +152,7 @@
                         android:layout_marginStart="10dp"
                         android:background="@drawable/bg_badge_positive"
                         android:paddingHorizontal="8dp"
-                        android:paddingVertical="2dp"
+                        android:paddingVertical="3dp"
                         android:textColor="@color/color_positive"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -170,107 +163,204 @@
             </LinearLayout>
 
             <!-- ============================================== -->
-            <!-- 3. SEGMENTED TABS                              -->
-            <!--    [ Technical Analysis ]  [ Fundamentals ]    -->
+            <!-- 3. COMPACT HORIZONTAL TAB ROW                  -->
+            <!--    Technical | Fundamentals | Forecast | Sentiment -->
             <!-- ============================================== -->
-            <LinearLayout
-                android:id="@+id/layout_analysis_switcher"
+            <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/bg_segmented_container"
-                android:orientation="horizontal"
-                android:padding="3dp"
-                android:weightSum="4">
+                android:layout_height="wrap_content"
+                android:fillViewport="true"
+                android:overScrollMode="never"
+                android:scrollbars="none">
 
-                <!-- Technical Analysis Tab -->
                 <LinearLayout
-                    android:id="@+id/btn_tab_technical"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_segmented_tab_active"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    android:id="@+id/layout_analysis_tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:weightSum="4">
 
-                    <TextView
-                        android:id="@+id/tv_tab_technical_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Technical"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                    <!-- Technical Tab -->
+                    <LinearLayout
+                        android:id="@+id/btn_tab_technical"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_tab_technical_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="Technical"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:id="@+id/indicator_tab_technical"
+                            android:layout_width="match_parent"
+                            android:layout_height="2.5dp"
+                            android:background="@color/color_basarat_green"
+                            android:visibility="visible" />
+                    </LinearLayout>
+
+                    <!-- Fundamentals Tab -->
+                    <LinearLayout
+                        android:id="@+id/btn_tab_fundamentals"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_tab_fundamentals_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="Fundamentals"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:id="@+id/indicator_tab_fundamentals"
+                            android:layout_width="match_parent"
+                            android:layout_height="2.5dp"
+                            android:background="@color/color_basarat_green"
+                            android:visibility="invisible" />
+                    </LinearLayout>
+
+                    <!-- Forecast Tab -->
+                    <LinearLayout
+                        android:id="@+id/btn_tab_forecast"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_tab_forecast_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="Forecast"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:id="@+id/indicator_tab_forecast"
+                            android:layout_width="match_parent"
+                            android:layout_height="2.5dp"
+                            android:background="@color/color_basarat_green"
+                            android:visibility="invisible" />
+                    </LinearLayout>
+
+                    <!-- Sentiment Tab -->
+                    <LinearLayout
+                        android:id="@+id/btn_tab_sentiment"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_tab_sentiment_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="Sentiment"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:id="@+id/indicator_tab_sentiment"
+                            android:layout_width="match_parent"
+                            android:layout_height="2.5dp"
+                            android:background="@color/color_basarat_green"
+                            android:visibility="invisible" />
+                    </LinearLayout>
+
                 </LinearLayout>
+            </HorizontalScrollView>
 
-                <!-- Fundamentals Tab -->
-                <LinearLayout
-                    android:id="@+id/btn_tab_fundamentals"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/transparent"
-                    android:clickable="true"
-                    android:focusable="true"
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/color_divider" />
+
+            <!-- Overall Analysis Loading State -->
+            <LinearLayout
+                android:id="@+id/layout_analysis_loading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="32dp"
+                android:visibility="gone">
+
+                <ProgressBar
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:indeterminateTint="@color/color_basarat_green" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Loading analysis data..."
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- Overall Analysis Error State -->
+            <LinearLayout
+                android:id="@+id/layout_analysis_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="32dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_analysis_error_msg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:orientation="horizontal">
+                    android:text="Unable to load stock analysis"
+                    android:textColor="@color/color_negative"
+                    android:textSize="14sp" />
 
-                    <TextView
-                        android:id="@+id/tv_tab_fundamentals_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Fundamentals"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <!-- Forecast Tab -->
-                <LinearLayout
-                    android:id="@+id/btn_tab_forecast"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/transparent"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tv_tab_forecast_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Forecast"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <!-- Sentiment Tab (navigates to SentimentFragment) -->
-                <LinearLayout
-                    android:id="@+id/btn_tab_sentiment"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/transparent"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tv_tab_sentiment_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Sentiment"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_analysis_retry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="12dp"
+                    android:text="Retry"
+                    android:textAllCaps="false"
+                    app:backgroundTint="@color/color_button_primary_bg"
+                    app:cornerRadius="8dp" />
             </LinearLayout>
 
             <!-- ============================================== -->
@@ -283,7 +373,7 @@
                 android:orientation="vertical"
                 android:visibility="visible">
 
-                <!-- 4A. TECHNICAL SUMMARY (PROMINENT GAUGE) -->
+                <!-- 4A. TECHNICAL SUMMARY CARD -->
                 <LinearLayout
                     android:id="@+id/card_technical_summary"
                     android:layout_width="match_parent"
@@ -301,18 +391,17 @@
                         android:letterSpacing="0.04"
                         android:text="TECHNICAL SUMMARY"
                         android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
 
-                    <!-- 15 Buy   4 Neutral   1 Sell -->
+                    <!-- Buy / Neutral / Sell Counters -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="10dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <!-- Buy Counter -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -324,7 +413,7 @@
                                 android:id="@+id/tv_count_buy"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="15"
+                                android:text="--"
                                 android:textColor="@color/color_positive"
                                 android:textSize="20sp"
                                 android:textStyle="bold" />
@@ -338,7 +427,6 @@
                                 android:textSize="11sp" />
                         </LinearLayout>
 
-                        <!-- Neutral Counter -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -350,7 +438,7 @@
                                 android:id="@+id/tv_count_neutral"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="4"
+                                android:text="--"
                                 android:textColor="@color/color_text_primary"
                                 android:textSize="20sp"
                                 android:textStyle="bold" />
@@ -364,7 +452,6 @@
                                 android:textSize="11sp" />
                         </LinearLayout>
 
-                        <!-- Sell Counter -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -376,7 +463,7 @@
                                 android:id="@+id/tv_count_sell"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="1"
+                                android:text="--"
                                 android:textColor="@color/color_negative"
                                 android:textSize="20sp"
                                 android:textStyle="bold" />
@@ -391,70 +478,57 @@
                         </LinearLayout>
                     </LinearLayout>
 
-                    <!-- Prominent Signal Callout: STRONG BUY -->
+                    <!-- Overall Signal Callout -->
                     <TextView
                         android:id="@+id/tv_prominent_signal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="14dp"
-                        android:background="@drawable/bg_badge_strong_buy"
-                        android:letterSpacing="0.06"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_badge_neutral"
+                        android:letterSpacing="0.05"
                         android:paddingHorizontal="16dp"
-                        android:paddingVertical="6dp"
-                        android:text="STRONG BUY"
-                        android:textColor="@color/color_basarat_green"
-                        android:textSize="14sp"
+                        android:paddingVertical="5dp"
+                        android:text="NEUTRAL"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
 
-                    <!-- Tri-color visual meter bar -->
+                    <!-- Visual Signal Meter Bar -->
                     <LinearLayout
+                        android:id="@+id/layout_meter_bar"
                         android:layout_width="match_parent"
                         android:layout_height="8dp"
-                        android:layout_marginTop="14dp"
+                        android:layout_marginTop="12dp"
                         android:clipToOutline="true"
                         android:orientation="horizontal"
-                        android:weightSum="20">
+                        android:weightSum="3">
 
                         <View
+                            android:id="@+id/bar_buy"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="15"
+                            android:layout_weight="1"
                             android:background="@color/color_positive" />
 
                         <View
-                            android:layout_width="2dp"
-                            android:layout_height="match_parent"
-                            android:background="@color/color_background" />
-
-                        <View
+                            android:id="@+id/bar_neutral"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="4"
+                            android:layout_weight="1"
                             android:background="@color/color_neutral" />
 
                         <View
-                            android:layout_width="2dp"
-                            android:layout_height="match_parent"
-                            android:background="@color/color_background" />
-
-                        <View
+                            android:id="@+id/bar_sell"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@color/color_negative" />
                     </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="Aggregated across 20 technical indicators (1D Timeframe)"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="11sp" />
                 </LinearLayout>
 
-                <!-- 4B. OSCILLATORS CARD -->
+                <!-- 4B. REAL PRICE HISTORY CHART CARD -->
                 <LinearLayout
+                    android:id="@+id/card_price_chart"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
@@ -473,18 +547,143 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Oscillators"
+                            android:text="Price History"
                             android:textColor="@color/color_text_primary"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
+                        <!-- Range Selector Pills: 1D | 1W | 1M | 1Y -->
+                        <LinearLayout
+                            android:id="@+id/layout_chart_ranges"
+                            android:layout_width="wrap_content"
+                            android:layout_height="28dp"
+                            android:background="@drawable/bg_segmented_container"
+                            android:orientation="horizontal"
+                            android:padding="2dp">
+
+                            <TextView
+                                android:id="@+id/btn_range_1d"
+                                android:layout_width="38dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/transparent"
+                                android:gravity="center"
+                                android:text="1D"
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/btn_range_1w"
+                                android:layout_width="38dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/transparent"
+                                android:gravity="center"
+                                android:text="1W"
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/btn_range_1m"
+                                android:layout_width="38dp"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/bg_segmented_tab_active"
+                                android:gravity="center"
+                                android:text="1M"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/btn_range_1y"
+                                android:layout_width="38dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/transparent"
+                                android:gravity="center"
+                                android:text="1Y"
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Chart Loading -->
+                    <ProgressBar
+                        android:id="@+id/chart_price_progress"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:layout_marginVertical="60dp"
+                        android:indeterminateTint="@color/color_basarat_green"
+                        android:visibility="gone" />
+
+                    <!-- Chart Error -->
+                    <LinearLayout
+                        android:id="@+id/layout_chart_error"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingVertical="32dp"
+                        android:visibility="gone">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="7 Buy • 3 Neutral • 1 Sell"
-                            android:textColor="@color/color_text_secondary"
+                            android:text="Unable to load price history"
+                            android:textColor="@color/color_negative"
                             android:textSize="12sp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_chart_retry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="34dp"
+                            android:layout_marginTop="8dp"
+                            android:text="Retry"
+                            android:textAllCaps="false"
+                            android:textSize="11sp"
+                            app:backgroundTint="@color/color_button_primary_bg"
+                            app:cornerRadius="6dp" />
                     </LinearLayout>
+
+                    <!-- Chart Empty -->
+                    <TextView
+                        android:id="@+id/tv_chart_empty"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp"
+                        android:gravity="center"
+                        android:text="No chart data available"
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="13sp"
+                        android:visibility="gone" />
+
+                    <!-- MPAndroidChart LineChart -->
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/chart_price_history"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginTop="12dp"
+                        android:visibility="visible" />
+                </LinearLayout>
+
+                <!-- 4C. KEY TECHNICAL INDICATORS -->
+                <LinearLayout
+                    android:id="@+id/card_technical_indicators"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_card_clean"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Technical Indicators"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="match_parent"
@@ -492,54 +691,19 @@
                         android:layout_marginTop="12dp"
                         android:background="@color/color_divider" />
 
-                    <!-- Table Header -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal"
-                        android:weightSum="100">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="46"
-                            android:text="Indicator"
-                            android:textColor="@color/color_text_secondary"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="30"
-                            android:gravity="end"
-                            android:text="Value"
-                            android:textColor="@color/color_text_secondary"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="24"
-                            android:gravity="end"
-                            android:text="Action"
-                            android:textColor="@color/color_text_secondary"
-                            android:textSize="11sp" />
-                    </LinearLayout>
-
                     <!-- RSI (14) -->
                     <LinearLayout
+                        android:id="@+id/row_rsi"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:weightSum="100">
+                        android:orientation="horizontal">
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="46"
+                            android:layout_weight="1"
                             android:orientation="vertical">
 
                             <TextView
@@ -553,50 +717,53 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Relative Strength"
+                                android:text="Relative Strength Index"
                                 android:textColor="@color/color_text_secondary"
-                                android:textSize="10sp" />
+                                android:textSize="11sp" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tv_val_rsi"
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="30"
-                            android:gravity="end"
-                            android:text="62.40"
+                            android:layout_marginEnd="10dp"
                             android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            tools:text="48.2" />
 
                         <TextView
                             android:id="@+id/tv_badge_rsi"
-                            android:layout_width="0dp"
+                            android:layout_width="72dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_weight="24"
                             android:background="@drawable/bg_badge_neutral"
                             android:gravity="center"
                             android:paddingVertical="3dp"
-                            android:text="NEUTRAL"
                             android:textColor="@color/color_text_secondary"
                             android:textSize="10sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="NEUTRAL" />
                     </LinearLayout>
 
-                    <!-- MACD (12, 26, 9) -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/color_divider" />
+
+                    <!-- MACD (12,26,9) -->
                     <LinearLayout
+                        android:id="@+id/row_macd"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="10dp"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:weightSum="100">
+                        android:orientation="horizontal">
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="46"
+                            android:layout_weight="1"
                             android:orientation="vertical">
 
                             <TextView
@@ -610,50 +777,53 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Bullish Crossover"
-                                android:textColor="@color/color_positive"
-                                android:textSize="10sp" />
+                                android:text="Moving Average Conv. Div."
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tv_val_macd"
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="30"
-                            android:gravity="end"
-                            android:text="+5.12"
-                            android:textColor="@color/color_positive"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:layout_marginEnd="10dp"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            tools:text="-1.85" />
 
                         <TextView
                             android:id="@+id/tv_badge_macd"
-                            android:layout_width="0dp"
+                            android:layout_width="72dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_weight="24"
-                            android:background="@drawable/bg_badge_positive"
+                            android:background="@drawable/bg_badge_negative"
                             android:gravity="center"
                             android:paddingVertical="3dp"
-                            android:text="BUY"
-                            android:textColor="@color/color_positive"
+                            android:textColor="@color/color_negative"
                             android:textSize="10sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="SELL" />
                     </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/color_divider" />
 
                     <!-- ADX (14) -->
                     <LinearLayout
+                        android:id="@+id/row_adx"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="10dp"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:weightSum="100">
+                        android:orientation="horizontal">
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="46"
+                            android:layout_weight="1"
                             android:orientation="vertical">
 
                             <TextView
@@ -667,50 +837,168 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Strong Uptrend"
+                                android:text="Average Directional Index"
                                 android:textColor="@color/color_text_secondary"
-                                android:textSize="10sp" />
+                                android:textSize="11sp" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tv_val_adx"
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="30"
-                            android:gravity="end"
-                            android:text="34.80"
+                            android:layout_marginEnd="10dp"
                             android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            tools:text="28.4" />
 
                         <TextView
                             android:id="@+id/tv_badge_adx"
-                            android:layout_width="0dp"
+                            android:layout_width="72dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_weight="24"
                             android:background="@drawable/bg_badge_positive"
                             android:gravity="center"
                             android:paddingVertical="3dp"
-                            android:text="BUY"
                             android:textColor="@color/color_positive"
                             android:textSize="10sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="BUY" />
                     </LinearLayout>
 
-                    <!-- Stochastic %K -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/color_divider" />
+
+                    <!-- Bollinger Bands -->
                     <LinearLayout
+                        android:id="@+id/row_bb"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="10dp"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:weightSum="100">
+                        android:orientation="horizontal">
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="46"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Bollinger Bands"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Middle Band (20,2)"
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tv_val_bb"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            tools:text="418.5" />
+
+                        <TextView
+                            android:id="@+id/tv_badge_bb"
+                            android:layout_width="72dp"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_badge_neutral"
+                            android:gravity="center"
+                            android:paddingVertical="3dp"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
+                            tools:text="NEUTRAL" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/color_divider" />
+
+                    <!-- SMA (20) -->
+                    <LinearLayout
+                        android:id="@+id/row_sma"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="SMA (20)"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Simple Moving Average"
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tv_val_sma"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            tools:text="415.20" />
+
+                        <TextView
+                            android:id="@+id/tv_badge_sma"
+                            android:layout_width="72dp"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_badge_positive"
+                            android:gravity="center"
+                            android:paddingVertical="3dp"
+                            android:textColor="@color/color_positive"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
+                            tools:text="BUY" />
+                    </LinearLayout>
+
+                    <!-- Stochastic (14,3) - hidden by default unless backend returns it -->
+                    <LinearLayout
+                        android:id="@+id/row_stoch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:orientation="vertical">
 
                             <TextView
@@ -726,506 +1014,27 @@
                                 android:layout_height="wrap_content"
                                 android:text="Fast Oscillator"
                                 android:textColor="@color/color_text_secondary"
-                                android:textSize="10sp" />
+                                android:textSize="11sp" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tv_val_stoch"
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="30"
-                            android:gravity="end"
-                            android:text="74.20"
+                            android:layout_marginEnd="10dp"
                             android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
+                            android:textSize="14sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tv_badge_stoch"
-                            android:layout_width="0dp"
+                            android:layout_width="72dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_weight="24"
                             android:background="@drawable/bg_badge_neutral"
                             android:gravity="center"
                             android:paddingVertical="3dp"
-                            android:text="NEUTRAL"
                             android:textColor="@color/color_text_secondary"
                             android:textSize="10sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <!-- Bollinger Bands %B -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:weightSum="100">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="46"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Bollinger Bands"
-                                android:textColor="@color/color_text_primary"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Upper Expansion"
-                                android:textColor="@color/color_text_secondary"
-                                android:textSize="10sp" />
-                        </LinearLayout>
-
-                        <TextView
-                            android:id="@+id/tv_val_bb"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="30"
-                            android:gravity="end"
-                            android:text="415.70"
-                            android:textColor="@color/color_positive"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tv_badge_bb"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_weight="24"
-                            android:background="@drawable/bg_badge_positive"
-                            android:gravity="center"
-                            android:paddingVertical="3dp"
-                            android:text="BUY"
-                            android:textColor="@color/color_positive"
-                            android:textSize="10sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- 4C. MOVING AVERAGES CARD -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="12dp"
-                    android:background="@drawable/bg_card_clean"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Moving Averages"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="12 Buy • 0 Sell"
-                            android:textColor="@color/color_positive"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="0.5dp"
-                        android:layout_marginTop="12dp"
-                        android:background="@color/color_divider" />
-
-                    <!-- SMA 20 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:weightSum="100">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="46"
-                            android:text="SMA (20)"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="30"
-                            android:gravity="end"
-                            android:text="PKR 401.50"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_weight="24"
-                            android:background="@drawable/bg_badge_positive"
-                            android:gravity="center"
-                            android:paddingVertical="3dp"
-                            android:text="BUY"
-                            android:textColor="@color/color_positive"
-                            android:textSize="10sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <!-- SMA 50 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:weightSum="100">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="46"
-                            android:text="SMA (50)"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="30"
-                            android:gravity="end"
-                            android:text="PKR 389.20"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_weight="24"
-                            android:background="@drawable/bg_badge_strong_buy"
-                            android:gravity="center"
-                            android:paddingVertical="3dp"
-                            android:text="STRONG BUY"
-                            android:textColor="@color/color_basarat_green"
-                            android:textSize="9sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <!-- SMA 200 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:weightSum="100">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="46"
-                            android:text="SMA (200)"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="30"
-                            android:gravity="end"
-                            android:text="PKR 354.10"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_weight="24"
-                            android:background="@drawable/bg_badge_positive"
-                            android:gravity="center"
-                            android:paddingVertical="3dp"
-                            android:text="BUY"
-                            android:textColor="@color/color_positive"
-                            android:textSize="10sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <!-- EMA 20 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:weightSum="100">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="46"
-                            android:text="EMA (20)"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="30"
-                            android:gravity="end"
-                            android:text="PKR 404.10"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_weight="24"
-                            android:background="@drawable/bg_badge_positive"
-                            android:gravity="center"
-                            android:paddingVertical="3dp"
-                            android:text="BUY"
-                            android:textColor="@color/color_positive"
-                            android:textSize="10sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- 4D. PIVOT POINTS (SUPPORT & RESISTANCE) -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="12dp"
-                    android:background="@drawable/bg_card_clean"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Pivot Points (Classic)"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="S &amp; R Levels"
-                            android:textColor="@color/color_text_secondary"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="0.5dp"
-                        android:layout_marginTop="12dp"
-                        android:background="@color/color_divider" />
-
-                    <!-- Resistance 3 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Resistance 3 (R3)"
-                            android:textColor="@color/color_negative"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="PKR 432.50"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <!-- Resistance 2 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Resistance 2 (R2)"
-                            android:textColor="@color/color_negative"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="PKR 424.10"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <!-- Resistance 1 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Resistance 1 (R1)"
-                            android:textColor="@color/color_negative"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="PKR 418.50"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <!-- Central Pivot Point Highlighted -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:background="@drawable/bg_badge_neutral"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="6dp">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Pivot Point (P)"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="PKR 410.20"
-                            android:textColor="@color/color_basarat_green"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <!-- Support 1 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Support 1 (S1)"
-                            android:textColor="@color/color_positive"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="PKR 404.60"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <!-- Support 2 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Support 2 (S2)"
-                            android:textColor="@color/color_positive"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="PKR 396.30"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <!-- Support 3 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Support 3 (S3)"
-                            android:textColor="@color/color_positive"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="PKR 390.70"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
@@ -1239,11 +1048,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone"
-                tools:visibility="visible">
+                android:visibility="gone">
 
                 <!-- 5A. VALUATION MULTIPLES CARD -->
                 <LinearLayout
+                    android:id="@+id/card_valuation_multiples"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
@@ -1268,46 +1077,34 @@
 
                     <!-- P/E Ratio -->
                     <LinearLayout
+                        android:id="@+id/row_pe"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:orientation="horizontal">
 
-                        <LinearLayout
+                        <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="P/E Ratio (TTM)"
-                                android:textColor="@color/color_text_primary"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Sector Avg: 11.2x"
-                                android:textColor="@color/color_text_secondary"
-                                android:textSize="10sp" />
-                        </LinearLayout>
+                            android:text="P/E Ratio (TTM)"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_pe"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
-                            android:textColor="@color/color_positive"
-                            android:textSize="14sp"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
                             android:textStyle="bold"
-                            tools:text="8.45x" />
+                            tools:text="8.42x" />
                     </LinearLayout>
 
                     <!-- Forward P/E -->
                     <LinearLayout
+                        android:id="@+id/row_forward_pe"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -1328,12 +1125,12 @@
                             android:text="N/A"
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold"
-                            tools:text="7.60x" />
+                            android:textStyle="bold" />
                     </LinearLayout>
 
-                    <!-- Price to Book (P/B) -->
+                    <!-- Price to Book -->
                     <LinearLayout
+                        android:id="@+id/row_pb"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -1355,11 +1152,38 @@
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
                             android:textStyle="bold"
-                            tools:text="1.32x" />
+                            tools:text="1.65x" />
                     </LinearLayout>
 
-                    <!-- Enterprise Value / EBITDA -->
+                    <!-- PEG Ratio -->
                     <LinearLayout
+                        android:id="@+id/row_peg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="PEG Ratio"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            android:id="@+id/tv_val_peg"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="N/A"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- EV / EBITDA -->
+                    <LinearLayout
+                        android:id="@+id/row_ev_ebitda"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -1380,39 +1204,13 @@
                             android:text="N/A"
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold"
-                            tools:text="5.18x" />
-                    </LinearLayout>
-
-                    <!-- PEG Ratio -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="PEG Ratio"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:id="@+id/tv_val_peg"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="N/A"
-                            android:textColor="@color/color_positive"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            tools:text="0.72" />
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <!-- 5B. PROFITABILITY & RETURNS CARD -->
                 <LinearLayout
+                    android:id="@+id/card_profitability"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
@@ -1437,6 +1235,7 @@
 
                     <!-- EPS -->
                     <LinearLayout
+                        android:id="@+id/row_eps"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
@@ -1446,10 +1245,9 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Earnings Per Share (EPS TTM)"
+                            android:text="Earnings Per Share (EPS)"
                             android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_eps"
@@ -1459,11 +1257,12 @@
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
                             android:textStyle="bold"
-                            tools:text="PKR 48.85" />
+                            tools:text="PKR 48.90" />
                     </LinearLayout>
 
                     <!-- ROE -->
                     <LinearLayout
+                        android:id="@+id/row_roe"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -1482,14 +1281,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
-                            android:textColor="@color/color_positive"
+                            android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
                             android:textStyle="bold"
-                            tools:text="22.4%" />
+                            tools:text="18.2%" />
                     </LinearLayout>
 
                     <!-- ROA -->
                     <LinearLayout
+                        android:id="@+id/row_roa"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -1510,12 +1310,38 @@
                             android:text="N/A"
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold"
-                            tools:text="14.8%" />
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Net Margin -->
+                    <LinearLayout
+                        android:id="@+id/row_net_margin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Net Profit Margin"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            android:id="@+id/tv_val_net_margin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="N/A"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <!-- Dividend Yield -->
                     <LinearLayout
+                        android:id="@+id/row_div_yield"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -1534,41 +1360,16 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
-                            android:textColor="@color/color_dividend_orange"
+                            android:textColor="@color/color_positive"
                             android:textSize="13sp"
                             android:textStyle="bold"
-                            tools:text="5.25%" />
-                    </LinearLayout>
-
-                    <!-- Net Margin -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:text="Net Profit Margin"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:id="@+id/tv_val_net_margin"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="N/A"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            tools:text="19.4%" />
+                            tools:text="4.20%" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <!-- 5C. FINANCIAL HEALTH & SOLVENCY CARD -->
                 <LinearLayout
+                    android:id="@+id/card_financial_health"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
@@ -1591,48 +1392,36 @@
                         android:layout_marginTop="12dp"
                         android:background="@color/color_divider" />
 
-                    <!-- Debt to Equity -->
+                    <!-- Debt-to-Equity -->
                     <LinearLayout
+                        android:id="@+id/row_de"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:orientation="horizontal">
 
-                        <LinearLayout
+                        <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Debt-to-Equity (D/E)"
-                                android:textColor="@color/color_text_primary"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Low Leverage"
-                                android:textColor="@color/color_positive"
-                                android:textSize="10sp" />
-                        </LinearLayout>
+                            android:text="Debt / Equity"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_de"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
-                            android:textColor="@color/color_positive"
+                            android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
                             android:textStyle="bold"
-                            tools:text="0.38" />
+                            tools:text="0.45" />
                     </LinearLayout>
 
                     <!-- Current Ratio -->
                     <LinearLayout
+                        android:id="@+id/row_current_ratio"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -1653,12 +1442,12 @@
                             android:text="N/A"
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold"
-                            tools:text="1.85x" />
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <!-- Quick Ratio -->
                     <LinearLayout
+                        android:id="@+id/row_quick_ratio"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -1679,12 +1468,12 @@
                             android:text="N/A"
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold"
-                            tools:text="1.42x" />
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <!-- Interest Coverage -->
                     <LinearLayout
+                        android:id="@+id/row_interest_coverage"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -1703,15 +1492,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
-                            android:textColor="@color/color_positive"
+                            android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold"
-                            tools:text="8.4x" />
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- 5D. ANNUAL FINANCIAL PERFORMANCE CARD -->
+                <!-- 5D. FINANCIALS & CASH FLOW (Shown only when backend provides metrics) -->
                 <LinearLayout
+                    android:id="@+id/card_financial_performance"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
@@ -1723,7 +1512,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Annual Financial Performance (TTM)"
+                        android:text="Financials &amp; Cash Flow"
                         android:textColor="@color/color_text_primary"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -1734,8 +1523,9 @@
                         android:layout_marginTop="12dp"
                         android:background="@color/color_divider" />
 
-                    <!-- Revenue -->
+                    <!-- Revenue TTM -->
                     <LinearLayout
+                        android:id="@+id/row_revenue"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
@@ -1745,7 +1535,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Total Revenue (TTM)"
+                            android:text="Revenue (TTM)"
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp" />
 
@@ -1754,14 +1544,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
-                            android:textColor="@color/color_positive"
+                            android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold"
-                            tools:text="PKR 142.6 B (+18.2%)" />
+                            android:textStyle="bold" />
                     </LinearLayout>
 
-                    <!-- Net Income -->
+                    <!-- Net Income TTM -->
                     <LinearLayout
+                        android:id="@+id/row_net_income"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -1771,7 +1561,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Net Income"
+                            android:text="Net Income (TTM)"
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp" />
 
@@ -1780,14 +1570,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
-                            android:textColor="@color/color_positive"
+                            android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold"
-                            tools:text="PKR 27.6 B (+24.1%)" />
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <!-- Free Cash Flow -->
                     <LinearLayout
+                        android:id="@+id/row_fcf"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -1808,8 +1598,7 @@
                             android:text="N/A"
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold"
-                            tools:text="PKR 18.9 B" />
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -1904,10 +1693,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="Analyzing neural &amp; boosted ML models..."
+                        android:layout_marginTop="8dp"
+                        android:text="Loading ML forecast..."
                         android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <!-- 6C. ERROR STATE -->
@@ -1915,9 +1704,7 @@
                     android:id="@+id/layout_forecast_error"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="16dp"
-                    android:background="@drawable/bg_card_clean"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="24dp"
@@ -1928,22 +1715,23 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Unable to load forecast data"
+                        android:text="Unable to load forecast data."
                         android:textColor="@color/color_negative"
                         android:textSize="13sp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_forecast_retry"
                         android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="12dp"
+                        android:layout_height="36dp"
+                        android:layout_marginTop="10dp"
                         android:text="Retry Forecast"
                         android:textAllCaps="false"
+                        android:textSize="11sp"
                         app:backgroundTint="@color/color_button_primary_bg"
-                        app:cornerRadius="8dp" />
+                        app:cornerRadius="6dp" />
                 </LinearLayout>
 
-                <!-- 6D. SUCCESS STATE CONTAINER -->
+                <!-- 6D. SUCCESS FORECAST CONTENT -->
                 <LinearLayout
                     android:id="@+id/layout_forecast_success"
                     android:layout_width="match_parent"
@@ -1951,9 +1739,9 @@
                     android:orientation="vertical"
                     android:visibility="visible">
 
-                    <!-- PROMINENT ML FORECAST CARD -->
+                    <!-- PRIMARY FORECAST CARD -->
                     <LinearLayout
-                        android:id="@+id/card_forecast_prominent"
+                        android:id="@+id/card_forecast_main"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="16dp"
@@ -1972,10 +1760,9 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:letterSpacing="0.04"
-                                android:text="ML FORECAST"
-                                android:textColor="@color/color_text_secondary"
-                                android:textSize="13sp"
+                                android:text="Price Prediction"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="15sp"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -1984,14 +1771,14 @@
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/color_text_secondary"
                                 android:textSize="11sp"
-                                tools:text="Target: 2026-03-24" />
+                                tools:text="Target: 2026-09-28 (As of 2026-09-25)" />
                         </LinearLayout>
 
-                        <!-- Direction & Signal Rating Row -->
+                        <!-- Direction & Signal Badges -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="14dp"
+                            android:layout_marginTop="10dp"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
@@ -2000,25 +1787,25 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/bg_badge_positive"
-                                android:paddingHorizontal="14dp"
-                                android:paddingVertical="5dp"
-                                android:text="BULLISH"
+                                android:paddingHorizontal="10dp"
+                                android:paddingVertical="4dp"
                                 android:textColor="@color/color_positive"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="BULLISH" />
 
                             <TextView
                                 android:id="@+id/tv_forecast_signal_rating"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
+                                android:layout_marginStart="8dp"
                                 android:background="@drawable/bg_badge_strong_buy"
-                                android:paddingHorizontal="12dp"
-                                android:paddingVertical="5dp"
-                                android:text="STRONG BUY"
+                                android:paddingHorizontal="10dp"
+                                android:paddingVertical="4dp"
                                 android:textColor="@color/color_basarat_green"
                                 android:textSize="12sp"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                tools:text="STRONG BUY" />
 
                             <TextView
                                 android:id="@+id/tv_forecast_confidence"
@@ -2030,34 +1817,31 @@
                                 android:textColor="@color/color_text_primary"
                                 android:textSize="13sp"
                                 android:textStyle="bold"
-                                tools:text="84% Confidence" />
+                                tools:text="82% Confidence" />
                         </LinearLayout>
 
-                        <!-- Model Version & Gate Reason -->
                         <TextView
                             android:id="@+id/tv_forecast_meta"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="4dp"
                             android:textColor="@color/color_text_secondary"
                             android:textSize="11sp"
-                            tools:text="Model: Ensemble • Decision: agree(bullish)" />
+                            tools:text="Model: Ensemble • Decision: Confidence threshold met" />
 
-                        <!-- Price Targets & Risk Metrics Table -->
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="0.5dp"
                             android:layout_marginTop="12dp"
                             android:background="@color/color_divider" />
 
+                        <!-- Target Price & Stop Loss Grid -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-                            android:orientation="horizontal"
-                            android:weightSum="3">
+                            android:orientation="horizontal">
 
-                            <!-- Target Price -->
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -2075,11 +1859,10 @@
                                     android:id="@+id/tv_forecast_target_price"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="2dp"
                                     android:textColor="@color/color_positive"
-                                    android:textSize="15sp"
+                                    android:textSize="16sp"
                                     android:textStyle="bold"
-                                    tools:text="PKR 435.50" />
+                                    tools:text="PKR 445.00" />
 
                                 <TextView
                                     android:id="@+id/tv_forecast_upside_pct"
@@ -2087,10 +1870,9 @@
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/color_positive"
                                     android:textSize="11sp"
-                                    tools:text="+5.5%" />
+                                    tools:text="+7.8% upside" />
                             </LinearLayout>
 
-                            <!-- Stop Loss -->
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -2108,9 +1890,8 @@
                                     android:id="@+id/tv_forecast_stop_loss"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="2dp"
                                     android:textColor="@color/color_negative"
-                                    android:textSize="15sp"
+                                    android:textSize="16sp"
                                     android:textStyle="bold"
                                     tools:text="PKR 398.00" />
 
@@ -2120,14 +1901,12 @@
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/color_negative"
                                     android:textSize="11sp"
-                                    tools:text="-3.6%" />
+                                    tools:text="-3.6% risk" />
                             </LinearLayout>
 
-                            <!-- Risk / Reward -->
                             <LinearLayout
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
                                 android:gravity="end"
                                 android:orientation="vertical">
 
@@ -2142,18 +1921,17 @@
                                     android:id="@+id/tv_forecast_risk_reward"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="2dp"
                                     android:textColor="@color/color_text_primary"
-                                    android:textSize="15sp"
+                                    android:textSize="16sp"
                                     android:textStyle="bold"
-                                    tools:text="1.53" />
+                                    tools:text="2.17" />
 
                                 <TextView
                                     android:id="@+id/tv_forecast_current_price"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/color_text_secondary"
-                                    android:textSize="11sp"
+                                    android:textSize="10sp"
                                     tools:text="Ref: PKR 412.80" />
                             </LinearLayout>
                         </LinearLayout>
@@ -2168,7 +1946,9 @@
                         android:layout_marginTop="12dp"
                         android:background="@drawable/bg_card_clean"
                         android:orientation="vertical"
-                        android:padding="16dp">
+                        android:padding="16dp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -2178,27 +1958,21 @@
                             android:textSize="14sp"
                             android:textStyle="bold" />
 
-                        <!-- Multi-color distribution meter -->
+                        <!-- Segmented Distribution Meter -->
                         <LinearLayout
                             android:id="@+id/layout_prob_meter"
                             android:layout_width="match_parent"
-                            android:layout_height="8dp"
+                            android:layout_height="10dp"
                             android:layout_marginTop="12dp"
                             android:clipToOutline="true"
-                            android:orientation="horizontal"
-                            android:weightSum="100">
+                            android:orientation="horizontal">
 
                             <View
                                 android:id="@+id/bar_prob_bullish"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_weight="55"
+                                android:layout_weight="65"
                                 android:background="@color/color_positive" />
-
-                            <View
-                                android:layout_width="2dp"
-                                android:layout_height="match_parent"
-                                android:background="@color/color_background" />
 
                             <View
                                 android:id="@+id/bar_prob_sideways"
@@ -2208,23 +1982,17 @@
                                 android:background="@color/color_neutral" />
 
                             <View
-                                android:layout_width="2dp"
-                                android:layout_height="match_parent"
-                                android:background="@color/color_background" />
-
-                            <View
                                 android:id="@+id/bar_prob_bearish"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_weight="20"
+                                android:layout_weight="10"
                                 android:background="@color/color_negative" />
                         </LinearLayout>
 
-                        <!-- Legend & Values -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
+                            android:layout_marginTop="8dp"
                             android:orientation="horizontal">
 
                             <TextView
@@ -2232,10 +2000,10 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Bullish: 55%"
                                 android:textColor="@color/color_positive"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                tools:text="Bullish: 65.0%" />
 
                             <TextView
                                 android:id="@+id/tv_prob_sideways_val"
@@ -2243,10 +2011,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:text="Sideways: 25%"
                                 android:textColor="@color/color_text_secondary"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
+                                android:textSize="11sp"
+                                tools:text="Sideways: 25.0%" />
 
                             <TextView
                                 android:id="@+id/tv_prob_bearish_val"
@@ -2254,14 +2021,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:gravity="end"
-                                android:text="Bearish: 20%"
                                 android:textColor="@color/color_negative"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                tools:text="Bearish: 10.0%" />
                         </LinearLayout>
                     </LinearLayout>
 
-                    <!-- MODEL ENSEMBLE BREAKDOWN (GRU vs XGBoost) CARD -->
+                    <!-- MODEL ENSEMBLE BREAKDOWN CARD -->
                     <LinearLayout
                         android:id="@+id/card_model_breakdown"
                         android:layout_width="match_parent"
@@ -2270,12 +2037,14 @@
                         android:layout_marginTop="12dp"
                         android:background="@drawable/bg_card_clean"
                         android:orientation="vertical"
-                        android:padding="16dp">
+                        android:padding="16dp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Ensemble Model Breakdown"
+                            android:text="Model Ensemble Breakdown"
                             android:textColor="@color/color_text_primary"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -2284,14 +2053,14 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
+                            android:layout_marginTop="10dp"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
                             <TextView
-                                android:layout_width="wrap_content"
+                                android:layout_width="70dp"
                                 android:layout_height="wrap_content"
-                                android:text="GRU (Deep Neural Net)"
+                                android:text="GRU"
                                 android:textColor="@color/color_text_primary"
                                 android:textSize="13sp"
                                 android:textStyle="bold" />
@@ -2300,14 +2069,10 @@
                                 android:id="@+id/tv_gru_direction"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:background="@drawable/bg_badge_positive"
-                                android:paddingHorizontal="8dp"
-                                android:paddingVertical="2dp"
-                                android:text="BULLISH"
                                 android:textColor="@color/color_positive"
-                                android:textSize="10sp"
-                                android:textStyle="bold" />
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="BULLISH" />
 
                             <TextView
                                 android:id="@+id/tv_gru_pcts"
@@ -2318,14 +2083,8 @@
                                 android:gravity="end"
                                 android:textColor="@color/color_text_secondary"
                                 android:textSize="11sp"
-                                tools:text="45% Bull • 25% Bear • Gap 20.0pp" />
+                                tools:text="72% Bull • 28% Bear" />
                         </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="0.5dp"
-                            android:layout_marginTop="8dp"
-                            android:background="@color/color_divider" />
 
                         <!-- XGBoost Model Row -->
                         <LinearLayout
@@ -2336,9 +2095,9 @@
                             android:orientation="horizontal">
 
                             <TextView
-                                android:layout_width="wrap_content"
+                                android:layout_width="70dp"
                                 android:layout_height="wrap_content"
-                                android:text="XGBoost (Boosted Trees)"
+                                android:text="XGBoost"
                                 android:textColor="@color/color_text_primary"
                                 android:textSize="13sp"
                                 android:textStyle="bold" />
@@ -2347,14 +2106,10 @@
                                 android:id="@+id/tv_xgb_direction"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:background="@drawable/bg_badge_positive"
-                                android:paddingHorizontal="8dp"
-                                android:paddingVertical="2dp"
-                                android:text="BULLISH"
                                 android:textColor="@color/color_positive"
-                                android:textSize="10sp"
-                                android:textStyle="bold" />
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="BULLISH" />
 
                             <TextView
                                 android:id="@+id/tv_xgb_pcts"
@@ -2365,7 +2120,7 @@
                                 android:gravity="end"
                                 android:textColor="@color/color_text_secondary"
                                 android:textSize="11sp"
-                                tools:text="40% Bull • 32% Bear • Gap 7.2pp" />
+                                tools:text="68% Bull • 32% Bear" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -2378,39 +2133,17 @@
                         android:layout_marginTop="12dp"
                         android:background="@drawable/bg_card_clean"
                         android:orientation="vertical"
-                        android:padding="16dp">
+                        android:padding="16dp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Market &amp; Relative Context"
+                            android:text="Market &amp; Benchmark Context"
                             android:textColor="@color/color_text_primary"
                             android:textSize="14sp"
                             android:textStyle="bold" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="PSX Market Return (5D / 20D)"
-                                android:textColor="@color/color_text_secondary"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/tv_context_market_returns"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/color_text_primary"
-                                android:textSize="12sp"
-                                android:textStyle="bold"
-                                tools:text="+1.2% / +3.4%" />
-                        </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -2422,7 +2155,31 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Stock vs Market (20D Relative)"
+                                android:text="KSE Returns (5D / 20D)"
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/tv_context_market_returns"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="+1.8% / +4.2%" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Stock Relative Return"
                                 android:textColor="@color/color_text_secondary"
                                 android:textSize="12sp" />
 
@@ -2430,74 +2187,34 @@
                                 android:id="@+id/tv_context_stock_relative"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/color_text_primary"
+                                android:textColor="@color/color_positive"
                                 android:textSize="12sp"
                                 android:textStyle="bold"
-                                tools:text="-9.2% relative" />
+                                tools:text="+3.5% relative" />
                         </LinearLayout>
                     </LinearLayout>
 
-                    <!-- UNCERTAINTY NOTICE -->
+                    <!-- MODEL ACCURACY & HISTORY SECTION -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="16dp"
-                        android:layout_marginTop="12dp"
-                        android:background="@drawable/bg_card_clean"
-                        android:orientation="vertical"
-                        android:padding="12dp">
+                        android:layout_marginTop="16dp"
+                        android:orientation="vertical">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Informational Decision-Support"
+                            android:text="Forecast History &amp; Accuracy"
                             android:textColor="@color/color_text_primary"
-                            android:textSize="12sp"
+                            android:textSize="15sp"
                             android:textStyle="bold" />
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="ML forecasts and signal ratings are algorithmic statistical estimates and not financial guarantees or investment advice. Always evaluate risk tolerance and apply stop-loss limits."
-                            android:textColor="@color/color_text_secondary"
-                            android:textSize="11sp" />
-                    </LinearLayout>
-
-                    <!-- SECTION DIVIDER -->
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="0.5dp"
-                        android:layout_marginHorizontal="16dp"
-                        android:layout_marginTop="20dp"
-                        android:background="@color/color_divider" />
-
-                    <!-- ============================================== -->
-                    <!-- HISTORICAL ACCURACY & PERFORMANCE SECTION     -->
-                    <!-- ============================================== -->
-                    <LinearLayout
-                        android:id="@+id/layout_history_section"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="16dp"
-                        android:paddingTop="16dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:letterSpacing="0.04"
-                            android:text="HISTORICAL FORECAST ACCURACY"
-                            android:textColor="@color/color_text_secondary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-
-                        <!-- Accuracy Summary Card -->
+                        <!-- Accuracy Banner -->
                         <LinearLayout
-                            android:id="@+id/card_history_accuracy_summary"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
+                            android:layout_marginTop="8dp"
                             android:background="@drawable/bg_card_clean"
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
@@ -2514,7 +2231,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Overall Accuracy"
                                     android:textColor="@color/color_text_secondary"
-                                    android:textSize="12sp" />
+                                    android:textSize="11sp" />
 
                                 <TextView
                                     android:id="@+id/tv_history_accuracy_val"
@@ -2522,7 +2239,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:textColor="@color/color_basarat_green"
-                                    android:textSize="22sp"
+                                    android:textSize="20sp"
                                     android:textStyle="bold"
                                     tools:text="68.5%" />
                             </LinearLayout>
@@ -2538,7 +2255,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Scored Predictions"
                                     android:textColor="@color/color_text_secondary"
-                                    android:textSize="12sp" />
+                                    android:textSize="11sp" />
 
                                 <TextView
                                     android:id="@+id/tv_history_count_val"
@@ -2546,7 +2263,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:textColor="@color/color_text_primary"
-                                    android:textSize="20sp"
+                                    android:textSize="18sp"
                                     android:textStyle="bold"
                                     tools:text="30 Records" />
                             </LinearLayout>
@@ -2609,10 +2326,363 @@
                             android:id="@+id/rv_forecast_history"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
+                            android:layout_marginTop="10dp"
                             android:nestedScrollingEnabled="false" />
 
                     </LinearLayout>
+
+                    <!-- Prediction Disclaimer -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="16dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Notice: AI predictions are probabilistic projections generated by deep learning models for decision-support purposes only. They do not constitute guaranteed outcomes or registered financial advice."
+                        android:textColor="@color/color_text_tertiary"
+                        android:textSize="11sp" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ============================================== -->
+            <!-- 7. TAB 4: SENTIMENT CONTENT (IN-PLACE)         -->
+            <!-- ============================================== -->
+            <LinearLayout
+                android:id="@+id/layout_sentiment_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <!-- 7A. STOCK SENTIMENT SUMMARY CARD -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sentiment Analysis"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <!-- Stock Sentiment Loading -->
+                    <ProgressBar
+                        android:id="@+id/progress_stock_sentiment"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:layout_marginVertical="24dp"
+                        android:indeterminateTint="@color/color_basarat_green"
+                        android:visibility="gone" />
+
+                    <!-- Stock Sentiment Error -->
+                    <LinearLayout
+                        android:id="@+id/layout_stock_sentiment_error"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="20dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tv_stock_sentiment_error_msg"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Unable to load sentiment data."
+                            android:textColor="@color/color_negative"
+                            android:textSize="12sp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_stock_sentiment_retry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginTop="8dp"
+                            android:text="Retry"
+                            android:textAllCaps="false"
+                            android:textSize="11sp"
+                            app:backgroundTint="@color/color_button_primary_bg"
+                            app:cornerRadius="6dp" />
+                    </LinearLayout>
+
+                    <!-- Stock Sentiment Success Card -->
+                    <LinearLayout
+                        android:id="@+id/card_stock_sentiment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/bg_card_clean"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:visibility="visible">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_sentiment_stock_label"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
+                                tools:text="BULLISH" />
+
+                            <TextView
+                                android:id="@+id/tv_sentiment_stock_score_value"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/color_positive"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
+                                tools:text="+0.35" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Score scale: −1.0 (Bearish) → +1.0 (Bullish)"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="11sp" />
+
+                        <!-- Score Bar Meter -->
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="8dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginBottom="4dp">
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="8dp"
+                                android:layout_gravity="center_vertical"
+                                android:background="@color/color_divider" />
+
+                            <View
+                                android:id="@+id/view_sentiment_score_fill"
+                                android:layout_width="60dp"
+                                android:layout_height="8dp"
+                                android:layout_gravity="start|center_vertical"
+                                android:background="@color/color_basarat_green" />
+
+                            <View
+                                android:layout_width="2dp"
+                                android:layout_height="12dp"
+                                android:layout_gravity="center"
+                                android:background="@color/color_text_secondary" />
+                        </FrameLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_marginTop="12dp"
+                            android:background="@color/color_divider" />
+
+                        <!-- Sentiment Metadata Row -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_sentiment_article_count"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="12sp"
+                                tools:text="Articles Scored: 24" />
+
+                            <TextView
+                                android:id="@+id/tv_sentiment_trend"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="Trend: Improving" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tv_sentiment_sources_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/color_text_tertiary"
+                            android:textSize="11sp"
+                            tools:text="18 news items • 6 community signals" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- 7B. SENTIMENT HISTORY TREND CARD -->
+                <LinearLayout
+                    android:id="@+id/card_sentiment_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_card_clean"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sentiment Trend (30 Days)"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <ProgressBar
+                        android:id="@+id/progress_sentiment_history"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:layout_marginVertical="36dp"
+                        android:indeterminateTint="@color/color_basarat_green"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:id="@+id/layout_sentiment_history_error"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="20dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Unable to load sentiment history."
+                            android:textColor="@color/color_negative"
+                            android:textSize="12sp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_sentiment_history_retry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="34dp"
+                            android:layout_marginTop="6dp"
+                            android:text="Retry"
+                            android:textAllCaps="false"
+                            android:textSize="11sp"
+                            app:backgroundTint="@color/color_button_primary_bg"
+                            app:cornerRadius="6dp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_sentiment_history_empty"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:gravity="center"
+                        android:text="No sentiment trend history available"
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/chart_sentiment_history"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_marginTop="8dp"
+                        android:visibility="visible" />
+                </LinearLayout>
+
+                <!-- 7C. RECENT SENTIMENT NEWS -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FinBERT Annotated News"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Real-time news articles evaluated by financial sentiment AI"
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="11sp" />
+
+                    <!-- News Loading -->
+                    <ProgressBar
+                        android:id="@+id/progress_sentiment_news"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="20dp"
+                        android:indeterminateTint="@color/color_basarat_green"
+                        android:visibility="gone" />
+
+                    <!-- News Error -->
+                    <LinearLayout
+                        android:id="@+id/layout_sentiment_news_error"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tv_sentiment_news_error_msg"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Unable to load sentiment news"
+                            android:textColor="@color/color_negative"
+                            android:textSize="12sp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_sentiment_news_retry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginTop="6dp"
+                            android:text="Retry News"
+                            android:textAllCaps="false"
+                            android:textSize="11sp"
+                            app:backgroundTint="@color/color_button_primary_bg"
+                            app:cornerRadius="6dp" />
+                    </LinearLayout>
+
+                    <!-- News Empty -->
+                    <TextView
+                        android:id="@+id/tv_sentiment_news_empty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:gravity="center"
+                        android:text="No sentiment news available for this symbol."
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="13sp"
+                        android:visibility="gone" />
+
+                    <!-- News List -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_sentiment_news"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:nestedScrollingEnabled="false" />
                 </LinearLayout>
 
             </LinearLayout>
