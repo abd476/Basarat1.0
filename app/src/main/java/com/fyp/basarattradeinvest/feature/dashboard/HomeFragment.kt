@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -34,7 +34,7 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: HomeViewModel by viewModels()
+    private val viewModel: HomeViewModel by activityViewModels()
 
     private val priceFormat = NumberFormat.getNumberInstance(Locale.US).apply {
         minimumFractionDigits = 2
@@ -75,6 +75,7 @@ class HomeFragment : Fragment() {
         setupListeners()
         setupBenchmarkChart()
         observeUiState()
+        viewModel.ensureLoaded()
     }
 
     private fun setupRecyclerViews() {
@@ -169,19 +170,20 @@ class HomeFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     when (state) {
                         is HomeUiState.Loading -> {
-                            binding.progressHomeLoading.visibility = View.VISIBLE
+                            binding.layoutHomeSkeleton.visibility = View.VISIBLE
                             binding.layoutHomeError.visibility = View.GONE
                             binding.scrollContent.visibility = View.GONE
+                            binding.swipeRefresh.isRefreshing = false
                         }
                         is HomeUiState.Error -> {
-                            binding.progressHomeLoading.visibility = View.GONE
+                            binding.layoutHomeSkeleton.visibility = View.GONE
                             binding.layoutHomeError.visibility = View.VISIBLE
                             binding.scrollContent.visibility = View.GONE
                             binding.tvHomeErrorMsg.text = state.message
                             binding.swipeRefresh.isRefreshing = false
                         }
                         is HomeUiState.Success -> {
-                            binding.progressHomeLoading.visibility = View.GONE
+                            binding.layoutHomeSkeleton.visibility = View.GONE
                             binding.layoutHomeError.visibility = View.GONE
                             binding.scrollContent.visibility = View.VISIBLE
                             binding.swipeRefresh.isRefreshing = false

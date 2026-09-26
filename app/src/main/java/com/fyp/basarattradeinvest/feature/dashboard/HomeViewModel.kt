@@ -26,7 +26,8 @@ class HomeViewModel(
     private val newsRepository: NewsRepository = NewsRepositoryImpl(),
     private val usersRepository: UsersRepository = UsersRepositoryImpl(),
     private val alertsRepository: AlertsRepository = AlertsRepositoryImpl(),
-    private val newsApiService: NewsApiService = NetworkClient.newsApiService
+    private val newsApiService: NewsApiService = NetworkClient.newsApiService,
+    private val autoLoad: Boolean = true
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
@@ -34,14 +35,51 @@ class HomeViewModel(
 
     private var currentMoversTab: MoversTab = MoversTab.GAINERS
     private var currentTimeframe: String = "1D"
+    private var lastSuccessfulFetchAt: Long = 0L
+    private val freshnessWindowMs = 5 * 60 * 1000L
 
     init {
-        loadDashboard()
+        if (autoLoad) {
+            loadDashboard(forceLoad = false)
+        }
     }
 
-    fun loadDashboard(isRefresh: Boolean = false) {
+    private fun currentSuccessState(): HomeUiState.Success {
+        return (_uiState.value as? HomeUiState.Success)
+            ?: HomeUiState.Success(
+                userName = "Investor",
+                marketStatus = "Loading market data...",
+                isMarketOpen = false,
+                selectedTimeframe = currentTimeframe,
+                selectedMoversTab = currentMoversTab
+            )
+    }
+
+    private fun applyPartialState(update: HomeUiState.Success.() -> HomeUiState.Success) {
+        val current = currentSuccessState()
+        _uiState.value = update(current)
+    }
+
+    fun ensureLoaded() {
+        val state = _uiState.value
+        val shouldLoad = state !is HomeUiState.Success || stateHasExpired()
+        if (shouldLoad) {
+            loadDashboard(forceLoad = false)
+        }
+    }
+
+    private fun stateHasExpired(): Boolean {
+        return System.currentTimeMillis() - lastSuccessfulFetchAt > freshnessWindowMs
+    }
+
+    fun loadDashboard(isRefresh: Boolean = false, forceLoad: Boolean = isRefresh) {
         viewModelScope.launch {
-            if (!isRefresh && _uiState.value !is HomeUiState.Success) {
+            val currentState = _uiState.value
+            val hasUsableData = currentState is HomeUiState.Success
+            val shouldSkip = !forceLoad && hasUsableData && !stateHasExpired()
+
+            if (shouldSkip) return@launch
+            if (!forceLoad && !hasUsableData) {
                 _uiState.value = HomeUiState.Loading
             }
 
@@ -64,22 +102,15 @@ class HomeViewModel(
                     }
 
                     val userRes = userDeferred.await()
-                    val indicesRes = indicesDeferred.await()
-                    val gainersRes = gainersDeferred.await()
-                    val losersRes = losersDeferred.await()
-                    val spikesRes = spikesDeferred.await()
-                    val watchlistRes = watchlistDeferred.await()
-                    val newsRes = newsDeferred.await()
-                    val alertsRes = alertsDeferred.await()
-                    val statusResponse = marketStatusDeferred.await()
-
-                    // User name
                     val user = userRes.getOrNull()
                     val name = user?.fullName?.takeIf { it.isNotBlank() }
                         ?: user?.username?.takeIf { it.isNotBlank() }
                         ?: "Investor"
+                    applyPartialState { copy(userName = name) }
 
-                    // Market Status
+                    lastSuccessfulFetchAt = System.currentTimeMillis()
+
+                    val statusResponse = marketStatusDeferred.await()
                     val statusJson = statusResponse?.takeIf { it.isSuccessful }?.body()
                     val rawStatus = statusJson?.get("status")?.asString ?: "closed"
                     val isWeekend = statusJson?.get("is_weekend")?.asBoolean ?: false
@@ -89,40 +120,55 @@ class HomeViewModel(
                         isWeekend -> "Market Closed (Weekend)"
                         else -> "Market Closed"
                     }
+                    applyPartialState { copy(marketStatus = statusLabel, isMarketOpen = isOpen) }
 
-                    // Indices
+                    val indicesRes = indicesDeferred.await()
                     val indices = indicesRes.getOrNull() ?: emptyList()
                     val kse100 = indices.firstOrNull {
                         it.code.equals("KSE100", ignoreCase = true) ||
-                        it.name.contains("100", ignoreCase = true)
+                            it.name.contains("100", ignoreCase = true)
                     } ?: indices.firstOrNull()
+                    applyPartialState {
+                        copy(
+                            marketIndices = indices,
+                            selectedBenchmarkIndex = kse100,
+                            selectedTimeframe = currentTimeframe
+                        )
+                    }
 
-                    // Movers
+                    val gainersRes = gainersDeferred.await()
+                    val losersRes = losersDeferred.await()
+                    val spikesRes = spikesDeferred.await()
                     val gainers = gainersRes.getOrNull() ?: emptyList()
                     val losers = losersRes.getOrNull() ?: emptyList()
                     val volumeSpikes = spikesRes.getOrNull() ?: emptyList()
+                    applyPartialState {
+                        copy(
+                            topGainers = gainers,
+                            topLosers = losers,
+                            volumeSpikes = volumeSpikes,
+                            selectedMoversTab = currentMoversTab
+                        )
+                    }
 
-                    // Watchlist & News & Alerts
+                    val watchlistRes = watchlistDeferred.await()
                     val watchlist = watchlistRes.getOrNull() ?: emptyList()
-                    val news = newsRes.getOrNull()?.articles?.take(3) ?: emptyList()
-                    val unreadAlerts = alertsRes.getOrNull() ?: emptyList()
+                    applyPartialState { copy(watchlistStocks = watchlist) }
 
-                    _uiState.value = HomeUiState.Success(
-                        userName = name,
-                        marketStatus = statusLabel,
-                        isMarketOpen = isOpen,
-                        marketIndices = indices,
-                        selectedBenchmarkIndex = kse100,
-                        selectedTimeframe = currentTimeframe,
-                        watchlistStocks = watchlist,
-                        topGainers = gainers,
-                        topLosers = losers,
-                        volumeSpikes = volumeSpikes,
-                        selectedMoversTab = currentMoversTab,
-                        recentNews = news,
-                        activeAlertsCount = unreadAlerts.size,
-                        unresolvedAlerts = unreadAlerts.take(2)
-                    )
+                    val newsRes = newsDeferred.await()
+                    val news = newsRes.getOrNull()?.articles?.take(3) ?: emptyList()
+                    applyPartialState { copy(recentNews = news) }
+
+                    val alertsRes = alertsDeferred.await()
+                    val unreadAlerts = alertsRes.getOrNull() ?: emptyList()
+                    applyPartialState {
+                        copy(
+                            activeAlertsCount = unreadAlerts.size,
+                            unresolvedAlerts = unreadAlerts.take(2)
+                        )
+                    }
+
+                    lastSuccessfulFetchAt = System.currentTimeMillis()
                 }
             } catch (e: Exception) {
                 val current = _uiState.value
