@@ -76,7 +76,7 @@
             app:cardCornerRadius="16dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/color_border"
-            app:strokeWidth="1dp"
+            app:strokeWidth="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_section_channels">
@@ -244,7 +244,7 @@
             app:cardCornerRadius="16dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/color_border"
-            app:strokeWidth="1dp"
+            app:strokeWidth="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_section_categories">
