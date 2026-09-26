@@ -106,4 +106,57 @@ object SentimentDtoMapper {
             scoreDistributionNegative = dist?.get("negative") ?: 0
         )
     }
+
+    // ─── Bridge News Article to Sentiment Item ────────────────────────────────
+    fun mapNewsArticleToSentimentItem(dto: com.fyp.basarattradeinvest.data.remote.dto.news.NewsArticleResponseDto): SentimentNewsItem {
+        val label = dto.sentiment?.label?.trim()
+        val rawScore = dto.sentiment?.score?.toFloat()
+        val computedScore = rawScore ?: when (label?.lowercase(java.util.Locale.ROOT)) {
+            "positive", "bullish" -> 0.75f
+            "negative", "bearish" -> -0.75f
+            else -> 0.0f
+        }
+        val normalizedLabel = when (label?.lowercase(java.util.Locale.ROOT)) {
+            "positive", "bullish" -> "BULLISH"
+            "negative", "bearish" -> "BEARISH"
+            else -> "NEUTRAL"
+        }
+        return SentimentNewsItem(
+            id = dto.id,
+            title = dto.title,
+            source = dto.source?.name,
+            publishedAt = dto.publishedAt,
+            url = dto.url ?: dto.externalUrl,
+            sentiment = normalizedLabel,
+            sentimentScore = computedScore,
+            sentimentModel = dto.sentiment?.method ?: "finbert"
+        )
+    }
+
+    // ─── Bridge Market Breadth to Market Sentiment Overview ───────────────────
+    fun mapMarketOverviewDto(dto: com.fyp.basarattradeinvest.data.remote.dto.market.SentimentOverviewDto): MarketSentimentOverview {
+        val mood = dto.marketMood ?: "neutral"
+        val score = when (mood.lowercase(java.util.Locale.ROOT)) {
+            "strongly_bullish" -> 0.85f
+            "bullish" -> 0.50f
+            "bearish" -> -0.50f
+            "strongly_bearish" -> -0.75f
+            else -> 0.0f
+        }
+        return MarketSentimentOverview(
+            marketMood = mood,
+            overallScore = score,
+            articleCount = 0,
+            communityPostCount = 0,
+            advancing = dto.advancing ?: 0,
+            declining = dto.declining ?: 0,
+            unchanged = dto.unchanged ?: 0,
+            advanceDeclineRatio = dto.advanceDeclineRatio?.toFloat() ?: 0f,
+            newsSentimentAvg = score,
+            communitySentimentAvg = 0f,
+            scoreDistributionPositive = (dto.gainersPct ?: 0.0).toInt(),
+            scoreDistributionNeutral = 0,
+            scoreDistributionNegative = (dto.losersPct ?: 0.0).toInt()
+        )
+    }
 }
