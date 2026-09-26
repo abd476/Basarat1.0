@@ -171,9 +171,9 @@ class MarketDashboardFragment : Fragment() {
                             bindIndices(state.indices)
                             bindOverview(state.overview)
                             bindSentiment(state.sentiment)
-                            sectorAdapter.submitList(state.sectors)
+                            sectorAdapter.submitList(state.sectors.toList())
                             bindFilterTabs(state.selectedFilter)
-                            stockAdapter.submitList(state.topSymbols)
+                            stockAdapter.submitList(state.topSymbols.toList())
                             bindConstituents(state.constituents, state.selectedConstituentIndex, state.isConstituentsLoading)
                         }
                         is MarketDashboardUiState.Empty -> {

@@ -12,8 +12,11 @@ import java.util.concurrent.TimeUnit
 
 object NetworkClient {
 
-    // Live backend OpenAPI source of truth
-    const val BASE_URL = "https://basarat-fyp-official.onrender.com/"
+    // Live backend host (AWS EC2 FastAPI backend)
+    const val BASE_URL = "http://16.16.26.247:8000/"
+
+    // Live PSX Market API host (Real-time Market quotes, gainers, losers, volume spikes, indices, sectors)
+    const val MARKET_BASE_URL = "http://16.16.26.247:8000/"
 
     // Sanitized logging interceptor: redacts sensitive Authorization headers & tokens
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
@@ -41,8 +44,14 @@ object NetworkClient {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
+    private val marketRetrofit = Retrofit.Builder()
+        .baseUrl(MARKET_BASE_URL)
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
     val marketApiService: MarketApiService by lazy {
-        retrofit.create(MarketApiService::class.java)
+        marketRetrofit.create(MarketApiService::class.java)
     }
 
     val authApiService: AuthApiService by lazy {
@@ -58,7 +67,7 @@ object NetworkClient {
     }
 
     val stocksApiService: com.fyp.basarattradeinvest.data.remote.api.StocksApiService by lazy {
-        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.StocksApiService::class.java)
+        marketRetrofit.create(com.fyp.basarattradeinvest.data.remote.api.StocksApiService::class.java)
     }
 
     val recommendationsApiService: com.fyp.basarattradeinvest.data.remote.api.RecommendationsApiService by lazy {

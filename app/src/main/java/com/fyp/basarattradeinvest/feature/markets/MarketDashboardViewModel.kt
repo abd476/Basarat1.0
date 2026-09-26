@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.data.repository.MarketRepositoryImpl
 import com.fyp.basarattradeinvest.domain.model.IndexConstituent
 import com.fyp.basarattradeinvest.domain.model.MarketOverview
+import com.fyp.basarattradeinvest.domain.model.MarketStock
 import com.fyp.basarattradeinvest.domain.model.SymbolFilterType
 import com.fyp.basarattradeinvest.domain.repository.MarketRepository
 import com.fyp.basarattradeinvest.domain.usecase.GetMarketIndicesUseCase
@@ -126,12 +127,19 @@ class MarketDashboardViewModel(
         if (currentFilter == filterType && _uiState.value is MarketDashboardUiState.Success) return
         currentFilter = filterType
 
-        val currentState = _uiState.value
+        // 1. Immediately update UI state so selectedFilter changes without delay
+        val stateBefore = _uiState.value
+        if (stateBefore is MarketDashboardUiState.Success) {
+            _uiState.value = stateBefore.copy(selectedFilter = filterType)
+        }
+
         viewModelScope.launch {
             val topSymbolsResult = fetchSymbolsForFilter(filterType)
-            if (topSymbolsResult.isSuccess && currentState is MarketDashboardUiState.Success) {
+            val currentState = _uiState.value
+            if (currentState is MarketDashboardUiState.Success) {
+                val symbols = topSymbolsResult.getOrDefault(emptyList())
                 _uiState.value = currentState.copy(
-                    topSymbols = topSymbolsResult.getOrDefault(emptyList()),
+                    topSymbols = symbols,
                     selectedFilter = filterType
                 )
             }
@@ -163,11 +171,11 @@ class MarketDashboardViewModel(
         }
     }
 
-    private suspend fun fetchSymbolsForFilter(filterType: SymbolFilterType) = when (filterType) {
+    private suspend fun fetchSymbolsForFilter(filterType: SymbolFilterType): Result<List<MarketStock>> = when (filterType) {
         SymbolFilterType.GAINERS -> getTopGainersUseCase(10)
         SymbolFilterType.LOSERS -> getTopLosersUseCase(10)
         SymbolFilterType.VOLUME_SPIKES -> getVolumeSpikesUseCase(10)
-        SymbolFilterType.MOST_ACTIVE -> repository.getTopSymbols(SymbolFilterType.MOST_ACTIVE)
+        SymbolFilterType.MOST_ACTIVE -> getVolumeSpikesUseCase(10)
         SymbolFilterType.WATCHLIST -> repository.getTopSymbols(SymbolFilterType.WATCHLIST)
     }
 

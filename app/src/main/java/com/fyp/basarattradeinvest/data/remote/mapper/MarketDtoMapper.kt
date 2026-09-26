@@ -56,14 +56,19 @@ fun IndexConstituentsResponseDto.toDomain(): IndexConstituents {
 
 fun MarketQuoteItemDto.toDomain(rank: Int = 1): MarketStock {
     val formattedVolume = formatVolume(volume ?: 0L)
+    val priceVal = current ?: ldcp ?: 0.0
+    val chgPct = changePct ?: if (change != null && ldcp != null && ldcp > 0) {
+        (change / ldcp) * 100.0
+    } else 0.0
+
     return MarketStock(
         rank = rank,
         symbol = symbol.orEmpty(),
-        companyName = symbol.orEmpty(),
+        companyName = name ?: symbol.orEmpty(),
         sectorCode = sector ?: "PSX",
-        price = current ?: 0.0,
+        price = priceVal,
         change = change ?: 0.0,
-        changePercent = changePct ?: 0.0,
+        changePercent = chgPct,
         volume = formattedVolume,
         isShariah = true
     )
@@ -109,6 +114,23 @@ fun SectorPerformanceItemDto.toDomain(): SectorPerformance {
         sectorName = sec,
         changePercent = pct,
         volume = "${companies ?: 0} Cos",
+        isPositive = pct >= 0
+    )
+}
+
+fun com.fyp.basarattradeinvest.data.remote.dto.market.SectorPerformanceDetailDto.toDomain(): SectorPerformance {
+    val pct = avgChangePct ?: 0.0
+    val sec = sector ?: "General"
+    val volStr = when {
+        totalVolume != null && totalVolume > 0 -> formatVolume(totalVolume)
+        companies != null -> "${companies} Cos"
+        else -> ""
+    }
+    return SectorPerformance(
+        id = sec.lowercase().replace(" ", "_"),
+        sectorName = sec,
+        changePercent = pct,
+        volume = volStr,
         isPositive = pct >= 0
     )
 }
