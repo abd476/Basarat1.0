@@ -64,4 +64,9 @@
     <color name="color_border">@color/color_divider</color>
     <color name="color_down">@color/color_negative</color>
     <color name="color_loading_overlay">#99FFFFFF</color>
+
+    <!-- Chart Mode Pills & Timeframes (Light Mode) -->
+    <color name="color_pill_selected_bg">#E9ECEF</color>
+    <color name="color_pill_unselected_bg">#F7F9F8</color>
+    <color name="color_timeframe_selected_bg">#E9ECEF</color>
 </resources>
