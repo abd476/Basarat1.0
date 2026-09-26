@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -46,7 +46,7 @@ class PortfolioMainFragment : Fragment() {
     private var _binding: FragmentPortfolioMainBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: PortfolioMainViewModel by viewModels { PortfolioMainViewModel.Factory() }
+    private val viewModel: PortfolioMainViewModel by activityViewModels { PortfolioMainViewModel.Factory() }
 
     private lateinit var holdingAdapter: HoldingAdapter
     private lateinit var stockAllocationAdapter: AllocationBarAdapter
@@ -93,6 +93,7 @@ class PortfolioMainFragment : Fragment() {
         setupHoldingsSearchAndFilter()
         setupListeners()
         observeState()
+        viewModel.ensureLoaded()
     }
 
     private fun setupRecyclerViews() {
@@ -439,10 +440,12 @@ class PortfolioMainFragment : Fragment() {
     private fun renderState(state: PortfolioMainUiState) {
         when (state) {
             is PortfolioMainUiState.Loading -> {
+                binding.scrollContent.visibility = View.GONE
                 binding.layoutLoading.visibility = View.VISIBLE
                 binding.layoutError.visibility = View.GONE
             }
             is PortfolioMainUiState.Success -> {
+                binding.scrollContent.visibility = View.VISIBLE
                 binding.layoutLoading.visibility = View.GONE
                 binding.layoutError.visibility = View.GONE
                 renderOverview(state.overview)
@@ -452,6 +455,7 @@ class PortfolioMainFragment : Fragment() {
                 renderRecentTransactions(state.recentTransactions)
             }
             is PortfolioMainUiState.Empty -> {
+                binding.scrollContent.visibility = View.VISIBLE
                 binding.layoutLoading.visibility = View.GONE
                 binding.layoutError.visibility = View.GONE
                 lastCurrentValue = 0.0
@@ -466,6 +470,7 @@ class PortfolioMainFragment : Fragment() {
                 renderPerformanceLineChart(null)
             }
             is PortfolioMainUiState.Error -> {
+                binding.scrollContent.visibility = View.GONE
                 binding.layoutLoading.visibility = View.GONE
                 binding.layoutError.visibility = View.VISIBLE
                 binding.tvErrorMsg.text = state.message

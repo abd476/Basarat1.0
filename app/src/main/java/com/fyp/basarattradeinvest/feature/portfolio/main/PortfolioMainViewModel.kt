@@ -60,9 +60,19 @@ class PortfolioMainViewModel(
 
     private val _selectedTab = MutableStateFlow(0) // 0: Holdings, 1: PnL, 2: Allocation, 3: Performance, 4: History
     val selectedTab: StateFlow<Int> = _selectedTab.asStateFlow()
+    private var lastSuccessfulFetchAt: Long = 0L
+    private val freshnessWindowMs = 5 * 60 * 1000L
 
-    init {
-        loadPortfolio()
+    fun ensureLoaded() {
+        val state = _uiState.value
+        val shouldLoad = state !is PortfolioMainUiState.Success || stateHasExpired()
+        if (shouldLoad) {
+            loadPortfolio(forceRefresh = false)
+        }
+    }
+
+    private fun stateHasExpired(): Boolean {
+        return System.currentTimeMillis() - lastSuccessfulFetchAt > freshnessWindowMs
     }
 
     fun selectTab(tabIndex: Int) {
@@ -83,7 +93,12 @@ class PortfolioMainViewModel(
 
     fun loadPortfolio(forceRefresh: Boolean = false) {
         viewModelScope.launch {
-            if (_uiState.value !is PortfolioMainUiState.Success || forceRefresh) {
+            val currentState = _uiState.value
+            val hasUsableData = currentState is PortfolioMainUiState.Success
+            val shouldSkip = !forceRefresh && hasUsableData && !stateHasExpired()
+
+            if (shouldSkip) return@launch
+            if (!forceRefresh && !hasUsableData) {
                 _uiState.value = PortfolioMainUiState.Loading
             }
 
@@ -100,6 +115,8 @@ class PortfolioMainViewModel(
                     val allocationRes = allocationDeferred.await()
                     val perfRes = performanceDeferred.await()
                     val txRes = transactionsDeferred.await()
+
+                    lastSuccessfulFetchAt = System.currentTimeMillis()
 
                     if (overviewRes.isSuccess) {
                         val overview = overviewRes.getOrThrow()
