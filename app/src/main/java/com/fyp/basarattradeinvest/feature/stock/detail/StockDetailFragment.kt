@@ -98,6 +98,8 @@ class StockDetailFragment : Fragment() {
             setScaleEnabled(true)
             setPinchZoom(true)
             setDrawGridBackground(false)
+            setNoDataText("Loading chart data...")
+            setNoDataTextColor(textColor)
 
             xAxis.apply {
                 position = XAxis.XAxisPosition.BOTTOM
@@ -138,6 +140,7 @@ class StockDetailFragment : Fragment() {
             setScaleEnabled(true)
             setPinchZoom(true)
             setDrawGridBackground(false)
+            setNoDataText("")
 
             xAxis.apply {
                 position = XAxis.XAxisPosition.BOTTOM
@@ -196,9 +199,9 @@ class StockDetailFragment : Fragment() {
         // Timeframe tabs
         val timeframeTabs = listOf(
             binding.tab1d to "1D",
-            binding.tabDaily to "Daily",
-            binding.tabWeekly to "Weekly",
-            binding.tab1m to "1M"
+            binding.tab1w to "1W",
+            binding.tab1m to "1M",
+            binding.tab1y to "1Y"
         )
         timeframeTabs.forEach { (tab, tf) ->
             tab.setOnClickListener { viewModel.setTimeframe(tf) }
@@ -311,8 +314,19 @@ class StockDetailFragment : Fragment() {
     }
 
     private fun bindCandles(candles: List<CandleEntry>) {
-        if (candles.isEmpty()) return
         val chart = candleChart ?: return
+        val volChart = volumeChart ?: return
+
+        if (candles.isEmpty()) {
+            val symbolLabel = if (currentSymbol.isNotEmpty()) currentSymbol else "this stock"
+            chart.setNoDataText("No historical price data available for $symbolLabel on PSX feed")
+            chart.data = null
+            chart.invalidate()
+            volChart.setNoDataText("")
+            volChart.data = null
+            volChart.invalidate()
+            return
+        }
 
         val positiveColor = ContextCompat.getColor(requireContext(), R.color.color_positive)
         val negativeColor = ContextCompat.getColor(requireContext(), R.color.color_negative)
@@ -336,16 +350,16 @@ class StockDetailFragment : Fragment() {
             decreasingColor = negativeColor
             decreasingPaintStyle = Paint.Style.FILL
             neutralColor = Color.GRAY
-            shadowWidth = 0.8f
+            shadowWidth = 1.0f
         }
 
         chart.data = CandleData(candleDataSet)
-        chart.setVisibleXRangeMaximum(50f)
+        val visibleRange = if (candleEntries.size > 25) 25f else candleEntries.size.toFloat().coerceAtLeast(5f)
+        chart.setVisibleXRangeMaximum(visibleRange)
         chart.moveViewToX(candleEntries.size.toFloat())
         chart.invalidate()
 
         // Volume bar chart
-        val volChart = volumeChart ?: return
         val barEntries = candles.mapIndexed { index, candle ->
             BarEntry(index.toFloat(), candle.volume.toFloat())
         }
@@ -362,7 +376,7 @@ class StockDetailFragment : Fragment() {
         volChart.data = BarData(barDataSet).apply {
             barWidth = 0.8f
         }
-        volChart.setVisibleXRangeMaximum(50f)
+        volChart.setVisibleXRangeMaximum(visibleRange)
         volChart.moveViewToX(barEntries.size.toFloat())
         volChart.invalidate()
     }
@@ -370,9 +384,9 @@ class StockDetailFragment : Fragment() {
     private fun updateTimeframeTabs(selected: String) {
         val tabs = listOf(
             binding.tab1d to "1D",
-            binding.tabDaily to "Daily",
-            binding.tabWeekly to "Weekly",
-            binding.tab1m to "1M"
+            binding.tab1w to "1W",
+            binding.tab1m to "1M",
+            binding.tab1y to "1Y"
         )
 
         tabs.forEach { (tab, tf) ->

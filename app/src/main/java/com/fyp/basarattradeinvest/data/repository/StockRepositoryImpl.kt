@@ -134,16 +134,12 @@ class StockRepositoryImpl(
             val response = apiService.getPriceHistory(symbol = symbol, range = validRange)
             if (response.isSuccessful && response.body() != null) {
                 val candles = StocksDtoMapper.mapPriceHistoryToCandles(response.body()!!)
-                if (candles.isNotEmpty()) {
-                    Result.success(candles)
-                } else {
-                    getChartData(symbol, range)
-                }
+                Result.success(candles)
             } else {
-                getChartData(symbol, range)
+                Result.failure(Exception("Price history not available: ${response.code()}"))
             }
         } catch (e: Exception) {
-            getChartData(symbol, range)
+            Result.failure(e)
         }
     }
 
@@ -153,10 +149,10 @@ class StockRepositoryImpl(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(StocksDtoMapper.mapTechnicalIndicators(response.body()!!))
             } else {
-                fallbackTechnicalAnalysis(symbol)
+                Result.failure(Exception("Technical indicators not available: ${response.code()}"))
             }
         } catch (e: Exception) {
-            fallbackTechnicalAnalysis(symbol)
+            Result.failure(e)
         }
     }
 
@@ -166,10 +162,10 @@ class StockRepositoryImpl(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(StocksDtoMapper.mapFundamentals(response.body()!!))
             } else {
-                fallbackFundamentals(symbol)
+                Result.failure(Exception("Fundamentals not available: ${response.code()}"))
             }
         } catch (e: Exception) {
-            fallbackFundamentals(symbol)
+            Result.failure(e)
         }
     }
 
@@ -273,19 +269,12 @@ class StockRepositoryImpl(
         val techRes = getTechnicalIndicators(symbol)
         val fundRes = getFundamentals(symbol)
 
-        val detail = overviewRes.getOrDefault(
-            stockDatabase[symbol.uppercase()] ?: StockDetail(
-                symbol = symbol.uppercase(), code = symbol.uppercase(), companyName = "${symbol.uppercase()} Limited",
-                sector = "Equity", price = 0.0, changeAmount = 0.0, changePercent = 0.0,
-                marketStatus = "Active", lastUpdated = "",
-                open = 0.0, high = 0.0, low = 0.0, close = 0.0,
-                volume = 0, avgVolume = 0, high52Week = 0.0, low52Week = 0.0,
-                marketCap = "N/A", pe = 0.0, eps = 0.0
-            )
-        )
+        val detail = overviewRes.getOrElse {
+            return@withContext Result.failure(it)
+        }
 
-        val technical = techRes.getOrDefault(fallbackTechnicalAnalysis(symbol).getOrThrow())
-        val fundamentals = fundRes.getOrDefault(fallbackFundamentals(symbol).getOrThrow())
+        val technical = techRes.getOrElse { emptyTechnicalAnalysis() }
+        val fundamentals = fundRes.getOrElse { FundamentalMetrics() }
 
         Result.success(
             StockAnalysis(
@@ -300,77 +289,17 @@ class StockRepositoryImpl(
         )
     }
 
-    private fun fallbackTechnicalAnalysis(symbol: String): Result<TechnicalAnalysis> {
-        val detail = stockDatabase[symbol.uppercase()]
-        val price = detail?.price ?: 100.0
-
-        val oscillators = listOf(
-            TechnicalIndicator("RSI (14)", "Relative Strength", "62.40", TechnicalSignal.NEUTRAL),
-            TechnicalIndicator("MACD (12,26,9)", "Bullish Crossover", "+5.12", TechnicalSignal.BUY),
-            TechnicalIndicator("ADX (14)", "Strong Uptrend", "34.80", TechnicalSignal.BUY),
-            TechnicalIndicator("Stochastic (14,3)", "Fast Oscillator", "74.20", TechnicalSignal.NEUTRAL),
-            TechnicalIndicator("Bollinger Bands", "Upper Expansion", String.format(Locale.US, "%.2f", price * 1.02), TechnicalSignal.BUY),
-            TechnicalIndicator("CCI (20)", "Commodity Channel", "+112.50", TechnicalSignal.BUY),
-            TechnicalIndicator("Awesome Oscillator", "Momentum", "+8.45", TechnicalSignal.BUY)
-        )
-
-        val movingAverages = listOf(
-            TechnicalIndicator("SMA (20)", "Price above 20MA", String.format(Locale.US, "PKR %.2f", price * 0.975), TechnicalSignal.BUY),
-            TechnicalIndicator("SMA (50)", "Golden Cross Active", String.format(Locale.US, "PKR %.2f", price * 0.945), TechnicalSignal.STRONG_BUY),
-            TechnicalIndicator("SMA (200)", "Long-term Bullish", String.format(Locale.US, "PKR %.2f", price * 0.86), TechnicalSignal.BUY),
-            TechnicalIndicator("EMA (20)", "Short-term Momentum", String.format(Locale.US, "PKR %.2f", price * 0.98), TechnicalSignal.BUY)
-        )
-
-        val pivotPoints = PivotPoints(
-            r3 = price * 1.05,
-            r2 = price * 1.03,
-            r1 = price * 1.015,
-            pivot = price * 0.995,
-            s1 = price * 0.98,
-            s2 = price * 0.96,
-            s3 = price * 0.945
-        )
-
-        return Result.success(
-            TechnicalAnalysis(
-                summary = TechnicalSummary(
-                    overallSignal = TechnicalSignal.BUY,
-                    buyCount = 10,
-                    neutralCount = 4,
-                    sellCount = 1
-                ),
-                oscillators = oscillators,
-                movingAverages = movingAverages,
-                pivotPoints = pivotPoints
-            )
-        )
-    }
-
-    private fun fallbackFundamentals(symbol: String): Result<FundamentalMetrics> {
-        val detail = stockDatabase[symbol.uppercase()]
-        return Result.success(
-            FundamentalMetrics(
-                peRatio = detail?.pe,
-                sectorPeAvg = null,
-                forwardPe = null,
-                pbRatio = null,
-                evEbitda = null,
-                pegRatio = null,
-                eps = detail?.eps,
-                roe = null,
-                roa = null,
-                dividendYield = null,
-                netProfitMargin = null,
-                debtToEquity = null,
-                currentRatio = null,
-                quickRatio = null,
-                interestCoverage = null,
-                revenueTTM = null,
-                revenueGrowthYoY = null,
-                netIncomeTTM = null,
-                netIncomeGrowthYoY = null,
-                freeCashFlowTTM = null
-            )
+    private fun emptyTechnicalAnalysis(): TechnicalAnalysis {
+        return TechnicalAnalysis(
+            summary = TechnicalSummary(
+                overallSignal = TechnicalSignal.NEUTRAL,
+                buyCount = 0,
+                neutralCount = 0,
+                sellCount = 0
+            ),
+            oscillators = emptyList(),
+            movingAverages = emptyList(),
+            pivotPoints = PivotPoints(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         )
     }
 }

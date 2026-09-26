@@ -21,7 +21,7 @@ class StockDetailViewModel(
     val uiState: StateFlow<StockDetailUiState> = _uiState.asStateFlow()
 
     private var currentSymbol: String = ""
-    private var currentTimeframe: String = "Weekly"
+    private var currentTimeframe: String = "1M"
     private var currentSection: String = "Quotes"
     private var currentSubPill: String = "By Price"
 
@@ -36,13 +36,20 @@ class StockDetailViewModel(
                 val tradesDeferred = async { repository.getRecentTrades(symbol) }
 
                 val detailResult = detailDeferred.await()
-                val chartResult = chartDeferred.await()
-                val tradesResult = tradesDeferred.await()
+                var candles = chartDeferred.await().getOrDefault(emptyList())
+                val trades = tradesDeferred.await().getOrDefault(emptyList())
+
+                // If default timeframe returned empty candles, attempt fallback to 1M or 1Y if available
+                if (candles.isEmpty() && currentTimeframe != "1M") {
+                    val fallback = repository.getPriceHistory(symbol, "1M").getOrDefault(emptyList())
+                    if (fallback.isNotEmpty()) {
+                        candles = fallback
+                        currentTimeframe = "1M"
+                    }
+                }
 
                 if (detailResult.isSuccess) {
                     val detail = detailResult.getOrThrow()
-                    val candles = chartResult.getOrDefault(emptyList())
-                    val trades = tradesResult.getOrDefault(emptyList())
 
                     _uiState.value = StockDetailUiState.Success(
                         detail = detail,

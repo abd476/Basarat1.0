@@ -262,19 +262,16 @@ class StocksModuleUnitTest {
         assertTrue(overviewRes.isSuccess)
         assertEquals("OGDC", overviewRes.getOrThrow().symbol)
 
-        // Test fallback price history
+        // Test price history on API error (strict no-mock rule: fails rather than inventing fake candles)
         val historyRes = repository.getPriceHistory("OGDC", "1M")
-        assertTrue(historyRes.isSuccess)
-        assertFalse(historyRes.getOrThrow().isEmpty())
+        assertTrue(historyRes.isFailure)
 
-        // Test fallback technical indicators
+        // Test technical indicators on API error (strict no-mock rule: fails rather than inventing fake RSI/MACD)
         val techRes = repository.getTechnicalIndicators("OGDC")
-        assertTrue(techRes.isSuccess)
-        assertNotNull(techRes.getOrThrow().summary)
+        assertTrue(techRes.isFailure)
 
-        // Test fallback fundamentals
+        // Test fundamentals on API error (strict no-mock rule: fails rather than inventing fake multiples)
         val fundRes = repository.getFundamentals("OGDC")
-        assertTrue(fundRes.isSuccess)
-        assertTrue((fundRes.getOrThrow().peRatio ?: 0.0) > 0)
+        assertTrue(fundRes.isFailure)
     }
 }

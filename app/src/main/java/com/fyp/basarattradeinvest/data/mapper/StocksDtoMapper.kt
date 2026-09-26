@@ -242,12 +242,28 @@ object StocksDtoMapper {
             else -> null
         }
 
+        val evEbitda = metricsMap["EV/EBITDA"]?.getValueAsDouble()
+            ?: metricsMap["EV EBITDA"]?.getValueAsDouble()
+
+        val fwdPe = metricsMap["FORWARD P/E"]?.getValueAsDouble()
+            ?: metricsMap["FORWARD PE"]?.getValueAsDouble()
+
+        val revVal = metricsMap["REVENUE"]?.getValueAsString()
+            ?: metricsMap["REVENUE TTM"]?.getValueAsString()
+            ?: metricsMap["SALES"]?.getValueAsString()
+
+        val netIncVal = metricsMap["NET INCOME"]?.getValueAsString()
+            ?: metricsMap["NET INCOME TTM"]?.getValueAsString()
+
+        val fcfVal = metricsMap["FREE CASH FLOW"]?.getValueAsString()
+            ?: metricsMap["FCF"]?.getValueAsString()
+
         return FundamentalMetrics(
             peRatio = pe,
-            sectorPeAvg = pe?.let { it * 1.05 },
-            forwardPe = pe?.let { it * 0.95 },
+            sectorPeAvg = null,
+            forwardPe = fwdPe,
             pbRatio = pb,
-            evEbitda = pe?.let { it * 0.8 },
+            evEbitda = evEbitda,
             pegRatio = peg,
             eps = epsVal,
             roe = roe,
@@ -258,11 +274,11 @@ object StocksDtoMapper {
             currentRatio = currentRatio,
             quickRatio = quickRatio,
             interestCoverage = interestCov,
-            revenueTTM = formattedMarketCap,
+            revenueTTM = revVal,
             revenueGrowthYoY = ratios?.epsGrowthPct ?: extras?.epsGrowthPct,
-            netIncomeTTM = formattedMarketCap,
+            netIncomeTTM = netIncVal,
             netIncomeGrowthYoY = null,
-            freeCashFlowTTM = formattedMarketCap
+            freeCashFlowTTM = fcfVal
         )
     }
 
