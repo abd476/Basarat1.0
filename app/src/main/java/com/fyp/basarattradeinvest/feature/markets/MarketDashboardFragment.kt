@@ -128,7 +128,7 @@ class MarketDashboardFragment : Fragment() {
             Toast.makeText(requireContext(), "Menu drawer", Toast.LENGTH_SHORT).show()
         }
         binding.ivTopNotifications.setOnClickListener {
-            findNavController().navigate(R.id.action_marketDashboard_to_notifications)
+            findNavController().navigate(R.id.notificationsFragment)
         }
         binding.ivTopSearch.setOnClickListener {
             findNavController().navigate(R.id.stockSearchFragment)
@@ -153,7 +153,7 @@ class MarketDashboardFragment : Fragment() {
         }
 
         binding.fabChatAssistant.setOnClickListener {
-            findNavController().navigate(R.id.action_marketDashboard_to_assistant)
+            findNavController().navigate(R.id.assistantConversationsFragment)
         }
     }
 

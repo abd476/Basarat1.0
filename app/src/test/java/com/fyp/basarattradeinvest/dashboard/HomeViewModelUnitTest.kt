@@ -1,0 +1,78 @@
+package com.fyp.basarattradeinvest.dashboard
+
+import com.fyp.basarattradeinvest.domain.model.MarketIndex
+import com.fyp.basarattradeinvest.domain.model.MarketStock
+import com.fyp.basarattradeinvest.domain.model.NewsArticle
+import com.fyp.basarattradeinvest.feature.dashboard.HomeUiState
+import com.fyp.basarattradeinvest.feature.dashboard.MoversTab
+import org.junit.Assert.*
+import org.junit.Test
+
+class HomeViewModelUnitTest {
+
+    @Test
+    fun testHomeUiStateMoversResolution() {
+        val gainers = listOf(MarketStock(1, "DSIL", "DSIL Corp", "TEXTILE", 10.58, 1.0, 10.44))
+        val losers = listOf(MarketStock(1, "BUXL", "Buxly Paints", "CHEMICAL", 502.62, -55.85, -10.0))
+        val spikes = listOf(MarketStock(1, "CNERGY", "Cnergyico PK", "REFINERY", 4.15, -0.18, -4.15))
+        val watchlist = listOf(MarketStock(1, "ENGRO", "Engro Corp", "FERTILIZER", 312.40, 7.35, 2.41))
+        val indices = listOf(
+            MarketIndex("1", "KSE-100", "KSE100", 170498.94, -1733.57, -1.01, 172491.16, 170418.38),
+            MarketIndex("2", "KSE-30", "KSE30", 50739.69, -544.11, -1.06, 51366.74, 50697.28)
+        )
+        val news = listOf(
+            NewsArticle("n1", "SYS", false, "Dawn News", "2026-09-26T12:00:00Z", 0.75, "Bullish", "Tech stocks rally", "Overview snippet")
+        )
+
+        val state = HomeUiState.Success(
+            userName = "Abdul Rehman",
+            marketStatus = "Market Open",
+            isMarketOpen = true,
+            marketIndices = indices,
+            selectedBenchmarkIndex = indices[0],
+            selectedTimeframe = "1D",
+            watchlistStocks = watchlist,
+            topGainers = gainers,
+            topLosers = losers,
+            volumeSpikes = spikes,
+            selectedMoversTab = MoversTab.GAINERS,
+            recentNews = news,
+            activeAlertsCount = 2
+        )
+
+        // 1. Verify basic properties
+        assertEquals("Abdul Rehman", state.userName)
+        assertEquals("Market Open", state.marketStatus)
+        assertTrue(state.isMarketOpen)
+        assertEquals(2, state.marketIndices.size)
+        assertEquals(1, state.watchlistStocks.size)
+        assertEquals(2, state.activeAlertsCount)
+
+        // 2. Verify currentMovers dynamically resolves based on selectedMoversTab
+        assertEquals("DSIL", state.currentMovers[0].symbol)
+
+        val stateLosers = state.copy(selectedMoversTab = MoversTab.LOSERS)
+        assertEquals("BUXL", stateLosers.currentMovers[0].symbol)
+
+        val stateSpikes = state.copy(selectedMoversTab = MoversTab.MOST_ACTIVE)
+        assertEquals("CNERGY", stateSpikes.currentMovers[0].symbol)
+
+        // 3. Verify backward compatibility defaults
+        assertEquals("04182-PSX", state.subAccount)
+        assertTrue(state.isCdcActive)
+        assertEquals("1M", state.selectedPeriod)
+        assertNull(state.portfolioOverview)
+        assertNull(state.allocation)
+        assertTrue(state.topHoldings.isEmpty())
+        assertNull(state.riskSummary)
+    }
+
+    @Test
+    fun testHomeUiStateErrorAndLoading() {
+        val loading: HomeUiState = HomeUiState.Loading
+        assertNotNull(loading)
+
+        val error: HomeUiState = HomeUiState.Error("Network error loading PSX market data")
+        assertEquals("Network error loading PSX market data", (error as HomeUiState.Error).message)
+    }
+}
