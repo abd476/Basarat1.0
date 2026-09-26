@@ -44,14 +44,28 @@ class MarketDashboardViewModel(
 
     private var currentFilter = SymbolFilterType.GAINERS
     private var currentConstituentIndex = "KSE-100"
+    private var lastSuccessfulFetchAt: Long = 0L
+    private val freshnessWindowMs = 5 * 60 * 1000L
 
     init {
-        loadMarketData()
+        ensureLoaded()
+    }
+
+    fun ensureLoaded() {
+        val state = _uiState.value
+        val shouldLoad = state !is MarketDashboardUiState.Success || System.currentTimeMillis() - lastSuccessfulFetchAt > freshnessWindowMs
+        if (shouldLoad) {
+            loadMarketData(isRefresh = false)
+        }
     }
 
     fun loadMarketData(isRefresh: Boolean = false) {
         viewModelScope.launch {
-            if (!isRefresh && _uiState.value !is MarketDashboardUiState.Success) {
+            val currentState = _uiState.value
+            val hasUsableData = currentState is MarketDashboardUiState.Success
+            val shouldSkip = !isRefresh && hasUsableData && System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs
+            if (shouldSkip) return@launch
+            if (!isRefresh && !hasUsableData) {
                 _uiState.value = MarketDashboardUiState.Loading
             }
 
@@ -94,6 +108,7 @@ class MarketDashboardViewModel(
                 )
 
                 val currentTime = SimpleDateFormat("HH:mm", Locale.US).format(Date())
+                lastSuccessfulFetchAt = System.currentTimeMillis()
 
                 if (sentiment != null) {
                     _uiState.value = MarketDashboardUiState.Success(

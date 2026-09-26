@@ -9,7 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -33,7 +33,7 @@ class MarketDashboardFragment : Fragment() {
     private var _binding: FragmentMarketDashboardBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: MarketDashboardViewModel by viewModels()
+    private val viewModel: MarketDashboardViewModel by activityViewModels()
 
     private val stockAdapter = MarketStockAdapter { stock ->
         val bundle = Bundle().apply { putString("symbol", stock.symbol) }
@@ -65,6 +65,7 @@ class MarketDashboardFragment : Fragment() {
         setupTabListeners()
         setupTopBarListeners()
         observeUiState()
+        viewModel.ensureLoaded()
     }
 
     private fun setupRecyclerViews() {
