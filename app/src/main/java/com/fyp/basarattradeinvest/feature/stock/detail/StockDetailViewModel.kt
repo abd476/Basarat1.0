@@ -24,10 +24,26 @@ class StockDetailViewModel(
     private var currentTimeframe: String = "1M"
     private var currentSection: String = "Quotes"
     private var currentSubPill: String = "By Price"
+    private var lastSuccessfulFetchAt: Long = 0L
+    private val freshnessWindowMs = 5 * 60 * 1000L
 
-    fun loadStock(symbol: String) {
+    fun ensureLoaded(symbol: String) {
+        val state = _uiState.value
+        val isSameSymbol = currentSymbol == symbol && state is StockDetailUiState.Success
+        val shouldLoad = !isSameSymbol || System.currentTimeMillis() - lastSuccessfulFetchAt > freshnessWindowMs
+        if (shouldLoad) {
+            loadStock(symbol)
+        }
+    }
+
+    fun loadStock(symbol: String, forceRefresh: Boolean = false) {
         currentSymbol = symbol
         viewModelScope.launch {
+            val currentState = _uiState.value
+            val isSameSymbol = currentSymbol == symbol && currentState is StockDetailUiState.Success
+            if (!forceRefresh && isSameSymbol && System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs) {
+                return@launch
+            }
             _uiState.value = StockDetailUiState.Loading
 
             coroutineScope {
@@ -50,6 +66,7 @@ class StockDetailViewModel(
 
                 if (detailResult.isSuccess) {
                     val detail = detailResult.getOrThrow()
+                    lastSuccessfulFetchAt = System.currentTimeMillis()
 
                     _uiState.value = StockDetailUiState.Success(
                         detail = detail,

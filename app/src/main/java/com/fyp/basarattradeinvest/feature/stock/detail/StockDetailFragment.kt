@@ -10,7 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -47,7 +47,7 @@ class StockDetailFragment : Fragment() {
     private var _binding: FragmentStockDetailBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: StockDetailViewModel by viewModels()
+    private val viewModel: StockDetailViewModel by activityViewModels()
     private val tradeAdapter = TradeAdapter()
 
     private var candleChart: CandleStickChart? = null
@@ -73,7 +73,7 @@ class StockDetailFragment : Fragment() {
         currentSymbol = arguments?.getString("symbol") ?: "SARCO"
         binding.tvTopSymbol.text = currentSymbol
         binding.tvTopCode.text = currentSymbol
-        viewModel.loadStock(currentSymbol)
+        viewModel.ensureLoaded(currentSymbol)
     }
 
     // ───────────────────────────────
