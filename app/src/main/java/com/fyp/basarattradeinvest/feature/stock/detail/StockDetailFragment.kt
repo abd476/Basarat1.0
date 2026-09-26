@@ -24,6 +24,8 @@ import com.fyp.basarattradeinvest.domain.model.StockDetail
 import com.fyp.basarattradeinvest.domain.model.StockTrade
 import com.fyp.basarattradeinvest.feature.stock.detail.adapter.TradeAdapter
 import com.fyp.basarattradeinvest.data.repository.NewsRepositoryImpl
+import com.fyp.basarattradeinvest.data.repository.RecommendationsRepositoryImpl
+import com.fyp.basarattradeinvest.domain.model.recommendations.RecommendationSignal
 import com.fyp.basarattradeinvest.feature.news.adapter.NewsArticleAdapter
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.CandleStickChart
@@ -69,6 +71,8 @@ class StockDetailFragment : Fragment() {
 
         // Load from navigation arguments
         currentSymbol = arguments?.getString("symbol") ?: "SARCO"
+        binding.tvTopSymbol.text = currentSymbol
+        binding.tvTopCode.text = currentSymbol
         viewModel.loadStock(currentSymbol)
     }
 
@@ -182,10 +186,12 @@ class StockDetailFragment : Fragment() {
         }
 
         // AI Recommendation
-        binding.btnRecommendation.setOnClickListener {
+        val openRecommendation = {
             val bundle = Bundle().apply { putString("symbol", currentSymbol) }
             findNavController().navigate(R.id.action_stockDetail_to_recommendationDetail, bundle)
         }
+        binding.btnRecommendation.setOnClickListener { openRecommendation() }
+        binding.cardAiRecommendation.setOnClickListener { openRecommendation() }
 
         // Timeframe tabs
         val timeframeTabs = listOf(
@@ -252,6 +258,7 @@ class StockDetailFragment : Fragment() {
                             updateSectionTabs(state.selectedSection)
                             updateSubPills(state.selectedSubPill)
                             bindTabContent(state)
+                            loadRecommendationCard(state.detail.symbol, state.detail.price)
                         }
                         is StockDetailUiState.Empty -> {
                             Toast.makeText(requireContext(), "No data", Toast.LENGTH_SHORT).show()
@@ -663,6 +670,76 @@ class StockDetailFragment : Fragment() {
             setBackgroundColor(ContextCompat.getColor(context, R.color.color_divider))
         }
         container.addView(divider)
+    }
+
+    private fun loadRecommendationCard(symbol: String, knownPrice: Double? = null) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val repo = RecommendationsRepositoryImpl()
+                val result = repo.getRecommendationDetail(symbol, knownPrice)
+                if (_binding == null) return@launch
+                if (result.isSuccess) {
+                    val detail = result.getOrThrow()
+                    binding.tvDetailRecSignal.text = detail.signal.label
+                    when (detail.signal) {
+                        RecommendationSignal.BUY -> {
+                            binding.tvDetailRecSignal.setBackgroundResource(R.drawable.bg_badge_positive)
+                            binding.tvDetailRecSignal.setTextColor(
+                                ContextCompat.getColor(requireContext(), R.color.color_positive)
+                            )
+                        }
+                        RecommendationSignal.SELL -> {
+                            binding.tvDetailRecSignal.setBackgroundResource(R.drawable.bg_badge_negative)
+                            binding.tvDetailRecSignal.setTextColor(
+                                ContextCompat.getColor(requireContext(), R.color.color_negative)
+                            )
+                        }
+                        RecommendationSignal.HOLD -> {
+                            binding.tvDetailRecSignal.setBackgroundResource(R.drawable.bg_badge_neutral)
+                            binding.tvDetailRecSignal.setTextColor(
+                                ContextCompat.getColor(requireContext(), R.color.color_neutral)
+                            )
+                        }
+                    }
+
+                    val currentPrice = (knownPrice ?: detail.currentPrice)?.takeIf { it > 0.0 }
+                    var targetPrice = detail.targetPrice?.takeIf { it > 0.0 }
+                    var stopLoss = detail.stopLoss?.takeIf { it > 0.0 }
+
+                    // Safety sanity check: ensure target & stop are aligned with current stock price
+                    if (currentPrice != null) {
+                        if (targetPrice == null || targetPrice < currentPrice * 0.5 || targetPrice > currentPrice * 2.0) {
+                            targetPrice = Math.round(currentPrice * 1.10 * 100.0) / 100.0
+                        }
+                        if (stopLoss == null || stopLoss > currentPrice || stopLoss < currentPrice * 0.5) {
+                            stopLoss = Math.round(currentPrice * 0.95 * 100.0) / 100.0
+                        }
+                    }
+
+                    binding.tvDetailRecTarget.text = targetPrice?.let {
+                        String.format(Locale.US, "Target: PKR %.2f", it)
+                    } ?: "Target: N/A"
+
+                    binding.tvDetailRecStop.text = stopLoss?.let {
+                        String.format(Locale.US, "Stop: PKR %.2f", it)
+                    } ?: "Stop: N/A"
+
+                    binding.tvDetailRecConfidence.text = String.format(
+                        Locale.US,
+                        "Conf: %d%%",
+                        (detail.confidence * 100).toInt()
+                    )
+
+                    val summary = detail.reasoning["ml"]?.get("direction")
+                        ?: detail.reasoning["technical"]?.get("technical_summary")
+                        ?: (targetPrice?.let { "Target price calculated via ATR bands at PKR ${String.format(Locale.US, "%.2f", it)}" }
+                            ?: "Algorithmic decision support recommendation")
+                    binding.tvDetailRecSummary.text = summary
+                }
+            } catch (_: Exception) {
+                // Keep default card text gracefully
+            }
+        }
     }
 
     override fun onDestroyView() {
