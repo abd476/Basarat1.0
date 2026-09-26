@@ -23,10 +23,26 @@ class StockRecommendationDetailViewModel(
     val uiState: StateFlow<StockRecommendationDetailUiState> = _uiState.asStateFlow()
 
     private var currentSymbol: String = ""
+    private var lastSuccessfulFetchAt: Long = 0L
+    private val freshnessWindowMs = 5 * 60 * 1000L
+
+    fun ensureLoaded(symbol: String) {
+        val state = _uiState.value
+        val isSameSymbol = currentSymbol == symbol && state is StockRecommendationDetailUiState.Success
+        val shouldLoad = !isSameSymbol || System.currentTimeMillis() - lastSuccessfulFetchAt > freshnessWindowMs
+        if (shouldLoad) {
+            loadRecommendation(symbol)
+        }
+    }
 
     fun loadRecommendation(symbol: String) {
         currentSymbol = symbol
         viewModelScope.launch {
+            val currentState = _uiState.value
+            val isSameSymbol = currentSymbol == symbol && currentState is StockRecommendationDetailUiState.Success
+            if (isSameSymbol && System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs) {
+                return@launch
+            }
             _uiState.value = StockRecommendationDetailUiState.Loading
 
             coroutineScope {
@@ -37,6 +53,7 @@ class StockRecommendationDetailViewModel(
                 val targetStopResult = targetStopDeferred.await()
 
                 if (detailResult.isSuccess) {
+                    lastSuccessfulFetchAt = System.currentTimeMillis()
                     _uiState.value = StockRecommendationDetailUiState.Success(
                         detail = detailResult.getOrThrow(),
                         targetStop = targetStopResult.getOrNull()

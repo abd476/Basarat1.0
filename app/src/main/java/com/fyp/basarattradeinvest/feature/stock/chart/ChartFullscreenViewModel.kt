@@ -20,12 +20,28 @@ class ChartFullscreenViewModel(
     private var currentTimeframe: String = "1W"
     private val activeIndicators = mutableSetOf("MA", "VOL")
     private var currentTool: DrawingTool = DrawingTool.CROSSHAIR
+    private var lastSuccessfulFetchAt: Long = 0L
+    private val freshnessWindowMs = 5 * 60 * 1000L
+
+    fun ensureLoaded(symbol: String, timeframe: String = currentTimeframe) {
+        val state = _uiState.value
+        val isSameChart = currentSymbol == symbol && currentTimeframe == timeframe && state is ChartFullscreenUiState.Success
+        val shouldLoad = !isSameChart || System.currentTimeMillis() - lastSuccessfulFetchAt > freshnessWindowMs
+        if (shouldLoad) {
+            loadChart(symbol, timeframe)
+        }
+    }
 
     fun loadChart(symbol: String, timeframe: String = currentTimeframe) {
         currentSymbol = symbol
         currentTimeframe = timeframe
 
         viewModelScope.launch {
+            val currentState = _uiState.value
+            val isSameChart = currentSymbol == symbol && currentTimeframe == timeframe && currentState is ChartFullscreenUiState.Success
+            if (isSameChart && System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs) {
+                return@launch
+            }
             _uiState.value = ChartFullscreenUiState.Loading
 
             val detailResult = repository.getStockDetail(currentSymbol)
@@ -36,8 +52,10 @@ class ChartFullscreenViewModel(
                 val candles = chartResult.getOrDefault(emptyList())
 
                 if (candles.isEmpty()) {
+                    lastSuccessfulFetchAt = System.currentTimeMillis()
                     _uiState.value = ChartFullscreenUiState.Empty
                 } else {
+                    lastSuccessfulFetchAt = System.currentTimeMillis()
                     _uiState.value = ChartFullscreenUiState.Success(
                         stockDetail = detail,
                         candles = candles,

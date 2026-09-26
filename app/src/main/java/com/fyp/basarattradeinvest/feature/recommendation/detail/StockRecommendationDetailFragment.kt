@@ -44,7 +44,7 @@ class StockRecommendationDetailFragment : Fragment() {
         setupListeners()
         observeUiState()
 
-        viewModel.loadRecommendation(symbol)
+        viewModel.ensureLoaded(symbol)
     }
 
     private fun setupListeners() {

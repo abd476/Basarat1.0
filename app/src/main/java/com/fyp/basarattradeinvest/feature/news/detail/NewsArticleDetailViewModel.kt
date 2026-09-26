@@ -17,14 +17,31 @@ class NewsArticleDetailViewModel(
     val uiState: StateFlow<NewsArticleDetailUiState> = _uiState.asStateFlow()
 
     private var currentArticleId: String = ""
+    private var lastSuccessfulFetchAt: Long = 0L
+    private val freshnessWindowMs = 5 * 60 * 1000L
+
+    fun ensureLoaded(articleId: String) {
+        val state = _uiState.value
+        val isSameArticle = currentArticleId == articleId && state is NewsArticleDetailUiState.Success
+        val shouldLoad = !isSameArticle || System.currentTimeMillis() - lastSuccessfulFetchAt > freshnessWindowMs
+        if (shouldLoad) {
+            loadArticle(articleId)
+        }
+    }
 
     fun loadArticle(articleId: String) {
         currentArticleId = articleId
         viewModelScope.launch {
+            val currentState = _uiState.value
+            val isSameArticle = currentArticleId == articleId && currentState is NewsArticleDetailUiState.Success
+            if (isSameArticle && System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs) {
+                return@launch
+            }
             _uiState.value = NewsArticleDetailUiState.Loading
             val result = getNewsAndEventsUseCase.getNewsArticle(articleId)
             result.fold(
                 onSuccess = { article ->
+                    lastSuccessfulFetchAt = System.currentTimeMillis()
                     _uiState.value = NewsArticleDetailUiState.Success(article)
                 },
                 onFailure = { error ->

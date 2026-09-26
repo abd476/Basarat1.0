@@ -45,7 +45,7 @@ class NewsArticleDetailFragment : Fragment() {
         observeUiState()
 
         if (articleId.isNotBlank()) {
-            viewModel.loadArticle(articleId)
+            viewModel.ensureLoaded(articleId)
         } else {
             binding.tvErrorMessage.text = "Article ID not provided"
             binding.layoutErrorState.visibility = View.VISIBLE

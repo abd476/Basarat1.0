@@ -69,7 +69,7 @@ class ChartFullscreenFragment : Fragment() {
         setupListeners()
         observeUiState()
 
-        viewModel.loadChart(symbol)
+        viewModel.ensureLoaded(symbol)
     }
 
     private fun setupCharts() {
