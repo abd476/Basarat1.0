@@ -52,6 +52,7 @@
     <color name="color_chip_selected_bg">#0D2821</color>
     <color name="color_chip_selected_stroke">#18B981</color>
     <color name="color_dividend_orange">#FF9800</color>
+    <color name="color_skeleton">#1E2C3B</color>
 
     <!-- Semantic Aliases for Components (Dark Mode) -->
     <color name="color_brand_green">#00B894</color>
