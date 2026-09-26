@@ -116,10 +116,10 @@
                         android:id="@+id/tv_stock_symbol"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="LUCK"
                         android:textColor="@color/color_text_primary"
                         android:textSize="22sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        tools:text="LUCK" />
 
                     <TextView
                         android:id="@+id/tv_company_name"
@@ -129,9 +129,9 @@
                         android:layout_weight="1"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="Lucky Cement Limited"
                         android:textColor="@color/color_text_secondary"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        tools:text="Lucky Cement Limited" />
                 </LinearLayout>
 
                 <!-- Price + Percentage Change Row -->
@@ -146,10 +146,11 @@
                         android:id="@+id/tv_current_price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="PKR 412.80"
+                        android:text="--"
                         android:textColor="@color/color_text_primary"
                         android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        tools:text="PKR 412.80" />
 
                     <TextView
                         android:id="@+id/tv_price_change"
@@ -159,10 +160,12 @@
                         android:background="@drawable/bg_badge_positive"
                         android:paddingHorizontal="8dp"
                         android:paddingVertical="2dp"
-                        android:text="+3.10% (+12.40)"
                         android:textColor="@color/color_positive"
                         android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        tools:text="+3.10% (+12.40)"
+                        tools:visibility="visible" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -1296,10 +1299,11 @@
                             android:id="@+id/tv_val_pe"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="8.45x"
+                            android:text="N/A"
                             android:textColor="@color/color_positive"
                             android:textSize="14sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="8.45x" />
                     </LinearLayout>
 
                     <!-- Forward P/E -->
@@ -1321,10 +1325,11 @@
                             android:id="@+id/tv_val_forward_pe"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="7.60x"
+                            android:text="N/A"
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="7.60x" />
                     </LinearLayout>
 
                     <!-- Price to Book (P/B) -->
@@ -1346,10 +1351,11 @@
                             android:id="@+id/tv_val_pb"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1.32x"
+                            android:text="N/A"
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="1.32x" />
                     </LinearLayout>
 
                     <!-- Enterprise Value / EBITDA -->
@@ -1371,10 +1377,11 @@
                             android:id="@+id/tv_val_ev_ebitda"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="5.18x"
+                            android:text="N/A"
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="5.18x" />
                     </LinearLayout>
 
                     <!-- PEG Ratio -->
@@ -1396,10 +1403,11 @@
                             android:id="@+id/tv_val_peg"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0.72"
+                            android:text="N/A"
                             android:textColor="@color/color_positive"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="0.72" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -1447,10 +1455,11 @@
                             android:id="@+id/tv_val_eps"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="PKR 48.85"
+                            android:text="N/A"
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="PKR 48.85" />
                     </LinearLayout>
 
                     <!-- ROE -->
@@ -1472,10 +1481,11 @@
                             android:id="@+id/tv_val_roe"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="22.4%"
+                            android:text="N/A"
                             android:textColor="@color/color_positive"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="22.4%" />
                     </LinearLayout>
 
                     <!-- ROA -->
@@ -1497,10 +1507,11 @@
                             android:id="@+id/tv_val_roa"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="14.8%"
+                            android:text="N/A"
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="14.8%" />
                     </LinearLayout>
 
                     <!-- Dividend Yield -->
@@ -1522,10 +1533,11 @@
                             android:id="@+id/tv_val_div_yield"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="5.25%"
+                            android:text="N/A"
                             android:textColor="@color/color_dividend_orange"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="5.25%" />
                     </LinearLayout>
 
                     <!-- Net Margin -->
@@ -1537,8 +1549,8 @@
 
                         <TextView
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:layout_height="wrap_content"
                             android:text="Net Profit Margin"
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp" />
@@ -1547,10 +1559,11 @@
                             android:id="@+id/tv_val_net_margin"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="19.4%"
+                            android:text="N/A"
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="19.4%" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -1611,10 +1624,11 @@
                             android:id="@+id/tv_val_de"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0.38"
+                            android:text="N/A"
                             android:textColor="@color/color_positive"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="0.38" />
                     </LinearLayout>
 
                     <!-- Current Ratio -->
@@ -1636,10 +1650,11 @@
                             android:id="@+id/tv_val_current_ratio"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1.85x"
+                            android:text="N/A"
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="1.85x" />
                     </LinearLayout>
 
                     <!-- Quick Ratio -->
@@ -1661,10 +1676,11 @@
                             android:id="@+id/tv_val_quick_ratio"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1.42x"
+                            android:text="N/A"
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="1.42x" />
                     </LinearLayout>
 
                     <!-- Interest Coverage -->
@@ -1686,10 +1702,11 @@
                             android:id="@+id/tv_val_interest_coverage"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="8.4x"
+                            android:text="N/A"
                             android:textColor="@color/color_positive"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="8.4x" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -1736,10 +1753,11 @@
                             android:id="@+id/tv_val_revenue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="PKR 142.6 B (+18.2%)"
+                            android:text="N/A"
                             android:textColor="@color/color_positive"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="PKR 142.6 B (+18.2%)" />
                     </LinearLayout>
 
                     <!-- Net Income -->
@@ -1761,10 +1779,11 @@
                             android:id="@+id/tv_val_net_income"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="PKR 27.6 B (+24.1%)"
+                            android:text="N/A"
                             android:textColor="@color/color_positive"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="PKR 27.6 B (+24.1%)" />
                     </LinearLayout>
 
                     <!-- Free Cash Flow -->
@@ -1786,10 +1805,11 @@
                             android:id="@+id/tv_val_fcf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="PKR 18.9 B"
+                            android:text="N/A"
                             android:textColor="@color/color_text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="PKR 18.9 B" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

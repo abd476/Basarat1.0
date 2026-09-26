@@ -6,6 +6,7 @@ data class StockOverviewDto(
     @SerializedName("symbol") val symbol: String,
     @SerializedName("name") val name: String? = null,
     @SerializedName("sector") val sector: String? = null,
+    @SerializedName("current_price") val currentPrice: Double? = null,
     @SerializedName("ltp") val ltp: Double? = null,
     @SerializedName("ldcp") val ldcp: Double? = null,
     @SerializedName("change") val change: Double? = null,

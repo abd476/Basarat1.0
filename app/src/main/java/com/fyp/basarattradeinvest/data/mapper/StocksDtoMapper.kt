@@ -182,36 +182,72 @@ object StocksDtoMapper {
     }
 
     fun mapFundamentals(dto: FundamentalsResponseDto): FundamentalMetrics {
-        val ratios = dto.financialRatios
+        val ratios = dto.ratios ?: dto.financialRatios
         val extras = dto.extras
         val equity = dto.equityProfile
 
-        val pe = ratios?.peRatio ?: 0.0
-        val peg = ratios?.pegRatio ?: 0.0
-        val epsVal = ratios?.eps ?: 0.0
-        val divYield = ratios?.dividendYieldPct ?: 0.0
-        val netMargin = ratios?.netProfitMarginPct ?: 0.0
+        // Helper to extract metric values from the "metrics" list by key or name
+        val metricsMap = dto.metrics?.associate { 
+            (it.key ?: it.name ?: "").uppercase().trim() to it 
+        } ?: emptyMap()
 
-        val de = extras?.debtToEquity ?: 0.0
-        val currentRatio = extras?.currentRatio ?: 0.0
-        val quickRatio = extras?.quickRatio ?: 0.0
-        val roe = extras?.roePct ?: 0.0
-        val roa = extras?.roaPct ?: 0.0
-        val interestCov = extras?.interestCoverage ?: 0.0
-        val pb = extras?.priceToBook ?: 0.0
+        val pe = ratios?.peRatio
+            ?: metricsMap["P/E RATIO"]?.getValueAsDouble()
+            ?: metricsMap["PE RATIO"]?.getValueAsDouble()
+            ?: metricsMap["PE"]?.getValueAsDouble()
 
-        val formattedMarketCap = if (equity?.marketCapPkrM != null) {
-            String.format(Locale.US, "%.1fM", equity.marketCapPkrM)
-        } else {
-            "N/A"
+        val peg = ratios?.pegRatio
+            ?: metricsMap["PEG RATIO"]?.getValueAsDouble()
+
+        val epsVal = ratios?.eps
+            ?: metricsMap["EPS"]?.getValueAsDouble()
+
+        val divYield = ratios?.dividendYieldPct
+            ?: metricsMap["DIVIDEND YIELD"]?.getValueAsDouble()
+
+        val netMargin = ratios?.netProfitMarginPct
+            ?: extras?.netProfitMarginPct
+            ?: metricsMap["NET PROFIT MARGIN"]?.getValueAsDouble()
+
+        val de = extras?.debtToEquity
+            ?: metricsMap["DEBT-TO-EQUITY"]?.getValueAsDouble()
+            ?: metricsMap["DEBT TO EQUITY"]?.getValueAsDouble()
+
+        val currentRatio = extras?.currentRatio
+            ?: metricsMap["CURRENT RATIO"]?.getValueAsDouble()
+
+        val quickRatio = extras?.quickRatio
+            ?: metricsMap["QUICK RATIO"]?.getValueAsDouble()
+
+        val roe = extras?.roePct
+            ?: metricsMap["ROE"]?.getValueAsDouble()
+
+        val roa = extras?.roaPct
+            ?: metricsMap["ROA"]?.getValueAsDouble()
+
+        val interestCov = extras?.interestCoverage
+            ?: metricsMap["INTEREST COVERAGE"]?.getValueAsDouble()
+
+        val pb = extras?.priceToBook
+            ?: metricsMap["PRICE TO BOOK"]?.getValueAsDouble()
+            ?: metricsMap["P/B RATIO"]?.getValueAsDouble()
+
+        val formattedMarketCap = when {
+            equity?.marketCapPkrM != null && equity.marketCapPkrM > 0 -> {
+                String.format(Locale.US, "%.1fM", equity.marketCapPkrM)
+            }
+            metricsMap["MARKET CAP (PKR M)"]?.getValueAsDouble() != null -> {
+                String.format(Locale.US, "%.1fM", metricsMap["MARKET CAP (PKR M)"]!!.getValueAsDouble()!!)
+            }
+            else -> null
         }
 
         return FundamentalMetrics(
             peRatio = pe,
-            sectorPeAvg = pe * 1.05,
-            forwardPe = pe * 0.95,
+            sectorPeAvg = pe?.let { it * 1.05 },
+            forwardPe = pe?.let { it * 0.95 },
             pbRatio = pb,
-            evEbitda = pe * 0.8,
+            evEbitda = pe?.let { it * 0.8 },
             pegRatio = peg,
             eps = epsVal,
             roe = roe,
@@ -223,9 +259,9 @@ object StocksDtoMapper {
             quickRatio = quickRatio,
             interestCoverage = interestCov,
             revenueTTM = formattedMarketCap,
-            revenueGrowthYoY = ratios?.epsGrowthPct ?: 0.0,
+            revenueGrowthYoY = ratios?.epsGrowthPct ?: extras?.epsGrowthPct,
             netIncomeTTM = formattedMarketCap,
-            netIncomeGrowthYoY = 0.0,
+            netIncomeGrowthYoY = null,
             freeCashFlowTTM = formattedMarketCap
         )
     }

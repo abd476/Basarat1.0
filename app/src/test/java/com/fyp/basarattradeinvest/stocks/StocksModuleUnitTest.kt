@@ -173,12 +173,47 @@ class StocksModuleUnitTest {
         assertEquals("MEBL", dto.symbol)
 
         val fundamentals = StocksDtoMapper.mapFundamentals(dto)
-        assertEquals(8.9, fundamentals.peRatio, 0.001)
-        assertEquals(0.65, fundamentals.pegRatio, 0.001)
-        assertEquals(27.58, fundamentals.eps, 0.001)
-        assertEquals(7.5, fundamentals.dividendYield, 0.001)
-        assertEquals(35.4, fundamentals.roe, 0.001)
-        assertEquals(0.12, fundamentals.debtToEquity, 0.001)
+        assertEquals(8.9, fundamentals.peRatio!!, 0.001)
+        assertEquals(0.65, fundamentals.pegRatio!!, 0.001)
+        assertEquals(27.58, fundamentals.eps!!, 0.001)
+        assertEquals(7.5, fundamentals.dividendYield!!, 0.001)
+        assertEquals(35.4, fundamentals.roe!!, 0.001)
+        assertEquals(0.12, fundamentals.debtToEquity!!, 0.001)
+    }
+
+    @Test
+    fun testHBLFundamentalsMapping_partialData() {
+        val json = """
+            {
+              "symbol": "HBL",
+              "data_status": "partial",
+              "data_message": "Some company fundamentals are missing from the upstream PSX feed; blank fields are not estimated.",
+              "company_profile": {
+                "name": "Habib Bank",
+                "sector": "COMMERCIAL BANKS"
+              },
+              "ratios": {
+                "pe_ratio": null,
+                "peg_ratio": null,
+                "eps": null,
+                "dividend_yield_pct": 7.8
+              },
+              "metrics": [
+                { "key": "EPS", "value": null },
+                { "key": "P/E Ratio", "value": null },
+                { "key": "Dividend Yield", "value": 7.8 }
+              ]
+            }
+        """.trimIndent()
+
+        val dto = gson.fromJson(json, FundamentalsResponseDto::class.java)
+        assertEquals("HBL", dto.symbol)
+        assertEquals("partial", dto.dataStatus)
+
+        val fundamentals = StocksDtoMapper.mapFundamentals(dto)
+        assertNull(fundamentals.peRatio)
+        assertNull(fundamentals.eps)
+        assertEquals(7.8, fundamentals.dividendYield!!, 0.001)
     }
 
     @Test
@@ -240,6 +275,6 @@ class StocksModuleUnitTest {
         // Test fallback fundamentals
         val fundRes = repository.getFundamentals("OGDC")
         assertTrue(fundRes.isSuccess)
-        assertTrue(fundRes.getOrThrow().peRatio > 0)
+        assertTrue((fundRes.getOrThrow().peRatio ?: 0.0) > 0)
     }
 }

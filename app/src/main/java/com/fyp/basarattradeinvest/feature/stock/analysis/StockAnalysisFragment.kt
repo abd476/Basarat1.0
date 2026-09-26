@@ -45,6 +45,11 @@ class StockAnalysisFragment : Fragment() {
 
         val symbol = arguments?.getString("symbol") ?: "LUCK"
 
+        binding.tvStockSymbol.text = symbol
+        binding.tvCompanyName.text = ""
+        binding.tvCurrentPrice.text = "--"
+        binding.tvPriceChange.visibility = View.INVISIBLE
+
         setupRecyclerView()
         setupClickListeners()
         observeUiState()
@@ -137,10 +142,11 @@ class StockAnalysisFragment : Fragment() {
         // Stock Identity
         binding.tvStockSymbol.text = analysis.symbol
         binding.tvCompanyName.text = analysis.companyName
-        binding.tvCurrentPrice.text = String.format("PKR %.2f", analysis.price)
+        binding.tvCurrentPrice.text = String.format(java.util.Locale.US, "PKR %.2f", analysis.price)
 
         val sign = if (analysis.changeAmount >= 0) "+" else ""
-        binding.tvPriceChange.text = String.format("%s%.2f (%s%.2f%%)", sign, analysis.changeAmount, sign, analysis.changePercent)
+        binding.tvPriceChange.text = String.format(java.util.Locale.US, "%s%.2f (%s%.2f%%)", sign, analysis.changeAmount, sign, analysis.changePercent)
+        binding.tvPriceChange.visibility = View.VISIBLE
 
         val isPositive = analysis.changeAmount >= 0
         binding.tvPriceChange.setTextColor(
@@ -193,27 +199,47 @@ class StockAnalysisFragment : Fragment() {
 
         // Fundamentals
         val fund = analysis.fundamentals
-        binding.tvValPe.text = String.format("%.2fx", fund.peRatio)
-        binding.tvValForwardPe.text = String.format("%.2fx", fund.forwardPe)
-        binding.tvValPb.text = String.format("%.2fx", fund.pbRatio)
-        binding.tvValEvEbitda.text = String.format("%.2fx", fund.evEbitda)
-        binding.tvValPeg.text = String.format("%.2f", fund.pegRatio)
+        binding.tvValPe.text = formatMultiple(fund.peRatio)
+        binding.tvValForwardPe.text = formatMultiple(fund.forwardPe)
+        binding.tvValPb.text = formatMultiple(fund.pbRatio)
+        binding.tvValEvEbitda.text = formatMultiple(fund.evEbitda)
+        binding.tvValPeg.text = formatRatio(fund.pegRatio)
 
-        binding.tvValEps.text = String.format("PKR %.2f", fund.eps)
-        binding.tvValRoe.text = String.format("%.1f%%", fund.roe)
-        binding.tvValRoa.text = String.format("%.1f%%", fund.roa)
-        binding.tvValDivYield.text = String.format("%.2f%%", fund.dividendYield)
-        binding.tvValNetMargin.text = String.format("%.1f%%", fund.netProfitMargin)
+        binding.tvValEps.text = formatCurrency(fund.eps)
+        binding.tvValRoe.text = formatPercent(fund.roe)
+        binding.tvValRoa.text = formatPercent(fund.roa)
+        binding.tvValDivYield.text = formatPercent(fund.dividendYield)
+        binding.tvValNetMargin.text = formatPercent(fund.netProfitMargin)
 
-        binding.tvValDe.text = String.format("%.2f", fund.debtToEquity)
-        binding.tvValCurrentRatio.text = String.format("%.2fx", fund.currentRatio)
-        binding.tvValQuickRatio.text = String.format("%.2fx", fund.quickRatio)
-        binding.tvValInterestCoverage.text = String.format("%.1fx", fund.interestCoverage)
+        binding.tvValDe.text = formatRatio(fund.debtToEquity)
+        binding.tvValCurrentRatio.text = formatMultiple(fund.currentRatio)
+        binding.tvValQuickRatio.text = formatMultiple(fund.quickRatio)
+        binding.tvValInterestCoverage.text = formatMultiple(fund.interestCoverage)
 
-        binding.tvValRevenue.text = String.format("%s (+%.1f%%)", fund.revenueTTM, fund.revenueGrowthYoY)
-        binding.tvValNetIncome.text = String.format("%s (+%.1f%%)", fund.netIncomeTTM, fund.netIncomeGrowthYoY)
-        binding.tvValFcf.text = fund.freeCashFlowTTM
+        binding.tvValRevenue.text = when {
+            fund.revenueTTM != null && fund.revenueGrowthYoY != null -> "${fund.revenueTTM} (${if (fund.revenueGrowthYoY >= 0) "+" else ""}${String.format(java.util.Locale.US, "%.1f%%", fund.revenueGrowthYoY)})"
+            fund.revenueTTM != null -> fund.revenueTTM
+            else -> "N/A"
+        }
+        binding.tvValNetIncome.text = when {
+            fund.netIncomeTTM != null && fund.netIncomeGrowthYoY != null -> "${fund.netIncomeTTM} (${if (fund.netIncomeGrowthYoY >= 0) "+" else ""}${String.format(java.util.Locale.US, "%.1f%%", fund.netIncomeGrowthYoY)})"
+            fund.netIncomeTTM != null -> fund.netIncomeTTM
+            else -> "N/A"
+        }
+        binding.tvValFcf.text = fund.freeCashFlowTTM ?: "N/A"
     }
+
+    private fun formatMultiple(value: Double?): String =
+        value?.let { String.format(java.util.Locale.US, "%.2fx", it) } ?: "N/A"
+
+    private fun formatRatio(value: Double?): String =
+        value?.let { String.format(java.util.Locale.US, "%.2f", it) } ?: "N/A"
+
+    private fun formatPercent(value: Double?): String =
+        value?.let { String.format(java.util.Locale.US, "%.2f%%", it) } ?: "N/A"
+
+    private fun formatCurrency(value: Double?): String =
+        value?.let { String.format(java.util.Locale.US, "PKR %.2f", it) } ?: "N/A"
 
     private fun renderTab(tab: AnalysisTab) {
         val activeBg = ContextCompat.getDrawable(requireContext(), R.drawable.bg_segmented_tab_active)
