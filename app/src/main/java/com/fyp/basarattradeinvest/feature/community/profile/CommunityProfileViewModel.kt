@@ -35,13 +35,29 @@ class CommunityProfileViewModel(
     private var currentUserId: String? = null
     private var currentFeedMode: CommunityFeedMode = CommunityFeedMode.COMMUNITY_FEED
     private var postCursor: String? = null
+    private var lastSuccessfulFetchAt: Long = 0L
+    private val freshnessWindowMs = 5 * 60 * 1000L
+
+    fun ensureLoaded(userId: String? = null, isRefresh: Boolean = false) {
+        val state = _uiState.value
+        val isSameProfile = currentUserId == userId && state is CommunityProfileUiState.Success
+        val shouldLoad = isRefresh || !isSameProfile || System.currentTimeMillis() - lastSuccessfulFetchAt > freshnessWindowMs
+        if (shouldLoad) {
+            loadProfile(userId = userId, isRefresh = isRefresh)
+        }
+    }
 
     fun loadProfile(userId: String? = null, isRefresh: Boolean = false) {
         currentUserId = userId
         val isSelf = userId.isNullOrBlank() || userId.equals("me", ignoreCase = true)
 
         viewModelScope.launch {
-            if (!isRefresh && _uiState.value !is CommunityProfileUiState.Success) {
+            val currentState = _uiState.value
+            val isSameProfile = currentUserId == userId && currentState is CommunityProfileUiState.Success
+            if (!isRefresh && isSameProfile && System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs) {
+                return@launch
+            }
+            if (!isRefresh && currentState !is CommunityProfileUiState.Success) {
                 _uiState.value = CommunityProfileUiState.Loading
             }
 
@@ -68,6 +84,7 @@ class CommunityProfileViewModel(
                 val hasMore = postsResult.getOrNull()?.hasMore ?: false
                 postCursor = postsResult.getOrNull()?.cursor
 
+                lastSuccessfulFetchAt = System.currentTimeMillis()
                 _uiState.value = CommunityProfileUiState.Success(
                     profile = profile,
                     posts = posts,

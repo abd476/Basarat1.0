@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -26,7 +26,7 @@ class CommunityProfileFragment : Fragment() {
     private var _binding: FragmentCommunityProfileBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: CommunityProfileViewModel by viewModels {
+    private val viewModel: CommunityProfileViewModel by activityViewModels {
         CommunityProfileViewModel.Factory()
     }
 
@@ -55,7 +55,7 @@ class CommunityProfileFragment : Fragment() {
         setupListeners()
         observeUiState()
 
-        viewModel.loadProfile(userId = targetUserId)
+        viewModel.ensureLoaded(userId = targetUserId)
     }
 
     private fun setupToolbar() {
