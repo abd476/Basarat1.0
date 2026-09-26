@@ -7,14 +7,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.data.repository.PortfolioRepositoryImpl
+import com.fyp.basarattradeinvest.data.repository.StockRepositoryImpl
 import com.fyp.basarattradeinvest.databinding.DialogAddEditTransactionBinding
+import com.fyp.basarattradeinvest.domain.model.StockSearchResult
 import com.fyp.basarattradeinvest.domain.usecase.portfolio.CreateTransactionUseCase
 import com.fyp.basarattradeinvest.domain.usecase.portfolio.UpdateTransactionUseCase
+import com.fyp.basarattradeinvest.feature.stock.search.StockSearchAdapter
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -31,6 +39,16 @@ class AddEditTransactionDialogFragment : DialogFragment() {
 
     private val createUseCase = CreateTransactionUseCase(PortfolioRepositoryImpl())
     private val updateUseCase = UpdateTransactionUseCase(PortfolioRepositoryImpl())
+    private val stockRepository = StockRepositoryImpl()
+
+    private lateinit var suggestionAdapter: StockSearchAdapter
+    private var verifiedSelectedStock: StockSearchResult? = null
+    private var searchJob: Job? = null
+
+    private val currencyFormat = NumberFormat.getNumberInstance(Locale.US).apply {
+        minimumFractionDigits = 2
+        maximumFractionDigits = 2
+    }
 
     var onTransactionSaved: (() -> Unit)? = null
 
@@ -110,6 +128,7 @@ class AddEditTransactionDialogFragment : DialogFragment() {
 
         setupUI()
         setupListeners()
+        setupCostCalculation()
     }
 
     private fun setupUI() {
@@ -117,26 +136,40 @@ class AddEditTransactionDialogFragment : DialogFragment() {
             binding.tvDialogTitle.text = "Edit Transaction"
             binding.tvDialogSubtitle.text = "Update quantity, price, fee, or execution date."
             binding.layoutTypeToggle.visibility = View.GONE
-            binding.tilSymbol.isEnabled = false
+            binding.tilStockSearch.visibility = View.GONE
+            binding.layoutQuickChips.visibility = View.GONE
+            binding.rvStockSuggestions.visibility = View.GONE
 
-            binding.etSymbol.setText(prefilledSymbol ?: "")
+            binding.cardSelectedStock.visibility = View.VISIBLE
+            binding.btnChangeStock.visibility = View.GONE
+            binding.tvSelectedSymbol.text = prefilledSymbol ?: ""
+            binding.tvSelectedName.text = "Position Asset"
+            binding.tvSelectedSector.text = "PSX Equities"
+            binding.tvSelectedLetter.text = (prefilledSymbol ?: "S").take(1).uppercase()
+            binding.tvSelectedLtp.text = "Recorded Ticker"
+
             binding.etQuantity.setText(arguments?.getDouble(ARG_QTY)?.toString() ?: "")
             binding.etPrice.setText(arguments?.getDouble(ARG_PRICE)?.toString() ?: "")
             binding.etFee.setText(arguments?.getDouble(ARG_FEE)?.toString() ?: "0.0")
             binding.etDate.setText(arguments?.getString(ARG_DATE) ?: "")
         } else {
             binding.tvDialogTitle.text = "Record Transaction"
-            binding.tvDialogSubtitle.text = "Add a BUY or SELL order to your portfolio."
+            binding.tvDialogSubtitle.text = "Select a verified PSX stock and add order details."
             binding.layoutTypeToggle.visibility = View.VISIBLE
-            binding.tilSymbol.isEnabled = true
 
-            if (!prefilledSymbol.isNullOrBlank()) {
-                binding.etSymbol.setText(prefilledSymbol)
+            suggestionAdapter = StockSearchAdapter { stock ->
+                selectStock(stock)
             }
+            binding.rvStockSuggestions.layoutManager = LinearLayoutManager(requireContext())
+            binding.rvStockSuggestions.adapter = suggestionAdapter
 
             val today = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
             binding.etDate.setText(today)
             updateTypeToggleUI()
+
+            if (!prefilledSymbol.isNullOrBlank()) {
+                selectQuickSymbol(prefilledSymbol!!)
+            }
         }
     }
 
@@ -172,21 +205,172 @@ class AddEditTransactionDialogFragment : DialogFragment() {
         binding.btnSubmit.setOnClickListener {
             submitForm()
         }
+
+        binding.btnChangeStock.setOnClickListener {
+            clearSelectedStock()
+        }
+
+        // Live Search Typeahead (debounced 250ms)
+        binding.etStockSearch.doAfterTextChanged { text ->
+            val query = text?.toString()?.trim() ?: ""
+            searchJob?.cancel()
+            if (query.isEmpty()) {
+                binding.rvStockSuggestions.visibility = View.GONE
+                binding.layoutQuickChips.visibility = View.VISIBLE
+            } else {
+                searchJob = lifecycleScope.launch {
+                    delay(250)
+                    performStockSearch(query)
+                }
+            }
+        }
+
+        // Quick Pick Chips
+        binding.chipLuck.setOnClickListener { selectQuickSymbol("LUCK") }
+        binding.chipOgdc.setOnClickListener { selectQuickSymbol("OGDC") }
+        binding.chipSys.setOnClickListener { selectQuickSymbol("SYS") }
+        binding.chipHubc.setOnClickListener { selectQuickSymbol("HUBC") }
+        binding.chipEngro.setOnClickListener { selectQuickSymbol("ENGRO") }
+        binding.chipMebl.setOnClickListener { selectQuickSymbol("MEBL") }
+
+        // Quick Quantity Chips
+        binding.chipQty10.setOnClickListener { incrementQuantity(10.0) }
+        binding.chipQty50.setOnClickListener { incrementQuantity(50.0) }
+        binding.chipQty100.setOnClickListener { incrementQuantity(100.0) }
+        binding.chipQty500.setOnClickListener { incrementQuantity(500.0) }
+    }
+
+    private fun incrementQuantity(addQty: Double) {
+        val current = binding.etQuantity.text?.toString()?.toDoubleOrNull() ?: 0.0
+        val updated = current + addQty
+        binding.etQuantity.setText(String.format(Locale.US, "%.0f", updated))
+        calculateTotalCost()
+    }
+
+    private fun setupCostCalculation() {
+        val watcher = {
+            calculateTotalCost()
+        }
+        binding.etQuantity.doAfterTextChanged { watcher() }
+        binding.etPrice.doAfterTextChanged { watcher() }
+        binding.etFee.doAfterTextChanged { watcher() }
+    }
+
+    private fun calculateTotalCost() {
+        val qty = binding.etQuantity.text?.toString()?.toDoubleOrNull() ?: 0.0
+        val price = binding.etPrice.text?.toString()?.toDoubleOrNull() ?: 0.0
+        val fee = binding.etFee.text?.toString()?.toDoubleOrNull() ?: 0.0
+        val total = (qty * price) + fee
+        binding.tvEstimatedTotal.text = "PKR ${currencyFormat.format(total)}"
+    }
+
+    private suspend fun performStockSearch(query: String) {
+        val result = stockRepository.searchStocks(query, limit = 6)
+        if (result.isSuccess) {
+            val list = result.getOrDefault(emptyList())
+            if (list.isNotEmpty()) {
+                binding.layoutQuickChips.visibility = View.GONE
+                binding.rvStockSuggestions.visibility = View.VISIBLE
+                suggestionAdapter.submitList(list)
+            } else {
+                binding.rvStockSuggestions.visibility = View.GONE
+                binding.layoutQuickChips.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun selectQuickSymbol(symbol: String) {
+        lifecycleScope.launch {
+            val overviewResult = stockRepository.getStockOverview(symbol)
+            if (overviewResult.isSuccess) {
+                val detail = overviewResult.getOrThrow()
+                val stock = StockSearchResult(
+                    symbol = detail.symbol,
+                    name = detail.companyName,
+                    sector = detail.sector
+                )
+                selectStock(stock, detail.price)
+            } else {
+                val stock = StockSearchResult(
+                    symbol = symbol,
+                    name = "$symbol Limited",
+                    sector = "PSX Equities"
+                )
+                selectStock(stock)
+            }
+        }
+    }
+
+    private fun selectStock(stock: StockSearchResult, knownPrice: Double? = null) {
+        verifiedSelectedStock = stock
+        binding.tvFormError.visibility = View.GONE
+
+        // Hide search & suggestions
+        binding.tilStockSearch.visibility = View.GONE
+        binding.layoutQuickChips.visibility = View.GONE
+        binding.rvStockSuggestions.visibility = View.GONE
+
+        // Show locked verified stock card
+        binding.cardSelectedStock.visibility = View.VISIBLE
+        binding.btnChangeStock.visibility = View.VISIBLE
+        binding.tvSelectedSymbol.text = stock.symbol
+        binding.tvSelectedName.text = stock.name
+        binding.tvSelectedSector.text = stock.sector
+        binding.tvSelectedLetter.text = stock.symbol.take(1).uppercase()
+
+        if (knownPrice != null && knownPrice > 0.0) {
+            binding.tvSelectedLtp.text = "Market Price: PKR ${currencyFormat.format(knownPrice)}"
+            if (binding.etPrice.text.isNullOrBlank()) {
+                binding.etPrice.setText(String.format(Locale.US, "%.2f", knownPrice))
+            }
+            calculateTotalCost()
+        } else {
+            binding.tvSelectedLtp.text = "Fetching live market price..."
+            lifecycleScope.launch {
+                val overview = stockRepository.getStockOverview(stock.symbol)
+                if (overview.isSuccess) {
+                    val price = overview.getOrThrow().price
+                    binding.tvSelectedLtp.text = "Market Price: PKR ${currencyFormat.format(price)}"
+                    if (binding.etPrice.text.isNullOrBlank()) {
+                        binding.etPrice.setText(String.format(Locale.US, "%.2f", price))
+                    }
+                    calculateTotalCost()
+                } else {
+                    binding.tvSelectedLtp.text = "Live price unavailable on PSX feed"
+                }
+            }
+        }
+    }
+
+    private fun clearSelectedStock() {
+        verifiedSelectedStock = null
+        binding.cardSelectedStock.visibility = View.GONE
+        binding.tilStockSearch.visibility = View.VISIBLE
+        binding.layoutQuickChips.visibility = View.VISIBLE
+        binding.rvStockSuggestions.visibility = View.GONE
+        binding.etStockSearch.text?.clear()
     }
 
     private fun submitForm() {
         binding.tvFormError.visibility = View.GONE
 
-        val symbol = binding.etSymbol.text?.toString()?.trim()?.uppercase().orEmpty()
+        val symbol = if (isEditMode) {
+            prefilledSymbol.orEmpty()
+        } else {
+            verifiedSelectedStock?.symbol.orEmpty()
+        }
+
+        // Strict verification: User cannot submit without picking a real PSX stock!
+        if (symbol.isBlank()) {
+            showError("Please search and select a verified PSX stock from the list.")
+            return
+        }
+
         val qty = binding.etQuantity.text?.toString()?.toDoubleOrNull()
         val price = binding.etPrice.text?.toString()?.toDoubleOrNull()
         val fee = binding.etFee.text?.toString()?.toDoubleOrNull() ?: 0.0
         val date = binding.etDate.text?.toString()?.trim().orEmpty()
 
-        if (symbol.isBlank()) {
-            showError("Stock symbol is required.")
-            return
-        }
         if (qty == null || qty <= 0) {
             showError("Please enter a valid positive quantity.")
             return
@@ -249,6 +433,7 @@ class AddEditTransactionDialogFragment : DialogFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        searchJob?.cancel()
         _binding = null
     }
 }

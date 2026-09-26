@@ -7,11 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.fyp.basarattradeinvest.data.repository.PortfolioRepositoryImpl
+import com.fyp.basarattradeinvest.data.repository.StockRepositoryImpl
 import com.fyp.basarattradeinvest.databinding.DialogRecordCompletedTradeBinding
+import com.fyp.basarattradeinvest.domain.model.StockSearchResult
 import com.fyp.basarattradeinvest.domain.usecase.portfolio.RecordCompletedTradeUseCase
+import com.fyp.basarattradeinvest.feature.stock.search.StockSearchAdapter
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -24,6 +31,11 @@ class RecordCompletedTradeDialogFragment : DialogFragment() {
     private val binding get() = _binding!!
 
     private val recordTradeUseCase = RecordCompletedTradeUseCase(PortfolioRepositoryImpl())
+    private val stockRepository = StockRepositoryImpl()
+
+    private lateinit var suggestionAdapter: StockSearchAdapter
+    private var verifiedSelectedStock: StockSearchResult? = null
+    private var searchJob: Job? = null
 
     var onTradeRecorded: (() -> Unit)? = null
 
@@ -62,6 +74,116 @@ class RecordCompletedTradeDialogFragment : DialogFragment() {
         binding.etBuyDate.setText(today)
         binding.etSellDate.setText(today)
 
+        setupSearchAndSuggestions()
+        setupListeners()
+    }
+
+    private fun setupSearchAndSuggestions() {
+        suggestionAdapter = StockSearchAdapter { stock ->
+            selectStock(stock)
+        }
+        binding.rvTradeStockSuggestions.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvTradeStockSuggestions.adapter = suggestionAdapter
+
+        binding.etTradeStockSearch.doAfterTextChanged { text ->
+            val query = text?.toString()?.trim() ?: ""
+            searchJob?.cancel()
+            if (query.isEmpty()) {
+                binding.rvTradeStockSuggestions.visibility = View.GONE
+                binding.layoutTradeQuickChips.visibility = View.VISIBLE
+            } else {
+                searchJob = lifecycleScope.launch {
+                    delay(250)
+                    val result = stockRepository.searchStocks(query, limit = 6)
+                    if (result.isSuccess) {
+                        val list = result.getOrDefault(emptyList())
+                        if (list.isNotEmpty()) {
+                            binding.layoutTradeQuickChips.visibility = View.GONE
+                            binding.rvTradeStockSuggestions.visibility = View.VISIBLE
+                            suggestionAdapter.submitList(list)
+                        } else {
+                            binding.rvTradeStockSuggestions.visibility = View.GONE
+                            binding.layoutTradeQuickChips.visibility = View.VISIBLE
+                        }
+                    }
+                }
+            }
+        }
+
+        binding.chipTradeLuck.setOnClickListener { selectQuickSymbol("LUCK") }
+        binding.chipTradeOgdc.setOnClickListener { selectQuickSymbol("OGDC") }
+        binding.chipTradeSys.setOnClickListener { selectQuickSymbol("SYS") }
+        binding.chipTradeHubc.setOnClickListener { selectQuickSymbol("HUBC") }
+        binding.chipTradeEngro.setOnClickListener { selectQuickSymbol("ENGRO") }
+        binding.chipTradeMebl.setOnClickListener { selectQuickSymbol("MEBL") }
+
+        binding.btnTradeChangeStock.setOnClickListener {
+            clearSelectedStock()
+        }
+    }
+
+    private fun selectQuickSymbol(symbol: String) {
+        lifecycleScope.launch {
+            val overviewResult = stockRepository.getStockOverview(symbol)
+            if (overviewResult.isSuccess) {
+                val detail = overviewResult.getOrThrow()
+                val stock = StockSearchResult(
+                    symbol = detail.symbol,
+                    name = detail.companyName,
+                    sector = detail.sector
+                )
+                selectStock(stock, detail.price)
+            } else {
+                val stock = StockSearchResult(
+                    symbol = symbol,
+                    name = "$symbol Limited",
+                    sector = "PSX Equities"
+                )
+                selectStock(stock)
+            }
+        }
+    }
+
+    private fun selectStock(stock: StockSearchResult, knownPrice: Double? = null) {
+        verifiedSelectedStock = stock
+        binding.tvTradeError.visibility = View.GONE
+
+        binding.tilTradeStockSearch.visibility = View.GONE
+        binding.layoutTradeQuickChips.visibility = View.GONE
+        binding.rvTradeStockSuggestions.visibility = View.GONE
+
+        binding.cardTradeSelectedStock.visibility = View.VISIBLE
+        binding.tvTradeSelectedSymbol.text = stock.symbol
+        binding.tvTradeSelectedName.text = stock.name
+        binding.tvTradeSelectedSector.text = stock.sector
+        binding.tvTradeSelectedLetter.text = stock.symbol.take(1).uppercase()
+
+        if (knownPrice != null && knownPrice > 0.0) {
+            binding.tvTradeSelectedLtp.text = "Market Price: PKR ${currencyFormat.format(knownPrice)}"
+        } else {
+            binding.tvTradeSelectedLtp.text = "Fetching live market price..."
+            lifecycleScope.launch {
+                val overview = stockRepository.getStockOverview(stock.symbol)
+                if (overview.isSuccess) {
+                    val price = overview.getOrThrow().price
+                    binding.tvTradeSelectedLtp.text = "Market Price: PKR ${currencyFormat.format(price)}"
+                } else {
+                    binding.tvTradeSelectedLtp.text = "Live price unavailable on PSX feed"
+                }
+            }
+        }
+    }
+
+    private fun clearSelectedStock() {
+        verifiedSelectedStock = null
+        binding.cardTradeSelectedStock.visibility = View.GONE
+        binding.tilTradeStockSearch.visibility = View.VISIBLE
+        binding.layoutTradeQuickChips.visibility = View.VISIBLE
+        binding.rvTradeStockSuggestions.visibility = View.GONE
+        binding.etTradeStockSearch.text?.clear()
+    }
+
+    private fun setupListeners() {
         binding.btnCancelTrade.setOnClickListener {
             dismiss()
         }
@@ -74,7 +196,7 @@ class RecordCompletedTradeDialogFragment : DialogFragment() {
     private fun submitTrade() {
         binding.tvTradeError.visibility = View.GONE
 
-        val symbol = binding.etTradeSymbol.text?.toString()?.trim()?.uppercase().orEmpty()
+        val symbol = verifiedSelectedStock?.symbol.orEmpty()
         val qty = binding.etTradeQuantity.text?.toString()?.toDoubleOrNull()
         val buyPrice = binding.etBuyPrice.text?.toString()?.toDoubleOrNull()
         val buyDate = binding.etBuyDate.text?.toString()?.trim().orEmpty()
@@ -84,7 +206,7 @@ class RecordCompletedTradeDialogFragment : DialogFragment() {
         val sellFee = binding.etSellFee.text?.toString()?.toDoubleOrNull() ?: 0.0
 
         if (symbol.isBlank()) {
-            showError("Stock symbol is required.")
+            showError("Please search and select a verified PSX stock from the list.")
             return
         }
         if (qty == null || qty <= 0) {
@@ -141,24 +263,21 @@ class RecordCompletedTradeDialogFragment : DialogFragment() {
                 } else {
                     binding.tvResultPnl.setTextColor(Color.parseColor("#EF4444"))
                 }
-
                 binding.tvResultDetails.text = String.format(
                     Locale.US,
-                    "Held for %d days • Invested: PKR %s • Proceeds: PKR %s",
-                    trade.holdingPeriodDays,
+                    "Invested: PKR %s | Proceeds: PKR %s | Held: %d days",
                     currencyFormat.format(trade.totalInvested),
-                    currencyFormat.format(trade.totalProceeds)
+                    currencyFormat.format(trade.totalProceeds),
+                    trade.holdingPeriodDays
                 )
 
-                binding.btnSubmitTrade.text = "Done"
-                binding.btnSubmitTrade.isEnabled = true
-                binding.btnSubmitTrade.setOnClickListener {
-                    dismiss()
-                }
+                binding.btnSubmitTrade.visibility = View.GONE
+                binding.btnCancelTrade.text = "Close"
+                binding.btnCancelTrade.isEnabled = true
             } else {
                 binding.btnSubmitTrade.isEnabled = true
                 binding.btnCancelTrade.isEnabled = true
-                showError(result.exceptionOrNull()?.message ?: "Failed to record completed trade.")
+                showError(result.exceptionOrNull()?.message ?: "Failed to record trade.")
             }
         }
     }
@@ -170,6 +289,7 @@ class RecordCompletedTradeDialogFragment : DialogFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        searchJob?.cancel()
         _binding = null
     }
 }
