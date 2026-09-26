@@ -4,6 +4,8 @@ import com.fyp.basarattradeinvest.data.mapper.CommunityDtoMapper
 import com.fyp.basarattradeinvest.data.remote.dto.community.CommunityReportDto
 import com.fyp.basarattradeinvest.data.remote.dto.community.CommunityReportStatusUpdateRequest
 import com.fyp.basarattradeinvest.data.remote.dto.community.ModerationActionDto
+import com.fyp.basarattradeinvest.domain.model.community.CommunityComment
+import com.fyp.basarattradeinvest.domain.model.community.CommunityCommentList
 import com.fyp.basarattradeinvest.domain.model.community.CommunityPost
 import com.fyp.basarattradeinvest.domain.model.community.CommunityReport
 import com.fyp.basarattradeinvest.domain.model.community.ModerationAction
@@ -333,5 +335,29 @@ class AdminCommunityUnitTest {
             cursor: String?,
             limit: Int?
         ): Result<com.fyp.basarattradeinvest.domain.model.community.CommunityPostList> = TODO()
+
+        override suspend fun likePost(postId: String): Result<Unit> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun unlikePost(postId: String): Result<Unit> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun getComments(
+            postId: String,
+            cursor: String?,
+            limit: Int?
+        ): Result<CommunityCommentList> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun createComment(
+            postId: String,
+            content: String,
+            parentCommentId: String?
+        ): Result<CommunityComment> {
+            TODO("Not yet implemented")
+        }
     }
 }

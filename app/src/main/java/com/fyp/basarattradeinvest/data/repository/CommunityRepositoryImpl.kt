@@ -83,10 +83,71 @@ class CommunityRepositoryImpl(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(CommunityDtoMapper.mapPostListDtoToDomain(response.body()!!))
             } else {
-                Result.success(getFallbackMyPosts())
+                val errorMsg = NetworkErrorParser.parseError(response)
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
-            Result.success(getFallbackMyPosts())
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun likePost(postId: String): Result<Unit> {
+        return try {
+            val response = apiService.likePost(postId)
+            if (response.isSuccessful || response.code() == 204) {
+                Result.success(Unit)
+            } else {
+                val errorMsg = NetworkErrorParser.parseError(response)
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun unlikePost(postId: String): Result<Unit> {
+        return try {
+            val response = apiService.unlikePost(postId)
+            if (response.isSuccessful || response.code() == 204) {
+                Result.success(Unit)
+            } else {
+                val errorMsg = NetworkErrorParser.parseError(response)
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getComments(postId: String, cursor: String?, limit: Int?): Result<com.fyp.basarattradeinvest.domain.model.community.CommunityCommentList> {
+        return try {
+            val response = apiService.getComments(postId, cursor, limit)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(CommunityDtoMapper.mapCommentListDtoToDomain(response.body()!!))
+            } else {
+                val errorMsg = NetworkErrorParser.parseError(response)
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun createComment(postId: String, content: String, parentCommentId: String?): Result<com.fyp.basarattradeinvest.domain.model.community.CommunityComment> {
+        return try {
+            val body = com.fyp.basarattradeinvest.data.remote.dto.community.CommunityCommentCreateDto(
+                content = content,
+                parentCommentId = parentCommentId
+            )
+            val response = apiService.createComment(postId, body)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(CommunityDtoMapper.mapCommentDtoToDomain(response.body()!!))
+            } else {
+                val errorMsg = NetworkErrorParser.parseError(response)
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 
@@ -96,10 +157,11 @@ class CommunityRepositoryImpl(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(CommunityDtoMapper.mapProfileDtoToDomain(response.body()!!))
             } else {
-                Result.success(getFallbackMyProfile())
+                val errorMsg = NetworkErrorParser.parseError(response)
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
-            Result.success(getFallbackMyProfile())
+            Result.failure(e)
         }
     }
 
@@ -109,10 +171,11 @@ class CommunityRepositoryImpl(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(CommunityDtoMapper.mapProfileDtoToDomain(response.body()!!))
             } else {
-                Result.success(getFallbackUserProfile(userId))
+                val errorMsg = NetworkErrorParser.parseError(response)
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
-            Result.success(getFallbackUserProfile(userId))
+            Result.failure(e)
         }
     }
 
@@ -122,10 +185,11 @@ class CommunityRepositoryImpl(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(CommunityDtoMapper.mapPostListDtoToDomain(response.body()!!))
             } else {
-                Result.success(getFallbackMyPosts())
+                val errorMsg = NetworkErrorParser.parseError(response)
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
-            Result.success(getFallbackMyPosts())
+            Result.failure(e)
         }
     }
 
@@ -135,10 +199,11 @@ class CommunityRepositoryImpl(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(CommunityDtoMapper.mapPostListDtoToDomain(response.body()!!))
             } else {
-                Result.success(getFallbackUserPosts(userId))
+                val errorMsg = NetworkErrorParser.parseError(response)
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
-            Result.success(getFallbackUserPosts(userId))
+            Result.failure(e)
         }
     }
 
@@ -148,10 +213,11 @@ class CommunityRepositoryImpl(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(CommunityDtoMapper.mapFollowListDtoToDomain(response.body()!!))
             } else {
-                Result.success(getFallbackFollowers())
+                val errorMsg = NetworkErrorParser.parseError(response)
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
-            Result.success(getFallbackFollowers())
+            Result.failure(e)
         }
     }
 
@@ -161,10 +227,11 @@ class CommunityRepositoryImpl(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(CommunityDtoMapper.mapFollowListDtoToDomain(response.body()!!))
             } else {
-                Result.success(getFallbackFollowing())
+                val errorMsg = NetworkErrorParser.parseError(response)
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
-            Result.success(getFallbackFollowing())
+            Result.failure(e)
         }
     }
 
@@ -178,10 +245,11 @@ class CommunityRepositoryImpl(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(CommunityDtoMapper.mapNotificationListDtoToDomain(response.body()!!))
             } else {
-                Result.success(getFallbackNotifications(unreadOnly ?: false))
+                val errorMsg = NetworkErrorParser.parseError(response)
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
-            Result.success(getFallbackNotifications(unreadOnly ?: false))
+            Result.failure(e)
         }
     }
 
@@ -191,10 +259,11 @@ class CommunityRepositoryImpl(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(CommunityDtoMapper.mapUnreadCountDtoToDomain(response.body()!!))
             } else {
-                Result.success(CommunityUnreadCount(unreadCount = 3))
+                val errorMsg = NetworkErrorParser.parseError(response)
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
-            Result.success(CommunityUnreadCount(unreadCount = 3))
+            Result.failure(e)
         }
     }
 
@@ -402,169 +471,5 @@ class CommunityRepositoryImpl(
         } catch (_: Exception) {
             emptyList()
         }
-    }
-
-
-    // ───────────────────────────────
-    // Fallback Data Providers
-    // ───────────────────────────────
-
-    private fun getFallbackMyProfile(): CommunityProfile {
-        return CommunityProfile(
-            id = "me-user-uuid",
-            username = "basarat_trader",
-            fullName = "Basarat Investor",
-            avatarUrl = null,
-            followersCount = 142,
-            followingCount = 48,
-            publishedPostCount = 12,
-            isFollowing = false,
-            isOwnProfile = true
-        )
-    }
-
-    private fun getFallbackUserProfile(userId: String): CommunityProfile {
-        return CommunityProfile(
-            id = userId,
-            username = "psx_analyst_arif",
-            fullName = "Arif Habib Analytics",
-            avatarUrl = null,
-            followersCount = 2840,
-            followingCount = 195,
-            publishedPostCount = 86,
-            isFollowing = true,
-            isOwnProfile = false
-        )
-    }
-
-    private fun getFallbackMyPosts(): CommunityPostList {
-        val posts = listOf(
-            CommunityPost(
-                id = "post-101",
-                authorId = "me-user-uuid",
-                postType = "STOCK",
-                stockSymbol = "LUCK",
-                content = "Lucky Cement (LUCK) showing strong support above 880 PKR. Solid cement sector dispatches reported for the month with export realization up.",
-                imageUrl = null,
-                likeCount = 24,
-                commentCount = 5,
-                reportCount = 0,
-                status = "PUBLISHED",
-                removedReason = null,
-                likedByMe = true,
-                createdAt = "2026-09-24T08:30:00Z",
-                updatedAt = "2026-09-24T08:30:00Z"
-            ),
-            CommunityPost(
-                id = "post-102",
-                authorId = "me-user-uuid",
-                postType = "GENERAL_MARKET",
-                stockSymbol = null,
-                content = "KSE-100 consolidating around 85,000 index level. Waiting for SBP monetary policy rate decision next week.",
-                imageUrl = null,
-                likeCount = 18,
-                commentCount = 3,
-                reportCount = 0,
-                status = "PUBLISHED",
-                removedReason = null,
-                likedByMe = false,
-                createdAt = "2026-09-23T14:15:00Z",
-                updatedAt = "2026-09-23T14:15:00Z"
-            )
-        )
-        return CommunityPostList(posts = posts, cursor = null, hasMore = false)
-    }
-
-    private fun getFallbackUserPosts(userId: String): CommunityPostList {
-        val posts = listOf(
-            CommunityPost(
-                id = "post-201",
-                authorId = userId,
-                postType = "STOCK",
-                stockSymbol = "MEBL",
-                content = "Meezan Bank Limited continues robust deposit growth. Net Islamic financing spreads maintained at historical highs.",
-                imageUrl = null,
-                likeCount = 56,
-                commentCount = 12,
-                reportCount = 0,
-                status = "PUBLISHED",
-                removedReason = null,
-                likedByMe = true,
-                createdAt = "2026-09-24T06:00:00Z",
-                updatedAt = "2026-09-24T06:00:00Z"
-            )
-        )
-        return CommunityPostList(posts = posts, cursor = null, hasMore = false)
-    }
-
-    private fun getFallbackFollowers(): CommunityFollowList {
-        val users = listOf(
-            CommunityUserSummary("user-1", "tariq_equity", "Tariq Mahmood", null),
-            CommunityUserSummary("user-2", "karachi_trader", "Salman Khan", null),
-            CommunityUserSummary("user-3", "fatima_invests", "Fatima Zahra", null),
-            CommunityUserSummary("user-4", "bilal_psx", "Bilal Ahmed", null)
-        )
-        return CommunityFollowList(users = users, cursor = null, hasMore = false)
-    }
-
-    private fun getFallbackFollowing(): CommunityFollowList {
-        val users = listOf(
-            CommunityUserSummary("user-5", "psx_analyst_arif", "Arif Habib Analytics", null),
-            CommunityUserSummary("user-6", "kmi30_shariah_watch", "KMI-30 Shariah Watch", null),
-            CommunityUserSummary("user-7", "topline_research", "Topline Securities Research", null)
-        )
-        return CommunityFollowList(users = users, cursor = null, hasMore = false)
-    }
-
-    private fun getFallbackNotifications(unreadOnly: Boolean): CommunityNotificationList {
-        val list = listOf(
-            CommunityNotification(
-                id = "c-notif-1",
-                recipientId = "me-user-uuid",
-                actorId = "user-1",
-                actorUsername = "tariq_equity",
-                postId = "post-101",
-                commentId = null,
-                type = "POST_LIKED",
-                title = "Post Liked",
-                message = "tariq_equity liked your post on LUCK",
-                isRead = false,
-                createdAt = "2026-09-24T10:15:00Z"
-            ),
-            CommunityNotification(
-                id = "c-notif-2",
-                recipientId = "me-user-uuid",
-                actorId = "user-2",
-                actorUsername = "karachi_trader",
-                postId = "post-101",
-                commentId = "comm-99",
-                type = "POST_COMMENTED",
-                title = "New Comment",
-                message = "karachi_trader commented on your analysis",
-                isRead = false,
-                createdAt = "2026-09-24T09:40:00Z"
-            ),
-            CommunityNotification(
-                id = "c-notif-3",
-                recipientId = "me-user-uuid",
-                actorId = "user-3",
-                actorUsername = "fatima_invests",
-                postId = null,
-                commentId = null,
-                type = "USER_FOLLOWED",
-                title = "New Follower",
-                message = "fatima_invests started following your community trades",
-                isRead = true,
-                createdAt = "2026-09-23T18:20:00Z"
-            )
-        )
-        val filtered = if (unreadOnly) list.filter { !it.isRead } else list
-        return CommunityNotificationList(
-            notifications = filtered,
-            total = filtered.size,
-            page = 1,
-            limit = 20,
-            hasMore = false
-        )
     }
 }

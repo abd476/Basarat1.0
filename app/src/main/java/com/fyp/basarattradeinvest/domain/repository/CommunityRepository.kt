@@ -29,6 +29,14 @@ interface CommunityRepository {
         limit: Int? = 20
     ): Result<CommunityPostList>
 
+    suspend fun likePost(postId: String): Result<Unit>
+
+    suspend fun unlikePost(postId: String): Result<Unit>
+
+    suspend fun getComments(postId: String, cursor: String? = null, limit: Int? = 50): Result<com.fyp.basarattradeinvest.domain.model.community.CommunityCommentList>
+
+    suspend fun createComment(postId: String, content: String, parentCommentId: String? = null): Result<com.fyp.basarattradeinvest.domain.model.community.CommunityComment>
+
     suspend fun getMyProfile(): Result<CommunityProfile>
 
     suspend fun getUserProfile(userId: String): Result<CommunityProfile>

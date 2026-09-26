@@ -89,6 +89,12 @@ class CreateCommunityPostUseCaseTest {
         override suspend fun removeAdminPost(postId: String): Result<Unit> = TODO()
         override suspend fun deleteAdminComment(commentId: String): Result<Unit> = TODO()
         override suspend fun getModerationActions(postId: String?, commentId: String?, limit: Int): Result<List<ModerationAction>> = TODO()
+        override suspend fun likePost(postId: String): Result<Unit> = Result.success(Unit)
+        override suspend fun unlikePost(postId: String): Result<Unit> = Result.success(Unit)
+        override suspend fun getComments(postId: String, cursor: String?, limit: Int?): Result<com.fyp.basarattradeinvest.domain.model.community.CommunityCommentList> =
+            Result.success(com.fyp.basarattradeinvest.domain.model.community.CommunityCommentList(emptyList(), null, false))
+        override suspend fun createComment(postId: String, content: String, parentCommentId: String?): Result<com.fyp.basarattradeinvest.domain.model.community.CommunityComment> =
+            Result.failure(NotImplementedError())
     }
 
     private lateinit var fakeRepository: FakeCommunityRepository

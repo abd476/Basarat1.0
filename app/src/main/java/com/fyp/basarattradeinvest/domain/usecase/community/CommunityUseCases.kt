@@ -89,3 +89,69 @@ class MarkAllCommunityNotificationsReadUseCase(
     suspend operator fun invoke(): Result<Unit> =
         repository.markAllNotificationsAsRead()
 }
+
+class GetCommunityFeedUseCase(
+    private val repository: CommunityRepository
+) {
+    suspend operator fun invoke(
+        stockSymbol: String? = null,
+        postType: String? = null,
+        mine: Boolean? = null,
+        following: Boolean? = null,
+        cursor: String? = null,
+        limit: Int? = 20
+    ): Result<CommunityPostList> =
+        repository.getCommunityFeed(
+            stockSymbol = stockSymbol,
+            postType = postType,
+            mine = mine,
+            following = following,
+            cursor = cursor,
+            limit = limit
+        )
+}
+
+class LikeCommunityPostUseCase(
+    private val repository: CommunityRepository
+) {
+    suspend operator fun invoke(postId: String): Result<Unit> {
+        require(postId.isNotBlank()) { "Post ID must not be blank" }
+        return repository.likePost(postId)
+    }
+}
+
+class UnlikeCommunityPostUseCase(
+    private val repository: CommunityRepository
+) {
+    suspend operator fun invoke(postId: String): Result<Unit> {
+        require(postId.isNotBlank()) { "Post ID must not be blank" }
+        return repository.unlikePost(postId)
+    }
+}
+
+class GetCommunityCommentsUseCase(
+    private val repository: CommunityRepository
+) {
+    suspend operator fun invoke(
+        postId: String,
+        cursor: String? = null,
+        limit: Int? = 50
+    ): Result<com.fyp.basarattradeinvest.domain.model.community.CommunityCommentList> {
+        require(postId.isNotBlank()) { "Post ID must not be blank" }
+        return repository.getComments(postId, cursor, limit)
+    }
+}
+
+class CreateCommunityCommentUseCase(
+    private val repository: CommunityRepository
+) {
+    suspend operator fun invoke(
+        postId: String,
+        content: String,
+        parentCommentId: String? = null
+    ): Result<com.fyp.basarattradeinvest.domain.model.community.CommunityComment> {
+        require(postId.isNotBlank()) { "Post ID must not be blank" }
+        require(content.isNotBlank()) { "Comment content must not be blank" }
+        return repository.createComment(postId, content.trim(), parentCommentId)
+    }
+}

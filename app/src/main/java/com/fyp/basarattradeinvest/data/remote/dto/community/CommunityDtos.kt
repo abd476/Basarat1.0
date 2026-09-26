@@ -214,3 +214,69 @@ data class CommunityUnreadCountResponseDto(
     val totalUnread: Int
         get() = count ?: unreadCount ?: 0
 }
+
+/**
+ * Request body for creating a comment on a post
+ */
+data class CommunityCommentCreateDto(
+    @SerializedName("content")
+    val content: String,
+
+    @SerializedName("parent_comment_id")
+    val parentCommentId: String? = null
+)
+
+/**
+ * Single comment response matching backend OpenAPI schema
+ */
+data class CommunityCommentResponseDto(
+    @SerializedName("id")
+    val id: String,
+
+    @SerializedName("post_id")
+    val postId: String,
+
+    @SerializedName("author_id")
+    val authorId: String,
+
+    @SerializedName("author_username")
+    val authorUsername: String? = null,
+
+    @SerializedName("author_full_name")
+    val authorFullName: String? = null,
+
+    @SerializedName("author_avatar_url")
+    val authorAvatarUrl: String? = null,
+
+    @SerializedName("parent_comment_id")
+    val parentCommentId: String? = null,
+
+    @SerializedName("content")
+    val content: String,
+
+    @SerializedName("status")
+    val status: String? = "PUBLISHED",
+
+    @SerializedName("reply_count")
+    val replyCount: Int = 0,
+
+    @SerializedName("created_at")
+    val createdAt: String,
+
+    @SerializedName("updated_at")
+    val updatedAt: String? = null
+)
+
+/**
+ * Paginated comment list response
+ */
+data class CommunityCommentListResponseDto(
+    @SerializedName("comments")
+    val comments: List<CommunityCommentResponseDto> = emptyList(),
+
+    @SerializedName("cursor")
+    val cursor: String? = null,
+
+    @SerializedName("has_more")
+    val hasMore: Boolean = false
+)
