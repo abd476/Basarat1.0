@@ -37,15 +37,32 @@ class StockAnalysisViewModel(
     private var currentTab: AnalysisTab = AnalysisTab.TECHNICAL
     private var currentHorizon: String = "1D"
     private var currentPriceRange: String = "1M"
+    private var lastSuccessfulFetchAt: Long = 0L
+    private val freshnessWindowMs = 5 * 60 * 1000L
+
+    fun ensureLoaded(symbol: String) {
+        val state = _uiState.value
+        val isSameSymbol = currentSymbol == symbol && state is StockAnalysisUiState.Success
+        val shouldLoad = !isSameSymbol || System.currentTimeMillis() - lastSuccessfulFetchAt > freshnessWindowMs
+        if (shouldLoad) {
+            loadAnalysis(symbol)
+        }
+    }
 
     fun loadAnalysis(symbol: String) {
         currentSymbol = symbol
         viewModelScope.launch {
+            val currentState = _uiState.value
+            val isSameSymbol = currentSymbol == symbol && currentState is StockAnalysisUiState.Success
+            if (isSameSymbol && System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs) {
+                return@launch
+            }
             _uiState.value = StockAnalysisUiState.Loading
 
             val result = repository.getStockAnalysis(symbol)
             if (result.isSuccess) {
                 val analysis = result.getOrThrow()
+                lastSuccessfulFetchAt = System.currentTimeMillis()
                 _uiState.value = StockAnalysisUiState.Success(
                     analysis = analysis,
                     selectedTab = currentTab,

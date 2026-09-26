@@ -66,7 +66,7 @@ class StockAnalysisFragment : Fragment() {
         setupClickListeners()
         observeUiState()
 
-        viewModel.loadAnalysis(symbol)
+        viewModel.ensureLoaded(symbol)
     }
 
     private fun setupRecyclerViews() {
