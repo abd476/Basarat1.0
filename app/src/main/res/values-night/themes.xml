@@ -19,7 +19,7 @@
         <!-- Status Bar & Navigation Bar for Dark Mode (Dark status bar with white system icons) -->
         <item name="android:statusBarColor">@color/color_background</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
-        <item name="android:navigationBarColor">@color/color_surface</item>
+        <item name="android:navigationBarColor">@color/color_background</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
     </style>
 </resources>

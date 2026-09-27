@@ -602,7 +602,7 @@
                     android:layout_weight="1"
                     android:text="Your Assets"
                     android:textColor="@color/color_text_primary"
-                    android:textSize="22sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <!-- Currency / % toggle pills -->
@@ -647,7 +647,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="14dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -658,7 +658,8 @@
                     android:text="Asset"
                     android:textColor="@color/color_text_tertiary"
                     android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:letterSpacing="0.02" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -667,7 +668,8 @@
                     android:text="Price"
                     android:textColor="@color/color_text_tertiary"
                     android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:letterSpacing="0.02" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -675,7 +677,8 @@
                     android:text="Holdings ▾"
                     android:textColor="@color/color_text_tertiary"
                     android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:letterSpacing="0.02" />
 
             </LinearLayout>
 
@@ -811,7 +814,7 @@
                 android:id="@+id/section_transactions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="28dp"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -826,21 +829,21 @@
                         android:layout_weight="1"
                         android:text="Recent Activity"
                         android:textColor="@color/color_text_primary"
-                        android:textSize="18sp"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_record_trade"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="wrap_content"
-                        android:layout_height="32dp"
+                        android:layout_height="34dp"
                         android:layout_marginEnd="8dp"
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
-                        android:paddingHorizontal="8dp"
+                        android:paddingHorizontal="10dp"
                         android:text="+ Trade"
                         android:textColor="@color/color_brand_primary"
-                        android:textSize="11sp"
+                        android:textSize="12sp"
                         app:cornerRadius="6dp"
                         app:strokeColor="@color/color_brand_primary"
                         app:strokeWidth="1dp" />

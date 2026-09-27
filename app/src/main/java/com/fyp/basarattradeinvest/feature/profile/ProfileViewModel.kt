@@ -29,20 +29,38 @@ class ProfileViewModel(
     private val _logoutUiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
     val logoutUiState: StateFlow<AuthUiState> = _logoutUiState.asStateFlow()
 
+    private var lastSuccessfulFetchAt: Long = 0L
+    private val freshnessWindowMs = 5 * 60 * 1000L
+
     init {
-        loadUserProfile()
+        ensureLoaded()
     }
 
-    fun loadUserProfile() {
+    fun ensureLoaded(forceRefresh: Boolean = false) {
+        val currentState = _profileUiState.value
+        val isFresh = System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs
+        if (!forceRefresh && currentState is ProfileUiState.Success && isFresh) return
+        loadUserProfile(forceRefresh)
+    }
+
+    fun loadUserProfile(forceRefresh: Boolean = false) {
         // Fallback session info
         _userState.value = checkSessionUseCase.getUser()
 
+        val currentState = _profileUiState.value
+        val isFresh = System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs
+        if (!forceRefresh && currentState is ProfileUiState.Success && isFresh) return
+
         // Fetch live profile from backend
         viewModelScope.launch {
-            _profileUiState.value = ProfileUiState.Loading
+            if (currentState !is ProfileUiState.Success || forceRefresh) {
+                _profileUiState.value = ProfileUiState.Loading
+            }
+
             val result = getCurrentUserProfileUseCase()
             result.fold(
                 onSuccess = { profile ->
+                    lastSuccessfulFetchAt = System.currentTimeMillis()
                     _profileUiState.value = ProfileUiState.Success(profile)
                     _userState.value = User(
                         id = profile.id,

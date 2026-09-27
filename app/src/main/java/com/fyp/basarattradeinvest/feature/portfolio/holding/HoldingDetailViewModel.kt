@@ -36,11 +36,28 @@ class HoldingDetailViewModel(
     private val _uiState = MutableStateFlow<HoldingDetailUiState>(HoldingDetailUiState.Loading)
     val uiState: StateFlow<HoldingDetailUiState> = _uiState.asStateFlow()
 
-    fun loadHolding(symbol: String) {
+    private var lastLoadedSymbol: String? = null
+    private var lastSuccessfulFetchAt: Long = 0L
+    private val freshnessWindowMs = 5 * 60 * 1000L
+
+    fun shouldLoadHolding(symbol: String): Boolean {
+        val state = _uiState.value
+        val isSameSymbol = lastLoadedSymbol == symbol && state is HoldingDetailUiState.Success
+        return !isSameSymbol || System.currentTimeMillis() - lastSuccessfulFetchAt > freshnessWindowMs
+    }
+
+    fun loadHolding(symbol: String, forceRefresh: Boolean = false) {
+        if (!forceRefresh && !shouldLoadHolding(symbol)) {
+            return
+        }
+
+        lastLoadedSymbol = symbol
+
         viewModelScope.launch {
             _uiState.value = HoldingDetailUiState.Loading
             val result = getHoldingDetailUseCase(symbol)
             if (result.isSuccess) {
+                lastSuccessfulFetchAt = System.currentTimeMillis()
                 _uiState.value = HoldingDetailUiState.Success(result.getOrThrow())
             } else {
                 _uiState.value = HoldingDetailUiState.Error(

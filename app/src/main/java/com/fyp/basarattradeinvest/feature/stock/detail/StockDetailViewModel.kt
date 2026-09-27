@@ -2,9 +2,12 @@ package com.fyp.basarattradeinvest.feature.stock.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fyp.basarattradeinvest.data.repository.RecommendationsRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.StockRepositoryImpl
 import com.fyp.basarattradeinvest.domain.model.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.recommendations.RecommendationDetail
 import com.fyp.basarattradeinvest.domain.model.StockTrade
+import com.fyp.basarattradeinvest.domain.repository.RecommendationsRepository
 import com.fyp.basarattradeinvest.domain.repository.StockRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -13,8 +16,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+sealed interface RecommendationCardUiState {
+    data object Idle : RecommendationCardUiState
+    data class Loading(val symbol: String) : RecommendationCardUiState
+    data class Success(val symbol: String, val detail: RecommendationDetail) : RecommendationCardUiState
+    data class Error(val symbol: String) : RecommendationCardUiState
+}
+
 class StockDetailViewModel(
-    private val repository: StockRepository = StockRepositoryImpl()
+    private val repository: StockRepository = StockRepositoryImpl(),
+    private val recommendationsRepository: RecommendationsRepository = RecommendationsRepositoryImpl()
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<StockDetailUiState>(StockDetailUiState.Loading)
@@ -25,6 +36,11 @@ class StockDetailViewModel(
     private var currentSection: String = "Quotes"
     private var currentSubPill: String = "By Price"
     private var lastSuccessfulFetchAt: Long = 0L
+    private val _recommendationCardState = MutableStateFlow<RecommendationCardUiState>(RecommendationCardUiState.Idle)
+    val recommendationCardState: StateFlow<RecommendationCardUiState> = _recommendationCardState.asStateFlow()
+    private var recommendationCardSymbol: String? = null
+    private var recommendationCardLoadingSymbol: String? = null
+    private var recommendationCardJob: kotlinx.coroutines.Job? = null
     private val freshnessWindowMs = 5 * 60 * 1000L
 
     fun ensureLoaded(symbol: String) {
@@ -122,6 +138,55 @@ class StockDetailViewModel(
         val currentState = _uiState.value
         if (currentState is StockDetailUiState.Success) {
             _uiState.value = currentState.copy(selectedSubPill = pill)
+        }
+    }
+
+    fun loadRecommendationCard(symbol: String, knownPrice: Double? = null) {
+        val normalizedSymbol = symbol.trim().uppercase()
+        if (normalizedSymbol.isEmpty()) return
+
+        RecommendationsRepositoryImpl.getCachedRecommendationDetail(normalizedSymbol)?.let { cached ->
+            recommendationCardSymbol = normalizedSymbol
+            recommendationCardLoadingSymbol = null
+            recommendationCardJob?.cancel()
+            _recommendationCardState.value = RecommendationCardUiState.Success(normalizedSymbol, cached)
+            return
+        }
+
+        if (recommendationCardSymbol == normalizedSymbol) {
+            recommendationCardSymbol = null
+        }
+        if (recommendationCardLoadingSymbol == normalizedSymbol) return
+
+        recommendationCardJob?.cancel()
+        recommendationCardLoadingSymbol = normalizedSymbol
+        _recommendationCardState.value = RecommendationCardUiState.Loading(normalizedSymbol)
+        recommendationCardJob = viewModelScope.launch {
+            try {
+                val result = recommendationsRepository.getRecommendationDetail(normalizedSymbol, knownPrice)
+                if (recommendationCardLoadingSymbol != normalizedSymbol) return@launch
+                result.fold(
+                    onSuccess = { detail ->
+                        recommendationCardSymbol = normalizedSymbol
+                        _recommendationCardState.value = RecommendationCardUiState.Success(normalizedSymbol, detail)
+                    },
+                    onFailure = {
+                        recommendationCardSymbol = null
+                        _recommendationCardState.value = RecommendationCardUiState.Error(normalizedSymbol)
+                    }
+                )
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                if (recommendationCardLoadingSymbol == normalizedSymbol) {
+                    recommendationCardSymbol = null
+                    _recommendationCardState.value = RecommendationCardUiState.Error(normalizedSymbol)
+                }
+            } finally {
+                if (recommendationCardLoadingSymbol == normalizedSymbol) {
+                    recommendationCardLoadingSymbol = null
+                }
+            }
         }
     }
 

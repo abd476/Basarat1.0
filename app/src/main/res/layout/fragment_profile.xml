@@ -19,7 +19,7 @@
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Account &amp; Profile"
+            android:text="Profile"
             android:textColor="@color/color_text_primary"
             android:textSize="24sp"
             android:textStyle="bold"

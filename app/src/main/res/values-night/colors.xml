@@ -78,4 +78,11 @@
     <color name="auth_primary_ripple">#44FFFFFF</color>
     <color name="auth_logo_tile_start">#173C33</color>
     <color name="auth_logo_tile_end">#102822</color>
+
+    <!-- Floating bottom navigation -->
+    <color name="nav_bar_background">#080F13</color>
+    <color name="nav_bar_border">#18252B</color>
+    <color name="nav_item_selected_background">#16382F</color>
+    <color name="nav_item_selected_tint">#18B981</color>
+    <color name="nav_item_unselected_tint">#829099</color>
 </resources>

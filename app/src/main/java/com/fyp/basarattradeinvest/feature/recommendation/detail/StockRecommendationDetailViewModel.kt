@@ -35,12 +35,12 @@ class StockRecommendationDetailViewModel(
         }
     }
 
-    fun loadRecommendation(symbol: String) {
+    fun loadRecommendation(symbol: String, forceRefresh: Boolean = false) {
         currentSymbol = symbol
         viewModelScope.launch {
             val currentState = _uiState.value
             val isSameSymbol = currentSymbol == symbol && currentState is StockRecommendationDetailUiState.Success
-            if (isSameSymbol && System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs) {
+            if (!forceRefresh && isSameSymbol && System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs) {
                 return@launch
             }
             _uiState.value = StockRecommendationDetailUiState.Loading

@@ -13,11 +13,40 @@ import com.fyp.basarattradeinvest.domain.model.recommendations.TargetStop
 import com.fyp.basarattradeinvest.domain.repository.RecommendationsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.concurrent.ConcurrentHashMap
 import java.util.Locale
 
 class RecommendationsRepositoryImpl(
     private val apiService: RecommendationsApiService = NetworkClient.recommendationsApiService
 ) : RecommendationsRepository {
+
+    private data class CachedRecommendationDetail(
+        val detail: RecommendationDetail,
+        val cachedAt: Long
+    )
+
+    companion object {
+        private const val RECOMMENDATION_DETAIL_CACHE_TTL_MS = 5 * 60 * 1000L
+        private val recommendationDetailCache = ConcurrentHashMap<String, CachedRecommendationDetail>()
+
+        fun getCachedRecommendationDetail(symbol: String): RecommendationDetail? {
+            val key = symbol.trim().uppercase(Locale.ROOT)
+            val cached = recommendationDetailCache[key] ?: return null
+            if (System.currentTimeMillis() - cached.cachedAt > RECOMMENDATION_DETAIL_CACHE_TTL_MS) {
+                recommendationDetailCache.remove(key, cached)
+                return null
+            }
+            return cached.detail
+        }
+    }
+
+    private fun cacheRecommendationDetail(detail: RecommendationDetail): RecommendationDetail {
+        recommendationDetailCache[detail.symbol.trim().uppercase(Locale.ROOT)] = CachedRecommendationDetail(
+            detail = detail,
+            cachedAt = System.currentTimeMillis()
+        )
+        return detail
+    }
 
     override suspend fun getRecommendations(
         riskProfile: String?,
@@ -47,6 +76,7 @@ class RecommendationsRepositoryImpl(
 
     override suspend fun getRecommendationDetail(symbol: String, knownPrice: Double?): Result<RecommendationDetail> = withContext(Dispatchers.IO) {
         val sym = symbol.trim().uppercase()
+        getCachedRecommendationDetail(sym)?.let { return@withContext Result.success(it) }
 
         // 0. Resolve live market price for the stock
         var livePrice: Double? = knownPrice?.takeIf { it > 0.0 }
@@ -74,11 +104,11 @@ class RecommendationsRepositoryImpl(
                     ?: stockPrice?.let { Math.round(it * 0.95 * 100.0) / 100.0 }
 
                 return@withContext Result.success(
-                    mapped.copy(
+                    cacheRecommendationDetail(mapped.copy(
                         currentPrice = stockPrice,
                         targetPrice = target,
                         stopLoss = stop
-                    )
+                    ))
                 )
             }
         } catch (_: Exception) {}
@@ -113,7 +143,7 @@ class RecommendationsRepositoryImpl(
                         ),
                         weights = mapOf("gru" to 0.33, "technical" to 0.33, "fundamental" to 0.34)
                     )
-                    return@withContext Result.success(detail)
+                    return@withContext Result.success(cacheRecommendationDetail(detail))
                 }
             }
         } catch (_: Exception) {}
@@ -150,13 +180,15 @@ class RecommendationsRepositoryImpl(
                         ),
                         weights = emptyMap()
                     )
-                    return@withContext Result.success(detail)
+                    return@withContext Result.success(cacheRecommendationDetail(detail))
                 }
             }
         } catch (_: Exception) {}
 
         // 4. Dynamic price-based fallback for any stock
-        fallbackRecommendationDetail(sym, livePrice)
+        val fallback = fallbackRecommendationDetail(sym, livePrice)
+        fallback.onSuccess { cacheRecommendationDetail(it) }
+        fallback
     }
 
     override suspend fun getTargetStop(symbol: String, knownPrice: Double?): Result<TargetStop> = withContext(Dispatchers.IO) {

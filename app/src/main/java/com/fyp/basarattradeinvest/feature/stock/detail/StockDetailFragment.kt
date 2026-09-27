@@ -10,7 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -24,7 +24,6 @@ import com.fyp.basarattradeinvest.domain.model.StockDetail
 import com.fyp.basarattradeinvest.domain.model.StockTrade
 import com.fyp.basarattradeinvest.feature.stock.detail.adapter.TradeAdapter
 import com.fyp.basarattradeinvest.data.repository.NewsRepositoryImpl
-import com.fyp.basarattradeinvest.data.repository.RecommendationsRepositoryImpl
 import com.fyp.basarattradeinvest.domain.model.recommendations.RecommendationSignal
 import com.fyp.basarattradeinvest.feature.news.adapter.NewsArticleAdapter
 import com.github.mikephil.charting.charts.BarChart
@@ -47,14 +46,12 @@ class StockDetailFragment : Fragment() {
     private var _binding: FragmentStockDetailBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: StockDetailViewModel by activityViewModels()
+    private val viewModel: StockDetailViewModel by viewModels()
     private val tradeAdapter = TradeAdapter()
 
     private var candleChart: CandleStickChart? = null
     private var volumeChart: BarChart? = null
     private var currentSymbol: String = "SARCO"
-    private var lastRecommendationCardKey: String? = null
-    private var lastRecommendationKnownPrice: Double? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,6 +67,7 @@ class StockDetailFragment : Fragment() {
         setupCharts()
         setupListeners()
         observeUiState()
+        observeRecommendationCard()
 
         // Load from navigation arguments
         currentSymbol = arguments?.getString("symbol") ?: "SARCO"
@@ -263,7 +261,7 @@ class StockDetailFragment : Fragment() {
                             updateSectionTabs(state.selectedSection)
                             updateSubPills(state.selectedSubPill)
                             bindTabContent(state)
-                            loadRecommendationCard(state.detail.symbol, state.detail.price)
+                            viewModel.loadRecommendationCard(state.detail.symbol, state.detail.price)
                         }
                         is StockDetailUiState.Empty -> {
                             Toast.makeText(requireContext(), "No data", Toast.LENGTH_SHORT).show()
@@ -271,6 +269,34 @@ class StockDetailFragment : Fragment() {
                         is StockDetailUiState.Error -> {
                             Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun observeRecommendationCard() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.recommendationCardState.collect { state ->
+                    when (state) {
+                        is RecommendationCardUiState.Success -> {
+                            if (state.symbol.equals(currentSymbol, ignoreCase = true)) {
+                                val knownPrice = (viewModel.uiState.value as? StockDetailUiState.Success)
+                                    ?.detail?.price
+                                bindRecommendationCard(state.detail, knownPrice)
+                            }
+                        }
+                        is RecommendationCardUiState.Error -> {
+                            if (state.symbol.equals(currentSymbol, ignoreCase = true)) {
+                                binding.tvDetailRecTarget.text = "Target: N/A"
+                                binding.tvDetailRecStop.text = "Stop: N/A"
+                                binding.tvDetailRecConfidence.text = "Conf: --"
+                                binding.tvDetailRecSummary.text = "Recommendation temporarily unavailable."
+                            }
+                        }
+                        is RecommendationCardUiState.Idle,
+                        is RecommendationCardUiState.Loading -> Unit
                     }
                 }
             }
@@ -688,80 +714,61 @@ class StockDetailFragment : Fragment() {
         container.addView(divider)
     }
 
-    private fun loadRecommendationCard(symbol: String, knownPrice: Double? = null) {
-        val cardKey = "${symbol}_${knownPrice ?: -1.0}"
-        if (cardKey == lastRecommendationCardKey) return
-
-        lastRecommendationCardKey = cardKey
-        lastRecommendationKnownPrice = knownPrice
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val repo = RecommendationsRepositoryImpl()
-                val result = repo.getRecommendationDetail(symbol, knownPrice)
-                if (_binding == null) return@launch
-                if (result.isSuccess) {
-                    val detail = result.getOrThrow()
-                    binding.tvDetailRecSignal.text = detail.signal.label
-                    when (detail.signal) {
-                        RecommendationSignal.BUY -> {
-                            binding.tvDetailRecSignal.setBackgroundResource(R.drawable.bg_badge_positive)
-                            binding.tvDetailRecSignal.setTextColor(
-                                ContextCompat.getColor(requireContext(), R.color.color_positive)
-                            )
-                        }
-                        RecommendationSignal.SELL -> {
-                            binding.tvDetailRecSignal.setBackgroundResource(R.drawable.bg_badge_negative)
-                            binding.tvDetailRecSignal.setTextColor(
-                                ContextCompat.getColor(requireContext(), R.color.color_negative)
-                            )
-                        }
-                        RecommendationSignal.HOLD -> {
-                            binding.tvDetailRecSignal.setBackgroundResource(R.drawable.bg_badge_neutral)
-                            binding.tvDetailRecSignal.setTextColor(
-                                ContextCompat.getColor(requireContext(), R.color.color_neutral)
-                            )
-                        }
-                    }
-
-                    val currentPrice = (knownPrice ?: detail.currentPrice)?.takeIf { it > 0.0 }
-                    var targetPrice = detail.targetPrice?.takeIf { it > 0.0 }
-                    var stopLoss = detail.stopLoss?.takeIf { it > 0.0 }
-
-                    // Safety sanity check: ensure target & stop are aligned with current stock price
-                    if (currentPrice != null) {
-                        if (targetPrice == null || targetPrice < currentPrice * 0.5 || targetPrice > currentPrice * 2.0) {
-                            targetPrice = Math.round(currentPrice * 1.10 * 100.0) / 100.0
-                        }
-                        if (stopLoss == null || stopLoss > currentPrice || stopLoss < currentPrice * 0.5) {
-                            stopLoss = Math.round(currentPrice * 0.95 * 100.0) / 100.0
-                        }
-                    }
-
-                    binding.tvDetailRecTarget.text = targetPrice?.let {
-                        String.format(Locale.US, "Target: PKR %.2f", it)
-                    } ?: "Target: N/A"
-
-                    binding.tvDetailRecStop.text = stopLoss?.let {
-                        String.format(Locale.US, "Stop: PKR %.2f", it)
-                    } ?: "Stop: N/A"
-
-                    binding.tvDetailRecConfidence.text = String.format(
-                        Locale.US,
-                        "Conf: %d%%",
-                        (detail.confidence * 100).toInt()
-                    )
-
-                    val summary = detail.reasoning["ml"]?.get("direction")
-                        ?: detail.reasoning["technical"]?.get("technical_summary")
-                        ?: (targetPrice?.let { "Target price calculated via ATR bands at PKR ${String.format(Locale.US, "%.2f", it)}" }
-                            ?: "Algorithmic decision support recommendation")
-                    binding.tvDetailRecSummary.text = summary
-                }
-            } catch (_: Exception) {
-                // Keep default card text gracefully
+    private fun bindRecommendationCard(
+        detail: com.fyp.basarattradeinvest.domain.model.recommendations.RecommendationDetail,
+        knownPrice: Double? = null
+    ) {
+        binding.tvDetailRecSignal.text = detail.signal.label
+        when (detail.signal) {
+            RecommendationSignal.BUY -> {
+                binding.tvDetailRecSignal.setBackgroundResource(R.drawable.bg_badge_positive)
+                binding.tvDetailRecSignal.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.color_positive)
+                )
+            }
+            RecommendationSignal.SELL -> {
+                binding.tvDetailRecSignal.setBackgroundResource(R.drawable.bg_badge_negative)
+                binding.tvDetailRecSignal.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.color_negative)
+                )
+            }
+            RecommendationSignal.HOLD -> {
+                binding.tvDetailRecSignal.setBackgroundResource(R.drawable.bg_badge_neutral)
+                binding.tvDetailRecSignal.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.color_neutral)
+                )
             }
         }
+
+        val currentPrice = (knownPrice ?: detail.currentPrice)?.takeIf { it > 0.0 }
+        var targetPrice = detail.targetPrice?.takeIf { it > 0.0 }
+        var stopLoss = detail.stopLoss?.takeIf { it > 0.0 }
+        if (currentPrice != null) {
+            if (targetPrice == null || targetPrice < currentPrice * 0.5 || targetPrice > currentPrice * 2.0) {
+                targetPrice = Math.round(currentPrice * 1.10 * 100.0) / 100.0
+            }
+            if (stopLoss == null || stopLoss > currentPrice || stopLoss < currentPrice * 0.5) {
+                stopLoss = Math.round(currentPrice * 0.95 * 100.0) / 100.0
+            }
+        }
+
+        binding.tvDetailRecTarget.text = targetPrice?.let {
+            String.format(Locale.US, "Target: PKR %.2f", it)
+        } ?: "Target: N/A"
+        binding.tvDetailRecStop.text = stopLoss?.let {
+            String.format(Locale.US, "Stop: PKR %.2f", it)
+        } ?: "Stop: N/A"
+        binding.tvDetailRecConfidence.text = String.format(
+            Locale.US,
+            "Conf: %d%%",
+            (detail.confidence * 100).toInt()
+        )
+
+        binding.tvDetailRecSummary.text = detail.reasoning["ml"]?.get("direction")
+            ?: detail.reasoning["technical"]?.get("technical_summary")
+            ?: (targetPrice?.let {
+                "Target price calculated via ATR bands at PKR ${String.format(Locale.US, "%.2f", it)}"
+            } ?: "Algorithmic decision support recommendation")
     }
 
     override fun onDestroyView() {
