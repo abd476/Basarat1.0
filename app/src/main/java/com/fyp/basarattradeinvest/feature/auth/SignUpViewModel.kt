@@ -36,6 +36,10 @@ class SignUpViewModel(
             _uiState.value = AuthUiState.Error("Password must be at least 8 characters")
             return
         }
+        if (confirmPassword != null && confirmPassword.isBlank()) {
+            _uiState.value = AuthUiState.Error("Please confirm your password")
+            return
+        }
         if (confirmPassword != null && password != confirmPassword) {
             _uiState.value = AuthUiState.Error("Passwords do not match")
             return

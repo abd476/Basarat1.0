@@ -27,17 +27,22 @@
     <string name="onboarding_get_started">Get Started</string>
 
     <!-- Auth Titles & Subtitles -->
-    <string name="welcome_back_title">Welcome back</string>
+    <string name="welcome_back_title">Welcome Back</string>
     <string name="welcome_back_subtitle">Access your orders, wishlist, and\nexclusive offers by logging in.</string>
-    <string name="signup_title">Sign up Account</string>
+    <string name="auth_login_subtitle">Track. Analyze. Invest.</string>
+    <string name="signup_title">Create Your Account</string>
+    <string name="auth_signup_subtitle">Join BASARAT and start your investment journey today.</string>
+    <string name="auth_security_note">Your account and personal data stay protected.</string>
     <string name="signup_subtitle">Join now for a faster, smarter\nshopping experience.</string>
 
     <!-- Auth Fields & Labels -->
     <string name="label_name">Name</string>
     <string name="hint_name">Enter you name</string>
     <string name="label_email">Email</string>
-    <string name="hint_email">Enter you email</string>
+    <string name="hint_email">Enter your email</string>
     <string name="label_password">Password</string>
+    <string name="label_confirm_password">Confirm Password</string>
+    <string name="hint_confirm_password">Re-enter your password</string>
     <string name="hint_password">Enter you password</string>
     <string name="remember_me">Remember me</string>
     <string name="forgot_password">Forgot password?</string>
@@ -45,6 +50,11 @@
     <!-- Actions & Social -->
     <string name="sign_in">Sign in</string>
     <string name="sign_up">Sign up</string>
+    <string name="create_account">Create Account</string>
+    <string name="sign_in_arrow">Sign in</string>
+    <string name="password_visibility">Toggle password visibility</string>
+    <string name="navigate_back">Navigate back</string>
+    <string name="agree_terms">I agree to the Terms &amp; Conditions and Privacy Policy</string>
     <string name="or_divider">OR</string>
     <string name="continue_with_google">Continue with Google</string>
     <string name="continue_with_apple">Continue with Apple</string>

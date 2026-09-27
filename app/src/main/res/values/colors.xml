@@ -70,4 +70,17 @@
     <color name="color_pill_selected_bg">#E9ECEF</color>
     <color name="color_pill_unselected_bg">#F7F9F8</color>
     <color name="color_timeframe_selected_bg">#E9ECEF</color>
+
+    <!-- Authentication presentation -->
+    <color name="auth_background_start">#F7FBF9</color>
+    <color name="auth_background_end">#EEF7F3</color>
+    <color name="auth_surface">#FFFFFF</color>
+    <color name="auth_surface_stroke">#DCEBE4</color>
+    <color name="auth_curve">#1200B894</color>
+    <color name="auth_curve_secondary">#0D087F5B</color>
+    <color name="auth_primary_start">#079B78</color>
+    <color name="auth_primary_end">#087F5B</color>
+    <color name="auth_primary_ripple">#33FFFFFF</color>
+    <color name="auth_logo_tile_start">#E2F7EF</color>
+    <color name="auth_logo_tile_end">#F5FCF8</color>
 </resources>

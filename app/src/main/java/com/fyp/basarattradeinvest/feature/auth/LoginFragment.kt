@@ -44,10 +44,27 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        styleTitle()
         setupPasswordVisibilityToggle()
         setupBottomLink()
         setupClickListeners()
         observeUiState()
+    }
+
+    private fun styleTitle() {
+        val title = getString(R.string.welcome_back_title)
+        val spannable = SpannableString(title)
+        val accentStart = title.lastIndexOf("Back")
+        if (accentStart >= 0) {
+            val accent = ContextCompat.getColor(requireContext(), R.color.color_basarat_green)
+            spannable.setSpan(
+                ForegroundColorSpan(accent),
+                accentStart,
+                title.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        binding.tvTitle.text = spannable
     }
 
     private fun setupPasswordVisibilityToggle() {
@@ -71,8 +88,8 @@ class LoginFragment : Fragment() {
         val signUpStart = fullText.indexOf(getString(R.string.sign_up))
         if (signUpStart != -1) {
             val signUpEnd = signUpStart + getString(R.string.sign_up).length
-            val blackColor = ContextCompat.getColor(requireContext(), R.color.color_text_primary)
-            spannable.setSpan(ForegroundColorSpan(blackColor), signUpStart, signUpEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            val accentColor = ContextCompat.getColor(requireContext(), R.color.color_basarat_green)
+            spannable.setSpan(ForegroundColorSpan(accentColor), signUpStart, signUpEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             spannable.setSpan(StyleSpan(Typeface.BOLD), signUpStart, signUpEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
 

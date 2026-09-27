@@ -31,6 +31,7 @@ class SignUpFragment : Fragment() {
 
     private val viewModel: SignUpViewModel by viewModels()
     private var isPasswordVisible = false
+    private var isConfirmPasswordVisible = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,10 +44,28 @@ class SignUpFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        styleTitle()
+        binding.ivBack.setOnClickListener { findNavController().navigateUp() }
         setupPasswordVisibilityToggle()
         setupBottomLink()
         setupClickListeners()
         observeUiState()
+    }
+
+    private fun styleTitle() {
+        val title = getString(R.string.signup_title)
+        val spannable = SpannableString(title)
+        val accentStart = title.lastIndexOf("Account")
+        if (accentStart >= 0) {
+            val accent = ContextCompat.getColor(requireContext(), R.color.color_basarat_green)
+            spannable.setSpan(
+                ForegroundColorSpan(accent),
+                accentStart,
+                title.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        binding.tvTitle.text = spannable
     }
 
     private fun setupPasswordVisibilityToggle() {
@@ -61,6 +80,18 @@ class SignUpFragment : Fragment() {
             }
             binding.etPassword.setSelection(binding.etPassword.text?.length ?: 0)
         }
+
+        binding.ivToggleConfirmPassword.setOnClickListener {
+            isConfirmPasswordVisible = !isConfirmPasswordVisible
+            if (isConfirmPasswordVisible) {
+                binding.etConfirmPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+                binding.ivToggleConfirmPassword.setImageResource(R.drawable.ic_eye_off)
+            } else {
+                binding.etConfirmPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+                binding.ivToggleConfirmPassword.setImageResource(R.drawable.ic_eye)
+            }
+            binding.etConfirmPassword.setSelection(binding.etConfirmPassword.text?.length ?: 0)
+        }
     }
 
     private fun setupBottomLink() {
@@ -70,8 +101,8 @@ class SignUpFragment : Fragment() {
         val signInStart = fullText.indexOf(getString(R.string.sign_in))
         if (signInStart != -1) {
             val signInEnd = signInStart + getString(R.string.sign_in).length
-            val blackColor = ContextCompat.getColor(requireContext(), R.color.color_text_primary)
-            spannable.setSpan(ForegroundColorSpan(blackColor), signInStart, signInEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            val accentColor = ContextCompat.getColor(requireContext(), R.color.color_basarat_green)
+            spannable.setSpan(ForegroundColorSpan(accentColor), signInStart, signInEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             spannable.setSpan(StyleSpan(Typeface.BOLD), signInStart, signInEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
 
@@ -86,11 +117,8 @@ class SignUpFragment : Fragment() {
             val name = binding.etName.text?.toString().orEmpty().trim()
             val email = binding.etEmail.text?.toString().orEmpty().trim()
             val password = binding.etPassword.text?.toString().orEmpty()
-            viewModel.signUp(name, email, password)
-        }
-
-        binding.tvForgotPassword.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_forgotPasswordFragment)
+            val confirmPassword = binding.etConfirmPassword.text?.toString().orEmpty()
+            viewModel.signUp(name, email, password, confirmPassword)
         }
 
         binding.btnGoogleSignUp.setOnClickListener {
