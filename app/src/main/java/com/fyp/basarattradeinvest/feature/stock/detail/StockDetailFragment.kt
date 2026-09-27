@@ -53,6 +53,8 @@ class StockDetailFragment : Fragment() {
     private var candleChart: CandleStickChart? = null
     private var volumeChart: BarChart? = null
     private var currentSymbol: String = "SARCO"
+    private var lastRecommendationCardKey: String? = null
+    private var lastRecommendationKnownPrice: Double? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -687,6 +689,12 @@ class StockDetailFragment : Fragment() {
     }
 
     private fun loadRecommendationCard(symbol: String, knownPrice: Double? = null) {
+        val cardKey = "${symbol}_${knownPrice ?: -1.0}"
+        if (cardKey == lastRecommendationCardKey) return
+
+        lastRecommendationCardKey = cardKey
+        lastRecommendationKnownPrice = knownPrice
+
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val repo = RecommendationsRepositoryImpl()

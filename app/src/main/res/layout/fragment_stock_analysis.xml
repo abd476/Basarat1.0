@@ -319,10 +319,10 @@
                 android:padding="32dp"
                 android:visibility="gone">
 
-                <ProgressBar
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:indeterminateTint="@color/color_basarat_green" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="130dp"
+                    android:background="@drawable/bg_skeleton" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -608,13 +608,13 @@
                     </LinearLayout>
 
                     <!-- Chart Loading -->
-                    <ProgressBar
+                    <View
                         android:id="@+id/chart_price_progress"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp"
                         android:layout_gravity="center"
-                        android:layout_marginVertical="60dp"
-                        android:indeterminateTint="@color/color_basarat_green"
+                        android:layout_marginVertical="12dp"
+                        android:background="@drawable/bg_skeleton"
                         android:visibility="gone" />
 
                     <!-- Chart Error -->
@@ -1685,10 +1685,10 @@
                     android:padding="24dp"
                     android:visibility="gone">
 
-                    <ProgressBar
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:indeterminateTint="@color/color_basarat_green" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:background="@drawable/bg_skeleton" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -2270,13 +2270,13 @@
                         </LinearLayout>
 
                         <!-- History Loading State -->
-                        <ProgressBar
+                        <View
                             android:id="@+id/history_progress"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="120dp"
                             android:layout_gravity="center"
                             android:layout_marginTop="16dp"
-                            android:indeterminateTint="@color/color_basarat_green"
+                            android:background="@drawable/bg_skeleton"
                             android:visibility="gone" />
 
                         <!-- History Error State -->
@@ -2372,13 +2372,13 @@
                         android:textStyle="bold" />
 
                     <!-- Stock Sentiment Loading -->
-                    <ProgressBar
+                    <View
                         android:id="@+id/progress_stock_sentiment"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="110dp"
                         android:layout_gravity="center"
                         android:layout_marginVertical="24dp"
-                        android:indeterminateTint="@color/color_basarat_green"
+                        android:background="@drawable/bg_skeleton"
                         android:visibility="gone" />
 
                     <!-- Stock Sentiment Error -->
@@ -2545,13 +2545,13 @@
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
-                    <ProgressBar
+                    <View
                         android:id="@+id/progress_sentiment_history"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
                         android:layout_gravity="center"
                         android:layout_marginVertical="36dp"
-                        android:indeterminateTint="@color/color_basarat_green"
+                        android:background="@drawable/bg_skeleton"
                         android:visibility="gone" />
 
                     <LinearLayout
@@ -2625,13 +2625,13 @@
                         android:textSize="11sp" />
 
                     <!-- News Loading -->
-                    <ProgressBar
+                    <View
                         android:id="@+id/progress_sentiment_news"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
                         android:layout_gravity="center"
                         android:layout_marginTop="20dp"
-                        android:indeterminateTint="@color/color_basarat_green"
+                        android:background="@drawable/bg_skeleton"
                         android:visibility="gone" />
 
                     <!-- News Error -->

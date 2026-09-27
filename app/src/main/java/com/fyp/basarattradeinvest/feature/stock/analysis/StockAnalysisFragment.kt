@@ -8,7 +8,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -39,7 +39,7 @@ class StockAnalysisFragment : Fragment() {
     private var _binding: FragmentStockAnalysisBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: StockAnalysisViewModel by viewModels()
+    private val viewModel: StockAnalysisViewModel by activityViewModels()
     private val forecastHistoryAdapter by lazy { ForecastHistoryAdapter() }
     private val sentimentNewsAdapter by lazy { SentimentNewsAdapter() }
 
@@ -144,6 +144,7 @@ class StockAnalysisFragment : Fragment() {
                             binding.layoutFundamentalsContent.visibility = View.GONE
                             binding.layoutForecastContent.visibility = View.GONE
                             binding.layoutSentimentContent.visibility = View.GONE
+                            binding.layoutAnalysisLoading.bringToFront()
                         }
                         is StockAnalysisUiState.Error -> {
                             binding.layoutAnalysisLoading.visibility = View.GONE

@@ -158,10 +158,12 @@ class CommunityProfileFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     when (state) {
                         is CommunityProfileUiState.Loading -> {
-                            binding.progressBar.visibility = View.VISIBLE
+                            binding.layoutProfileSkeleton.visibility = View.VISIBLE
+                            binding.progressBar.visibility = View.GONE
                             binding.layoutError.visibility = View.GONE
                         }
                         is CommunityProfileUiState.Success -> {
+                            binding.layoutProfileSkeleton.visibility = View.GONE
                             binding.progressBar.visibility = View.GONE
                             binding.layoutError.visibility = View.GONE
                             binding.swipeRefresh.isRefreshing = false
@@ -176,6 +178,7 @@ class CommunityProfileFragment : Fragment() {
                             }
                         }
                         is CommunityProfileUiState.Error -> {
+                            binding.layoutProfileSkeleton.visibility = View.GONE
                             binding.progressBar.visibility = View.GONE
                             binding.swipeRefresh.isRefreshing = false
                             binding.layoutError.visibility = View.VISIBLE
