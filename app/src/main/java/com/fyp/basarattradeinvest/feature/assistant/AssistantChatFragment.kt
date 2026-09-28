@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
+import com.fyp.basarattradeinvest.core.session.SessionManager
 import com.fyp.basarattradeinvest.databinding.FragmentAssistantChatBinding
 import com.fyp.basarattradeinvest.feature.assistant.adapter.ChatMessageAdapter
 import com.google.android.material.snackbar.Snackbar
@@ -45,7 +46,7 @@ class AssistantChatFragment : Fragment() {
 
         val conversationId = arguments?.getString("conversation_id")
 
-        setupToolbar()
+        setupHeader()
         setupRecyclerView()
         setupInput()
         observeState()
@@ -57,9 +58,15 @@ class AssistantChatFragment : Fragment() {
         }
     }
 
-    private fun setupToolbar() {
-        binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
+    private fun setupHeader() {
+        val name = SessionManager.getCurrentUserName()
+            ?.trim()
+            ?.takeIf { it.isNotEmpty() }
+            ?: getString(R.string.assistant_default_user)
+        binding.tvAssistantGreeting.text = getString(R.string.assistant_greeting, name)
+
+        binding.btnConversationHistory.setOnClickListener {
+            findNavController().navigate(R.id.assistantConversationsFragment)
         }
     }
 
@@ -151,13 +158,6 @@ class AssistantChatFragment : Fragment() {
             is ChatUiState.Active -> {
                 binding.progressLoading.visibility = View.GONE
                 binding.layoutError.visibility = View.GONE
-
-                // Update toolbar title if conversation has a name
-                state.conversation?.title?.let { title ->
-                    if (title.isNotBlank()) {
-                        binding.toolbar.title = title
-                    }
-                }
 
                 // Show welcome banner if no messages
                 val hasMessages = state.messages.isNotEmpty()

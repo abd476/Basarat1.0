@@ -85,4 +85,16 @@
     <color name="nav_item_selected_background">#16382F</color>
     <color name="nav_item_selected_tint">#18B981</color>
     <color name="nav_item_unselected_tint">#829099</color>
+
+    <!-- Assistant chat presentation -->
+    <color name="assistant_chat_background">#031316</color>
+    <color name="assistant_chat_wash">#0B332D</color>
+    <color name="assistant_chat_chart">#5514B99A</color>
+    <color name="assistant_avatar_fill">#103B34</color>
+    <color name="assistant_avatar_stroke">#1E6957</color>
+    <color name="assistant_composer_fill">#071C20</color>
+    <color name="assistant_composer_border">#205047</color>
+    <color name="assistant_composer_sparkle_fill">#10332D</color>
+    <color name="assistant_header_chip_fill">#0B2926</color>
+    <color name="assistant_header_chip_border">#164C40</color>
 </resources>
