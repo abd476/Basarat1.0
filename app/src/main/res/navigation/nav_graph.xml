@@ -134,6 +134,9 @@
             android:id="@+id/action_markets_to_recommendations"
             app:destination="@id/recommendationsFragment" />
         <action
+            android:id="@+id/action_markets_to_smart_selection"
+            app:destination="@id/smart_selection_fragment" />
+        <action
             android:id="@+id/action_markets_to_alerts"
             app:destination="@id/alertsFragment" />
         <action
@@ -376,6 +379,12 @@
         tools:layout="@layout/fragment_notification_preferences" />
 
     <!-- Recommendations Destinations -->
+    <fragment
+        android:id="@+id/smart_selection_fragment"
+        android:name="com.fyp.basarattradeinvest.feature.recommendation.smartselection.SmartSelectionFragment"
+        android:label="Smart Selection"
+        tools:layout="@layout/fragment_smart_selection" />
+
     <fragment
         android:id="@+id/recommendationsFragment"
         android:name="com.fyp.basarattradeinvest.feature.recommendation.list.RecommendationsFragment"

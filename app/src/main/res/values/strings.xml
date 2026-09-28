@@ -94,6 +94,33 @@
 
     <!-- AI Assistant Module -->
     <string name="title_assistant">AI Assistant</string>
+    <string name="assistant_greeting">Hi, %1$s</string>
+    <string name="assistant_default_user">Investor</string>
+    <string name="assistant_welcome_subtitle">Your AI investment assistant</string>
+    <string name="assistant_welcome_description">Ask me anything about PSX, stocks, market trends, or your portfolio. I\'m here to help you make better investment decisions.</string>
+    <string name="assistant_bot_description">BASARAT AI assistant</string>
+    <string name="assistant_open_history">Open conversation history</string>
+    <string name="assistant_composer_hint">Ask about stocks, market, portfolio...</string>
+    <string name="assistant_send_message">Send message</string>
+    <string name="assistant_stop_generating">Stop Generating</string>
+    <string name="assistant_regenerate">Regenerate</string>
+    <string name="common_retry">Retry</string>
+    <string name="smart_selection_title">Smart Selection</string>
+    <string name="smart_selection_subtitle">Explore model signals and price levels</string>
+    <string name="smart_selection_candidates">SELECT A STOCK</string>
+    <string name="smart_selection_price_history">Price history · 1 month</string>
+    <string name="smart_selection_current_price">Current price</string>
+    <string name="smart_selection_target">Target price</string>
+    <string name="smart_selection_stop">Stop loss</string>
+    <string name="smart_selection_confidence">Confidence %1$d%%</string>
+    <string name="smart_selection_no_candidates">No live smart selections are available right now.</string>
+    <string name="smart_selection_disclaimer">Model-based levels are estimates for decision support and are not guaranteed outcomes.</string>
+    <string name="smart_selection_chart_unavailable">Price history is temporarily unavailable.</string>
+    <string name="smart_selection_no_levels">Live target and stop levels are not available for this stock.</string>
+    <string name="smart_selection_chart_description">Candlestick chart with current price, target and stop loss levels</string>
+    <string name="smart_selection_live_target">Target · PKR %1$.2f</string>
+    <string name="smart_selection_live_stop">Stop · PKR %1$.2f</string>
+    <string name="stock_detail_open_ai_recommendation">Open AI recommendation and risk details</string>
     <string name="delete_conversation_title">Delete Conversation</string>
     <string name="delete_conversation_message">Are you sure you want to delete this conversation? This action cannot be undone.</string>
     <string name="delete">Delete</string>

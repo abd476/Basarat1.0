@@ -249,6 +249,9 @@
                     android:layout_height="32dp"
                     android:layout_marginEnd="6dp"
                     android:background="@drawable/bg_badge_teal"
+                    android:clickable="true"
+                    android:contentDescription="@string/stock_detail_open_ai_recommendation"
+                    android:focusable="true"
                     android:gravity="center"
                     android:paddingHorizontal="10dp"
                     android:text="AI Rec"
@@ -267,119 +270,6 @@
                     android:src="@drawable/ic_favorite_outline"
                     app:tint="@color/color_text_secondary" />
             </LinearLayout>
-
-            <!-- ============================================== -->
-            <!-- 3B. AI RECOMMENDATION MODEL CARD               -->
-            <!-- ============================================== -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_ai_recommendation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="2dp"
-                android:clickable="true"
-                android:focusable="true"
-                app:cardBackgroundColor="@color/color_surface"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:strokeWidth="0dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="BASARAT AI Recommendation"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="1dp"
-                            android:layout_weight="1" />
-
-                        <TextView
-                            android:id="@+id/tv_detail_rec_signal"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/bg_badge_positive"
-                            android:paddingHorizontal="10dp"
-                            android:paddingVertical="3dp"
-                            android:text="BUY"
-                            android:textColor="@color/color_positive"
-                            android:textSize="11sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/tv_detail_rec_target"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Target: PKR --"
-                            android:textColor="@color/color_positive"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tv_detail_rec_stop"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Stop: PKR --"
-                            android:textColor="@color/color_negative"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tv_detail_rec_confidence"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Conf: 78%"
-                            android:textColor="@color/color_text_secondary"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tv_detail_rec_summary"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:ellipsize="end"
-                        android:maxLines="2"
-                        android:text="Multi-factor GRU deep learning model forecasts bullish momentum."
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="11sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="View Full Model &amp; Risk Breakdown →"
-                        android:textColor="@color/color_ai_blue"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
             <!-- ====================== -->
             <!-- 4. TIMEFRAME TABS      -->

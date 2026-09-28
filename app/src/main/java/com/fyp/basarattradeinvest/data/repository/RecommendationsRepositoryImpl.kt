@@ -11,6 +11,7 @@ import com.fyp.basarattradeinvest.domain.model.recommendations.RecommendationSig
 import com.fyp.basarattradeinvest.domain.model.recommendations.StockRecommendation
 import com.fyp.basarattradeinvest.domain.model.recommendations.TargetStop
 import com.fyp.basarattradeinvest.domain.repository.RecommendationsRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
@@ -71,6 +72,35 @@ class RecommendationsRepositoryImpl(
             }
         } catch (e: Exception) {
             fallbackRecommendations(normalizedProfile)
+        }
+    }
+
+    override suspend fun getLiveRecommendations(
+        riskProfile: String?,
+        sector: String?,
+        limit: Int
+    ): Result<List<StockRecommendation>> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.getRecommendations(
+                riskProfile = riskProfile?.trim()?.lowercase() ?: "moderate",
+                sector = sector,
+                limit = limit
+            )
+            val body = response.body()
+            if (response.isSuccessful && body != null) {
+                Result.success(
+                    body.recommendations.mapNotNull { item ->
+                        if (item.symbol.isNullOrBlank()) null
+                        else RecommendationsDtoMapper.mapRecommendationItem(item)
+                    }
+                )
+            } else {
+                Result.failure(Exception("Unable to load live smart selections (${response.code()})"))
+            }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (error: Exception) {
+            Result.failure(Exception(error.message ?: "Unable to load live smart selections"))
         }
     }
 
@@ -229,6 +259,23 @@ class RecommendationsRepositoryImpl(
         } catch (_: Exception) {}
 
         fallbackTargetStop(sym, livePrice)
+    }
+
+    override suspend fun getLiveTargetStop(symbol: String): Result<TargetStop> = withContext(Dispatchers.IO) {
+        val normalizedSymbol = symbol.trim().uppercase(Locale.ROOT)
+        try {
+            val response = apiService.getTargetStop(normalizedSymbol)
+            val body = response.body()
+            if (response.isSuccessful && body != null) {
+                Result.success(RecommendationsDtoMapper.mapTargetStop(body))
+            } else {
+                Result.failure(Exception("Live target and stop levels are unavailable (${response.code()})"))
+            }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (error: Exception) {
+            Result.failure(Exception(error.message ?: "Live target and stop levels are unavailable"))
+        }
     }
 
     override suspend fun getEngineWeights(): Result<EngineWeights> = withContext(Dispatchers.IO) {

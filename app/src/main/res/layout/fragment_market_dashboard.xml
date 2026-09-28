@@ -778,10 +778,13 @@
 
                 <!-- Smart Selection -->
                 <LinearLayout
+                    android:id="@+id/chip_smart_selection"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
                     android:layout_marginEnd="8dp"
                     android:background="@drawable/bg_feature_chip"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="12dp">
 

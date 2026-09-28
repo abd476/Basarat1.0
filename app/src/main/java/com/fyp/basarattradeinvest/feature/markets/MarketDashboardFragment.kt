@@ -152,6 +152,9 @@ class MarketDashboardFragment : Fragment() {
         binding.chipRecommendations.setOnClickListener {
             findNavController().navigate(R.id.recommendationsFragment)
         }
+        binding.chipSmartSelection.setOnClickListener {
+            findNavController().navigate(R.id.smart_selection_fragment)
+        }
 
         binding.fabChatAssistant.setOnClickListener {
             findNavController().navigate(R.id.assistantConversationsFragment)

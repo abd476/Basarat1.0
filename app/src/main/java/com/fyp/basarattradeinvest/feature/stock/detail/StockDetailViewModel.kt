@@ -141,6 +141,7 @@ class StockDetailViewModel(
         }
     }
 
+    /** Kept for source compatibility; the detail screen no longer requests or renders this card. */
     fun loadRecommendationCard(symbol: String, knownPrice: Double? = null) {
         val normalizedSymbol = symbol.trim().uppercase()
         if (normalizedSymbol.isEmpty()) return
@@ -153,9 +154,7 @@ class StockDetailViewModel(
             return
         }
 
-        if (recommendationCardSymbol == normalizedSymbol) {
-            recommendationCardSymbol = null
-        }
+        if (recommendationCardSymbol == normalizedSymbol) recommendationCardSymbol = null
         if (recommendationCardLoadingSymbol == normalizedSymbol) return
 
         recommendationCardJob?.cancel()
