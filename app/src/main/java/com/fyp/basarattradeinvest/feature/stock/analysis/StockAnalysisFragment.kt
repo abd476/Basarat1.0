@@ -540,8 +540,13 @@ class StockAnalysisFragment : Fragment() {
         // Dates
         binding.tvForecastDates.text = "Target: ${forecast.targetDate} (As of ${forecast.asOfDate})"
 
+        val displayDirection = when (forecast.direction) {
+            ForecastDirection.SIDEWAYS -> "Neutral"
+            else -> forecast.direction.label
+        }
+
         // Direction Badge
-        binding.tvForecastDirectionBadge.text = forecast.direction.label.uppercase()
+        binding.tvForecastDirectionBadge.text = displayDirection.uppercase()
         when (forecast.direction) {
             ForecastDirection.BULLISH -> {
                 binding.tvForecastDirectionBadge.setBackgroundResource(R.drawable.bg_badge_positive)
@@ -579,17 +584,24 @@ class StockAnalysisFragment : Fragment() {
         val confPct = (forecast.confidence * 100).toInt()
         binding.tvForecastConfidence.text = "$confPct% Confidence"
 
-        // Meta (Model version & Gate reason)
-        val modelVer = forecast.modelVersion ?: "ensemble"
-        val gateReason = forecast.gateReason?.takeIf { it.isNotBlank() } ?: "standard"
-        binding.tvForecastMeta.text = "Model: ${modelVer.replaceFirstChar { it.uppercase() }} • Decision: $gateReason"
-
-        // Prices & Targets
-        binding.tvForecastTargetPrice.text = forecast.targetPrice?.let { String.format(Locale.US, "PKR %.2f", it) } ?: "N/A"
-        binding.tvForecastUpsidePct.text = forecast.upsidePct?.let {
+        val targetPriceText = forecast.targetPrice?.let { String.format(Locale.US, "PKR %.2f", it) } ?: "N/A"
+        val upsideText = forecast.upsidePct?.let {
             if (it >= 0.0) String.format(Locale.US, "%+,.1f%% upside", it)
             else String.format(Locale.US, "%,.1f%% downside", it)
         } ?: "--"
+
+        val summaryDirection = when (forecast.direction) {
+            ForecastDirection.BULLISH -> "Bullish"
+            ForecastDirection.BEARISH -> "Bearish"
+            ForecastDirection.SIDEWAYS -> "Neutral"
+        }
+
+        binding.tvForecastSummary.text = "Overall forecast: $summaryDirection. Target $targetPriceText with $upsideText."
+        binding.tvForecastMeta.text = "Forecast confidence: $confPct% • Target date: ${forecast.targetDate}"
+
+        // Prices & Targets
+        binding.tvForecastTargetPrice.text = targetPriceText
+        binding.tvForecastUpsidePct.text = upsideText
 
         binding.tvForecastStopLoss.text = forecast.stopLoss?.let { String.format(Locale.US, "PKR %.2f", it) } ?: "N/A"
         binding.tvForecastDownsidePct.text = forecast.downsidePct?.let {
@@ -600,56 +612,10 @@ class StockAnalysisFragment : Fragment() {
         binding.tvForecastRiskReward.text = forecast.riskRewardRatio?.let { String.format(Locale.US, "%.2f", it) } ?: "N/A"
         binding.tvForecastCurrentPrice.text = forecast.currentPrice?.let { String.format(Locale.US, "Ref: PKR %.2f", it) } ?: ""
 
-        // Probability Distribution Meter
-        val probs = forecast.probabilities
-        if (probs != null) {
-            binding.cardForecastProbabilities.visibility = View.VISIBLE
-            val bullWeight = probs.bullish.coerceAtLeast(1.0).toFloat()
-            val sideWeight = probs.sideways.coerceAtLeast(1.0).toFloat()
-            val bearWeight = probs.bearish.coerceAtLeast(1.0).toFloat()
-
-            (binding.barProbBullish.layoutParams as LinearLayout.LayoutParams).weight = bullWeight
-            (binding.barProbSideways.layoutParams as LinearLayout.LayoutParams).weight = sideWeight
-            (binding.barProbBearish.layoutParams as LinearLayout.LayoutParams).weight = bearWeight
-            binding.layoutProbMeter.requestLayout()
-
-            binding.tvProbBullishVal.text = String.format(Locale.US, "Bullish: %.1f%%", probs.bullish)
-            binding.tvProbSidewaysVal.text = String.format(Locale.US, "Sideways: %.1f%%", probs.sideways)
-            binding.tvProbBearishVal.text = String.format(Locale.US, "Bearish: %.1f%%", probs.bearish)
-        } else {
-            binding.cardForecastProbabilities.visibility = View.GONE
-        }
-
-        // Model Ensemble Breakdown (GRU vs XGBoost)
-        val gruModel = forecast.models["gru"]
-        val xgbModel = forecast.models["xgb"]
-        if (gruModel != null || xgbModel != null) {
-            binding.cardModelBreakdown.visibility = View.VISIBLE
-            if (gruModel != null) {
-                binding.tvGruDirection.text = gruModel.direction.uppercase()
-                binding.tvGruPcts.text = String.format(Locale.US, "%.0f%% Bull • %.0f%% Bear", gruModel.bullishPct, gruModel.bearishPct)
-            }
-            if (xgbModel != null) {
-                binding.tvXgbDirection.text = xgbModel.direction.uppercase()
-                binding.tvXgbPcts.text = String.format(Locale.US, "%.0f%% Bull • %.0f%% Bear", xgbModel.bullishPct, xgbModel.bearishPct)
-            }
-        } else {
-            binding.cardModelBreakdown.visibility = View.GONE
-        }
-
-        // Market Context
-        val mc = forecast.marketContext
-        if (mc != null) {
-            binding.cardMarketContext.visibility = View.VISIBLE
-            val m5d = mc.marketReturn5d?.let { String.format(Locale.US, "%+,.1f%%", it * 100) } ?: "N/A"
-            val m20d = mc.marketReturn20d?.let { String.format(Locale.US, "%+,.1f%%", it * 100) } ?: "N/A"
-            binding.tvContextMarketReturns.text = "$m5d / $m20d"
-
-            val rel20d = mc.stockRelativeReturn20d?.let { String.format(Locale.US, "%+,.1f%% relative", it * 100) } ?: "N/A"
-            binding.tvContextStockRelative.text = rel20d
-        } else {
-            binding.cardMarketContext.visibility = View.GONE
-        }
+        // Keep only the user-facing result and key price/risk values. Hide model internals.
+        binding.cardForecastProbabilities.visibility = View.GONE
+        binding.cardModelBreakdown.visibility = View.GONE
+        binding.cardMarketContext.visibility = View.GONE
     }
 
     private fun renderForecastHistorySection(state: ForecastHistorySectionState) {

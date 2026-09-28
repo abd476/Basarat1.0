@@ -1821,13 +1821,23 @@
                         </LinearLayout>
 
                         <TextView
+                            android:id="@+id/tv_forecast_summary"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            tools:text="Overall forecast: Bullish. Target PKR 445.00 with +7.8% upside." />
+
+                        <TextView
                             android:id="@+id/tv_forecast_meta"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
+                            android:layout_marginTop="2dp"
                             android:textColor="@color/color_text_secondary"
                             android:textSize="11sp"
-                            tools:text="Model: Ensemble • Decision: Confidence threshold met" />
+                            tools:text="Forecast confidence: 82% • Target date: 2026-09-28" />
 
                         <View
                             android:layout_width="match_parent"
