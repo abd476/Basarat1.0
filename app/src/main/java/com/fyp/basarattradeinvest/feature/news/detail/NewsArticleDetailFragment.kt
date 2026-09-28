@@ -100,25 +100,10 @@ class NewsArticleDetailFragment : Fragment() {
         binding.tvArticleHeadline.text = article.headline
         binding.tvArticleBody.text = article.snippet
 
-        // FinBERT Sentiment Badge
-        val sign = if (article.sentimentScore > 0) "+" else ""
-        val sentimentText = String.format(Locale.US, "%s%.2f %s", sign, article.sentimentScore, article.sentimentLabel)
-        binding.tvArticleSentiment.text = sentimentText
-
-        when {
-            article.sentimentScore > 0.20 -> {
-                binding.tvArticleSentiment.setBackgroundResource(R.drawable.bg_badge_positive)
-                binding.tvArticleSentiment.setTextColor(ContextCompat.getColor(context, R.color.color_positive))
-            }
-            article.sentimentScore < -0.20 -> {
-                binding.tvArticleSentiment.setBackgroundResource(R.drawable.bg_badge_negative)
-                binding.tvArticleSentiment.setTextColor(ContextCompat.getColor(context, R.color.color_negative))
-            }
-            else -> {
-                binding.tvArticleSentiment.setBackgroundResource(R.drawable.bg_badge_neutral)
-                binding.tvArticleSentiment.setTextColor(ContextCompat.getColor(context, R.color.color_text_secondary))
-            }
-        }
+        // Generic news detail screens must not render sentiment badges.
+        // Sentiment analysis is only relevant in dedicated stock/portfolio sentiment flows.
+        binding.tvArticleSentiment.visibility = View.GONE
+        binding.tvArticleSentiment.text = ""
 
         // Symbols chips
         binding.layoutSymbolsContainer.removeAllViews()
