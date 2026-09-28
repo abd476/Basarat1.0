@@ -4,6 +4,7 @@ import com.fyp.basarattradeinvest.core.network.AuthInterceptor
 import com.fyp.basarattradeinvest.core.network.TokenAuthenticator
 import com.fyp.basarattradeinvest.data.remote.api.AuthApiService
 import com.fyp.basarattradeinvest.data.remote.api.MarketApiService
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -26,12 +27,30 @@ object NetworkClient {
         redactHeader("Set-Cookie")
     }
 
+    // BODY logging reads the complete response body before returning it, which defeats SSE
+    // streaming. Keep stream logging to headers and allow more idle time for model generation.
+    private val streamingLoggingInterceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.HEADERS
+        redactHeader("Authorization")
+        redactHeader("Cookie")
+        redactHeader("Set-Cookie")
+    }
+
+    private val streamAwareLoggingInterceptor = Interceptor { chain ->
+        val request = chain.request()
+        if (request.url.encodedPath == "/api/v1/assistant/chat/stream") {
+            streamingLoggingInterceptor.intercept(chain.withReadTimeout(2, TimeUnit.MINUTES))
+        } else {
+            loggingInterceptor.intercept(chain)
+        }
+    }
+
     private val authInterceptor = AuthInterceptor()
     private val tokenAuthenticator = TokenAuthenticator(BASE_URL)
 
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(authInterceptor)
-        .addInterceptor(loggingInterceptor)
+        .addInterceptor(streamAwareLoggingInterceptor)
         .authenticator(tokenAuthenticator)
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
