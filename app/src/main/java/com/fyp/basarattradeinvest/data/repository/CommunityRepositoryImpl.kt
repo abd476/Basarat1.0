@@ -13,6 +13,7 @@ import com.fyp.basarattradeinvest.domain.model.community.CommunityProfile
 import com.fyp.basarattradeinvest.domain.model.community.CommunityUnreadCount
 import com.fyp.basarattradeinvest.domain.model.community.CommunityUserSummary
 import com.fyp.basarattradeinvest.domain.repository.CommunityRepository
+import kotlinx.coroutines.CancellationException
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -128,6 +129,8 @@ class CommunityRepositoryImpl(
                 val errorMsg = NetworkErrorParser.parseError(response)
                 Result.failure(Exception(errorMsg))
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -146,6 +149,8 @@ class CommunityRepositoryImpl(
                 val errorMsg = NetworkErrorParser.parseError(response)
                 Result.failure(Exception(errorMsg))
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
             Result.failure(e)
         }

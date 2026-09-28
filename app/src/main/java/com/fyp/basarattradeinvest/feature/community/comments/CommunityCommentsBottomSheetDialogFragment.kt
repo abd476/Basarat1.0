@@ -78,8 +78,9 @@ class CommunityCommentsBottomSheetDialogFragment : BottomSheetDialogFragment() {
         binding.progressBar.visibility = View.VISIBLE
         binding.layoutEmptyComments.visibility = View.GONE
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val result = getCommentsUseCase(postId = postId)
+            if (_binding == null) return@launch
             binding.progressBar.visibility = View.GONE
 
             if (result.isSuccess) {
@@ -104,8 +105,9 @@ class CommunityCommentsBottomSheetDialogFragment : BottomSheetDialogFragment() {
         binding.ivSendIcon.visibility = View.GONE
         binding.progressSend.visibility = View.VISIBLE
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val result = createCommentUseCase(postId = postId, content = text)
+            if (_binding == null) return@launch
             binding.btnSendComment.isEnabled = true
             binding.ivSendIcon.visibility = View.VISIBLE
             binding.progressSend.visibility = View.GONE
