@@ -31,7 +31,7 @@ class AuthInterceptor : Interceptor {
         }
 
         if (!isUnauthenticated) {
-            val token = SessionManager.getAccessToken() ?: DevTokenConfig.DEV_ACCESS_TOKEN.takeIf { it.isNotBlank() }
+            val token = SessionManager.getAccessToken()
             if (!token.isNullOrBlank() && request.header("Authorization") == null) {
                 requestBuilder.header("Authorization", "Bearer $token")
             }

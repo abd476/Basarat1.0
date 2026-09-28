@@ -3,9 +3,8 @@ package com.fyp.basarattradeinvest.core.network
 /**
  * DevTokenConfig
  *
- * Dedicated development & testing token configuration.
- * Paste any active Bearer token here so you don't need to re-login every time you run or test the app.
- * AuthInterceptor will automatically fall back to this token if no active session is found in SessionManager.
+ * Legacy development token holder. AuthInterceptor intentionally does not send this token;
+ * protected requests must use the access token from the user's stored session.
  */
 object DevTokenConfig {
     var DEV_ACCESS_TOKEN: String = ""

@@ -20,7 +20,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import com.fyp.basarattradeinvest.R
+import com.fyp.basarattradeinvest.core.session.SessionManager
 import com.fyp.basarattradeinvest.databinding.FragmentLoginBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
@@ -138,7 +140,19 @@ class LoginFragment : Fragment() {
                             binding.pbLoading.visibility = View.GONE
                             binding.tvSignInLabel.visibility = View.VISIBLE
                             binding.btnSignIn.isEnabled = true
-                            findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                            val pendingDestination = SessionManager.consumePostLoginDestination()
+                            if (pendingDestination == null) {
+                                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                            } else {
+                                findNavController().navigate(
+                                    pendingDestination.destinationId,
+                                    pendingDestination.arguments,
+                                    navOptions {
+                                        popUpTo(R.id.loginFragment) { inclusive = true }
+                                        launchSingleTop = true
+                                    }
+                                )
+                            }
                             viewModel.resetState()
                         }
                         is AuthUiState.Error -> {
