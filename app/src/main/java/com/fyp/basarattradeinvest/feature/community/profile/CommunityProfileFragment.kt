@@ -135,6 +135,27 @@ class CommunityProfileFragment : Fragment() {
             viewModel.setFeedMode(CommunityFeedMode.MY_POSTS)
         }
 
+        binding.chipFilterAll.setOnClickListener {
+            viewModel.setCommunityFilter(postType = null, stockSymbol = null)
+            binding.chipFilterAll.isChecked = true
+            binding.chipFilterStock.isChecked = false
+            binding.chipFilterGeneral.isChecked = false
+        }
+
+        binding.chipFilterStock.setOnClickListener {
+            viewModel.setCommunityFilter(postType = "STOCK", stockSymbol = null)
+            binding.chipFilterAll.isChecked = false
+            binding.chipFilterStock.isChecked = true
+            binding.chipFilterGeneral.isChecked = false
+        }
+
+        binding.chipFilterGeneral.setOnClickListener {
+            viewModel.setCommunityFilter(postType = "GENERAL_MARKET", stockSymbol = null)
+            binding.chipFilterAll.isChecked = false
+            binding.chipFilterStock.isChecked = false
+            binding.chipFilterGeneral.isChecked = true
+        }
+
         binding.fabCreatePost.setOnClickListener {
             showCreatePostDialog()
         }

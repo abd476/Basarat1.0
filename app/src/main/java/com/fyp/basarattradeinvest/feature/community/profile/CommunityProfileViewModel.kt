@@ -34,6 +34,8 @@ class CommunityProfileViewModel(
 
     private var currentUserId: String? = null
     private var currentFeedMode: CommunityFeedMode = CommunityFeedMode.COMMUNITY_FEED
+    private var currentPostTypeFilter: String? = null
+    private var currentStockSymbolFilter: String? = null
     private var postCursor: String? = null
     private var lastSuccessfulFetchAt: Long = 0L
     private val freshnessWindowMs = 5 * 60 * 1000L
@@ -69,7 +71,15 @@ class CommunityProfileViewModel(
 
             val postsResult = if (isSelf) {
                 if (currentFeedMode == CommunityFeedMode.COMMUNITY_FEED) {
-                    getCommunityFeedUseCase(mine = false, cursor = null, limit = 20)
+                    val normalizedPostType = currentPostTypeFilter?.takeIf { it.isNotBlank() && it != "ALL" }
+                    val normalizedStock = currentStockSymbolFilter?.trim()?.takeIf { it.isNotBlank() }
+                    getCommunityFeedUseCase(
+                        stockSymbol = normalizedStock,
+                        postType = normalizedPostType,
+                        mine = false,
+                        cursor = null,
+                        limit = 20
+                    )
                 } else {
                     getMyPostsUseCase(cursor = null, limit = 20)
                 }
@@ -104,6 +114,18 @@ class CommunityProfileViewModel(
             return
         }
         currentFeedMode = mode
+        loadProfile(userId = currentUserId, isRefresh = true)
+    }
+
+    fun setCommunityFilter(postType: String? = null, stockSymbol: String? = null) {
+        currentPostTypeFilter = postType?.takeIf { it.isNotBlank() && it != "ALL" }
+        currentStockSymbolFilter = stockSymbol?.trim()?.takeIf { it.isNotBlank() }
+        loadProfile(userId = currentUserId, isRefresh = true)
+    }
+
+    fun clearCommunityFilter() {
+        currentPostTypeFilter = null
+        currentStockSymbolFilter = null
         loadProfile(userId = currentUserId, isRefresh = true)
     }
 
