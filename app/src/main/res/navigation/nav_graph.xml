@@ -215,9 +215,6 @@
             android:id="@+id/action_stockDetail_to_articleDetail"
             app:destination="@id/newsArticleDetailFragment" />
         <action
-            android:id="@+id/action_stockDetail_to_alerts"
-            app:destination="@id/alertsFragment" />
-        <action
             android:id="@+id/action_stockDetail_to_assistantChat"
             app:destination="@id/assistantChatFragment" />
     </fragment>
@@ -494,7 +491,7 @@
     <fragment
         android:id="@+id/alertsFragment"
         android:name="com.fyp.basarattradeinvest.feature.alerts.AlertsFragment"
-        android:label="Alerts"
+        android:label="Alert History"
         tools:layout="@layout/fragment_alerts" />
 
     <fragment

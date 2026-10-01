@@ -62,12 +62,7 @@
     <string name="already_have_account">Already have an account?</string>
 
     <!-- Alerts Module -->
-    <string name="title_alerts">Alerts &amp; Notifications</string>
-    <string name="tab_alert_rules">My Rules</string>
-    <string name="tab_alert_history">History</string>
-    <string name="create_alert_rule">Create Alert Rule</string>
-    <string name="edit_alert_rule">Edit Alert Rule</string>
-    <string name="delete_alert_rule">Delete Alert Rule</string>
+    <string name="title_alert_history">Alert History</string>
 
     <!-- Notifications Module -->
     <string name="title_notifications">Notifications</string>
