@@ -15,6 +15,7 @@ import com.fyp.basarattradeinvest.domain.model.TechnicalIndicator
 import com.fyp.basarattradeinvest.domain.model.TechnicalSignal
 import com.fyp.basarattradeinvest.domain.model.TechnicalSummary
 import com.fyp.basarattradeinvest.domain.repository.StockRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Locale
@@ -96,6 +97,8 @@ class StockRepositoryImpl(
             } else {
                 fallbackSearch(query)
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
             fallbackSearch(query)
         }
