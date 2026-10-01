@@ -3,7 +3,11 @@ package com.fyp.basarattradeinvest.data.remote
 import com.fyp.basarattradeinvest.core.network.AuthInterceptor
 import com.fyp.basarattradeinvest.core.network.TokenAuthenticator
 import com.fyp.basarattradeinvest.data.remote.api.AuthApiService
+import com.fyp.basarattradeinvest.data.remote.api.LiveMarketApiService
 import com.fyp.basarattradeinvest.data.remote.api.MarketApiService
+import com.fyp.basarattradeinvest.data.remote.live.LiveMarketDataSource
+import com.fyp.basarattradeinvest.data.repository.LiveMarketRepositoryImpl
+import com.fyp.basarattradeinvest.domain.repository.LiveMarketRepository
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -36,9 +40,19 @@ object NetworkClient {
         redactHeader("Set-Cookie")
     }
 
+    // Device registration bodies contain the FCM token. Keep these requests out of BODY logs.
+    private val headersOnlyLoggingInterceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.HEADERS
+        redactHeader("Authorization")
+        redactHeader("Cookie")
+        redactHeader("Set-Cookie")
+    }
+
     private val streamAwareLoggingInterceptor = Interceptor { chain ->
         val request = chain.request()
-        if (request.url.encodedPath == "/api/v1/assistant/chat/stream") {
+        if (request.url.encodedPath.startsWith("/api/v1/devices/")) {
+            headersOnlyLoggingInterceptor.intercept(chain)
+        } else if (request.url.encodedPath == "/api/v1/assistant/chat/stream") {
             streamingLoggingInterceptor.intercept(chain.withReadTimeout(2, TimeUnit.MINUTES))
         } else {
             loggingInterceptor.intercept(chain)
@@ -71,6 +85,25 @@ object NetworkClient {
 
     val marketApiService: MarketApiService by lazy {
         marketRetrofit.create(MarketApiService::class.java)
+    }
+
+    val liveMarketApiService: LiveMarketApiService by lazy {
+        marketRetrofit.create(LiveMarketApiService::class.java)
+    }
+
+    /** Singleton WebSocket data source shared across all screens. */
+    val liveMarketDataSource: LiveMarketDataSource by lazy {
+        LiveMarketDataSource(
+            okHttpClient = okHttpClient.newBuilder()
+                .readTimeout(0, TimeUnit.MILLISECONDS)
+                .build(),
+            liveMarketApiService = liveMarketApiService
+        )
+    }
+
+    /** Singleton repository that wraps [liveMarketDataSource]; shared across all ViewModels. */
+    val liveMarketRepository: LiveMarketRepository by lazy {
+        LiveMarketRepositoryImpl(liveMarketDataSource)
     }
 
     val authApiService: AuthApiService by lazy {
@@ -113,8 +146,20 @@ object NetworkClient {
         retrofit.create(com.fyp.basarattradeinvest.data.remote.api.AlertsApiService::class.java)
     }
 
+    val watchlistApiService: com.fyp.basarattradeinvest.data.remote.api.WatchlistApiService by lazy {
+        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.WatchlistApiService::class.java)
+    }
+
+    val watchlistRepository: com.fyp.basarattradeinvest.domain.repository.WatchlistRepository by lazy {
+        com.fyp.basarattradeinvest.data.repository.WatchlistRepositoryImpl(watchlistApiService)
+    }
+
     val notificationsApiService: com.fyp.basarattradeinvest.data.remote.api.NotificationsApiService by lazy {
         retrofit.create(com.fyp.basarattradeinvest.data.remote.api.NotificationsApiService::class.java)
+    }
+
+    val devicesApiService: com.fyp.basarattradeinvest.data.remote.api.DevicesApiService by lazy {
+        retrofit.create(com.fyp.basarattradeinvest.data.remote.api.DevicesApiService::class.java)
     }
 
     val shariahApiService: com.fyp.basarattradeinvest.data.remote.api.ShariahApiService by lazy {
