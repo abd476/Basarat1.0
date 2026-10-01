@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 object SessionManager {
 
     private var tokenStorage: SecureTokenStorage? = null
+    private var appContext: Context? = null
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Unknown)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
@@ -23,6 +24,7 @@ object SessionManager {
     data class PostLoginDestination(val destinationId: Int, val arguments: android.os.Bundle?)
 
     fun init(context: Context) {
+        appContext = context.applicationContext
         if (tokenStorage == null) {
             tokenStorage = SecureTokenStorage(context.applicationContext)
             checkInitialSession()
@@ -82,6 +84,26 @@ object SessionManager {
     fun getCurrentUserName(): String? = tokenStorage?.getUserName()
 
     fun getCurrentUserId(): String? = tokenStorage?.getUserId()
+
+    fun applicationContext(): Context? = appContext
+
+    fun storePendingFcmToken(token: String) = tokenStorage?.savePendingFcmToken(token)
+
+    fun getPendingFcmToken(): String? = tokenStorage?.getPendingFcmToken()
+
+    fun getDeviceId(): String? = tokenStorage?.getDeviceId()
+
+    fun getRegisteredFcmToken(): String? = tokenStorage?.getRegisteredFcmToken()
+
+    fun saveDeviceRegistration(deviceId: String, token: String) =
+        tokenStorage?.saveDeviceRegistration(deviceId, token)
+
+    fun clearDeviceRegistration() = tokenStorage?.clearDeviceRegistration()
+
+    fun wasNotificationPermissionAsked(): Boolean =
+        tokenStorage?.wasNotificationPermissionAsked() == true
+
+    fun setNotificationPermissionAsked() = tokenStorage?.setNotificationPermissionAsked()
 
     fun saveSession(
         accessToken: String,

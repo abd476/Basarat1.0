@@ -30,7 +30,8 @@ class AuthInterceptor : Interceptor {
             requestBuilder.header("Accept", "application/json")
         }
 
-        if (!isUnauthenticated) {
+        val isPublicMarketWebSocket = path == "/api/v1/ws/market"
+        if (!isUnauthenticated && !isPublicMarketWebSocket) {
             val token = SessionManager.getAccessToken()
             if (!token.isNullOrBlank() && request.header("Authorization") == null) {
                 requestBuilder.header("Authorization", "Bearer $token")

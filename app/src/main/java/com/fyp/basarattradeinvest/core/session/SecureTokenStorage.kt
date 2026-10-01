@@ -29,6 +29,10 @@ class SecureTokenStorage(context: Context) {
         private const val KEY_USER_ID = "user_id"
         private const val KEY_USER_EMAIL = "user_email"
         private const val KEY_USER_NAME = "user_name"
+        private const val KEY_DEVICE_ID = "push_device_id"
+        private const val KEY_REGISTERED_FCM_TOKEN = "registered_fcm_token"
+        private const val KEY_PENDING_FCM_TOKEN = "pending_fcm_token"
+        private const val KEY_NOTIFICATION_PERMISSION_ASKED = "notification_permission_asked"
     }
 
     init {
@@ -140,11 +144,51 @@ class SecureTokenStorage(context: Context) {
 
     fun getUserId(): String? = prefs.getString(KEY_USER_ID, null)
 
+    fun savePendingFcmToken(token: String) {
+        prefs.edit().putString(KEY_PENDING_FCM_TOKEN, encrypt(token)).apply()
+    }
+
+    fun getPendingFcmToken(): String? = prefs.getString(KEY_PENDING_FCM_TOKEN, null)?.let(::decrypt)
+
+    fun getDeviceId(): String? = prefs.getString(KEY_DEVICE_ID, null)
+
+    fun getRegisteredFcmToken(): String? = prefs.getString(KEY_REGISTERED_FCM_TOKEN, null)?.let(::decrypt)
+
+    fun saveDeviceRegistration(deviceId: String, token: String) {
+        prefs.edit()
+            .putString(KEY_DEVICE_ID, deviceId)
+            .putString(KEY_REGISTERED_FCM_TOKEN, encrypt(token))
+            .remove(KEY_PENDING_FCM_TOKEN)
+            .apply()
+    }
+
+    fun clearDeviceRegistration() {
+        prefs.edit()
+            .remove(KEY_DEVICE_ID)
+            .remove(KEY_REGISTERED_FCM_TOKEN)
+            .apply()
+    }
+
+    fun wasNotificationPermissionAsked(): Boolean =
+        prefs.getBoolean(KEY_NOTIFICATION_PERMISSION_ASKED, false)
+
+    fun setNotificationPermissionAsked() {
+        prefs.edit().putBoolean(KEY_NOTIFICATION_PERMISSION_ASKED, true).apply()
+    }
+
     fun hasValidTokens(): Boolean {
         return !getAccessToken().isNullOrBlank()
     }
 
     fun clear() {
-        prefs.edit().clear().apply()
+        prefs.edit()
+            .remove(KEY_ACCESS_TOKEN)
+            .remove(KEY_REFRESH_TOKEN)
+            .remove(KEY_USER_ID)
+            .remove(KEY_USER_EMAIL)
+            .remove(KEY_USER_NAME)
+            .remove(KEY_DEVICE_ID)
+            .remove(KEY_REGISTERED_FCM_TOKEN)
+            .apply()
     }
 }
