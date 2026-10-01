@@ -389,7 +389,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="Manage alert rules, triggers &amp; notification history"
+                        android:text="View triggered price alerts and notification history"
                         android:textColor="@color/color_text_secondary"
                         android:textSize="13sp" />
                 </LinearLayout>

@@ -45,6 +45,7 @@ class PortfolioMainFragment : Fragment() {
 
     private var _binding: FragmentPortfolioMainBinding? = null
     private val binding get() = _binding!!
+    private var lastRenderedSuccess: PortfolioMainUiState.Success? = null
 
     private val viewModel: PortfolioMainViewModel by activityViewModels { PortfolioMainViewModel.Factory() }
 
@@ -164,7 +165,7 @@ class PortfolioMainFragment : Fragment() {
 
             // Right Axis
             axisRight.isEnabled = false
-            setNoDataText("Plotting PSX portfolio trajectory...")
+            setNoDataText("")
             setNoDataTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_tertiary))
         }
         renderPerformanceLineChart(null)
@@ -440,6 +441,7 @@ class PortfolioMainFragment : Fragment() {
     private fun renderState(state: PortfolioMainUiState) {
         when (state) {
             is PortfolioMainUiState.Loading -> {
+                lastRenderedSuccess = null
                 binding.scrollContent.visibility = View.GONE
                 binding.layoutLoading.visibility = View.VISIBLE
                 binding.layoutError.visibility = View.GONE
@@ -448,13 +450,26 @@ class PortfolioMainFragment : Fragment() {
                 binding.scrollContent.visibility = View.VISIBLE
                 binding.layoutLoading.visibility = View.GONE
                 binding.layoutError.visibility = View.GONE
-                renderOverview(state.overview)
-                state.pnl?.let { renderPnL(it) }
-                state.allocation?.let { renderAllocation(it) }
-                renderPerformanceLineChart(state.performance)
-                renderRecentTransactions(state.recentTransactions)
+                val previous = lastRenderedSuccess
+                if (previous == null || previous.overview != state.overview) {
+                    renderOverview(state.overview)
+                }
+                if (state.pnl != null && previous?.pnl != state.pnl) {
+                    renderPnL(state.pnl)
+                }
+                if (state.allocation != null && previous?.allocation != state.allocation) {
+                    renderAllocation(state.allocation)
+                }
+                if (previous == null || previous.performance != state.performance) {
+                    renderPerformanceLineChart(state.performance)
+                }
+                if (previous == null || previous.recentTransactions != state.recentTransactions) {
+                    renderRecentTransactions(state.recentTransactions)
+                }
+                lastRenderedSuccess = state
             }
             is PortfolioMainUiState.Empty -> {
+                lastRenderedSuccess = null
                 binding.scrollContent.visibility = View.VISIBLE
                 binding.layoutLoading.visibility = View.GONE
                 binding.layoutError.visibility = View.GONE
@@ -470,6 +485,7 @@ class PortfolioMainFragment : Fragment() {
                 renderPerformanceLineChart(null)
             }
             is PortfolioMainUiState.Error -> {
+                lastRenderedSuccess = null
                 binding.scrollContent.visibility = View.GONE
                 binding.layoutLoading.visibility = View.GONE
                 binding.layoutError.visibility = View.VISIBLE
@@ -498,19 +514,13 @@ class PortfolioMainFragment : Fragment() {
         val points = perf?.data ?: emptyList()
         val entries = ArrayList<Entry>()
 
-        if (points.isNotEmpty()) {
-            points.forEachIndexed { index, pt ->
-                entries.add(Entry(index.toFloat(), pt.value.toFloat()))
-            }
-        } else {
-            // Graceful baseline: When no historical point is returned yet, plot smooth trajectory from current valuation
-            val currentVal = if (lastCurrentValue > 0.0) lastCurrentValue.toFloat() else 800547.82f
-            entries.add(Entry(0f, currentVal * 0.965f))
-            entries.add(Entry(1f, currentVal * 0.978f))
-            entries.add(Entry(2f, currentVal * 0.972f))
-            entries.add(Entry(3f, currentVal * 0.988f))
-            entries.add(Entry(4f, currentVal * 0.985f))
-            entries.add(Entry(5f, currentVal))
+        if (points.isEmpty()) {
+            binding.chartPortfolioPerformance.clear()
+            return
+        }
+
+        points.forEachIndexed { index, point ->
+            entries.add(Entry(index.toFloat(), point.value.toFloat()))
         }
 
         if (entries.isEmpty()) {
@@ -592,6 +602,7 @@ class PortfolioMainFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        lastRenderedSuccess = null
         _binding = null
     }
 }
