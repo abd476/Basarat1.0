@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentHomeBinding
 import com.fyp.basarattradeinvest.domain.model.MarketIndex
-import com.fyp.basarattradeinvest.domain.model.MarketStock
+import com.fyp.basarattradeinvest.domain.model.watchlist.WatchlistItem
 import com.fyp.basarattradeinvest.feature.markets.adapter.MarketStockAdapter
 import com.fyp.basarattradeinvest.feature.news.adapter.NewsArticleAdapter
 import com.github.mikephil.charting.data.Entry
@@ -59,6 +59,7 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.newsArticleDetailFragment, bundle)
         }
     }
+    private var lastBoundSuccess: HomeUiState.Success? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -99,6 +100,14 @@ class HomeFragment : Fragment() {
 
         binding.btnRetryHome.setOnClickListener {
             viewModel.refresh()
+        }
+
+        binding.btnRetryWatchlist.setOnClickListener {
+            viewModel.retryWatchlist()
+        }
+
+        binding.btnExploreMarkets.setOnClickListener {
+            findNavController().navigate(R.id.nav_markets)
         }
 
         // 1. Search Bar -> Stock Search
@@ -170,12 +179,14 @@ class HomeFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     when (state) {
                         is HomeUiState.Loading -> {
+                            lastBoundSuccess = null
                             binding.layoutHomeSkeleton.visibility = View.VISIBLE
                             binding.layoutHomeError.visibility = View.GONE
                             binding.scrollContent.visibility = View.GONE
                             binding.swipeRefresh.isRefreshing = false
                         }
                         is HomeUiState.Error -> {
+                            lastBoundSuccess = null
                             binding.layoutHomeSkeleton.visibility = View.GONE
                             binding.layoutHomeError.visibility = View.VISIBLE
                             binding.scrollContent.visibility = View.GONE
@@ -195,51 +206,79 @@ class HomeFragment : Fragment() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        viewModel.setLiveUpdatesActive(true)
+    }
+
+    override fun onStop() {
+        viewModel.setLiveUpdatesActive(false)
+        super.onStop()
+    }
+
     private fun bindSuccessState(state: HomeUiState.Success) {
+        val previous = lastBoundSuccess
         val context = requireContext()
 
         // 1. Header Greeting & User Name
-        val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-        val greetingPrefix = when (hour) {
-            in 4..11 -> "Good morning,"
-            in 12..16 -> "Good afternoon,"
-            in 17..22 -> "Good evening,"
-            else -> "Welcome back,"
+        if (previous == null || previous.userName != state.userName) {
+            val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+            val greetingPrefix = when (hour) {
+                in 4..11 -> "Good morning,"
+                in 12..16 -> "Good afternoon,"
+                in 17..22 -> "Good evening,"
+                else -> "Welcome back,"
+            }
+            binding.tvGreeting.text = greetingPrefix
+            binding.tvUserName.text = state.userName
         }
-        binding.tvGreeting.text = greetingPrefix
-        binding.tvUserName.text = state.userName
 
         // Market Status
-        binding.tvMarketStatus.text = state.marketStatus
-        val statusColor = if (state.isMarketOpen) {
-            ContextCompat.getColor(context, R.color.color_positive)
-        } else {
-            ContextCompat.getColor(context, R.color.color_neutral)
+        if (previous == null || previous.marketStatus != state.marketStatus || previous.isMarketOpen != state.isMarketOpen) {
+            binding.tvMarketStatus.text = state.marketStatus
+            val statusColor = if (state.isMarketOpen) {
+                ContextCompat.getColor(context, R.color.color_positive)
+            } else {
+                ContextCompat.getColor(context, R.color.color_neutral)
+            }
+            binding.dotMarketStatus.backgroundTintList = ColorStateList.valueOf(statusColor)
         }
-        binding.dotMarketStatus.backgroundTintList = ColorStateList.valueOf(statusColor)
 
         // Notification Badge
-        if (state.activeAlertsCount > 0) {
-            binding.tvAlertBadge.visibility = View.VISIBLE
-            binding.tvAlertBadge.text = if (state.activeAlertsCount > 9) "9+" else state.activeAlertsCount.toString()
-        } else {
-            binding.tvAlertBadge.visibility = View.GONE
+        if (previous == null || previous.activeAlertsCount != state.activeAlertsCount) {
+            if (state.activeAlertsCount > 0) {
+                binding.tvAlertBadge.visibility = View.VISIBLE
+                binding.tvAlertBadge.text = if (state.activeAlertsCount > 9) "9+" else state.activeAlertsCount.toString()
+            } else {
+                binding.tvAlertBadge.visibility = View.GONE
+            }
         }
 
         // 2. Market Pulse Indices
-        bindMarketPulse(state.marketIndices)
+        if (previous == null || previous.marketIndices != state.marketIndices) {
+            bindMarketPulse(state.marketIndices)
+        }
 
         // 3. Benchmark Trend Card (KSE-100)
-        bindBenchmarkCard(state)
+        if (previous == null || previous.selectedBenchmarkIndex != state.selectedBenchmarkIndex || previous.selectedTimeframe != state.selectedTimeframe) {
+            bindBenchmarkCard(state)
+        }
 
         // 4. Watchlist Preview
-        bindWatchlist(state.watchlistStocks)
+        if (previous == null || previous.watchlist != state.watchlist) {
+            bindWatchlist(state.watchlist)
+        }
 
         // 5. Market Movers
-        bindMarketMovers(state)
+        if (previous == null || previous.currentMovers != state.currentMovers || previous.selectedMoversTab != state.selectedMoversTab) {
+            bindMarketMovers(state)
+        }
 
         // 6. Market News
-        newsArticleAdapter.submitList(state.recentNews)
+        if (previous == null || previous.recentNews != state.recentNews) {
+            newsArticleAdapter.submitList(state.recentNews)
+        }
+        lastBoundSuccess = state
     }
 
     private fun bindMarketPulse(indices: List<MarketIndex>) {
@@ -375,58 +414,99 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun bindWatchlist(stocks: List<MarketStock>) {
-        if (stocks.isEmpty()) {
-            binding.layoutWatchlistEmpty.visibility = View.VISIBLE
-            binding.layoutWatchlistItems.visibility = View.GONE
-            return
-        }
-
+    private fun bindWatchlist(state: WatchlistUiState) {
+        binding.layoutWatchlistLoading.visibility = View.GONE
         binding.layoutWatchlistEmpty.visibility = View.GONE
+        binding.layoutWatchlistError.visibility = View.GONE
+        binding.layoutWatchlistItems.visibility = View.GONE
+
+        when (state) {
+            WatchlistUiState.Loading -> {
+                binding.layoutWatchlistLoading.visibility = View.VISIBLE
+                return
+            }
+            WatchlistUiState.Empty -> {
+                binding.layoutWatchlistEmpty.visibility = View.VISIBLE
+                return
+            }
+            is WatchlistUiState.Error -> {
+                binding.tvWatchlistError.text = state.message
+                binding.layoutWatchlistError.visibility = View.VISIBLE
+                return
+            }
+            is WatchlistUiState.Success -> Unit
+        }
+        val stocks = (state as WatchlistUiState.Success).watchlist.items
         binding.layoutWatchlistItems.visibility = View.VISIBLE
 
         val s1 = stocks.getOrNull(0)
         if (s1 != null) {
-            binding.cardWatchlistItem1.visibility = View.VISIBLE
-            binding.tvWatchlistSym1.text = s1.symbol
-            binding.tvWatchlistName1.text = s1.companyName
-            binding.tvWatchlistPrice1.text = priceFormat.format(s1.price)
-
-            val isPos1 = s1.changePercent >= 0
-            val prefix1 = if (isPos1) "+" else ""
-            binding.tvWatchlistChange1.text = String.format(Locale.US, "%s%.2f%%", prefix1, s1.changePercent)
-            val col1 = ContextCompat.getColor(requireContext(), if (isPos1) R.color.color_positive else R.color.color_negative)
-            binding.tvWatchlistChange1.setTextColor(col1)
-            binding.sparklineWatchlist1.setTrend(isPos1)
-
-            binding.cardWatchlistItem1.setOnClickListener {
-                val bundle = Bundle().apply { putString("symbol", s1.symbol) }
-                findNavController().navigate(R.id.stockDetailFragment, bundle)
-            }
+            bindWatchlistCard(s1, 1)
         } else {
             binding.cardWatchlistItem1.visibility = View.GONE
         }
 
         val s2 = stocks.getOrNull(1)
         if (s2 != null) {
-            binding.cardWatchlistItem2.visibility = View.VISIBLE
-            binding.tvWatchlistSym2.text = s2.symbol
-            binding.tvWatchlistName2.text = s2.companyName
-            binding.tvWatchlistPrice2.text = priceFormat.format(s2.price)
-
-            val isPos2 = s2.changePercent >= 0
-            val prefix2 = if (isPos2) "+" else ""
-            binding.tvWatchlistChange2.text = String.format(Locale.US, "%s%.2f%%", prefix2, s2.changePercent)
-            val col2 = ContextCompat.getColor(requireContext(), if (isPos2) R.color.color_positive else R.color.color_negative)
-            binding.tvWatchlistChange2.setTextColor(col2)
-            binding.sparklineWatchlist2.setTrend(isPos2)
-
-            binding.cardWatchlistItem2.setOnClickListener {
-                val bundle = Bundle().apply { putString("symbol", s2.symbol) }
-                findNavController().navigate(R.id.stockDetailFragment, bundle)
-            }
+            bindWatchlistCard(s2, 2)
         } else {
             binding.cardWatchlistItem2.visibility = View.GONE
+        }
+    }
+
+    private fun bindWatchlistCard(stock: WatchlistItem, position: Int) {
+        val card: View
+        val symbol: TextView
+        val name: TextView
+        val price: TextView
+        val change: TextView
+        val sparkline: com.fyp.basarattradeinvest.core.ui.components.MiniSparklineView
+        if (position == 1) {
+            card = binding.cardWatchlistItem1
+            symbol = binding.tvWatchlistSym1
+            name = binding.tvWatchlistName1
+            price = binding.tvWatchlistPrice1
+            change = binding.tvWatchlistChange1
+            sparkline = binding.sparklineWatchlist1
+        } else {
+            card = binding.cardWatchlistItem2
+            symbol = binding.tvWatchlistSym2
+            name = binding.tvWatchlistName2
+            price = binding.tvWatchlistPrice2
+            change = binding.tvWatchlistChange2
+            sparkline = binding.sparklineWatchlist2
+        }
+
+        card.visibility = View.VISIBLE
+        symbol.text = stock.symbol
+        name.text = stock.name?.takeIf { it.isNotBlank() } ?: stock.symbol
+        price.text = stock.currentPrice?.let(priceFormat::format) ?: "—"
+
+        val changePercent = stock.changePercent
+        if (stock.isStale) {
+            change.text = "Delayed"
+            change.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_tertiary))
+            sparkline.visibility = View.INVISIBLE
+        } else if (changePercent != null) {
+            val isPos = changePercent >= 0
+            val prefix = if (isPos) "+" else ""
+            change.text = String.format(Locale.US, "%s%.2f%%", prefix, changePercent)
+            val color = ContextCompat.getColor(
+                requireContext(),
+                if (isPos) R.color.color_positive else R.color.color_negative
+            )
+            change.setTextColor(color)
+            sparkline.setTrend(isPos)
+            sparkline.visibility = View.VISIBLE
+        } else {
+            change.text = "—"
+            change.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_tertiary))
+            sparkline.visibility = View.INVISIBLE
+        }
+
+        card.setOnClickListener {
+            val bundle = Bundle().apply { putString("symbol", stock.symbol) }
+            findNavController().navigate(R.id.stockDetailFragment, bundle)
         }
     }
 
@@ -456,6 +536,7 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        lastBoundSuccess = null
         _binding = null
     }
 }

@@ -5,6 +5,9 @@ import com.fyp.basarattradeinvest.domain.model.MarketStock
 import com.fyp.basarattradeinvest.domain.model.NewsArticle
 import com.fyp.basarattradeinvest.feature.dashboard.HomeUiState
 import com.fyp.basarattradeinvest.feature.dashboard.MoversTab
+import com.fyp.basarattradeinvest.feature.dashboard.WatchlistUiState
+import com.fyp.basarattradeinvest.domain.model.watchlist.Watchlist
+import com.fyp.basarattradeinvest.domain.model.watchlist.WatchlistItem
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -15,7 +18,22 @@ class HomeViewModelUnitTest {
         val gainers = listOf(MarketStock(1, "DSIL", "DSIL Corp", "TEXTILE", 10.58, 1.0, 10.44))
         val losers = listOf(MarketStock(1, "BUXL", "Buxly Paints", "CHEMICAL", 502.62, -55.85, -10.0))
         val spikes = listOf(MarketStock(1, "CNERGY", "Cnergyico PK", "REFINERY", 4.15, -0.18, -4.15))
-        val watchlist = listOf(MarketStock(1, "ENGRO", "Engro Corp", "FERTILIZER", 312.40, 7.35, 2.41))
+        val watchlist = Watchlist(
+            id = "watchlist-1",
+            name = "Default",
+            items = listOf(
+                WatchlistItem(
+                    id = "item-1",
+                    watchlistId = "watchlist-1",
+                    symbol = "ENGRO",
+                    name = "Engro Corp",
+                    currentPrice = 312.40,
+                    change = 7.35,
+                    changePercent = 2.41,
+                    isStale = false
+                )
+            )
+        )
         val indices = listOf(
             MarketIndex("1", "KSE-100", "KSE100", 170498.94, -1733.57, -1.01, 172491.16, 170418.38),
             MarketIndex("2", "KSE-30", "KSE30", 50739.69, -544.11, -1.06, 51366.74, 50697.28)
@@ -31,7 +49,7 @@ class HomeViewModelUnitTest {
             marketIndices = indices,
             selectedBenchmarkIndex = indices[0],
             selectedTimeframe = "1D",
-            watchlistStocks = watchlist,
+            watchlist = WatchlistUiState.Success(watchlist),
             topGainers = gainers,
             topLosers = losers,
             volumeSpikes = spikes,
@@ -45,7 +63,7 @@ class HomeViewModelUnitTest {
         assertEquals("Market Open", state.marketStatus)
         assertTrue(state.isMarketOpen)
         assertEquals(2, state.marketIndices.size)
-        assertEquals(1, state.watchlistStocks.size)
+        assertEquals(1, (state.watchlist as WatchlistUiState.Success).watchlist.items.size)
         assertEquals(2, state.activeAlertsCount)
 
         // 2. Verify currentMovers dynamically resolves based on selectedMoversTab

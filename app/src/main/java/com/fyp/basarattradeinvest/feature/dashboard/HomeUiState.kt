@@ -4,11 +4,14 @@ import com.fyp.basarattradeinvest.domain.model.AlertItem
 import com.fyp.basarattradeinvest.domain.model.MarketIndex
 import com.fyp.basarattradeinvest.domain.model.MarketStock
 import com.fyp.basarattradeinvest.domain.model.NewsArticle
+import com.fyp.basarattradeinvest.domain.model.live.LiveQuote
+import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 import com.fyp.basarattradeinvest.domain.model.portfolio.HoldingItem
 import com.fyp.basarattradeinvest.domain.model.portfolio.PerformancePoint
 import com.fyp.basarattradeinvest.domain.model.portfolio.PortfolioAllocation
 import com.fyp.basarattradeinvest.domain.model.portfolio.PortfolioOverview
 import com.fyp.basarattradeinvest.domain.model.risk.PortfolioVaR
+import com.fyp.basarattradeinvest.domain.model.watchlist.Watchlist
 
 enum class MoversTab {
     GAINERS,
@@ -26,7 +29,7 @@ sealed interface HomeUiState {
         val marketIndices: List<MarketIndex> = emptyList(),
         val selectedBenchmarkIndex: MarketIndex? = null,
         val selectedTimeframe: String = "1D",
-        val watchlistStocks: List<MarketStock> = emptyList(),
+        val watchlist: WatchlistUiState = WatchlistUiState.Loading,
         val topGainers: List<MarketStock> = emptyList(),
         val topLosers: List<MarketStock> = emptyList(),
         val volumeSpikes: List<MarketStock> = emptyList(),
@@ -42,7 +45,9 @@ sealed interface HomeUiState {
         val selectedPeriod: String = "1M",
         val allocation: PortfolioAllocation? = null,
         val topHoldings: List<HoldingItem> = emptyList(),
-        val riskSummary: PortfolioVaR? = null
+        val riskSummary: PortfolioVaR? = null,
+        val liveQuotes: Map<String, LiveQuote> = emptyMap(),
+        val wsConnectionState: WsConnectionState = WsConnectionState.Idle
     ) : HomeUiState {
         val currentMovers: List<MarketStock>
             get() = when (selectedMoversTab) {
@@ -53,4 +58,11 @@ sealed interface HomeUiState {
     }
 
     data class Error(val message: String) : HomeUiState
+}
+
+sealed interface WatchlistUiState {
+    data object Loading : WatchlistUiState
+    data class Success(val watchlist: Watchlist) : WatchlistUiState
+    data object Empty : WatchlistUiState
+    data class Error(val message: String) : WatchlistUiState
 }
