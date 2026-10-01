@@ -290,7 +290,7 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layout_or_divider">
+            app:layout_constraintTop_toBottomOf="@id/btn_google_sign_in">
 
             <ImageView
                 android:layout_width="20dp"
