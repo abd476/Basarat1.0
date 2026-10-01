@@ -15,5 +15,6 @@
 local.properties
 .kotlin/
 *.json
+!app/google-services.json
 *.ps1
 *.py
