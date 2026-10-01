@@ -3,6 +3,7 @@ package com.fyp.basarattradeinvest.feature.community.notifications
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.fyp.basarattradeinvest.core.notifications.NotificationBadgeState
 import com.fyp.basarattradeinvest.data.repository.CommunityRepositoryImpl
 import com.fyp.basarattradeinvest.domain.model.community.CommunityNotification
 import com.fyp.basarattradeinvest.domain.repository.CommunityRepository
@@ -62,19 +63,22 @@ class CommunityNotificationsViewModel(
     fun markAsRead(notificationId: String) {
         viewModelScope.launch {
             val currentState = _uiState.value
-            if (currentState is CommunityNotificationsUiState.Success) {
-                val updatedList = currentState.notifications.map {
-                    if (it.id == notificationId) it.copy(isRead = true) else it
-                }
-                val newUnread = maxOf(0, currentState.unreadCount - 1)
-                _uiState.value = currentState.copy(
-                    notifications = updatedList,
-                    unreadCount = newUnread
-                )
-            }
+            if (currentState !is CommunityNotificationsUiState.Success ||
+                currentState.notifications.none { it.id == notificationId && !it.isRead }
+            ) return@launch
 
-            // Sync with backend authoritative endpoint
-            markReadUseCase(notificationId)
+            val updatedList = currentState.notifications.map {
+                if (it.id == notificationId) it.copy(isRead = true) else it
+            }
+            val newUnread = maxOf(0, currentState.unreadCount - 1)
+            _uiState.value = currentState.copy(
+                notifications = updatedList,
+                unreadCount = newUnread
+            )
+
+            val result = markReadUseCase(notificationId)
+            if (result.isSuccess) NotificationBadgeState.markCommunityRead()
+            else loadNotifications(unreadOnly = currentUnreadOnly, isRefresh = true)
         }
     }
 
@@ -92,6 +96,7 @@ class CommunityNotificationsViewModel(
             // Sync with backend authoritative endpoint
             val result = markAllReadUseCase()
             if (result.isSuccess) {
+                NotificationBadgeState.refresh()
                 loadNotifications(unreadOnly = currentUnreadOnly, isRefresh = true)
             }
         }

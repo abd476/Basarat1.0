@@ -3,6 +3,7 @@ package com.fyp.basarattradeinvest.feature.notifications
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.data.repository.NotificationsRepositoryImpl
+import com.fyp.basarattradeinvest.core.notifications.NotificationBadgeState
 import com.fyp.basarattradeinvest.domain.model.InAppNotification
 import com.fyp.basarattradeinvest.domain.usecase.notifications.GetNotificationsUseCase
 import com.fyp.basarattradeinvest.domain.usecase.notifications.MarkNotificationReadUseCase
@@ -26,6 +27,7 @@ class NotificationsViewModel(
     private var unreadFilter = false
 
     private val notificationList = mutableListOf<InAppNotification>()
+    private val readRequestsInFlight = mutableSetOf<String>()
     private var totalCount = 0
 
     init {
@@ -152,35 +154,49 @@ class NotificationsViewModel(
     }
 
     fun markAsRead(notificationId: String) {
+        val index = notificationList.indexOfFirst { it.id == notificationId }
+        if (index == -1 || notificationList[index].isRead || !readRequestsInFlight.add(notificationId)) return
+
         viewModelScope.launch {
             // Optimistic update in list
-            val index = notificationList.indexOfFirst { it.id == notificationId }
-            if (index != -1 && !notificationList[index].isRead) {
-                notificationList[index] = notificationList[index].copy(isRead = true)
+            notificationList[index] = notificationList[index].copy(isRead = true)
 
-                // If filter is unreadOnly, remove from displayed list
-                val updatedItems = if (unreadFilter) {
-                    notificationList.filter { !it.isRead }
-                } else {
-                    notificationList.toList()
-                }
-
-                if (updatedItems.isEmpty()) {
-                    _uiState.value = NotificationsUiState.Empty(unreadOnlyFilter = unreadFilter)
-                } else {
-                    _uiState.value = NotificationsUiState.Success(
-                        items = updatedItems,
-                        total = totalCount,
-                        page = currentPage,
-                        hasMore = hasMorePages,
-                        unreadOnlyFilter = unreadFilter,
-                        isPaginating = false
-                    )
-                }
+            // If filter is unreadOnly, remove from displayed list.
+            val updatedItems = if (unreadFilter) {
+                notificationList.filter { !it.isRead }
+            } else {
+                notificationList.toList()
             }
 
-            // Real API call
-            markNotificationReadUseCase(notificationId)
+            if (updatedItems.isEmpty()) {
+                _uiState.value = NotificationsUiState.Empty(unreadOnlyFilter = unreadFilter)
+            } else {
+                _uiState.value = NotificationsUiState.Success(
+                    items = updatedItems,
+                    total = totalCount,
+                    page = currentPage,
+                    hasMore = hasMorePages,
+                    unreadOnlyFilter = unreadFilter,
+                    isPaginating = false
+                )
+            }
+
+            val result = markNotificationReadUseCase(notificationId)
+            readRequestsInFlight.remove(notificationId)
+            if (result.isSuccess) {
+                NotificationBadgeState.markRead()
+            } else {
+                notificationList[index] = notificationList[index].copy(isRead = false)
+                _uiState.value = NotificationsUiState.Success(
+                    items = if (unreadFilter) notificationList.filter { !it.isRead } else notificationList.toList(),
+                    total = totalCount,
+                    page = currentPage,
+                    hasMore = hasMorePages,
+                    unreadOnlyFilter = unreadFilter,
+                    isPaginating = false
+                )
+                NotificationBadgeState.refresh()
+            }
         }
     }
 }
