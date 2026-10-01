@@ -259,6 +259,31 @@
                     android:textSize="11sp"
                     android:textStyle="bold" />
 
+                <!-- One-tap backend-managed price alert -->
+                <FrameLayout
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="2dp">
+
+                    <ImageView
+                        android:id="@+id/iv_quick_alert"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Create automatic price alert"
+                        android:padding="7dp"
+                        android:src="@drawable/ic_alert_bell"
+                        app:tint="@color/color_text_secondary" />
+
+                    <ProgressBar
+                        android:id="@+id/progress_quick_alert"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:indeterminateTint="@color/color_brand_primary"
+                        android:visibility="gone" />
+                </FrameLayout>
+
                 <!-- Favorite Icon -->
                 <ImageView
                     android:id="@+id/iv_favorite"

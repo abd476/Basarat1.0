@@ -5,6 +5,7 @@ import com.fyp.basarattradeinvest.domain.model.StockAnalysis
 import com.fyp.basarattradeinvest.domain.model.StockDetail
 import com.fyp.basarattradeinvest.domain.model.StockForecast
 import com.fyp.basarattradeinvest.domain.model.StockTrade
+import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 
 sealed interface StockDetailUiState {
     data object Loading : StockDetailUiState
@@ -18,7 +19,14 @@ sealed interface StockDetailUiState {
         val selectedSubPill: String,   // Quotes: "By Price", "Trades", "Detailed Quote", "Liquidity" | Analysis: "Technicals", "AI Forecast", "Fundamentals", "Shariah"
         val analysis: StockAnalysis? = null,
         val forecast: StockForecast? = null,
-        val isAnalysisLoading: Boolean = false
+        val isAnalysisLoading: Boolean = false,
+        val livePrice: Double? = null,
+        val liveChangePct: Double? = null,
+        val liveChange: Double? = null,
+        val liveVolume: Long? = null,
+        val isLivePriceStreaming: Boolean = false,
+        val liveIsStale: Boolean = false,
+        val wsConnectionState: WsConnectionState = WsConnectionState.Idle
     ) : StockDetailUiState
 
     data object Empty : StockDetailUiState
