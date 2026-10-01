@@ -6,6 +6,8 @@ import com.fyp.basarattradeinvest.domain.model.MarketSentiment
 import com.fyp.basarattradeinvest.domain.model.MarketStock
 import com.fyp.basarattradeinvest.domain.model.SectorPerformance
 import com.fyp.basarattradeinvest.domain.model.SymbolFilterType
+import com.fyp.basarattradeinvest.domain.model.live.LiveQuote
+import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 
 sealed interface MarketDashboardUiState {
     data object Loading : MarketDashboardUiState
@@ -20,7 +22,9 @@ sealed interface MarketDashboardUiState {
         val selectedConstituentIndex: String = "KSE-100",
         val constituents: List<com.fyp.basarattradeinvest.domain.model.IndexConstituent> = emptyList(),
         val isConstituentsLoading: Boolean = false,
-        val lastUpdated: String
+        val lastUpdated: String,
+        val liveQuotes: Map<String, LiveQuote> = emptyMap(),
+        val wsConnectionState: WsConnectionState = WsConnectionState.Idle
     ) : MarketDashboardUiState
 
     data object Empty : MarketDashboardUiState

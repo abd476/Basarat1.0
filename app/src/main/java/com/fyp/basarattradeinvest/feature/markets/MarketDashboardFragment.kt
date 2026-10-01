@@ -16,12 +16,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fyp.basarattradeinvest.R
+import com.fyp.basarattradeinvest.core.notifications.NotificationBadgeState
 import com.fyp.basarattradeinvest.databinding.FragmentMarketDashboardBinding
 import com.fyp.basarattradeinvest.domain.model.IndexConstituent
 import com.fyp.basarattradeinvest.domain.model.MarketIndex
 import com.fyp.basarattradeinvest.domain.model.MarketOverview
 import com.fyp.basarattradeinvest.domain.model.MarketSentiment
 import com.fyp.basarattradeinvest.domain.model.SymbolFilterType
+import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 import com.fyp.basarattradeinvest.feature.markets.adapter.ConstituentAdapter
 import com.fyp.basarattradeinvest.feature.markets.adapter.MarketStockAdapter
 import com.fyp.basarattradeinvest.feature.markets.adapter.SectorPerformanceAdapter
@@ -65,6 +67,7 @@ class MarketDashboardFragment : Fragment() {
         setupTabListeners()
         setupTopBarListeners()
         observeUiState()
+        observeNotificationBadge()
         viewModel.ensureLoaded()
     }
 
@@ -161,6 +164,27 @@ class MarketDashboardFragment : Fragment() {
         }
     }
 
+    private fun observeNotificationBadge() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                NotificationBadgeState.unreadCount.collect { unreadCount ->
+                    binding.tvNotificationsBadge.visibility = if (unreadCount > 0) View.VISIBLE else View.GONE
+                    binding.tvNotificationsBadge.text = if (unreadCount > 99) "99+" else unreadCount.toString()
+                }
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.setLiveUpdatesActive(true)
+    }
+
+    override fun onStop() {
+        viewModel.setLiveUpdatesActive(false)
+        super.onStop()
+    }
+
     private fun observeUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -172,6 +196,7 @@ class MarketDashboardFragment : Fragment() {
                         is MarketDashboardUiState.Success -> {
                             binding.swipeRefreshLayout.isRefreshing = false
                             binding.tvLastUpdated.text = "• Updated ${state.lastUpdated}"
+                            bindLiveConnection(state)
                             bindIndices(state.indices)
                             bindOverview(state.overview)
                             bindSentiment(state.sentiment)
@@ -192,6 +217,24 @@ class MarketDashboardFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun bindLiveConnection(state: MarketDashboardUiState.Success) {
+        if (state.liveQuotes.values.any { it.isStale }) {
+            binding.tvQuoteBannerText.text = "Market data delayed"
+            return
+        }
+        binding.tvQuoteBannerText.text = when (val connection = state.wsConnectionState) {
+            WsConnectionState.Live -> "Live PSX quote stream connected"
+            is WsConnectionState.Connecting -> "Connecting to live PSX quotes"
+            is WsConnectionState.Reconnecting -> "Reconnecting to live PSX quotes"
+            is WsConnectionState.Delayed -> if (state.liveQuotes.values.any { it.isStale }) {
+                "Market data delayed"
+            } else {
+                "Live quotes reconnecting · ${connection.nextRetryInSeconds}s"
+            }
+            WsConnectionState.Idle, WsConnectionState.Closed -> "Live PSX quotes disconnected"
         }
     }
 
