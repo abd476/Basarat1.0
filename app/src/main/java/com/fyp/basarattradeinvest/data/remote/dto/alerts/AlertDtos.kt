@@ -2,10 +2,7 @@ package com.fyp.basarattradeinvest.data.remote.dto.alerts
 
 import com.google.gson.annotations.SerializedName
 
-/**
- * Exact OpenAPI schema for AlertRuleResponse
- * Returned by GET /api/v1/alerts/rules, POST /api/v1/alerts/rules, PATCH /api/v1/alerts/rules/{rule_id}
- */
+/** Nested rule returned as part of the quick-alert response. */
 data class AlertRuleResponseDto(
     @SerializedName("id")
     val id: String,
@@ -15,6 +12,12 @@ data class AlertRuleResponseDto(
 
     @SerializedName("stock_id")
     val stockId: String? = null,
+
+    @SerializedName("symbol")
+    val symbol: String? = null,
+
+    @SerializedName("stock_name")
+    val stockName: String? = null,
 
     @SerializedName("condition")
     val condition: String,
@@ -30,36 +33,27 @@ data class AlertRuleResponseDto(
 )
 
 /**
- * Exact OpenAPI schema for AlertRuleCreate
- * Used by POST /api/v1/alerts/rules
+ * OpenAPI QuickAlertRuleCreate. The backend applies its documented defaults for
+ * percent_threshold (3.0) and direction (both) when those optional fields are omitted.
  */
-data class AlertRuleCreateDto(
-    @SerializedName("stock_id")
-    val stockId: String? = null,
-
-    @SerializedName("condition")
-    val condition: String,
-
-    @SerializedName("threshold")
-    val threshold: Double
+data class QuickAlertRuleCreateDto(
+    @SerializedName("symbol") val symbol: String? = null,
+    @SerializedName("stock_name") val stockName: String? = null,
+    @SerializedName("stock_id") val stockId: String? = null,
+    @SerializedName("percent_threshold") val percentThreshold: Double? = null,
+    @SerializedName("direction") val direction: String? = null
 )
 
-/**
- * Exact OpenAPI schema for AlertRuleUpdate
- * Used by PATCH /api/v1/alerts/rules/{rule_id}
- */
-data class AlertRuleUpdateDto(
-    @SerializedName("stock_id")
-    val stockId: String? = null,
-
-    @SerializedName("condition")
-    val condition: String? = null,
-
-    @SerializedName("threshold")
-    val threshold: Double? = null,
-
-    @SerializedName("is_active")
-    val isActive: Boolean? = null
+/** Exact OpenAPI QuickAlertRuleResponse for POST /api/v1/alerts/quick-rule. */
+data class QuickAlertRuleResponseDto(
+    @SerializedName("symbol") val symbol: String,
+    @SerializedName("stock_name") val stockName: String? = null,
+    @SerializedName("stock_id") val stockId: String,
+    @SerializedName("base_price") val basePrice: Double,
+    @SerializedName("percent_threshold") val percentThreshold: Double,
+    @SerializedName("direction") val direction: String,
+    @SerializedName("rules") val rules: List<AlertRuleResponseDto>,
+    @SerializedName("message") val message: String
 )
 
 /**

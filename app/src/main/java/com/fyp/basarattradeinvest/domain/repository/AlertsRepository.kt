@@ -1,39 +1,12 @@
 package com.fyp.basarattradeinvest.domain.repository
 
 import com.fyp.basarattradeinvest.domain.model.AlertItem
-import com.fyp.basarattradeinvest.domain.model.AlertRule
+import com.fyp.basarattradeinvest.domain.model.QuickAlertResult
 
 interface AlertsRepository {
 
-    /**
-     * Get user's alert rules.
-     */
-    suspend fun getAlertRules(): Result<List<AlertRule>>
-
-    /**
-     * Create a new alert rule.
-     */
-    suspend fun createAlertRule(
-        stockId: String?,
-        condition: String,
-        threshold: Double
-    ): Result<AlertRule>
-
-    /**
-     * Update an existing alert rule.
-     */
-    suspend fun updateAlertRule(
-        ruleId: String,
-        stockId: String? = null,
-        condition: String? = null,
-        threshold: Double? = null,
-        isActive: Boolean? = null
-    ): Result<AlertRule>
-
-    /**
-     * Delete an alert rule.
-     */
-    suspend fun deleteAlertRule(ruleId: String): Result<Unit>
+    /** Create a backend-managed quick price alert using the stock ticker. */
+    suspend fun createQuickAlertRule(symbol: String): Result<QuickAlertResult>
 
     /**
      * Get user's triggered alerts / notification history.

@@ -4,10 +4,9 @@ import com.fyp.basarattradeinvest.core.network.NetworkErrorParser
 import com.fyp.basarattradeinvest.data.mapper.AlertDtoMapper
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
 import com.fyp.basarattradeinvest.data.remote.api.AlertsApiService
-import com.fyp.basarattradeinvest.data.remote.dto.alerts.AlertRuleCreateDto
-import com.fyp.basarattradeinvest.data.remote.dto.alerts.AlertRuleUpdateDto
+import com.fyp.basarattradeinvest.data.remote.dto.alerts.QuickAlertRuleCreateDto
 import com.fyp.basarattradeinvest.domain.model.AlertItem
-import com.fyp.basarattradeinvest.domain.model.AlertRule
+import com.fyp.basarattradeinvest.domain.model.QuickAlertResult
 import com.fyp.basarattradeinvest.domain.repository.AlertsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -16,78 +15,25 @@ class AlertsRepositoryImpl(
     private val apiService: AlertsApiService = NetworkClient.alertsApiService
 ) : AlertsRepository {
 
-    override suspend fun getAlertRules(): Result<List<AlertRule>> = withContext(Dispatchers.IO) {
+    override suspend fun createQuickAlertRule(symbol: String): Result<QuickAlertResult> = withContext(Dispatchers.IO) {
         try {
-            val response = apiService.getAlertRules()
-            if (response.isSuccessful) {
-                val dtoList = response.body() ?: emptyList()
-                val domainList = dtoList.map { AlertDtoMapper.mapRuleDtoToDomain(it) }
-                Result.success(domainList)
-            } else {
-                val errorMsg = NetworkErrorParser.parseError(response)
-                Result.failure(Exception(errorMsg))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    override suspend fun createAlertRule(
-        stockId: String?,
-        condition: String,
-        threshold: Double
-    ): Result<AlertRule> = withContext(Dispatchers.IO) {
-        try {
-            val request = AlertRuleCreateDto(
-                stockId = stockId?.takeIf { it.isNotBlank() },
-                condition = condition,
-                threshold = threshold
+            val request = QuickAlertRuleCreateDto(
+                symbol = symbol.trim().uppercase().takeIf { it.isNotBlank() }
+                    ?: return@withContext Result.failure(IllegalArgumentException("A stock symbol is required"))
             )
-            val response = apiService.createAlertRule(request)
+            val response = apiService.createQuickAlertRule(request)
             if (response.isSuccessful && response.body() != null) {
-                val domain = AlertDtoMapper.mapRuleDtoToDomain(response.body()!!)
-                Result.success(domain)
-            } else {
-                val errorMsg = NetworkErrorParser.parseError(response)
-                Result.failure(Exception(errorMsg))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    override suspend fun updateAlertRule(
-        ruleId: String,
-        stockId: String?,
-        condition: String?,
-        threshold: Double?,
-        isActive: Boolean?
-    ): Result<AlertRule> = withContext(Dispatchers.IO) {
-        try {
-            val request = AlertRuleUpdateDto(
-                stockId = stockId,
-                condition = condition,
-                threshold = threshold,
-                isActive = isActive
-            )
-            val response = apiService.updateAlertRule(ruleId, request)
-            if (response.isSuccessful && response.body() != null) {
-                val domain = AlertDtoMapper.mapRuleDtoToDomain(response.body()!!)
-                Result.success(domain)
-            } else {
-                val errorMsg = NetworkErrorParser.parseError(response)
-                Result.failure(Exception(errorMsg))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    override suspend fun deleteAlertRule(ruleId: String): Result<Unit> = withContext(Dispatchers.IO) {
-        try {
-            val response = apiService.deleteAlertRule(ruleId)
-            if (response.isSuccessful) {
-                Result.success(Unit)
+                val dto = response.body()!!
+                Result.success(
+                    QuickAlertResult(
+                        symbol = dto.symbol,
+                        stockId = dto.stockId,
+                        basePrice = dto.basePrice,
+                        percentThreshold = dto.percentThreshold,
+                        direction = dto.direction,
+                        message = dto.message
+                    )
+                )
             } else {
                 val errorMsg = NetworkErrorParser.parseError(response)
                 Result.failure(Exception(errorMsg))
