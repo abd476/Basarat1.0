@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -25,7 +25,7 @@ class NewsArticleDetailFragment : Fragment() {
     private var _binding: FragmentNewsArticleDetailBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: NewsArticleDetailViewModel by viewModels()
+    private val viewModel: NewsArticleDetailViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

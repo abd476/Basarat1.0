@@ -23,9 +23,11 @@ object NetworkClient {
     // Live PSX Market API host (Real-time Market quotes, gainers, losers, volume spikes, indices, sectors)
     const val MARKET_BASE_URL = "http://16.16.26.247:8000/"
 
-    // Sanitized logging interceptor: redacts sensitive Authorization headers & tokens
+    // Sanitized logging interceptor: redacts sensitive Authorization headers & tokens.
+    // BASIC (method/url/code/duration) avoids buffering every full response body, which
+    // Level.BODY does and which adds latency to each call over the slow market backend.
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
+        level = HttpLoggingInterceptor.Level.BASIC
         redactHeader("Authorization")
         redactHeader("Cookie")
         redactHeader("Set-Cookie")
@@ -172,5 +174,21 @@ object NetworkClient {
 
     val assistantApiService: com.fyp.basarattradeinvest.data.remote.api.AssistantApiService by lazy {
         retrofit.create(com.fyp.basarattradeinvest.data.remote.api.AssistantApiService::class.java)
+    }
+
+    val ipoApiService: com.fyp.basarattradeinvest.data.remote.api.IpoApiService by lazy {
+        marketRetrofit.create(com.fyp.basarattradeinvest.data.remote.api.IpoApiService::class.java)
+    }
+
+    val etfApiService: com.fyp.basarattradeinvest.data.remote.api.EtfApiService by lazy {
+        marketRetrofit.create(com.fyp.basarattradeinvest.data.remote.api.EtfApiService::class.java)
+    }
+
+    val ipoRepository: com.fyp.basarattradeinvest.domain.repository.IpoRepository by lazy {
+        com.fyp.basarattradeinvest.data.repository.IpoRepositoryImpl(ipoApiService)
+    }
+
+    val etfRepository: com.fyp.basarattradeinvest.domain.repository.EtfRepository by lazy {
+        com.fyp.basarattradeinvest.data.repository.EtfRepositoryImpl(etfApiService)
     }
 }

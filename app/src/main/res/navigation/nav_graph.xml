@@ -600,5 +600,37 @@
             app:nullable="true"
             android:defaultValue="@null" />
     </fragment>
+    <!-- IPO & ETF Destinations -->
+    <fragment
+        android:id="@+id/ipoFragment"
+        android:name="com.fyp.basarattradeinvest.feature.ipo.IpoFragment"
+        android:label="IPOs"
+        tools:layout="@layout/fragment_ipo_host" />
+
+    <fragment
+        android:id="@+id/ipoDetailFragment"
+        android:name="com.fyp.basarattradeinvest.feature.ipo.IpoDetailFragment"
+        android:label="IPO Detail"
+        tools:layout="@layout/fragment_ipo_detail">
+        <argument
+            android:name="symbol"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/etfDirectoryFragment"
+        android:name="com.fyp.basarattradeinvest.feature.etf.EtfDirectoryFragment"
+        android:label="ETFs"
+        tools:layout="@layout/fragment_etf_directory" />
+
+    <fragment
+        android:id="@+id/etfDetailFragment"
+        android:name="com.fyp.basarattradeinvest.feature.etf.EtfDetailFragment"
+        android:label="ETF Detail"
+        tools:layout="@layout/fragment_etf_detail">
+        <argument
+            android:name="symbol"
+            app:argType="string" />
+    </fragment>
 
 </navigation>

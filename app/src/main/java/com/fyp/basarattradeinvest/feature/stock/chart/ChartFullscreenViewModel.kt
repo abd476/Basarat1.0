@@ -38,7 +38,12 @@ class ChartFullscreenViewModel(
 
         viewModelScope.launch {
             val currentState = _uiState.value
-            val isSameChart = currentSymbol == symbol && currentTimeframe == timeframe && currentState is ChartFullscreenUiState.Success
+            // Compare against what the cached state actually shows. This VM is activity-scoped,
+            // so a previous symbol/timeframe's Success must not skip this load (also fixes
+            // timeframe switches being ignored inside the freshness window).
+            val isSameChart = currentState is ChartFullscreenUiState.Success &&
+                currentState.stockDetail.symbol.equals(symbol, ignoreCase = true) &&
+                currentState.selectedTimeframe == timeframe
             if (isSameChart && System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs) {
                 return@launch
             }

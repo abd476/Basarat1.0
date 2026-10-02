@@ -34,6 +34,18 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var pendingLaunchTarget: NotificationTarget? = null
     private val handledReadIds = mutableSetOf<String>()
+
+    // Screens that legitimately live in a signed-out state; never force these to login.
+    private val authFlowDestinations = setOf(
+        R.id.splashFragment,
+        R.id.onboardingFragment,
+        R.id.loginFragment,
+        R.id.signUpFragment,
+        R.id.emailVerificationFragment,
+        R.id.forgotPasswordFragment,
+        R.id.verifyResetCodeFragment,
+        R.id.resetPasswordFragment
+    )
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { /* The app remains fully usable when notification permission is denied. */ }
@@ -128,12 +140,15 @@ class MainActivity : AppCompatActivity() {
                         if (state is AuthState.Authenticated) {
                             DeviceRegistrationScheduler.requestCurrentToken(applicationContext)
                             lifecycleScope.launch { NotificationBadgeState.refresh() }
+                            return@collect
                         }
-                        if (state != AuthState.SessionExpired) return@collect
+                        // Expired or unauthenticated: route back to login instead of leaving a
+                        // protected screen showing an on-screen "not authenticated" error.
+                        if (state != AuthState.SessionExpired && state != AuthState.Unauthenticated) {
+                            return@collect
+                        }
                         val currentDestination = navController.currentDestination ?: return@collect
-                        if (currentDestination.id == R.id.loginFragment ||
-                            currentDestination.id == R.id.splashFragment
-                        ) return@collect
+                        if (currentDestination.id in authFlowDestinations) return@collect
 
                         SessionManager.rememberPostLoginDestination(
                             destinationId = currentDestination.id,
@@ -141,7 +156,11 @@ class MainActivity : AppCompatActivity() {
                         )
                         Toast.makeText(
                             this@MainActivity,
-                            "Your session expired. Please sign in again.",
+                            if (state == AuthState.SessionExpired) {
+                                "Your session expired. Please sign in again."
+                            } else {
+                                "Please sign in to continue."
+                            },
                             Toast.LENGTH_LONG
                         ).show()
                         navController.navigate(

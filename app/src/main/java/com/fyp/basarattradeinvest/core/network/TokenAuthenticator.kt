@@ -77,7 +77,7 @@ class TokenAuthenticator(
                             .header("Authorization", "Bearer $newAccessToken")
                             .build()
                     } else {
-                        SessionManager.notifyRefreshUnavailable()
+                        SessionManager.notifySessionExpired()
                         null
                     }
                 }
@@ -87,9 +87,11 @@ class TokenAuthenticator(
                     null
                 }
                 RefreshOutcome.TEMPORARY_FAILURE -> {
-                    // Preserve credentials on offline, rate-limit, and server failures.
-                    retryRefreshAfterMillis = System.currentTimeMillis() + 5_000L
-                    SessionManager.notifyRefreshUnavailable()
+                    // Product decision: any request the backend rejects with 401 that we
+                    // cannot recover via refresh routes the user back to login, rather than
+                    // leaving a protected screen showing an on-screen "not authenticated" error.
+                    retryRefreshAfterMillis = 0L
+                    SessionManager.notifySessionExpired()
                     null
                 }
             }

@@ -127,13 +127,18 @@ class StockDetailViewModel(
     }
 
     fun ensureLoaded(symbol: String) {
-        currentSymbol = symbol.trim().uppercase()
+        val requested = symbol.trim().uppercase()
         if (isLiveUpdatesActive) {
-            liveMarketRepository.setSubscriptions(liveSubscriptionOwner, listOf(currentSymbol))
+            liveMarketRepository.setSubscriptions(liveSubscriptionOwner, listOf(requested))
         }
         ensureWatchlistMembership(symbol)
         val state = _uiState.value
-        val isSameSymbol = currentSymbol == symbol && state is StockDetailUiState.Success
+        // Compare against the symbol the cached state actually holds. This VM is
+        // activity-scoped, so a Success state from a previously-opened stock must NOT
+        // be mistaken for the requested one.
+        val isSameSymbol = state is StockDetailUiState.Success &&
+            state.detail.symbol.equals(requested, ignoreCase = true)
+        currentSymbol = requested
         val shouldLoad = !isSameSymbol || System.currentTimeMillis() - lastSuccessfulFetchAt > freshnessWindowMs
         if (shouldLoad) {
             loadStock(symbol)
@@ -147,7 +152,8 @@ class StockDetailViewModel(
         currentSymbol = symbol
         viewModelScope.launch {
             val currentState = _uiState.value
-            val isSameSymbol = currentSymbol == symbol && currentState is StockDetailUiState.Success
+            val isSameSymbol = currentState is StockDetailUiState.Success &&
+                currentState.detail.symbol.equals(symbol, ignoreCase = true)
             if (!forceRefresh && isSameSymbol && System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs) {
                 return@launch
             }

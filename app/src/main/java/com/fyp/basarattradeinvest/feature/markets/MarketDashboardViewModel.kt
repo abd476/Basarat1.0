@@ -143,19 +143,18 @@ class MarketDashboardViewModel(
                 val sectorsDeferred = async { getSectorPerformancesUseCase() }
                 val constituentsDeferred = async { fetchConstituentsForIndex(currentConstituentIndex) }
 
+                // Await only the above-the-fold data first so the dashboard paints as soon as
+                // indices/sentiment/top symbols are ready. Sectors and constituents are
+                // secondary and fill in progressively below.
                 val indicesResult = indicesDeferred.await()
                 val sentimentResult = sentimentDeferred.await()
                 val topSymbolsResult = topSymbolsDeferred.await()
-                val sectorsResult = sectorsDeferred.await()
-                val constituentsResult = constituentsDeferred.await()
                 if (loadGeneration != accountGeneration) return@launch
 
                 if (indicesResult.isSuccess || sentimentResult.isSuccess) {
                     val indices = indicesResult.getOrDefault(emptyList())
                     val sentiment = sentimentResult.getOrNull()
                     val topSymbols = topSymbolsResult.getOrDefault(emptyList())
-                    val sectors = sectorsResult.getOrDefault(emptyList())
-                    val constituents = constituentsResult.getOrDefault(emptyList())
 
                     val upCount = sentiment?.advancing ?: 0
                     val downCount = sentiment?.declining ?: 0
@@ -186,9 +185,10 @@ class MarketDashboardViewModel(
                             topSymbols = applyCachedMarketStocks(topSymbols),
                             selectedFilter = currentFilter,
                             sentiment = sentiment,
-                            sectors = sectors,
+                            sectors = emptyList(),
                             selectedConstituentIndex = currentConstituentIndex,
-                            constituents = applyCachedConstituents(constituents),
+                            constituents = emptyList(),
+                            isConstituentsLoading = true,
                             lastUpdated = currentTime,
                             liveQuotes = liveMarketRepository.quoteCache.value,
                             wsConnectionState = liveMarketRepository.connectionState.value
@@ -197,6 +197,20 @@ class MarketDashboardViewModel(
                         _uiState.value = MarketDashboardUiState.Empty
                     }
                     updateMarketSubscriptions()
+
+                    // Secondary sections: fill in once they arrive without blocking first paint.
+                    val sectors = sectorsDeferred.await().getOrDefault(emptyList())
+                    val constituents = constituentsDeferred.await().getOrDefault(emptyList())
+                    if (loadGeneration != accountGeneration) return@launch
+                    val stateAfterSecondary = _uiState.value
+                    if (stateAfterSecondary is MarketDashboardUiState.Success) {
+                        _uiState.value = stateAfterSecondary.copy(
+                            sectors = sectors,
+                            constituents = applyCachedConstituents(constituents),
+                            isConstituentsLoading = false
+                        )
+                        updateMarketSubscriptions()
+                    }
                 } else {
                     val errorMsg = indicesResult.exceptionOrNull()?.message
                         ?: sentimentResult.exceptionOrNull()?.message

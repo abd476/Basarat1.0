@@ -158,6 +158,12 @@ class MarketDashboardFragment : Fragment() {
         binding.chipSmartSelection.setOnClickListener {
             findNavController().navigate(R.id.smart_selection_fragment)
         }
+        binding.chipIpo.setOnClickListener {
+            findNavController().navigate(R.id.ipoFragment)
+        }
+        binding.chipEtf.setOnClickListener {
+            findNavController().navigate(R.id.etfDirectoryFragment)
+        }
 
         binding.fabChatAssistant.setOnClickListener {
             findNavController().navigate(R.id.assistantConversationsFragment)

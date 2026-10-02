@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -26,7 +26,7 @@ class ShariahScreeningFragment : Fragment() {
     private var _binding: FragmentShariahScreeningBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: ShariahScreeningViewModel by viewModels()
+    private val viewModel: ShariahScreeningViewModel by activityViewModels()
 
     private var currentSortColumn: String? = null
     private var isSortAscending: Boolean = true

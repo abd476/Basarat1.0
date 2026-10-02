@@ -483,11 +483,10 @@ class HomeFragment : Fragment() {
         price.text = stock.currentPrice?.let(priceFormat::format) ?: "—"
 
         val changePercent = stock.changePercent
-        if (stock.isStale) {
-            change.text = "Delayed"
-            change.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_tertiary))
-            sparkline.visibility = View.INVISIBLE
-        } else if (changePercent != null) {
+        // Prefer the real change + sparkline whenever we have a change value, even if the
+        // quote is flagged stale (PSX feed is end-of-day/delayed). Only fall back to the
+        // "Delayed" label when there is no change data at all to graph.
+        if (changePercent != null) {
             val isPos = changePercent >= 0
             val prefix = if (isPos) "+" else ""
             change.text = String.format(Locale.US, "%s%.2f%%", prefix, changePercent)
@@ -498,6 +497,10 @@ class HomeFragment : Fragment() {
             change.setTextColor(color)
             sparkline.setTrend(isPos)
             sparkline.visibility = View.VISIBLE
+        } else if (stock.isStale) {
+            change.text = "Delayed"
+            change.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_tertiary))
+            sparkline.visibility = View.INVISIBLE
         } else {
             change.text = "—"
             change.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_tertiary))

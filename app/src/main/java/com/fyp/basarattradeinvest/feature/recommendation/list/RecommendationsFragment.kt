@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -21,7 +21,7 @@ class RecommendationsFragment : Fragment() {
     private var _binding: FragmentRecommendationsBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: RecommendationsViewModel by viewModels()
+    private val viewModel: RecommendationsViewModel by activityViewModels()
     private lateinit var adapter: RecommendationsAdapter
 
     override fun onCreateView(

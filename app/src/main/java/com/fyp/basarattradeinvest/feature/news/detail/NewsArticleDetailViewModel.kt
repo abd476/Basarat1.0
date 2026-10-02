@@ -33,7 +33,10 @@ class NewsArticleDetailViewModel(
         currentArticleId = articleId
         viewModelScope.launch {
             val currentState = _uiState.value
-            val isSameArticle = currentArticleId == articleId && currentState is NewsArticleDetailUiState.Success
+            // Compare against the article the cached state actually holds; this VM is
+            // activity-scoped, so a previous article's Success must not skip this load.
+            val isSameArticle = currentState is NewsArticleDetailUiState.Success &&
+                currentState.article.id == articleId
             if (isSameArticle && System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs) {
                 return@launch
             }

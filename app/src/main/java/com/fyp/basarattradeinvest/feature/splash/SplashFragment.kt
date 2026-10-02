@@ -14,6 +14,7 @@ import com.fyp.basarattradeinvest.core.session.RefreshTokenFailure
 import com.fyp.basarattradeinvest.core.session.SessionManager
 import com.fyp.basarattradeinvest.data.repository.AuthRepositoryImpl
 import com.fyp.basarattradeinvest.databinding.FragmentSplashBinding
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -37,8 +38,9 @@ class SplashFragment : Fragment() {
         SessionManager.init(requireContext())
 
         viewLifecycleOwner.lifecycleScope.launch {
-            delay(1200)
-            if (isAdded) {
+            // Run the token refresh concurrently with a short minimum splash delay so
+            // cold start costs max(delay, refresh) instead of delay + refresh.
+            val refreshJob = async {
                 if (SessionManager.shouldRefreshAccessTokenSoon()) {
                     val refreshToken = SessionManager.getRefreshToken()
                     if (refreshToken.isNullOrBlank()) {
@@ -54,7 +56,12 @@ class SplashFragment : Fragment() {
                         }
                     }
                 }
+            }
 
+            delay(600)
+            refreshJob.await()
+
+            if (isAdded) {
                 when (SessionManager.authState.value) {
                     AuthState.SessionExpired -> findNavController().navigate(
                         R.id.loginFragment,

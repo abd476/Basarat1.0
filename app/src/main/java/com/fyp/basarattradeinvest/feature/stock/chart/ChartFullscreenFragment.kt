@@ -10,7 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -39,7 +39,7 @@ class ChartFullscreenFragment : Fragment() {
     private var _binding: FragmentChartFullscreenBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: ChartFullscreenViewModel by viewModels()
+    private val viewModel: ChartFullscreenViewModel by activityViewModels()
 
     private var candleChart: CandleStickChart? = null
     private var volumeChart: BarChart? = null

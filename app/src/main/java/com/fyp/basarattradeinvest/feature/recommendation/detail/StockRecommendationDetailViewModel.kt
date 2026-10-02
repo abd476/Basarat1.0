@@ -39,7 +39,10 @@ class StockRecommendationDetailViewModel(
         currentSymbol = symbol
         viewModelScope.launch {
             val currentState = _uiState.value
-            val isSameSymbol = currentSymbol == symbol && currentState is StockRecommendationDetailUiState.Success
+            // Compare against the symbol the cached state actually holds; this VM is
+            // activity-scoped, so a previous symbol's Success must not skip this load.
+            val isSameSymbol = currentState is StockRecommendationDetailUiState.Success &&
+                currentState.detail.symbol.equals(symbol, ignoreCase = true)
             if (!forceRefresh && isSameSymbol && System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs) {
                 return@launch
             }

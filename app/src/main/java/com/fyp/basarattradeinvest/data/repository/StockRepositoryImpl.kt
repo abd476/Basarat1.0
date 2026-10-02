@@ -17,6 +17,8 @@ import com.fyp.basarattradeinvest.domain.model.TechnicalSummary
 import com.fyp.basarattradeinvest.domain.repository.StockRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import java.util.Locale
 import kotlin.random.Random
@@ -268,28 +270,35 @@ class StockRepositoryImpl(
     }
 
     override suspend fun getStockAnalysis(symbol: String): Result<StockAnalysis> = withContext(Dispatchers.IO) {
-        val overviewRes = getStockOverview(symbol)
-        val techRes = getTechnicalIndicators(symbol)
-        val fundRes = getFundamentals(symbol)
+        coroutineScope {
+            // Fan out the three independent calls concurrently instead of serially.
+            val overviewDeferred = async { getStockOverview(symbol) }
+            val techDeferred = async { getTechnicalIndicators(symbol) }
+            val fundDeferred = async { getFundamentals(symbol) }
 
-        val detail = overviewRes.getOrElse {
-            return@withContext Result.failure(it)
-        }
+            val overviewRes = overviewDeferred.await()
+            val techRes = techDeferred.await()
+            val fundRes = fundDeferred.await()
 
-        val technical = techRes.getOrElse { emptyTechnicalAnalysis() }
-        val fundamentals = fundRes.getOrElse { FundamentalMetrics() }
+            val detail = overviewRes.getOrElse {
+                return@coroutineScope Result.failure(it)
+            }
 
-        Result.success(
-            StockAnalysis(
-                symbol = detail.symbol,
-                companyName = detail.companyName,
-                price = detail.price,
-                changeAmount = detail.changeAmount,
-                changePercent = detail.changePercent,
-                technical = technical,
-                fundamentals = fundamentals
+            val technical = techRes.getOrElse { emptyTechnicalAnalysis() }
+            val fundamentals = fundRes.getOrElse { FundamentalMetrics() }
+
+            Result.success(
+                StockAnalysis(
+                    symbol = detail.symbol,
+                    companyName = detail.companyName,
+                    price = detail.price,
+                    changeAmount = detail.changeAmount,
+                    changePercent = detail.changePercent,
+                    technical = technical,
+                    fundamentals = fundamentals
+                )
             )
-        )
+        }
     }
 
     private fun emptyTechnicalAnalysis(): TechnicalAnalysis {

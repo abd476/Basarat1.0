@@ -50,13 +50,14 @@ class StockAnalysisViewModel(
     }
 
     fun loadAnalysis(symbol: String) {
-        currentSymbol = symbol
         viewModelScope.launch {
             val currentState = _uiState.value
-            val isSameSymbol = currentSymbol == symbol && currentState is StockAnalysisUiState.Success
+            val isSameSymbol = currentState is StockAnalysisUiState.Success &&
+                currentState.analysis.symbol.equals(symbol, ignoreCase = true)
             if (isSameSymbol && System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs) {
                 return@launch
             }
+            currentSymbol = symbol
             _uiState.value = StockAnalysisUiState.Loading
 
             val result = repository.getStockAnalysis(symbol)
@@ -267,64 +268,70 @@ class StockAnalysisViewModel(
 
     private fun loadSentiment(symbol: String) {
         viewModelScope.launch {
-            // 1. Stock sentiment
-            val sentimentRes = getStockSentimentUseCase(symbol)
-            val stateAfterSent = _uiState.value
-            if (stateAfterSent is StockAnalysisUiState.Success) {
-                _uiState.value = if (sentimentRes.isSuccess) {
-                    stateAfterSent.copy(
-                        sentimentState = StockSentimentSectionState.Success(sentimentRes.getOrThrow())
-                    )
-                } else {
-                    stateAfterSent.copy(
-                        sentimentState = StockSentimentSectionState.Error(
-                            sentimentRes.exceptionOrNull()?.message ?: "Unable to load stock sentiment"
+            // Fetch the three independent sentiment endpoints concurrently. Each child
+            // updates only its own state slice; the read-modify-write is non-suspending
+            // and runs on the main dispatcher, so concurrent updates never clobber.
+            launch {
+                val sentimentRes = getStockSentimentUseCase(symbol)
+                val state = _uiState.value
+                if (state is StockAnalysisUiState.Success) {
+                    _uiState.value = if (sentimentRes.isSuccess) {
+                        state.copy(
+                            sentimentState = StockSentimentSectionState.Success(sentimentRes.getOrThrow())
                         )
-                    )
+                    } else {
+                        state.copy(
+                            sentimentState = StockSentimentSectionState.Error(
+                                sentimentRes.exceptionOrNull()?.message ?: "Unable to load stock sentiment"
+                            )
+                        )
+                    }
                 }
             }
 
-            // 2. Sentiment history
-            val historyRes = getSentimentHistoryUseCase(symbol, period = "1M")
-            val stateAfterHist = _uiState.value
-            if (stateAfterHist is StockAnalysisUiState.Success) {
-                _uiState.value = if (historyRes.isSuccess) {
-                    val history = historyRes.getOrThrow()
-                    stateAfterHist.copy(
-                        sentimentHistoryState = if (history.data.isEmpty()) {
-                            SentimentHistorySectionState.Empty
-                        } else {
-                            SentimentHistorySectionState.Success(history)
-                        }
-                    )
-                } else {
-                    stateAfterHist.copy(
-                        sentimentHistoryState = SentimentHistorySectionState.Error(
-                            historyRes.exceptionOrNull()?.message ?: "Unable to load sentiment history"
+            launch {
+                val historyRes = getSentimentHistoryUseCase(symbol, period = "1M")
+                val state = _uiState.value
+                if (state is StockAnalysisUiState.Success) {
+                    _uiState.value = if (historyRes.isSuccess) {
+                        val history = historyRes.getOrThrow()
+                        state.copy(
+                            sentimentHistoryState = if (history.data.isEmpty()) {
+                                SentimentHistorySectionState.Empty
+                            } else {
+                                SentimentHistorySectionState.Success(history)
+                            }
                         )
-                    )
+                    } else {
+                        state.copy(
+                            sentimentHistoryState = SentimentHistorySectionState.Error(
+                                historyRes.exceptionOrNull()?.message ?: "Unable to load sentiment history"
+                            )
+                        )
+                    }
                 }
             }
 
-            // 3. Sentiment news
-            val newsRes = getSentimentNewsUseCase(symbol, page = 1, limit = 15)
-            val stateAfterNews = _uiState.value
-            if (stateAfterNews is StockAnalysisUiState.Success) {
-                _uiState.value = if (newsRes.isSuccess) {
-                    val newsPage = newsRes.getOrThrow()
-                    stateAfterNews.copy(
-                        sentimentNewsState = if (newsPage.items.isEmpty()) {
-                            SentimentNewsSectionState.Empty
-                        } else {
-                            SentimentNewsSectionState.Success(newsPage.items)
-                        }
-                    )
-                } else {
-                    stateAfterNews.copy(
-                        sentimentNewsState = SentimentNewsSectionState.Error(
-                            newsRes.exceptionOrNull()?.message ?: "Unable to load sentiment news"
+            launch {
+                val newsRes = getSentimentNewsUseCase(symbol, page = 1, limit = 15)
+                val state = _uiState.value
+                if (state is StockAnalysisUiState.Success) {
+                    _uiState.value = if (newsRes.isSuccess) {
+                        val newsPage = newsRes.getOrThrow()
+                        state.copy(
+                            sentimentNewsState = if (newsPage.items.isEmpty()) {
+                                SentimentNewsSectionState.Empty
+                            } else {
+                                SentimentNewsSectionState.Success(newsPage.items)
+                            }
                         )
-                    )
+                    } else {
+                        state.copy(
+                            sentimentNewsState = SentimentNewsSectionState.Error(
+                                newsRes.exceptionOrNull()?.message ?: "Unable to load sentiment news"
+                            )
+                        )
+                    }
                 }
             }
         }
