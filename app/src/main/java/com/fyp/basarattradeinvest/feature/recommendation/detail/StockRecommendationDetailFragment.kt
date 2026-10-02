@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -24,7 +24,7 @@ class StockRecommendationDetailFragment : Fragment() {
     private var _binding: FragmentStockRecommendationDetailBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: StockRecommendationDetailViewModel by viewModels()
+    private val viewModel: StockRecommendationDetailViewModel by activityViewModels()
     private var symbol: String = "OGDC"
 
     override fun onCreateView(
@@ -44,7 +44,7 @@ class StockRecommendationDetailFragment : Fragment() {
         setupListeners()
         observeUiState()
 
-        viewModel.loadRecommendation(symbol)
+        viewModel.ensureLoaded(symbol)
     }
 
     private fun setupListeners() {
@@ -73,13 +73,13 @@ class StockRecommendationDetailFragment : Fragment() {
     }
 
     private fun renderUiState(state: StockRecommendationDetailUiState) {
-        binding.layoutLoading.visibility = View.GONE
+        binding.layoutRecommendationSkeleton.visibility = View.GONE
         binding.layoutError.visibility = View.GONE
         binding.scrollContent.visibility = View.GONE
 
         when (state) {
             is StockRecommendationDetailUiState.Loading -> {
-                binding.layoutLoading.visibility = View.VISIBLE
+                binding.layoutRecommendationSkeleton.visibility = View.VISIBLE
             }
             is StockRecommendationDetailUiState.Success -> {
                 binding.scrollContent.visibility = View.VISIBLE

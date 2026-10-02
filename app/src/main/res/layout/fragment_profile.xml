@@ -19,7 +19,7 @@
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Account &amp; Profile"
+            android:text="Profile"
             android:textColor="@color/color_text_primary"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -36,7 +36,7 @@
             app:cardCornerRadius="16dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/color_border"
-            app:strokeWidth="1dp"
+            app:strokeWidth="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_title">
@@ -139,7 +139,7 @@
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/color_border"
-            app:strokeWidth="1dp"
+            app:strokeWidth="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_section_investment">
@@ -233,7 +233,7 @@
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/color_border"
-            app:strokeWidth="1dp"
+            app:strokeWidth="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/card_risk_profile">
@@ -304,7 +304,7 @@
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/color_border"
-            app:strokeWidth="1dp"
+            app:strokeWidth="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_section_notifications">
@@ -359,7 +359,7 @@
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/color_border"
-            app:strokeWidth="1dp"
+            app:strokeWidth="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/card_notification_prefs">
@@ -389,7 +389,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="Manage alert rules, triggers &amp; notification history"
+                        android:text="View triggered price alerts and notification history"
                         android:textColor="@color/color_text_secondary"
                         android:textSize="13sp" />
                 </LinearLayout>
@@ -414,7 +414,7 @@
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/color_border"
-            app:strokeWidth="1dp"
+            app:strokeWidth="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/card_alerts">
@@ -469,7 +469,7 @@
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/color_border"
-            app:strokeWidth="1dp"
+            app:strokeWidth="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/card_notifications_inbox">
@@ -524,7 +524,7 @@
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/color_border"
-            app:strokeWidth="1dp"
+            app:strokeWidth="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/card_community_profile">
@@ -592,7 +592,7 @@
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/color_border"
-            app:strokeWidth="1dp"
+            app:strokeWidth="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_section_admin">
@@ -669,7 +669,7 @@
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/color_border"
-            app:strokeWidth="1dp"
+            app:strokeWidth="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_section_security">

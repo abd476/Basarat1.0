@@ -27,23 +27,23 @@ object ShariahDtoMapper {
     }
 
     fun mapConstituent(dto: Kmi30ConstituentDto): Kmi30Constituent {
-        val price = dto.current ?: dto.ldcp ?: 0.0
-        val changePct = dto.changePct ?: 0.0
-        val change = dto.change ?: 0.0
-        val weight = dto.weightPct ?: 0.0
+        val price = dto.current ?: dto.ldcp
+        val changePct = dto.changePct
+        val change = dto.change
+        val weight = dto.weightPct
         val purifRateStr = if (dto.purificationRate != null) {
             String.format(Locale.US, "%.4f%%", dto.purificationRate * 100)
         } else {
-            "0.0000%"
+            "N/A"
         }
 
         return Kmi30Constituent(
             symbol = dto.symbol,
             name = dto.name ?: dto.symbol,
-            currentPrice = price,
-            change = change,
-            changePct = changePct,
-            weightPct = weight,
+            currentPrice = price ?: Double.NaN,
+            change = change ?: Double.NaN,
+            changePct = changePct ?: Double.NaN,
+            weightPct = weight ?: Double.NaN,
             sector = dto.sector ?: "PSX Constituent",
             isCompliant = dto.isShariahCompliant ?: true,
             purificationRate = purifRateStr
@@ -51,16 +51,18 @@ object ShariahDtoMapper {
     }
 
     fun mapConstituentToLegacyStock(item: Kmi30Constituent): ShariahStock {
+        val purificationText = item.purificationRate.takeIf { !it.isNullOrBlank() && it != "N/A" } ?: "N/A"
+
         return ShariahStock(
             symbol = item.symbol,
             code = item.symbol,
             companyName = item.name,
             sector = item.sector,
-            price = item.currentPrice,
-            changePercent = item.changePct,
-            purificationRate = item.purificationRate,
+            price = item.currentPrice.takeIf { it.isFinite() } ?: Double.NaN,
+            changePercent = item.changePct.takeIf { it.isFinite() } ?: Double.NaN,
+            purificationRate = purificationText,
             isKmi30 = true,
-            hasDividend = item.purificationRate != "0.0000%"
+            hasDividend = purificationText != "N/A" && purificationText != "0.0000%"
         )
     }
 

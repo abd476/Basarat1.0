@@ -77,8 +77,11 @@ object CommunityDtoMapper {
     }
 
     fun mapPostListDtoToDomain(dto: CommunityPostListResponseDto): CommunityPostList {
+        val mappedPosts = dto.posts.map { mapPostDtoToDomain(it) }
+            .distinctBy { it.id }
+            .distinctBy { "${it.authorDisplayName}_${it.content.trim()}" }
         return CommunityPostList(
-            posts = dto.posts.map { mapPostDtoToDomain(it) },
+            posts = mappedPosts,
             cursor = dto.cursor,
             hasMore = dto.hasMore
         )
@@ -144,6 +147,31 @@ object CommunityDtoMapper {
             reason = dto.reason,
             details = dto.details,
             createdAt = dto.effectiveTimestamp
+        )
+    }
+
+    fun mapCommentDtoToDomain(dto: com.fyp.basarattradeinvest.data.remote.dto.community.CommunityCommentResponseDto): com.fyp.basarattradeinvest.domain.model.community.CommunityComment {
+        return com.fyp.basarattradeinvest.domain.model.community.CommunityComment(
+            id = dto.id,
+            postId = dto.postId,
+            authorId = dto.authorId,
+            authorUsername = dto.authorUsername,
+            authorFullName = dto.authorFullName,
+            authorAvatarUrl = dto.authorAvatarUrl,
+            parentCommentId = dto.parentCommentId,
+            content = dto.content,
+            status = dto.status ?: "PUBLISHED",
+            replyCount = dto.replyCount,
+            createdAt = dto.createdAt,
+            updatedAt = dto.updatedAt
+        )
+    }
+
+    fun mapCommentListDtoToDomain(dto: com.fyp.basarattradeinvest.data.remote.dto.community.CommunityCommentListResponseDto): com.fyp.basarattradeinvest.domain.model.community.CommunityCommentList {
+        return com.fyp.basarattradeinvest.domain.model.community.CommunityCommentList(
+            comments = dto.comments.map { mapCommentDtoToDomain(it) },
+            cursor = dto.cursor,
+            hasMore = dto.hasMore
         )
     }
 }

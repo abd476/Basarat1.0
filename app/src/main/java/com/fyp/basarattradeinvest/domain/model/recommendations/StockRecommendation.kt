@@ -7,7 +7,8 @@ data class StockRecommendation(
     val compositeScore: Double,
     val targetPrice: Double?,
     val stopLoss: Double?,
-    val summary: String
+    val summary: String,
+    val currentPrice: Double? = null
 )
 
 enum class RecommendationSignal(val label: String) {

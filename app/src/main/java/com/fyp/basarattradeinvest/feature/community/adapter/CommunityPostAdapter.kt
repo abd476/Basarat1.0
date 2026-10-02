@@ -12,7 +12,9 @@ import com.fyp.basarattradeinvest.databinding.ItemCommunityPostBinding
 import com.fyp.basarattradeinvest.domain.model.community.CommunityPost
 
 class CommunityPostAdapter(
-    private val onPostClick: ((CommunityPost) -> Unit)? = null
+    private val onPostClick: ((CommunityPost) -> Unit)? = null,
+    private val onLikeClick: ((CommunityPost) -> Unit)? = null,
+    private val onCommentClick: ((CommunityPost) -> Unit)? = null
 ) : ListAdapter<CommunityPost, CommunityPostAdapter.PostViewHolder>(PostDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -63,6 +65,17 @@ class CommunityPostAdapter(
                 binding.tvLikeCount.setTextColor(ContextCompat.getColor(context, R.color.color_text_secondary))
             }
 
+            // Like click
+            binding.layoutLikes.setOnClickListener {
+                onLikeClick?.invoke(post)
+            }
+
+            // Comment click
+            binding.layoutComments.setOnClickListener {
+                onCommentClick?.invoke(post)
+            }
+
+            // Whole item click
             binding.root.setOnClickListener {
                 onPostClick?.invoke(post)
             }

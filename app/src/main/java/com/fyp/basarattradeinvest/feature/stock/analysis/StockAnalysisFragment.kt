@@ -5,31 +5,43 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentStockAnalysisBinding
+import com.fyp.basarattradeinvest.domain.model.CandleEntry
 import com.fyp.basarattradeinvest.domain.model.ForecastDirection
 import com.fyp.basarattradeinvest.domain.model.ForecastHistory
 import com.fyp.basarattradeinvest.domain.model.StockAnalysis
 import com.fyp.basarattradeinvest.domain.model.StockForecast
 import com.fyp.basarattradeinvest.domain.model.TechnicalSignal
+import com.fyp.basarattradeinvest.domain.model.sentiment.SentimentHistory
+import com.fyp.basarattradeinvest.domain.model.sentiment.SentimentNewsItem
+import com.fyp.basarattradeinvest.domain.model.sentiment.StockSentiment
+import com.fyp.basarattradeinvest.feature.sentiment.adapter.SentimentNewsAdapter
 import com.fyp.basarattradeinvest.feature.stock.analysis.adapter.ForecastHistoryAdapter
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class StockAnalysisFragment : Fragment() {
 
     private var _binding: FragmentStockAnalysisBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: StockAnalysisViewModel by viewModels()
+    private val viewModel: StockAnalysisViewModel by activityViewModels()
     private val forecastHistoryAdapter by lazy { ForecastHistoryAdapter() }
+    private val sentimentNewsAdapter by lazy { SentimentNewsAdapter() }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,17 +57,28 @@ class StockAnalysisFragment : Fragment() {
 
         val symbol = arguments?.getString("symbol") ?: "LUCK"
 
-        setupRecyclerView()
+        binding.tvStockSymbol.text = symbol
+        binding.tvCompanyName.text = ""
+        binding.tvCurrentPrice.text = "--"
+        binding.tvPriceChange.visibility = View.GONE
+
+        setupRecyclerViews()
         setupClickListeners()
         observeUiState()
 
-        viewModel.loadAnalysis(symbol)
+        viewModel.ensureLoaded(symbol)
     }
 
-    private fun setupRecyclerView() {
+    private fun setupRecyclerViews() {
         binding.rvForecastHistory.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = forecastHistoryAdapter
+            isNestedScrollingEnabled = false
+        }
+
+        binding.rvSentimentNews.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = sentimentNewsAdapter
             isNestedScrollingEnabled = false
         }
     }
@@ -65,6 +88,11 @@ class StockAnalysisFragment : Fragment() {
             findNavController().navigateUp()
         }
 
+        binding.btnAnalysisRetry.setOnClickListener {
+            viewModel.retry()
+        }
+
+        // Analysis navigation tabs (in-place tab row)
         binding.btnTabTechnical.setOnClickListener {
             viewModel.selectTab(AnalysisTab.TECHNICAL)
         }
@@ -78,33 +106,30 @@ class StockAnalysisFragment : Fragment() {
         }
 
         binding.btnTabSentiment.setOnClickListener {
-            // Sentiment navigates to dedicated SentimentFragment
-            val symbol = arguments?.getString("symbol") ?: "LUCK"
-            val bundle = androidx.core.os.bundleOf("symbol" to symbol)
-            findNavController().navigate(R.id.action_stockAnalysis_to_sentiment, bundle)
+            viewModel.selectTab(AnalysisTab.SENTIMENT)
         }
 
-        // Horizon selection pills
-        binding.btnHorizon1d.setOnClickListener {
-            viewModel.selectHorizon("1D")
+        // Price History Range pills
+        binding.btnRange1d.setOnClickListener { viewModel.selectPriceRange("1D") }
+        binding.btnRange1w.setOnClickListener { viewModel.selectPriceRange("1W") }
+        binding.btnRange1m.setOnClickListener { viewModel.selectPriceRange("1M") }
+        binding.btnRange1y.setOnClickListener { viewModel.selectPriceRange("1Y") }
+
+        binding.btnChartRetry.setOnClickListener {
+            viewModel.retryPriceHistory()
         }
 
-        binding.btnHorizon1w.setOnClickListener {
-            viewModel.selectHorizon("1W")
-        }
-
-        binding.btnHorizon1m.setOnClickListener {
-            viewModel.selectHorizon("1M")
-        }
+        // Forecast Horizon selection pills
+        binding.btnHorizon1d.setOnClickListener { viewModel.selectHorizon("1D") }
+        binding.btnHorizon1w.setOnClickListener { viewModel.selectHorizon("1W") }
+        binding.btnHorizon1m.setOnClickListener { viewModel.selectHorizon("1M") }
 
         // Retry buttons
-        binding.btnForecastRetry.setOnClickListener {
-            viewModel.retryForecast()
-        }
-
-        binding.btnHistoryRetry.setOnClickListener {
-            viewModel.retryHistory()
-        }
+        binding.btnForecastRetry.setOnClickListener { viewModel.retryForecast() }
+        binding.btnHistoryRetry.setOnClickListener { viewModel.retryHistory() }
+        binding.btnStockSentimentRetry.setOnClickListener { viewModel.retrySentiment() }
+        binding.btnSentimentHistoryRetry.setOnClickListener { viewModel.retrySentiment() }
+        binding.btnSentimentNewsRetry.setOnClickListener { viewModel.retrySentiment() }
     }
 
     private fun observeUiState() {
@@ -113,19 +138,54 @@ class StockAnalysisFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     when (state) {
                         is StockAnalysisUiState.Loading -> {
-                            // Subtle loading if needed
-                        }
-                        is StockAnalysisUiState.Success -> {
-                            renderAnalysis(state.analysis)
-                            renderTab(state.selectedTab)
-                            renderForecastSection(state.forecastState, state.selectedHorizon)
-                            renderForecastHistorySection(state.historyState)
-                        }
-                        is StockAnalysisUiState.Empty -> {
-                            // Handle empty state
+                            binding.layoutAnalysisLoading.visibility = View.VISIBLE
+                            binding.layoutAnalysisError.visibility = View.GONE
+                            binding.layoutTechnicalContent.visibility = View.GONE
+                            binding.layoutFundamentalsContent.visibility = View.GONE
+                            binding.layoutForecastContent.visibility = View.GONE
+                            binding.layoutSentimentContent.visibility = View.GONE
+                            binding.layoutAnalysisLoading.bringToFront()
                         }
                         is StockAnalysisUiState.Error -> {
-                            // Handle analysis error
+                            binding.layoutAnalysisLoading.visibility = View.GONE
+                            binding.layoutAnalysisError.visibility = View.VISIBLE
+                            binding.tvAnalysisErrorMsg.text = state.message
+                            binding.layoutTechnicalContent.visibility = View.GONE
+                            binding.layoutFundamentalsContent.visibility = View.GONE
+                            binding.layoutForecastContent.visibility = View.GONE
+                            binding.layoutSentimentContent.visibility = View.GONE
+                        }
+                        is StockAnalysisUiState.Empty -> {
+                            binding.layoutAnalysisLoading.visibility = View.GONE
+                            binding.layoutAnalysisError.visibility = View.VISIBLE
+                            binding.tvAnalysisErrorMsg.text = "No stock analysis data available."
+                            binding.layoutTechnicalContent.visibility = View.GONE
+                            binding.layoutFundamentalsContent.visibility = View.GONE
+                            binding.layoutForecastContent.visibility = View.GONE
+                            binding.layoutSentimentContent.visibility = View.GONE
+                        }
+                        is StockAnalysisUiState.Success -> {
+                            binding.layoutAnalysisLoading.visibility = View.GONE
+                            binding.layoutAnalysisError.visibility = View.GONE
+
+                            renderHeader(state.analysis)
+                            renderTab(state.selectedTab)
+
+                            // Technical & Price History
+                            renderTechnicalSummary(state.analysis)
+                            renderPriceHistorySection(state.priceHistoryState, state.selectedPriceRange)
+
+                            // Fundamentals
+                            renderFundamentals(state.analysis)
+
+                            // Forecast
+                            renderForecastSection(state.forecastState, state.selectedHorizon)
+                            renderForecastHistorySection(state.historyState)
+
+                            // Sentiment
+                            renderStockSentiment(state.sentimentState)
+                            renderSentimentHistory(state.sentimentHistoryState)
+                            renderSentimentNews(state.sentimentNewsState)
                         }
                     }
                 }
@@ -133,57 +193,147 @@ class StockAnalysisFragment : Fragment() {
         }
     }
 
-    private fun renderAnalysis(analysis: StockAnalysis) {
-        // Stock Identity
+    // ─────────────────────────────────────────────────────────────────────────
+    //  HEADER & TAB NAVIGATION
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun renderHeader(analysis: StockAnalysis) {
         binding.tvStockSymbol.text = analysis.symbol
         binding.tvCompanyName.text = analysis.companyName
-        binding.tvCurrentPrice.text = String.format("PKR %.2f", analysis.price)
 
-        val sign = if (analysis.changeAmount >= 0) "+" else ""
-        binding.tvPriceChange.text = String.format("%s%.2f (%s%.2f%%)", sign, analysis.changeAmount, sign, analysis.changePercent)
+        if (analysis.price > 0.0) {
+            binding.tvCurrentPrice.text = String.format(Locale.US, "PKR %.2f", analysis.price)
 
-        val isPositive = analysis.changeAmount >= 0
-        binding.tvPriceChange.setTextColor(
-            ContextCompat.getColor(
-                requireContext(),
-                if (isPositive) R.color.color_positive else R.color.color_negative
+            val sign = if (analysis.changeAmount >= 0) "+" else ""
+            binding.tvPriceChange.text = String.format(
+                Locale.US,
+                "%s%.2f (%s%.2f%%)",
+                sign,
+                analysis.changeAmount,
+                sign,
+                analysis.changePercent
             )
-        )
-        binding.tvPriceChange.setBackgroundResource(
-            if (isPositive) R.drawable.bg_badge_positive else R.drawable.bg_badge_negative
-        )
+            binding.tvPriceChange.visibility = View.VISIBLE
 
-        // Technical Summary
+            val isPositive = analysis.changeAmount >= 0
+            binding.tvPriceChange.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    if (isPositive) R.color.color_positive else R.color.color_negative
+                )
+            )
+            binding.tvPriceChange.setBackgroundResource(
+                if (isPositive) R.drawable.bg_badge_positive else R.drawable.bg_badge_negative
+            )
+        } else {
+            binding.tvCurrentPrice.text = "Price unavailable"
+            binding.tvPriceChange.visibility = View.GONE
+        }
+    }
+
+    private fun renderTab(tab: AnalysisTab) {
+        val primaryText = ContextCompat.getColor(requireContext(), R.color.color_text_primary)
+        val secondaryText = ContextCompat.getColor(requireContext(), R.color.color_text_secondary)
+
+        // Reset all tabs
+        binding.tvTabTechnicalText.setTextColor(secondaryText)
+        binding.indicatorTabTechnical.visibility = View.INVISIBLE
+
+        binding.tvTabFundamentalsText.setTextColor(secondaryText)
+        binding.indicatorTabFundamentals.visibility = View.INVISIBLE
+
+        binding.tvTabForecastText.setTextColor(secondaryText)
+        binding.indicatorTabForecast.visibility = View.INVISIBLE
+
+        binding.tvTabSentimentText.setTextColor(secondaryText)
+        binding.indicatorTabSentiment.visibility = View.INVISIBLE
+
+        when (tab) {
+            AnalysisTab.TECHNICAL -> {
+                binding.tvTabTechnicalText.setTextColor(primaryText)
+                binding.indicatorTabTechnical.visibility = View.VISIBLE
+
+                binding.layoutTechnicalContent.visibility = View.VISIBLE
+                binding.layoutFundamentalsContent.visibility = View.GONE
+                binding.layoutForecastContent.visibility = View.GONE
+                binding.layoutSentimentContent.visibility = View.GONE
+            }
+            AnalysisTab.FUNDAMENTALS -> {
+                binding.tvTabFundamentalsText.setTextColor(primaryText)
+                binding.indicatorTabFundamentals.visibility = View.VISIBLE
+
+                binding.layoutTechnicalContent.visibility = View.GONE
+                binding.layoutFundamentalsContent.visibility = View.VISIBLE
+                binding.layoutForecastContent.visibility = View.GONE
+                binding.layoutSentimentContent.visibility = View.GONE
+            }
+            AnalysisTab.FORECAST -> {
+                binding.tvTabForecastText.setTextColor(primaryText)
+                binding.indicatorTabForecast.visibility = View.VISIBLE
+
+                binding.layoutTechnicalContent.visibility = View.GONE
+                binding.layoutFundamentalsContent.visibility = View.GONE
+                binding.layoutForecastContent.visibility = View.VISIBLE
+                binding.layoutSentimentContent.visibility = View.GONE
+            }
+            AnalysisTab.SENTIMENT -> {
+                binding.tvTabSentimentText.setTextColor(primaryText)
+                binding.indicatorTabSentiment.visibility = View.VISIBLE
+
+                binding.layoutTechnicalContent.visibility = View.GONE
+                binding.layoutFundamentalsContent.visibility = View.GONE
+                binding.layoutForecastContent.visibility = View.GONE
+                binding.layoutSentimentContent.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  TAB 1: TECHNICAL ANALYSIS
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun renderTechnicalSummary(analysis: StockAnalysis) {
         val tech = analysis.technical
         binding.tvCountBuy.text = tech.summary.buyCount.toString()
         binding.tvCountNeutral.text = tech.summary.neutralCount.toString()
         binding.tvCountSell.text = tech.summary.sellCount.toString()
         binding.tvProminentSignal.text = tech.summary.overallSignal.label
+        applyBadgeStyle(binding.tvProminentSignal, tech.summary.overallSignal)
 
-        // Oscillators
+        // Dynamically adjust meter weights to match backend signals breakdown
+        val total = (tech.summary.buyCount + tech.summary.neutralCount + tech.summary.sellCount).toFloat()
+        if (total > 0f) {
+            (binding.barBuy.layoutParams as LinearLayout.LayoutParams).weight = tech.summary.buyCount.toFloat()
+            (binding.barNeutral.layoutParams as LinearLayout.LayoutParams).weight = tech.summary.neutralCount.toFloat()
+            (binding.barSell.layoutParams as LinearLayout.LayoutParams).weight = tech.summary.sellCount.toFloat()
+            binding.layoutMeterBar.requestLayout()
+        }
+
+        // Oscillators mapping (real backend data only)
         tech.oscillators.forEach { indicator ->
-            when (indicator.name) {
-                "RSI (14)" -> {
+            when {
+                indicator.name.contains("RSI", ignoreCase = true) -> {
                     binding.tvValRsi.text = indicator.value
                     binding.tvBadgeRsi.text = indicator.signal.label
                     applyBadgeStyle(binding.tvBadgeRsi, indicator.signal)
                 }
-                "MACD (12,26,9)" -> {
+                indicator.name.contains("MACD", ignoreCase = true) -> {
                     binding.tvValMacd.text = indicator.value
                     binding.tvBadgeMacd.text = indicator.signal.label
                     applyBadgeStyle(binding.tvBadgeMacd, indicator.signal)
                 }
-                "ADX (14)" -> {
+                indicator.name.contains("ADX", ignoreCase = true) -> {
                     binding.tvValAdx.text = indicator.value
                     binding.tvBadgeAdx.text = indicator.signal.label
                     applyBadgeStyle(binding.tvBadgeAdx, indicator.signal)
                 }
-                "Stochastic (14,3)" -> {
+                indicator.name.contains("Stochastic", ignoreCase = true) -> {
+                    binding.rowStoch.visibility = View.VISIBLE
                     binding.tvValStoch.text = indicator.value
                     binding.tvBadgeStoch.text = indicator.signal.label
                     applyBadgeStyle(binding.tvBadgeStoch, indicator.signal)
                 }
-                "Bollinger Bands" -> {
+                indicator.name.contains("Bollinger", ignoreCase = true) -> {
                     binding.tvValBb.text = indicator.value
                     binding.tvBadgeBb.text = indicator.signal.label
                     applyBadgeStyle(binding.tvBadgeBb, indicator.signal)
@@ -191,84 +341,159 @@ class StockAnalysisFragment : Fragment() {
             }
         }
 
-        // Fundamentals
-        val fund = analysis.fundamentals
-        binding.tvValPe.text = String.format("%.2fx", fund.peRatio)
-        binding.tvValForwardPe.text = String.format("%.2fx", fund.forwardPe)
-        binding.tvValPb.text = String.format("%.2fx", fund.pbRatio)
-        binding.tvValEvEbitda.text = String.format("%.2fx", fund.evEbitda)
-        binding.tvValPeg.text = String.format("%.2f", fund.pegRatio)
-
-        binding.tvValEps.text = String.format("PKR %.2f", fund.eps)
-        binding.tvValRoe.text = String.format("%.1f%%", fund.roe)
-        binding.tvValRoa.text = String.format("%.1f%%", fund.roa)
-        binding.tvValDivYield.text = String.format("%.2f%%", fund.dividendYield)
-        binding.tvValNetMargin.text = String.format("%.1f%%", fund.netProfitMargin)
-
-        binding.tvValDe.text = String.format("%.2f", fund.debtToEquity)
-        binding.tvValCurrentRatio.text = String.format("%.2fx", fund.currentRatio)
-        binding.tvValQuickRatio.text = String.format("%.2fx", fund.quickRatio)
-        binding.tvValInterestCoverage.text = String.format("%.1fx", fund.interestCoverage)
-
-        binding.tvValRevenue.text = String.format("%s (+%.1f%%)", fund.revenueTTM, fund.revenueGrowthYoY)
-        binding.tvValNetIncome.text = String.format("%s (+%.1f%%)", fund.netIncomeTTM, fund.netIncomeGrowthYoY)
-        binding.tvValFcf.text = fund.freeCashFlowTTM
-    }
-
-    private fun renderTab(tab: AnalysisTab) {
-        val activeBg = ContextCompat.getDrawable(requireContext(), R.drawable.bg_segmented_tab_active)
-        val primaryText = ContextCompat.getColor(requireContext(), R.color.color_text_primary)
-        val secondaryText = ContextCompat.getColor(requireContext(), R.color.color_text_secondary)
-
-        // Reset all 3 content tabs (Sentiment is navigation-only, no local content)
-        binding.btnTabTechnical.background = null
-        binding.tvTabTechnicalText.setTextColor(secondaryText)
-        binding.btnTabFundamentals.background = null
-        binding.tvTabFundamentalsText.setTextColor(secondaryText)
-        binding.btnTabForecast.background = null
-        binding.tvTabForecastText.setTextColor(secondaryText)
-        binding.btnTabSentiment.background = null
-        binding.tvTabSentimentText.setTextColor(secondaryText)
-
-        when (tab) {
-            AnalysisTab.TECHNICAL -> {
-                binding.btnTabTechnical.background = activeBg
-                binding.tvTabTechnicalText.setTextColor(primaryText)
-
-                binding.layoutTechnicalContent.visibility = View.VISIBLE
-                binding.layoutFundamentalsContent.visibility = View.GONE
-                binding.layoutForecastContent.visibility = View.GONE
-            }
-            AnalysisTab.FUNDAMENTALS -> {
-                binding.btnTabFundamentals.background = activeBg
-                binding.tvTabFundamentalsText.setTextColor(primaryText)
-
-                binding.layoutTechnicalContent.visibility = View.GONE
-                binding.layoutFundamentalsContent.visibility = View.VISIBLE
-                binding.layoutForecastContent.visibility = View.GONE
-            }
-            AnalysisTab.FORECAST -> {
-                binding.btnTabForecast.background = activeBg
-                binding.tvTabForecastText.setTextColor(primaryText)
-
-                binding.layoutTechnicalContent.visibility = View.GONE
-                binding.layoutFundamentalsContent.visibility = View.GONE
-                binding.layoutForecastContent.visibility = View.VISIBLE
-            }
-            AnalysisTab.SENTIMENT -> {
-                // Navigation-only tab — content shown in SentimentFragment
-                binding.btnTabSentiment.background = activeBg
-                binding.tvTabSentimentText.setTextColor(primaryText)
-
-                binding.layoutTechnicalContent.visibility = View.GONE
-                binding.layoutFundamentalsContent.visibility = View.GONE
-                binding.layoutForecastContent.visibility = View.GONE
+        // Moving averages mapping
+        tech.movingAverages.forEach { ma ->
+            if (ma.name.contains("SMA", ignoreCase = true)) {
+                binding.tvValSma.text = ma.value
+                binding.tvBadgeSma.text = ma.signal.label
+                applyBadgeStyle(binding.tvBadgeSma, ma.signal)
             }
         }
     }
 
+    private fun renderPriceHistorySection(state: PriceHistorySectionState, selectedRange: String) {
+        val activeBg = ContextCompat.getDrawable(requireContext(), R.drawable.bg_segmented_tab_active)
+        val primaryText = ContextCompat.getColor(requireContext(), R.color.color_text_primary)
+        val secondaryText = ContextCompat.getColor(requireContext(), R.color.color_text_secondary)
+
+        binding.btnRange1d.background = if (selectedRange == "1D") activeBg else null
+        binding.btnRange1d.setTextColor(if (selectedRange == "1D") primaryText else secondaryText)
+
+        binding.btnRange1w.background = if (selectedRange == "1W") activeBg else null
+        binding.btnRange1w.setTextColor(if (selectedRange == "1W") primaryText else secondaryText)
+
+        binding.btnRange1m.background = if (selectedRange == "1M") activeBg else null
+        binding.btnRange1m.setTextColor(if (selectedRange == "1M") primaryText else secondaryText)
+
+        binding.btnRange1y.background = if (selectedRange == "1Y") activeBg else null
+        binding.btnRange1y.setTextColor(if (selectedRange == "1Y") primaryText else secondaryText)
+
+        when (state) {
+            is PriceHistorySectionState.Loading -> {
+                binding.chartPriceProgress.visibility = View.VISIBLE
+                binding.layoutChartError.visibility = View.GONE
+                binding.tvChartEmpty.visibility = View.GONE
+                binding.chartPriceHistory.visibility = View.GONE
+            }
+            is PriceHistorySectionState.Error -> {
+                binding.chartPriceProgress.visibility = View.GONE
+                binding.layoutChartError.visibility = View.VISIBLE
+                binding.tvChartEmpty.visibility = View.GONE
+                binding.chartPriceHistory.visibility = View.GONE
+            }
+            is PriceHistorySectionState.Empty -> {
+                binding.chartPriceProgress.visibility = View.GONE
+                binding.layoutChartError.visibility = View.GONE
+                binding.tvChartEmpty.visibility = View.VISIBLE
+                binding.chartPriceHistory.visibility = View.GONE
+            }
+            is PriceHistorySectionState.Success -> {
+                binding.chartPriceProgress.visibility = View.GONE
+                binding.layoutChartError.visibility = View.GONE
+                binding.tvChartEmpty.visibility = View.GONE
+                binding.chartPriceHistory.visibility = View.VISIBLE
+                renderPriceChart(state.candles)
+            }
+        }
+    }
+
+    private fun renderPriceChart(candles: List<CandleEntry>) {
+        val chart = binding.chartPriceHistory
+        if (candles.isEmpty()) {
+            chart.visibility = View.GONE
+            binding.tvChartEmpty.visibility = View.VISIBLE
+            return
+        }
+
+        val ctx = requireContext()
+        val isUp = (candles.lastOrNull()?.close ?: 0f) >= (candles.firstOrNull()?.open ?: 0f)
+        val lineColor = ContextCompat.getColor(
+            ctx,
+            if (isUp) R.color.color_positive else R.color.color_negative
+        )
+        val chartTextColor = ContextCompat.getColor(ctx, R.color.color_text_secondary)
+        val chartGridColor = ContextCompat.getColor(ctx, R.color.color_divider)
+
+        val entries = candles.mapIndexed { index, candle ->
+            Entry(index.toFloat(), candle.close)
+        }
+
+        val dataSet = LineDataSet(entries, "Price").apply {
+            color = lineColor
+            lineWidth = 2f
+            setDrawCircles(false)
+            setDrawValues(false)
+            mode = LineDataSet.Mode.CUBIC_BEZIER
+            setDrawFilled(true)
+            fillAlpha = 35
+            fillColor = lineColor
+        }
+
+        chart.apply {
+            data = LineData(dataSet)
+            description.isEnabled = false
+            legend.isEnabled = false
+            setTouchEnabled(true)
+            isDragEnabled = true
+            setScaleEnabled(false)
+            setPinchZoom(false)
+
+            xAxis.apply {
+                position = XAxis.XAxisPosition.BOTTOM
+                textColor = chartTextColor
+                setDrawGridLines(false)
+                setDrawAxisLine(true)
+                axisLineColor = chartGridColor
+                textSize = 9f
+            }
+
+            axisLeft.apply {
+                textColor = chartTextColor
+                gridColor = chartGridColor
+                setDrawAxisLine(false)
+                textSize = 9f
+            }
+
+            axisRight.isEnabled = false
+            animateX(400)
+            invalidate()
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  TAB 2: FUNDAMENTALS
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun renderFundamentals(analysis: StockAnalysis) {
+        val fund = analysis.fundamentals
+
+        binding.tvValPe.text = formatMultiple(fund.peRatio)
+        binding.tvValForwardPe.text = formatMultiple(fund.forwardPe)
+        binding.tvValPb.text = formatMultiple(fund.pbRatio)
+        binding.tvValPeg.text = formatRatio(fund.pegRatio)
+        binding.tvValEvEbitda.text = formatMultiple(fund.evEbitda)
+
+        binding.tvValEps.text = formatCurrency(fund.eps)
+        binding.tvValRoe.text = formatPercent(fund.roe)
+        binding.tvValRoa.text = formatPercent(fund.roa)
+        binding.tvValNetMargin.text = formatPercent(fund.netProfitMargin)
+        binding.tvValDivYield.text = formatPercent(fund.dividendYield)
+
+        binding.tvValDe.text = formatRatio(fund.debtToEquity)
+        binding.tvValCurrentRatio.text = formatMultiple(fund.currentRatio)
+        binding.tvValQuickRatio.text = formatMultiple(fund.quickRatio)
+        binding.tvValInterestCoverage.text = formatMultiple(fund.interestCoverage)
+
+        binding.tvValRevenue.text = fund.revenueTTM ?: "N/A"
+        binding.tvValNetIncome.text = fund.netIncomeTTM ?: "N/A"
+        binding.tvValFcf.text = fund.freeCashFlowTTM ?: "N/A"
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  TAB 3: FORECAST
+    // ─────────────────────────────────────────────────────────────────────────
+
     private fun renderForecastSection(state: ForecastSectionState, selectedHorizon: String) {
-        // Update Horizon Selector Buttons
         val activeBg = ContextCompat.getDrawable(requireContext(), R.drawable.bg_segmented_tab_active)
         val primaryText = ContextCompat.getColor(requireContext(), R.color.color_text_primary)
         val secondaryText = ContextCompat.getColor(requireContext(), R.color.color_text_secondary)
@@ -315,8 +540,13 @@ class StockAnalysisFragment : Fragment() {
         // Dates
         binding.tvForecastDates.text = "Target: ${forecast.targetDate} (As of ${forecast.asOfDate})"
 
+        val displayDirection = when (forecast.direction) {
+            ForecastDirection.SIDEWAYS -> "Neutral"
+            else -> forecast.direction.label
+        }
+
         // Direction Badge
-        binding.tvForecastDirectionBadge.text = forecast.direction.label.uppercase()
+        binding.tvForecastDirectionBadge.text = displayDirection.uppercase()
         when (forecast.direction) {
             ForecastDirection.BULLISH -> {
                 binding.tvForecastDirectionBadge.setBackgroundResource(R.drawable.bg_badge_positive)
@@ -354,71 +584,38 @@ class StockAnalysisFragment : Fragment() {
         val confPct = (forecast.confidence * 100).toInt()
         binding.tvForecastConfidence.text = "$confPct% Confidence"
 
-        // Meta (Model version & Gate reason)
-        val modelVer = forecast.modelVersion ?: "ensemble"
-        val gateReason = forecast.gateReason?.takeIf { it.isNotBlank() } ?: "standard"
-        binding.tvForecastMeta.text = "Model: ${modelVer.replaceFirstChar { it.uppercase() }} • Decision: $gateReason"
+        val targetPriceText = forecast.targetPrice?.let { String.format(Locale.US, "PKR %.2f", it) } ?: "N/A"
+        val upsideText = forecast.upsidePct?.let {
+            if (it >= 0.0) String.format(Locale.US, "%+,.1f%% upside", it)
+            else String.format(Locale.US, "%,.1f%% downside", it)
+        } ?: "--"
+
+        val summaryDirection = when (forecast.direction) {
+            ForecastDirection.BULLISH -> "Bullish"
+            ForecastDirection.BEARISH -> "Bearish"
+            ForecastDirection.SIDEWAYS -> "Neutral"
+        }
+
+        binding.tvForecastSummary.text = "Overall forecast: $summaryDirection. Target $targetPriceText with $upsideText."
+        binding.tvForecastMeta.text = "Forecast confidence: $confPct% • Target date: ${forecast.targetDate}"
 
         // Prices & Targets
-        binding.tvForecastTargetPrice.text = forecast.targetPrice?.let { String.format("PKR %.2f", it) } ?: "N/A"
-        binding.tvForecastUpsidePct.text = forecast.upsidePct?.let { String.format("%+,.1f%%", it) } ?: "--"
+        binding.tvForecastTargetPrice.text = targetPriceText
+        binding.tvForecastUpsidePct.text = upsideText
 
-        binding.tvForecastStopLoss.text = forecast.stopLoss?.let { String.format("PKR %.2f", it) } ?: "N/A"
-        binding.tvForecastDownsidePct.text = forecast.downsidePct?.let { String.format("%+,.1f%%", it) } ?: "--"
+        binding.tvForecastStopLoss.text = forecast.stopLoss?.let { String.format(Locale.US, "PKR %.2f", it) } ?: "N/A"
+        binding.tvForecastDownsidePct.text = forecast.downsidePct?.let {
+            if (it <= 0.0) String.format(Locale.US, "%,.1f%% risk", it)
+            else String.format(Locale.US, "%+,.1f%% stop", it)
+        } ?: "--"
 
-        binding.tvForecastRiskReward.text = forecast.riskRewardRatio?.let { String.format("%.2f", it) } ?: "N/A"
-        binding.tvForecastCurrentPrice.text = forecast.currentPrice?.let { String.format("Ref: PKR %.2f", it) } ?: ""
+        binding.tvForecastRiskReward.text = forecast.riskRewardRatio?.let { String.format(Locale.US, "%.2f", it) } ?: "N/A"
+        binding.tvForecastCurrentPrice.text = forecast.currentPrice?.let { String.format(Locale.US, "Ref: PKR %.2f", it) } ?: ""
 
-        // Probability Distribution Meter
-        val probs = forecast.probabilities
-        if (probs != null) {
-            binding.cardForecastProbabilities.visibility = View.VISIBLE
-            val bullWeight = probs.bullish.coerceAtLeast(1.0).toFloat()
-            val sideWeight = probs.sideways.coerceAtLeast(1.0).toFloat()
-            val bearWeight = probs.bearish.coerceAtLeast(1.0).toFloat()
-
-            (binding.barProbBullish.layoutParams as LinearLayout.LayoutParams).weight = bullWeight
-            (binding.barProbSideways.layoutParams as LinearLayout.LayoutParams).weight = sideWeight
-            (binding.barProbBearish.layoutParams as LinearLayout.LayoutParams).weight = bearWeight
-            binding.layoutProbMeter.requestLayout()
-
-            binding.tvProbBullishVal.text = String.format("Bullish: %.1f%%", probs.bullish)
-            binding.tvProbSidewaysVal.text = String.format("Sideways: %.1f%%", probs.sideways)
-            binding.tvProbBearishVal.text = String.format("Bearish: %.1f%%", probs.bearish)
-        } else {
-            binding.cardForecastProbabilities.visibility = View.GONE
-        }
-
-        // Model Ensemble Breakdown (GRU vs XGBoost)
-        val gruModel = forecast.models["gru"]
-        val xgbModel = forecast.models["xgb"]
-        if (gruModel != null || xgbModel != null) {
-            binding.cardModelBreakdown.visibility = View.VISIBLE
-            if (gruModel != null) {
-                binding.tvGruDirection.text = gruModel.direction.uppercase()
-                binding.tvGruPcts.text = String.format("%.0f%% Bull • %.0f%% Bear • Gap %.1fpp", gruModel.bullishPct, gruModel.bearishPct, gruModel.gapPp)
-            }
-            if (xgbModel != null) {
-                binding.tvXgbDirection.text = xgbModel.direction.uppercase()
-                binding.tvXgbPcts.text = String.format("%.0f%% Bull • %.0f%% Bear • Gap %.1fpp", xgbModel.bullishPct, xgbModel.bearishPct, xgbModel.gapPp)
-            }
-        } else {
-            binding.cardModelBreakdown.visibility = View.GONE
-        }
-
-        // Market Context
-        val mc = forecast.marketContext
-        if (mc != null) {
-            binding.cardMarketContext.visibility = View.VISIBLE
-            val m5d = mc.marketReturn5d?.let { String.format("%+,.1f%%", it * 100) } ?: "N/A"
-            val m20d = mc.marketReturn20d?.let { String.format("%+,.1f%%", it * 100) } ?: "N/A"
-            binding.tvContextMarketReturns.text = "$m5d / $m20d"
-
-            val rel20d = mc.stockRelativeReturn20d?.let { String.format("%+,.1f%% relative", it * 100) } ?: "N/A"
-            binding.tvContextStockRelative.text = rel20d
-        } else {
-            binding.cardMarketContext.visibility = View.GONE
-        }
+        // Keep only the user-facing result and key price/risk values. Hide model internals.
+        binding.cardForecastProbabilities.visibility = View.GONE
+        binding.cardModelBreakdown.visibility = View.GONE
+        binding.cardMarketContext.visibility = View.GONE
     }
 
     private fun renderForecastHistorySection(state: ForecastHistorySectionState) {
@@ -455,11 +652,10 @@ class StockAnalysisFragment : Fragment() {
     }
 
     private fun bindForecastHistoryData(history: ForecastHistory) {
-        // Overall accuracy from API
         val acc = history.accuracy
         if (acc != null) {
             val accPct = if (acc <= 1.0) acc * 100 else acc
-            binding.tvHistoryAccuracyVal.text = String.format("%.1f%%", accPct)
+            binding.tvHistoryAccuracyVal.text = String.format(Locale.US, "%.1f%%", accPct)
         } else {
             binding.tvHistoryAccuracyVal.text = "N/A"
         }
@@ -468,23 +664,241 @@ class StockAnalysisFragment : Fragment() {
         forecastHistoryAdapter.submitList(history.history)
     }
 
-    private fun applyBadgeStyle(textView: android.widget.TextView, signal: TechnicalSignal) {
+    // ─────────────────────────────────────────────────────────────────────────
+    //  TAB 4: SENTIMENT
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun renderStockSentiment(state: StockSentimentSectionState) {
+        when (state) {
+            is StockSentimentSectionState.Loading -> {
+                binding.progressStockSentiment.visibility = View.VISIBLE
+                binding.layoutStockSentimentError.visibility = View.GONE
+                binding.cardStockSentiment.visibility = View.GONE
+            }
+            is StockSentimentSectionState.Error -> {
+                binding.progressStockSentiment.visibility = View.GONE
+                binding.layoutStockSentimentError.visibility = View.VISIBLE
+                binding.cardStockSentiment.visibility = View.GONE
+                binding.tvStockSentimentErrorMsg.text = state.message
+            }
+            is StockSentimentSectionState.Empty -> {
+                binding.progressStockSentiment.visibility = View.GONE
+                binding.layoutStockSentimentError.visibility = View.GONE
+                binding.cardStockSentiment.visibility = View.GONE
+            }
+            is StockSentimentSectionState.Success -> {
+                binding.progressStockSentiment.visibility = View.GONE
+                binding.layoutStockSentimentError.visibility = View.GONE
+                binding.cardStockSentiment.visibility = View.VISIBLE
+                bindStockSentimentData(state.sentiment)
+            }
+        }
+    }
+
+    private fun bindStockSentimentData(data: StockSentiment) {
+        val ctx = requireContext()
+        binding.tvSentimentStockLabel.text = data.label.uppercase(Locale.getDefault())
+
+        val scoreText = String.format(Locale.US, "%+.2f", data.score)
+        binding.tvSentimentStockScoreValue.text = scoreText
+        val scoreColor = when {
+            data.score > 0f -> ContextCompat.getColor(ctx, R.color.color_positive)
+            data.score < 0f -> ContextCompat.getColor(ctx, R.color.color_negative)
+            else -> ContextCompat.getColor(ctx, R.color.color_text_secondary)
+        }
+        binding.tvSentimentStockScoreValue.setTextColor(scoreColor)
+
+        // Map score -1.0..+1.0 onto 0..100% of track width
+        val pct = ((data.score + 1f) / 2f).coerceIn(0f, 1f)
+        binding.viewSentimentScoreFill.post {
+            val totalWidth = (binding.viewSentimentScoreFill.parent as? View)?.width ?: 0
+            if (totalWidth > 0) {
+                val fillWidth = (pct * totalWidth).toInt()
+                val params = binding.viewSentimentScoreFill.layoutParams
+                params.width = fillWidth
+                binding.viewSentimentScoreFill.layoutParams = params
+
+                val barColor = when {
+                    data.score > 0.05f -> ContextCompat.getColor(ctx, R.color.color_positive)
+                    data.score < -0.05f -> ContextCompat.getColor(ctx, R.color.color_negative)
+                    else -> ContextCompat.getColor(ctx, R.color.color_neutral)
+                }
+                binding.viewSentimentScoreFill.setBackgroundColor(barColor)
+            }
+        }
+
+        binding.tvSentimentArticleCount.text = "Articles Scored: ${data.articleCount}"
+
+        val trendIcon = when (data.trend.lowercase(Locale.getDefault())) {
+            "improving" -> "↑"
+            "declining" -> "↓"
+            else -> "→"
+        }
+        binding.tvSentimentTrend.text = "Trend: ${data.trend.replaceFirstChar { it.uppercase() }} $trendIcon"
+
+        if (data.newsSourceCount > 0 || data.communitySourceCount > 0) {
+            binding.tvSentimentSourcesCount.visibility = View.VISIBLE
+            binding.tvSentimentSourcesCount.text = "${data.newsSourceCount} news items • ${data.communitySourceCount} community signals"
+        } else {
+            binding.tvSentimentSourcesCount.visibility = View.GONE
+        }
+    }
+
+    private fun renderSentimentHistory(state: SentimentHistorySectionState) {
+        when (state) {
+            is SentimentHistorySectionState.Loading -> {
+                binding.progressSentimentHistory.visibility = View.VISIBLE
+                binding.layoutSentimentHistoryError.visibility = View.GONE
+                binding.tvSentimentHistoryEmpty.visibility = View.GONE
+                binding.chartSentimentHistory.visibility = View.GONE
+            }
+            is SentimentHistorySectionState.Error -> {
+                binding.progressSentimentHistory.visibility = View.GONE
+                binding.layoutSentimentHistoryError.visibility = View.VISIBLE
+                binding.tvSentimentHistoryEmpty.visibility = View.GONE
+                binding.chartSentimentHistory.visibility = View.GONE
+            }
+            is SentimentHistorySectionState.Empty -> {
+                binding.progressSentimentHistory.visibility = View.GONE
+                binding.layoutSentimentHistoryError.visibility = View.GONE
+                binding.tvSentimentHistoryEmpty.visibility = View.VISIBLE
+                binding.chartSentimentHistory.visibility = View.GONE
+            }
+            is SentimentHistorySectionState.Success -> {
+                binding.progressSentimentHistory.visibility = View.GONE
+                binding.layoutSentimentHistoryError.visibility = View.GONE
+                binding.tvSentimentHistoryEmpty.visibility = View.GONE
+                binding.chartSentimentHistory.visibility = View.VISIBLE
+                renderSentimentChart(state.history)
+            }
+        }
+    }
+
+    private fun renderSentimentChart(history: SentimentHistory) {
+        val chart = binding.chartSentimentHistory
+        val ctx = requireContext()
+
+        val chartTextColor = ContextCompat.getColor(ctx, R.color.color_text_secondary)
+        val chartGridColor = ContextCompat.getColor(ctx, R.color.color_divider)
+        val greenColor = ContextCompat.getColor(ctx, R.color.color_basarat_green)
+
+        val entries = history.data.mapIndexed { index, point ->
+            Entry(index.toFloat(), point.score)
+        }
+
+        if (entries.isEmpty()) {
+            chart.visibility = View.GONE
+            binding.tvSentimentHistoryEmpty.visibility = View.VISIBLE
+            return
+        }
+
+        val dataSet = LineDataSet(entries, "Sentiment Score").apply {
+            color = greenColor
+            setCircleColor(greenColor)
+            circleRadius = 2.5f
+            setDrawCircleHole(false)
+            setDrawValues(false)
+            lineWidth = 2f
+            mode = LineDataSet.Mode.CUBIC_BEZIER
+            setDrawFilled(true)
+            fillAlpha = 30
+            fillColor = greenColor
+        }
+
+        chart.apply {
+            data = LineData(dataSet)
+            description.isEnabled = false
+            legend.isEnabled = false
+            setTouchEnabled(true)
+            setScaleEnabled(false)
+
+            xAxis.apply {
+                position = XAxis.XAxisPosition.BOTTOM
+                textColor = chartTextColor
+                gridColor = chartGridColor
+                setDrawGridLines(false)
+                textSize = 9f
+            }
+
+            axisLeft.apply {
+                textColor = chartTextColor
+                gridColor = chartGridColor
+                axisMinimum = -1f
+                axisMaximum = 1f
+                textSize = 9f
+            }
+
+            axisRight.isEnabled = false
+            animateX(350)
+            invalidate()
+        }
+    }
+
+    private fun renderSentimentNews(state: SentimentNewsSectionState) {
+        when (state) {
+            is SentimentNewsSectionState.Loading -> {
+                binding.progressSentimentNews.visibility = View.VISIBLE
+                binding.layoutSentimentNewsError.visibility = View.GONE
+                binding.tvSentimentNewsEmpty.visibility = View.GONE
+                binding.rvSentimentNews.visibility = View.GONE
+            }
+            is SentimentNewsSectionState.Error -> {
+                binding.progressSentimentNews.visibility = View.GONE
+                binding.layoutSentimentNewsError.visibility = View.VISIBLE
+                binding.tvSentimentNewsEmpty.visibility = View.GONE
+                binding.rvSentimentNews.visibility = View.GONE
+                binding.tvSentimentNewsErrorMsg.text = state.message
+            }
+            is SentimentNewsSectionState.Empty -> {
+                binding.progressSentimentNews.visibility = View.GONE
+                binding.layoutSentimentNewsError.visibility = View.GONE
+                binding.tvSentimentNewsEmpty.visibility = View.VISIBLE
+                binding.rvSentimentNews.visibility = View.GONE
+            }
+            is SentimentNewsSectionState.Success -> {
+                binding.progressSentimentNews.visibility = View.GONE
+                binding.layoutSentimentNewsError.visibility = View.GONE
+                binding.tvSentimentNewsEmpty.visibility = View.GONE
+                binding.rvSentimentNews.visibility = View.VISIBLE
+                sentimentNewsAdapter.submitList(state.news)
+            }
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  FORMATTING & BADGE HELPERS
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun formatMultiple(value: Double?): String =
+        value?.let { String.format(Locale.US, "%.2fx", it) } ?: "N/A"
+
+    private fun formatRatio(value: Double?): String =
+        value?.let { String.format(Locale.US, "%.2f", it) } ?: "N/A"
+
+    private fun formatPercent(value: Double?): String =
+        value?.let { String.format(Locale.US, "%.2f%%", it) } ?: "N/A"
+
+    private fun formatCurrency(value: Double?): String =
+        value?.let { String.format(Locale.US, "PKR %.2f", it) } ?: "N/A"
+
+    private fun applyBadgeStyle(textView: TextView, signal: TechnicalSignal) {
+        val ctx = requireContext()
         when (signal) {
             TechnicalSignal.STRONG_BUY -> {
                 textView.setBackgroundResource(R.drawable.bg_badge_strong_buy)
-                textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_basarat_green))
+                textView.setTextColor(ContextCompat.getColor(ctx, R.color.color_basarat_green))
             }
             TechnicalSignal.BUY -> {
                 textView.setBackgroundResource(R.drawable.bg_badge_positive)
-                textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_positive))
+                textView.setTextColor(ContextCompat.getColor(ctx, R.color.color_positive))
             }
             TechnicalSignal.NEUTRAL -> {
                 textView.setBackgroundResource(R.drawable.bg_badge_neutral)
-                textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_secondary))
+                textView.setTextColor(ContextCompat.getColor(ctx, R.color.color_text_secondary))
             }
             TechnicalSignal.SELL, TechnicalSignal.STRONG_SELL -> {
                 textView.setBackgroundResource(R.drawable.bg_badge_negative)
-                textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_negative))
+                textView.setTextColor(ContextCompat.getColor(ctx, R.color.color_negative))
             }
         }
     }

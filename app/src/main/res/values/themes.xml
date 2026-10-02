@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="BasaratBottomNavActiveIndicator">
+        <item name="android:width">52dp</item>
+        <item name="android:height">52dp</item>
+        <item name="android:color">@color/nav_item_selected_background</item>
+        <item name="shapeAppearance">@style/BasaratBottomNavIndicatorShape</item>
+    </style>
+
+    <style name="BasaratBottomNavIndicatorShape" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="BasaratBottomNavLabel" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">9sp</item>
+        <item name="android:fontFamily">sans</item>
+    </style>
+
     <!-- Base Application Theme (DayNight) -->
     <style name="Theme.BasaratTradeInvest" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Brand Colors -->
@@ -19,7 +36,7 @@
         <!-- Status Bar & Navigation Bar (Adapts Light / Dark) -->
         <item name="android:statusBarColor">@color/color_background</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
-        <item name="android:navigationBarColor">@color/color_surface</item>
+        <item name="android:navigationBarColor">@color/color_background</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
     </style>
 </resources>

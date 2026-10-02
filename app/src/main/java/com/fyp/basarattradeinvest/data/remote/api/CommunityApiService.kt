@@ -48,6 +48,41 @@ interface CommunityApiService {
     ): Response<CommunityPostListResponseDto>
 
     /**
+     * Like a post (204 No Content)
+     */
+    @POST("api/v1/community/posts/{post_id}/like")
+    suspend fun likePost(
+        @Path("post_id") postId: String
+    ): Response<Unit>
+
+    /**
+     * Unlike a post (204 No Content)
+     */
+    @retrofit2.http.DELETE("api/v1/community/posts/{post_id}/like")
+    suspend fun unlikePost(
+        @Path("post_id") postId: String
+    ): Response<Unit>
+
+    /**
+     * Get comments for a post
+     */
+    @GET("api/v1/community/posts/{post_id}/comments")
+    suspend fun getComments(
+        @Path("post_id") postId: String,
+        @Query("cursor") cursor: String? = null,
+        @Query("limit") limit: Int? = 50
+    ): Response<com.fyp.basarattradeinvest.data.remote.dto.community.CommunityCommentListResponseDto>
+
+    /**
+     * Create a comment on a post
+     */
+    @POST("api/v1/community/posts/{post_id}/comments")
+    suspend fun createComment(
+        @Path("post_id") postId: String,
+        @retrofit2.http.Body body: com.fyp.basarattradeinvest.data.remote.dto.community.CommunityCommentCreateDto
+    ): Response<com.fyp.basarattradeinvest.data.remote.dto.community.CommunityCommentResponseDto>
+
+    /**
      * Get user's followers
      */
     @GET("api/v1/community/users/{user_id}/followers")

@@ -239,15 +239,23 @@ class MarketRepositoryImpl(
             return@withContext Result.success(getFallbackSectors())
         }
         try {
-            val response = apiService.getMarketSentimentOverview()
-            if (response.isSuccessful && response.body()?.sectorPerformance != null) {
-                val sectors = response.body()!!.sectorPerformance!!.map { it.toDomain() }
+            val response = apiService.getSectorPerformances()
+            if (response.isSuccessful && response.body()?.sectors != null) {
+                val sectors = response.body()!!.sectors!!.map { it.toDomain() }
                 Result.success(sectors)
             } else {
-                Result.success(getFallbackSectors())
+                // Check if sentiment overview has sector performance before failing
+                val sentimentRes = apiService.getMarketSentimentOverview()
+                if (sentimentRes.isSuccessful && sentimentRes.body()?.sectorPerformance != null) {
+                    val sectors = sentimentRes.body()!!.sectorPerformance!!.map { it.toDomain() }
+                    Result.success(sectors)
+                } else {
+                    val error = NetworkErrorParser.parseError(response)
+                    Result.failure(Exception(error))
+                }
             }
         } catch (e: Exception) {
-            Result.success(getFallbackSectors())
+            Result.failure(e)
         }
     }
 

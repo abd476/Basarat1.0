@@ -20,7 +20,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import com.fyp.basarattradeinvest.R
+import com.fyp.basarattradeinvest.core.session.SessionManager
 import com.fyp.basarattradeinvest.databinding.FragmentLoginBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
@@ -44,10 +46,27 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        styleTitle()
         setupPasswordVisibilityToggle()
         setupBottomLink()
         setupClickListeners()
         observeUiState()
+    }
+
+    private fun styleTitle() {
+        val title = getString(R.string.welcome_back_title)
+        val spannable = SpannableString(title)
+        val accentStart = title.lastIndexOf("Back")
+        if (accentStart >= 0) {
+            val accent = ContextCompat.getColor(requireContext(), R.color.color_basarat_green)
+            spannable.setSpan(
+                ForegroundColorSpan(accent),
+                accentStart,
+                title.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        binding.tvTitle.text = spannable
     }
 
     private fun setupPasswordVisibilityToggle() {
@@ -71,8 +90,8 @@ class LoginFragment : Fragment() {
         val signUpStart = fullText.indexOf(getString(R.string.sign_up))
         if (signUpStart != -1) {
             val signUpEnd = signUpStart + getString(R.string.sign_up).length
-            val blackColor = ContextCompat.getColor(requireContext(), R.color.color_text_primary)
-            spannable.setSpan(ForegroundColorSpan(blackColor), signUpStart, signUpEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            val accentColor = ContextCompat.getColor(requireContext(), R.color.color_basarat_green)
+            spannable.setSpan(ForegroundColorSpan(accentColor), signUpStart, signUpEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             spannable.setSpan(StyleSpan(Typeface.BOLD), signUpStart, signUpEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
 
@@ -121,7 +140,19 @@ class LoginFragment : Fragment() {
                             binding.pbLoading.visibility = View.GONE
                             binding.tvSignInLabel.visibility = View.VISIBLE
                             binding.btnSignIn.isEnabled = true
-                            findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                            val pendingDestination = SessionManager.consumePostLoginDestination()
+                            if (pendingDestination == null) {
+                                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                            } else {
+                                findNavController().navigate(
+                                    pendingDestination.destinationId,
+                                    pendingDestination.arguments,
+                                    navOptions {
+                                        popUpTo(R.id.loginFragment) { inclusive = true }
+                                        launchSingleTop = true
+                                    }
+                                )
+                            }
                             viewModel.resetState()
                         }
                         is AuthUiState.Error -> {

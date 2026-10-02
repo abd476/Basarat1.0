@@ -8,11 +8,11 @@ import com.fyp.basarattradeinvest.domain.model.assistant.AssistantConversation
 import com.fyp.basarattradeinvest.domain.model.assistant.AssistantMessage
 import com.fyp.basarattradeinvest.domain.model.assistant.MessageRole
 import com.fyp.basarattradeinvest.domain.repository.AssistantRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 /**
@@ -165,7 +165,8 @@ class AssistantViewModel(
     /**
      * Send a message using the real backend SSE streaming endpoint.
      * Progressively updates a single assistant message in the chat list.
-     * Falls back to standard REST if streaming fails before any chunks arrive.
+     * A stream failure is surfaced instead of automatically resending the message via REST,
+     * which could create a duplicate if the server accepted the streamed request.
      */
     fun sendMessage(userMessage: String) {
         val trimmed = userMessage.trim()
@@ -207,17 +208,8 @@ class AssistantViewModel(
         streamingJob?.cancel()
         streamingJob = viewModelScope.launch {
             val accumulated = StringBuilder()
-            var hasReceivedChunk = false
-
-            repository.sendMessageStream(trimmed, currentConversationId)
-                .catch { e ->
-                    if (!hasReceivedChunk) {
-                        fallbackToRest(trimmed, assistantMsgId)
-                    } else {
-                        handleStreamError(e.message ?: "Stream interrupted", assistantMsgId, accumulated.toString())
-                    }
-                }
-                .collect { result ->
+            try {
+                repository.sendMessageStream(trimmed, currentConversationId).collect { result ->
                     result.fold(
                         onSuccess = { event ->
                             when (event) {
@@ -227,7 +219,6 @@ class AssistantViewModel(
                                     }
                                 }
                                 is com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Chunk -> {
-                                    hasReceivedChunk = true
                                     if (!event.conversationId.isNullOrBlank() && currentConversationId == null) {
                                         currentConversationId = event.conversationId
                                     }
@@ -247,23 +238,44 @@ class AssistantViewModel(
                                     updateStreamingMessage(assistantMsgId, finalText, isStreaming = false)
                                 }
                                 is com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent.Error -> {
-                                    if (!hasReceivedChunk) {
-                                        fallbackToRest(trimmed, assistantMsgId)
-                                    } else {
-                                        handleStreamError(event.error, assistantMsgId, accumulated.toString())
+                                    if (!event.conversationId.isNullOrBlank() && currentConversationId == null) {
+                                        currentConversationId = event.conversationId
                                     }
+                                    handleStreamError(event.error, assistantMsgId, accumulated.toString())
                                 }
                             }
                         },
                         onFailure = { error ->
-                            if (!hasReceivedChunk) {
-                                fallbackToRest(trimmed, assistantMsgId)
-                            } else {
-                                handleStreamError(error.message ?: "Streaming error", assistantMsgId, accumulated.toString())
-                            }
+                            handleStreamError(error.message ?: "Streaming error", assistantMsgId, accumulated.toString())
                         }
                     )
                 }
+
+                // Treat EOF without a terminal event as completion if chunks arrived; otherwise
+                // leave a visible error instead of a permanent loading indicator.
+                val state = _chatState.value
+                val assistantStillStreaming = state is ChatUiState.Active &&
+                    state.messages.any { it.id == assistantMsgId && it.isStreaming }
+                if (assistantStillStreaming) {
+                    if (accumulated.isNotEmpty()) {
+                        updateStreamingMessage(assistantMsgId, accumulated.toString(), isStreaming = false)
+                    } else {
+                        handleStreamError(
+                            "The response stream ended before a reply arrived. Please try again.",
+                            assistantMsgId,
+                            ""
+                        )
+                    }
+                }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (error: Exception) {
+                handleStreamError(
+                    error.message ?: "Streaming error",
+                    assistantMsgId,
+                    accumulated.toString()
+                )
+            }
         }
     }
 
@@ -324,53 +336,6 @@ class AssistantViewModel(
                 errorMessage = errorMessage
             )
         }
-    }
-
-    /**
-     * Fallback: send message via standard REST (non-streaming).
-     * Replaces the empty streaming assistant placeholder with the REST response.
-     */
-    private suspend fun fallbackToRest(userMessage: String, assistantMsgId: String) {
-        repository.sendMessage(userMessage, currentConversationId).fold(
-            onSuccess = { chatResult ->
-                if (currentConversationId == null) {
-                    currentConversationId = chatResult.conversationId
-                }
-
-                val state = _chatState.value
-                if (state is ChatUiState.Active) {
-                    val updatedMessages = state.messages.map { msg ->
-                        if (msg.id == assistantMsgId) {
-                            msg.copy(
-                                content = chatResult.message,
-                                isStreaming = false
-                            )
-                        } else msg
-                    }
-                    _chatState.value = state.copy(
-                        messages = updatedMessages,
-                        isSending = false,
-                        isStreaming = false,
-                        streamingContent = null,
-                        errorMessage = null
-                    )
-                }
-            },
-            onFailure = { error ->
-                val state = _chatState.value
-                if (state is ChatUiState.Active) {
-                    // Remove the empty assistant message placeholder if REST also failed
-                    val updatedMessages = state.messages.filter { it.id != assistantMsgId }
-                    _chatState.value = state.copy(
-                        messages = updatedMessages,
-                        isSending = false,
-                        isStreaming = false,
-                        streamingContent = null,
-                        errorMessage = error.message ?: "Failed to get response"
-                    )
-                }
-            }
-        )
     }
 
     fun regenerateLastResponse() {

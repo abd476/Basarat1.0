@@ -65,7 +65,7 @@ interface MarketApiService {
     @GET("api/v1/markets/sentiment")
     suspend fun getMarketSentiment(): Response<MarketSentimentDto>
 
-    @GET("api/v1/markets/sectors")
-    suspend fun getSectorPerformances(): Response<List<SectorPerformanceDto>>
+    @GET("api/v1/market/sectors/performance")
+    suspend fun getSectorPerformances(): Response<com.fyp.basarattradeinvest.data.remote.dto.market.SectorPerformanceListResponseDto>
 }
 

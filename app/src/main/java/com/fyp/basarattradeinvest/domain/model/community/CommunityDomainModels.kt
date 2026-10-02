@@ -186,3 +186,33 @@ data class ModerationAction(
     val createdAt: String
 )
 
+/**
+ * Domain representation of a Community Comment.
+ */
+data class CommunityComment(
+    val id: String,
+    val postId: String,
+    val authorId: String,
+    val authorUsername: String?,
+    val authorFullName: String?,
+    val authorAvatarUrl: String?,
+    val parentCommentId: String?,
+    val content: String,
+    val status: String,
+    val replyCount: Int,
+    val createdAt: String,
+    val updatedAt: String?
+) {
+    val authorDisplayName: String
+        get() = if (!authorFullName.isNullOrBlank()) authorFullName else if (!authorUsername.isNullOrBlank()) "@$authorUsername" else "Trader #${authorId.take(8)}"
+}
+
+/**
+ * Paginated comment list domain model.
+ */
+data class CommunityCommentList(
+    val comments: List<CommunityComment>,
+    val cursor: String?,
+    val hasMore: Boolean
+)
+

@@ -5,8 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -14,8 +15,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentCommunityProfileBinding
+import com.fyp.basarattradeinvest.domain.model.community.CommunityPost
 import com.fyp.basarattradeinvest.domain.model.community.CommunityProfile
 import com.fyp.basarattradeinvest.feature.community.adapter.CommunityPostAdapter
+import com.fyp.basarattradeinvest.feature.community.comments.CommunityCommentsBottomSheetDialogFragment
 import kotlinx.coroutines.launch
 
 class CommunityProfileFragment : Fragment() {
@@ -23,7 +26,7 @@ class CommunityProfileFragment : Fragment() {
     private var _binding: FragmentCommunityProfileBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: CommunityProfileViewModel by viewModels {
+    private val viewModel: CommunityProfileViewModel by activityViewModels {
         CommunityProfileViewModel.Factory()
     }
 
@@ -52,7 +55,7 @@ class CommunityProfileFragment : Fragment() {
         setupListeners()
         observeUiState()
 
-        viewModel.loadProfile(userId = targetUserId)
+        viewModel.ensureLoaded(userId = targetUserId)
     }
 
     private fun setupToolbar() {
@@ -74,6 +77,12 @@ class CommunityProfileFragment : Fragment() {
                 } else {
                     Toast.makeText(requireContext(), "Community Post #${post.id.take(6)}", Toast.LENGTH_SHORT).show()
                 }
+            },
+            onLikeClick = { post ->
+                viewModel.toggleLike(post)
+            },
+            onCommentClick = { post ->
+                showCommentsBottomSheet(post)
             }
         )
 
@@ -81,6 +90,14 @@ class CommunityProfileFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = postAdapter
         }
+    }
+
+    private fun showCommentsBottomSheet(post: CommunityPost) {
+        val bottomSheet = CommunityCommentsBottomSheetDialogFragment.newInstance(post.id)
+        bottomSheet.onCommentAdded = { newCount ->
+            viewModel.updateCommentCount(post.id, newCount)
+        }
+        bottomSheet.show(childFragmentManager, CommunityCommentsBottomSheetDialogFragment.TAG)
     }
 
     private fun setupListeners() {
@@ -110,6 +127,35 @@ class CommunityProfileFragment : Fragment() {
             findNavController().navigate(R.id.communityFollowersFragment, bundle)
         }
 
+        binding.tabAllFeed.setOnClickListener {
+            viewModel.setFeedMode(CommunityFeedMode.COMMUNITY_FEED)
+        }
+
+        binding.tabMyPosts.setOnClickListener {
+            viewModel.setFeedMode(CommunityFeedMode.MY_POSTS)
+        }
+
+        binding.chipFilterAll.setOnClickListener {
+            viewModel.setCommunityFilter(postType = null, stockSymbol = null)
+            binding.chipFilterAll.isChecked = true
+            binding.chipFilterStock.isChecked = false
+            binding.chipFilterGeneral.isChecked = false
+        }
+
+        binding.chipFilterStock.setOnClickListener {
+            viewModel.setCommunityFilter(postType = "STOCK", stockSymbol = null)
+            binding.chipFilterAll.isChecked = false
+            binding.chipFilterStock.isChecked = true
+            binding.chipFilterGeneral.isChecked = false
+        }
+
+        binding.chipFilterGeneral.setOnClickListener {
+            viewModel.setCommunityFilter(postType = "GENERAL_MARKET", stockSymbol = null)
+            binding.chipFilterAll.isChecked = false
+            binding.chipFilterStock.isChecked = false
+            binding.chipFilterGeneral.isChecked = true
+        }
+
         binding.fabCreatePost.setOnClickListener {
             showCreatePostDialog()
         }
@@ -133,14 +179,17 @@ class CommunityProfileFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     when (state) {
                         is CommunityProfileUiState.Loading -> {
-                            binding.progressBar.visibility = View.VISIBLE
+                            binding.layoutProfileSkeleton.visibility = View.VISIBLE
+                            binding.progressBar.visibility = View.GONE
                             binding.layoutError.visibility = View.GONE
                         }
                         is CommunityProfileUiState.Success -> {
+                            binding.layoutProfileSkeleton.visibility = View.GONE
                             binding.progressBar.visibility = View.GONE
                             binding.layoutError.visibility = View.GONE
                             binding.swipeRefresh.isRefreshing = false
                             bindProfile(state.profile)
+                            bindFeedModeTabs(state.feedMode, state.profile.isOwnProfile)
                             postAdapter.submitList(state.posts)
 
                             if (state.posts.isEmpty()) {
@@ -150,6 +199,7 @@ class CommunityProfileFragment : Fragment() {
                             }
                         }
                         is CommunityProfileUiState.Error -> {
+                            binding.layoutProfileSkeleton.visibility = View.GONE
                             binding.progressBar.visibility = View.GONE
                             binding.swipeRefresh.isRefreshing = false
                             binding.layoutError.visibility = View.VISIBLE
@@ -161,8 +211,37 @@ class CommunityProfileFragment : Fragment() {
         }
     }
 
+    private fun bindFeedModeTabs(mode: CommunityFeedMode, isOwnProfile: Boolean) {
+        if (!isOwnProfile && targetUserId != null) {
+            binding.layoutFeedTabs.visibility = View.GONE
+            binding.tvSectionPosts.text = "Posts by ${binding.tvProfileFullName.text}"
+            return
+        }
+
+        binding.layoutFeedTabs.visibility = View.VISIBLE
+        val context = requireContext()
+
+        if (mode == CommunityFeedMode.COMMUNITY_FEED) {
+            binding.tabAllFeed.setBackgroundResource(R.drawable.bg_segmented_tab_active)
+            binding.tabAllFeed.setTextColor(ContextCompat.getColor(context, R.color.color_text_primary))
+
+            binding.tabMyPosts.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+            binding.tabMyPosts.setTextColor(ContextCompat.getColor(context, R.color.color_text_secondary))
+
+            binding.tvSectionPosts.text = "Community Feed"
+        } else {
+            binding.tabMyPosts.setBackgroundResource(R.drawable.bg_segmented_tab_active)
+            binding.tabMyPosts.setTextColor(ContextCompat.getColor(context, R.color.color_text_primary))
+
+            binding.tabAllFeed.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+            binding.tabAllFeed.setTextColor(ContextCompat.getColor(context, R.color.color_text_secondary))
+
+            binding.tvSectionPosts.text = "My Published Posts"
+        }
+    }
+
     private fun bindProfile(profile: CommunityProfile) {
-        binding.tvToolbarTitle.text = if (profile.isOwnProfile) "My Profile" else "@${profile.username}"
+        binding.tvToolbarTitle.text = if (profile.isOwnProfile) "Community Hub" else "@${profile.username}"
         binding.tvProfileFullName.text = profile.displayName
         binding.tvProfileUsername.text = "@${profile.username}"
 

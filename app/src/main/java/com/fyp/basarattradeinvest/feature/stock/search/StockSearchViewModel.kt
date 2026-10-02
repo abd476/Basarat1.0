@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
@@ -29,7 +30,7 @@ class StockSearchViewModel(
             queryFlow
                 .debounce(300)
                 .distinctUntilChanged()
-                .collect { query ->
+                .collectLatest { query ->
                     executeSearch(query)
                 }
         }

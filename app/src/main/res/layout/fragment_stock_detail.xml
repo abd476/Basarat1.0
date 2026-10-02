@@ -249,12 +249,40 @@
                     android:layout_height="32dp"
                     android:layout_marginEnd="6dp"
                     android:background="@drawable/bg_badge_teal"
+                    android:clickable="true"
+                    android:contentDescription="@string/stock_detail_open_ai_recommendation"
+                    android:focusable="true"
                     android:gravity="center"
                     android:paddingHorizontal="10dp"
                     android:text="AI Rec"
                     android:textColor="@color/color_shariah_teal"
                     android:textSize="11sp"
                     android:textStyle="bold" />
+
+                <!-- One-tap backend-managed price alert -->
+                <FrameLayout
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="2dp">
+
+                    <ImageView
+                        android:id="@+id/iv_quick_alert"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Create automatic price alert"
+                        android:padding="7dp"
+                        android:src="@drawable/ic_alert_bell"
+                        app:tint="@color/color_text_secondary" />
+
+                    <ProgressBar
+                        android:id="@+id/progress_quick_alert"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:indeterminateTint="@color/color_brand_primary"
+                        android:visibility="gone" />
+                </FrameLayout>
 
                 <!-- Favorite Icon -->
                 <ImageView
@@ -309,26 +337,14 @@
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/tab_daily"
+                            android:id="@+id/tab_1w"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:background="@null"
                             android:gravity="center"
                             android:paddingHorizontal="12dp"
-                            android:text="Daily"
+                            android:text="1W"
                             android:textColor="@color/color_text_secondary"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tab_weekly"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/bg_timeframe_active"
-                            android:gravity="center"
-                            android:paddingHorizontal="12dp"
-                            android:text="Weekly"
-                            android:textColor="@color/color_text_primary"
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
@@ -336,12 +352,22 @@
                             android:id="@+id/tab_1m"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:background="@null"
-                            android:drawableEnd="@android:drawable/arrow_down_float"
-                            android:drawablePadding="2dp"
+                            android:background="@drawable/bg_timeframe_active"
                             android:gravity="center"
                             android:paddingHorizontal="12dp"
-                            android:text="1m"
+                            android:text="1M"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tab_1y"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:background="@null"
+                            android:gravity="center"
+                            android:paddingHorizontal="12dp"
+                            android:text="1Y"
                             android:textColor="@color/color_text_secondary"
                             android:textSize="12sp"
                             android:textStyle="bold" />

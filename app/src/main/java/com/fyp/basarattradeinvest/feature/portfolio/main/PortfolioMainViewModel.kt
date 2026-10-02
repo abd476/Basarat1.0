@@ -3,6 +3,8 @@ package com.fyp.basarattradeinvest.feature.portfolio.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.fyp.basarattradeinvest.core.session.AuthState
+import com.fyp.basarattradeinvest.core.session.SessionManager
 import com.fyp.basarattradeinvest.data.repository.PortfolioRepositoryImpl
 import com.fyp.basarattradeinvest.domain.model.portfolio.PortfolioAllocation
 import com.fyp.basarattradeinvest.domain.model.portfolio.PortfolioOverview
@@ -16,7 +18,9 @@ import com.fyp.basarattradeinvest.domain.usecase.portfolio.GetPortfolioPerforman
 import com.fyp.basarattradeinvest.domain.usecase.portfolio.GetPortfolioPnLUseCase
 import com.fyp.basarattradeinvest.domain.usecase.portfolio.GetTransactionsUseCase
 import kotlinx.coroutines.async
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -60,9 +64,44 @@ class PortfolioMainViewModel(
 
     private val _selectedTab = MutableStateFlow(0) // 0: Holdings, 1: PnL, 2: Allocation, 3: Performance, 4: History
     val selectedTab: StateFlow<Int> = _selectedTab.asStateFlow()
+    private var lastSuccessfulFetchAt: Long = 0L
+    private val freshnessWindowMs = 5 * 60 * 1000L
+    private var isPortfolioLoading = false
+    private var accountGeneration = 0
+    private var currentAccountKey: String? = accountKeyForCurrentSession()
+    private var portfolioLoadJob: Job? = null
 
     init {
-        loadPortfolio()
+        viewModelScope.launch {
+            SessionManager.authState.collect { authState ->
+                val nextAccountKey = accountKeyFor(authState)
+                if (nextAccountKey == currentAccountKey) return@collect
+
+                currentAccountKey = nextAccountKey
+                accountGeneration++
+                portfolioLoadJob?.cancel()
+                portfolioLoadJob = null
+                isPortfolioLoading = false
+                lastSuccessfulFetchAt = 0L
+                _uiState.value = PortfolioMainUiState.Loading
+
+                if (nextAccountKey != null) {
+                    loadPortfolio(forceRefresh = true)
+                }
+            }
+        }
+    }
+
+    fun ensureLoaded() {
+        val state = _uiState.value
+        val shouldLoad = state !is PortfolioMainUiState.Success || stateHasExpired()
+        if (shouldLoad) {
+            loadPortfolio(forceRefresh = false)
+        }
+    }
+
+    private fun stateHasExpired(): Boolean {
+        return System.currentTimeMillis() - lastSuccessfulFetchAt > freshnessWindowMs
     }
 
     fun selectTab(tabIndex: Int) {
@@ -72,6 +111,7 @@ class PortfolioMainViewModel(
     fun setPeriod(period: String) {
         if (_selectedPeriod.value == period) return
         _selectedPeriod.value = period
+        if (currentAccountKey == null) return
         viewModelScope.launch {
             val perfResult = getPerformanceUseCase(period)
             val currentState = _uiState.value
@@ -82,12 +122,25 @@ class PortfolioMainViewModel(
     }
 
     fun loadPortfolio(forceRefresh: Boolean = false) {
-        viewModelScope.launch {
-            if (_uiState.value !is PortfolioMainUiState.Success || forceRefresh) {
-                _uiState.value = PortfolioMainUiState.Loading
-            }
+        if (currentAccountKey == null) {
+            _uiState.value = PortfolioMainUiState.Loading
+            return
+        }
+        if (isPortfolioLoading) return
 
+        val currentState = _uiState.value
+        val hasUsableData = currentState is PortfolioMainUiState.Success
+        val shouldSkip = !forceRefresh && hasUsableData && !stateHasExpired()
+        if (shouldSkip) return
+
+        isPortfolioLoading = true
+        val loadGeneration = accountGeneration
+        portfolioLoadJob = viewModelScope.launch {
             try {
+                if (!forceRefresh && !hasUsableData) {
+                    _uiState.value = PortfolioMainUiState.Loading
+                }
+
                 coroutineScope {
                     val overviewDeferred = async { getOverviewUseCase() }
                     val pnlDeferred = async { getPnLUseCase() }
@@ -96,32 +149,92 @@ class PortfolioMainViewModel(
                     val transactionsDeferred = async { getTransactionsUseCase(page = 1, limit = 5) }
 
                     val overviewRes = overviewDeferred.await()
-                    val pnlRes = pnlDeferred.await()
-                    val allocationRes = allocationDeferred.await()
-                    val perfRes = performanceDeferred.await()
-                    val txRes = transactionsDeferred.await()
-
-                    if (overviewRes.isSuccess) {
-                        val overview = overviewRes.getOrThrow()
-                        if (overview.holdings.isEmpty() && overview.summary.totalInvested == 0.0) {
-                            _uiState.value = PortfolioMainUiState.Empty
-                        } else {
-                            _uiState.value = PortfolioMainUiState.Success(
-                                overview = overview,
-                                pnl = pnlRes.getOrNull(),
-                                allocation = allocationRes.getOrNull(),
-                                performance = perfRes.getOrNull(),
-                                recentTransactions = txRes.getOrNull()?.items ?: emptyList()
-                            )
-                        }
-                    } else {
+                    if (loadGeneration != accountGeneration) return@coroutineScope
+                    val overview = overviewRes.getOrNull()
+                    if (overview == null) {
                         val error = overviewRes.exceptionOrNull()?.message ?: "Unable to load portfolio overview."
-                        _uiState.value = PortfolioMainUiState.Error(error)
+                        if (_uiState.value !is PortfolioMainUiState.Success) {
+                            _uiState.value = PortfolioMainUiState.Error(error)
+                        }
+                        pnlDeferred.cancel()
+                        allocationDeferred.cancel()
+                        performanceDeferred.cancel()
+                        transactionsDeferred.cancel()
+                        return@coroutineScope
+                    }
+
+                    if (overview.holdings.isEmpty() && overview.summary.totalInvested == 0.0) {
+                        _uiState.value = PortfolioMainUiState.Empty
+                        pnlDeferred.cancel()
+                        allocationDeferred.cancel()
+                        performanceDeferred.cancel()
+                        transactionsDeferred.cancel()
+                        return@coroutineScope
+                    }
+
+                    _uiState.value = PortfolioMainUiState.Success(
+                        overview = overview,
+                        pnl = null,
+                        allocation = null,
+                        performance = null,
+                        recentTransactions = emptyList()
+                    )
+
+                    launch {
+                        val result = pnlDeferred.await()
+                        updateSuccessState(loadGeneration) { copy(pnl = result.getOrNull()) }
+                    }
+
+                    launch {
+                        val result = allocationDeferred.await()
+                        updateSuccessState(loadGeneration) { copy(allocation = result.getOrNull()) }
+                    }
+
+                    launch {
+                        val result = performanceDeferred.await()
+                        updateSuccessState(loadGeneration) { copy(performance = result.getOrNull()) }
+                    }
+
+                    launch {
+                        val result = transactionsDeferred.await()
+                        updateSuccessState(loadGeneration) {
+                            copy(recentTransactions = result.getOrNull()?.items ?: emptyList())
+                        }
                     }
                 }
+                if (loadGeneration == accountGeneration) {
+                    lastSuccessfulFetchAt = System.currentTimeMillis()
+                }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (e: Exception) {
-                _uiState.value = PortfolioMainUiState.Error(e.localizedMessage ?: "Unexpected error occurred.")
+                if (loadGeneration == accountGeneration && _uiState.value !is PortfolioMainUiState.Success) {
+                    _uiState.value = PortfolioMainUiState.Error(e.localizedMessage ?: "Unexpected error occurred.")
+                }
+            } finally {
+                if (loadGeneration == accountGeneration) {
+                    isPortfolioLoading = false
+                    portfolioLoadJob = null
+                }
             }
         }
     }
+
+    private fun updateSuccessState(
+        generation: Int,
+        update: PortfolioMainUiState.Success.() -> PortfolioMainUiState.Success
+    ) {
+        if (generation != accountGeneration) return
+        val current = _uiState.value as? PortfolioMainUiState.Success ?: return
+        _uiState.value = current.update()
+    }
+
+    private fun accountKeyForCurrentSession(): String? = accountKeyFor(SessionManager.authState.value)
+
+    private fun accountKeyFor(authState: AuthState): String? = (authState as? AuthState.Authenticated)
+        ?.let {
+            SessionManager.getCurrentUserId()?.takeIf(String::isNotBlank)
+                ?: it.userEmail.takeIf(String::isNotBlank)
+        }
+        ?.lowercase()
 }

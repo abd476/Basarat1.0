@@ -17,14 +17,34 @@ class NewsArticleDetailViewModel(
     val uiState: StateFlow<NewsArticleDetailUiState> = _uiState.asStateFlow()
 
     private var currentArticleId: String = ""
+    private var lastSuccessfulFetchAt: Long = 0L
+    private val freshnessWindowMs = 5 * 60 * 1000L
+
+    fun ensureLoaded(articleId: String) {
+        val state = _uiState.value
+        val isSameArticle = currentArticleId == articleId && state is NewsArticleDetailUiState.Success
+        val shouldLoad = !isSameArticle || System.currentTimeMillis() - lastSuccessfulFetchAt > freshnessWindowMs
+        if (shouldLoad) {
+            loadArticle(articleId)
+        }
+    }
 
     fun loadArticle(articleId: String) {
         currentArticleId = articleId
         viewModelScope.launch {
+            val currentState = _uiState.value
+            // Compare against the article the cached state actually holds; this VM is
+            // activity-scoped, so a previous article's Success must not skip this load.
+            val isSameArticle = currentState is NewsArticleDetailUiState.Success &&
+                currentState.article.id == articleId
+            if (isSameArticle && System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs) {
+                return@launch
+            }
             _uiState.value = NewsArticleDetailUiState.Loading
             val result = getNewsAndEventsUseCase.getNewsArticle(articleId)
             result.fold(
                 onSuccess = { article ->
+                    lastSuccessfulFetchAt = System.currentTimeMillis()
                     _uiState.value = NewsArticleDetailUiState.Success(article)
                 },
                 onFailure = { error ->

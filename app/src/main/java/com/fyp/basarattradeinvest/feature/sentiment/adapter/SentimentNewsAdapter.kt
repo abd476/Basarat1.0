@@ -80,8 +80,8 @@ class SentimentNewsAdapter : ListAdapter<SentimentNewsItem, SentimentNewsAdapter
             holder.tvSentimentBadge.text = label
 
             val (bgRes, colorRes) = when {
-                label.contains("POSITIVE") -> Pair(R.drawable.bg_badge_positive, R.color.color_positive)
-                label.contains("NEGATIVE") -> Pair(R.drawable.bg_badge_negative, R.color.color_negative)
+                label.contains("POSITIVE") || label.contains("BULLISH") -> Pair(R.drawable.bg_badge_positive, R.color.color_positive)
+                label.contains("NEGATIVE") || label.contains("BEARISH") -> Pair(R.drawable.bg_badge_negative, R.color.color_negative)
                 else -> Pair(R.drawable.bg_badge_neutral, R.color.color_text_secondary)
             }
             holder.tvSentimentBadge.setBackgroundResource(bgRes)

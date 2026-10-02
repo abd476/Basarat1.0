@@ -2,7 +2,10 @@ package com.fyp.basarattradeinvest.data.repository
 
 import com.fyp.basarattradeinvest.core.network.NetworkErrorParser
 import com.fyp.basarattradeinvest.core.session.SessionManager
+import com.fyp.basarattradeinvest.core.session.RefreshTokenFailure
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
+import com.fyp.basarattradeinvest.core.notifications.DeviceRegistrationScheduler
+import com.fyp.basarattradeinvest.core.notifications.NotificationBadgeState
 import com.fyp.basarattradeinvest.data.remote.api.AuthApiService
 import com.fyp.basarattradeinvest.data.remote.dto.auth.ChangePasswordRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.ForgotPasswordRequest
@@ -18,11 +21,13 @@ import com.fyp.basarattradeinvest.domain.model.AuthSession
 import com.fyp.basarattradeinvest.domain.model.User
 import com.fyp.basarattradeinvest.domain.model.VerifyResetCodeResult
 import com.fyp.basarattradeinvest.domain.repository.AuthRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class AuthRepositoryImpl(
-    private val apiService: AuthApiService = NetworkClient.authApiService
+    private val apiService: AuthApiService = NetworkClient.authApiService,
+    private val devicesRepository: com.fyp.basarattradeinvest.domain.repository.DevicesRepository = DevicesRepositoryImpl()
 ) : AuthRepository {
 
     override suspend fun signup(
@@ -169,7 +174,9 @@ class AuthRepositoryImpl(
         try {
             val response = apiService.refresh(RefreshRequest(refreshToken))
             if (response.isSuccessful) {
-                val body = response.body() ?: return@withContext Result.failure(Exception("Empty refresh response from server"))
+                val body = response.body() ?: return@withContext Result.failure(
+                    RefreshTokenFailure("Empty refresh response from server")
+                )
                 
                 SessionManager.updateTokens(body.accessToken, body.refreshToken)
                 
@@ -192,15 +199,25 @@ class AuthRepositoryImpl(
                 )
             } else {
                 val error = NetworkErrorParser.parseError(response)
-                Result.failure(Exception(error))
+                Result.failure(RefreshTokenFailure(error, statusCode = response.code()))
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
-            Result.failure(e)
+            Result.failure(RefreshTokenFailure(e.message ?: "Unable to reach the refresh service", cause = e))
         }
     }
 
     override suspend fun logout(): Result<Unit> = withContext(Dispatchers.IO) {
         try {
+            SessionManager.applicationContext()?.let(DeviceRegistrationScheduler::cancel)
+            val deviceId = SessionManager.getDeviceId()
+            if (!deviceId.isNullOrBlank()) {
+                runCatching { devicesRepository.unregisterDevice(deviceId) }
+            }
+            SessionManager.clearDeviceRegistration()
+            NotificationBadgeState.reset()
+
             val refreshToken = SessionManager.getRefreshToken()
             if (!refreshToken.isNullOrBlank()) {
                 try {
@@ -213,6 +230,7 @@ class AuthRepositoryImpl(
             Result.success(Unit)
         } catch (e: Exception) {
             SessionManager.clearSession()
+            NotificationBadgeState.reset()
             Result.success(Unit)
         }
     }

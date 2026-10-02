@@ -10,7 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -45,12 +45,13 @@ class StockDetailFragment : Fragment() {
     private var _binding: FragmentStockDetailBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: StockDetailViewModel by viewModels()
+    private val viewModel: StockDetailViewModel by activityViewModels()
     private val tradeAdapter = TradeAdapter()
 
     private var candleChart: CandleStickChart? = null
     private var volumeChart: BarChart? = null
     private var currentSymbol: String = "SARCO"
+    private var lastRenderedSuccess: StockDetailUiState.Success? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,7 +70,19 @@ class StockDetailFragment : Fragment() {
 
         // Load from navigation arguments
         currentSymbol = arguments?.getString("symbol") ?: "SARCO"
-        viewModel.loadStock(currentSymbol)
+        binding.tvTopSymbol.text = currentSymbol
+        binding.tvTopCode.text = currentSymbol
+        viewModel.ensureLoaded(currentSymbol)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.setLiveUpdatesActive(true)
+    }
+
+    override fun onStop() {
+        viewModel.setLiveUpdatesActive(false)
+        super.onStop()
     }
 
     // ───────────────────────────────
@@ -94,6 +107,8 @@ class StockDetailFragment : Fragment() {
             setScaleEnabled(true)
             setPinchZoom(true)
             setDrawGridBackground(false)
+            setNoDataText("Loading chart data...")
+            setNoDataTextColor(textColor)
 
             xAxis.apply {
                 position = XAxis.XAxisPosition.BOTTOM
@@ -134,6 +149,7 @@ class StockDetailFragment : Fragment() {
             setScaleEnabled(true)
             setPinchZoom(true)
             setDrawGridBackground(false)
+            setNoDataText("")
 
             xAxis.apply {
                 position = XAxis.XAxisPosition.BOTTOM
@@ -182,17 +198,18 @@ class StockDetailFragment : Fragment() {
         }
 
         // AI Recommendation
-        binding.btnRecommendation.setOnClickListener {
+        val openRecommendation = {
             val bundle = Bundle().apply { putString("symbol", currentSymbol) }
             findNavController().navigate(R.id.action_stockDetail_to_recommendationDetail, bundle)
         }
+        binding.btnRecommendation.setOnClickListener { openRecommendation() }
 
         // Timeframe tabs
         val timeframeTabs = listOf(
             binding.tab1d to "1D",
-            binding.tabDaily to "Daily",
-            binding.tabWeekly to "Weekly",
-            binding.tab1m to "1M"
+            binding.tab1w to "1W",
+            binding.tab1m to "1M",
+            binding.tab1y to "1Y"
         )
         timeframeTabs.forEach { (tab, tf) ->
             tab.setOnClickListener { viewModel.setTimeframe(tf) }
@@ -246,12 +263,40 @@ class StockDetailFragment : Fragment() {
                             // Could show shimmer/loading
                         }
                         is StockDetailUiState.Success -> {
-                            bindHeader(state.detail)
-                            bindCandles(state.candles)
-                            updateTimeframeTabs(state.selectedTimeframe)
-                            updateSectionTabs(state.selectedSection)
-                            updateSubPills(state.selectedSubPill)
-                            bindTabContent(state)
+                            val previous = lastRenderedSuccess
+                            if (previous == null || previous.detail != state.detail) {
+                                bindHeader(state)
+                            } else if (
+                                previous.livePrice != state.livePrice ||
+                                previous.liveChange != state.liveChange ||
+                                previous.liveChangePct != state.liveChangePct ||
+                                previous.liveVolume != state.liveVolume ||
+                                previous.liveIsStale != state.liveIsStale
+                            ) {
+                                bindLivePrice(state)
+                            }
+                            if (previous == null || previous.candles != state.candles) {
+                                bindCandles(state.candles)
+                            }
+                            if (previous == null || previous.selectedTimeframe != state.selectedTimeframe) {
+                                updateTimeframeTabs(state.selectedTimeframe)
+                            }
+                            if (previous == null || previous.selectedSection != state.selectedSection) {
+                                updateSectionTabs(state.selectedSection)
+                            }
+                            if (previous == null || previous.selectedSubPill != state.selectedSubPill) {
+                                updateSubPills(state.selectedSubPill)
+                            }
+                            if (
+                                previous == null || previous.detail != state.detail ||
+                                previous.trades != state.trades ||
+                                previous.selectedSection != state.selectedSection ||
+                                previous.selectedSubPill != state.selectedSubPill ||
+                                previous.analysis != state.analysis || previous.forecast != state.forecast
+                            ) {
+                                bindTabContent(state)
+                            }
+                            lastRenderedSuccess = state
                         }
                         is StockDetailUiState.Empty -> {
                             Toast.makeText(requireContext(), "No data", Toast.LENGTH_SHORT).show()
@@ -269,43 +314,64 @@ class StockDetailFragment : Fragment() {
     //  BINDING HELPERS
     // ───────────────────────────────
 
-    private fun bindHeader(detail: StockDetail) {
+    private fun bindHeader(state: StockDetailUiState.Success) {
+        val detail = state.detail
         binding.tvTopSymbol.text = detail.symbol
         binding.tvTopCode.text = detail.code
-        binding.tvMarketStatus.text = "${detail.marketStatus} ${detail.lastUpdated}"
-
-        // Price
-        binding.tvPrice.text = String.format(Locale.US, "%.2f", detail.price)
-        val isPositive = detail.changeAmount >= 0
-        val priceColor = if (isPositive) R.color.color_positive else R.color.color_negative
-        binding.tvPrice.setTextColor(ContextCompat.getColor(requireContext(), priceColor))
-
-        val prefix = if (isPositive) "+" else ""
-        binding.tvChangeAmount.text = String.format(Locale.US, "%s%.2f", prefix, detail.changeAmount)
-        binding.tvChangePercent.text = String.format(Locale.US, "%s%.2f%%", prefix, detail.changePercent)
-        binding.tvChangeAmount.setTextColor(ContextCompat.getColor(requireContext(), priceColor))
-        binding.tvChangePercent.setTextColor(ContextCompat.getColor(requireContext(), priceColor))
+        bindLivePrice(state)
 
         // Badges visibility
         binding.badgeCompliant.visibility = if (detail.isCompliant) View.VISIBLE else View.GONE
         binding.badgeShariah.visibility = if (detail.isShariah) View.VISIBLE else View.GONE
         binding.badgeDividend.visibility = if (detail.hasDividend) View.VISIBLE else View.GONE
 
-        // SMA mock values (will come from backend later)
+        // SMA values are derived from the backend-provided stock detail price.
         binding.tvSma10.text = String.format(Locale.US, "SMA10: %.3f", detail.price * 0.86)
         binding.tvSma50.text = String.format(Locale.US, "SMA50: %.3f", detail.price * 0.87)
         binding.tvSma200.text = String.format(Locale.US, "SMA200: %.3f", detail.price * 1.21)
 
-        // Volume info
-        binding.tvVolCurrent.text = String.format(Locale.US, "%,d", detail.volume)
         binding.tvVolMa5.text = String.format(Locale.US, "MA5: %,d", (detail.avgVolume * 0.9).toLong())
         binding.tvVolMa10.text = String.format(Locale.US, "MA10: %,d", detail.avgVolume)
         binding.tvVolMa20.text = String.format(Locale.US, "MA20: %,d", (detail.avgVolume * 1.1).toLong())
     }
 
+    private fun bindLivePrice(state: StockDetailUiState.Success) {
+        val detail = state.detail
+        binding.tvMarketStatus.text = if (state.liveIsStale) "Market data delayed"
+        else "${detail.marketStatus} ${detail.lastUpdated}"
+
+        // Price
+        val price = state.livePrice ?: detail.price
+        val change = state.liveChange ?: detail.changeAmount
+        val changePercent = state.liveChangePct ?: detail.changePercent
+        binding.tvPrice.text = String.format(Locale.US, "%.2f", price)
+        val isPositive = change >= 0
+        val priceColor = if (isPositive) R.color.color_positive else R.color.color_negative
+        binding.tvPrice.setTextColor(ContextCompat.getColor(requireContext(), priceColor))
+
+        val prefix = if (isPositive) "+" else ""
+        binding.tvChangeAmount.text = String.format(Locale.US, "%s%.2f", prefix, change)
+        binding.tvChangePercent.text = String.format(Locale.US, "%s%.2f%%", prefix, changePercent)
+        binding.tvChangeAmount.setTextColor(ContextCompat.getColor(requireContext(), priceColor))
+        binding.tvChangePercent.setTextColor(ContextCompat.getColor(requireContext(), priceColor))
+
+        binding.tvVolCurrent.text = String.format(Locale.US, "%,d", state.liveVolume ?: detail.volume)
+    }
+
     private fun bindCandles(candles: List<CandleEntry>) {
-        if (candles.isEmpty()) return
         val chart = candleChart ?: return
+        val volChart = volumeChart ?: return
+
+        if (candles.isEmpty()) {
+            val symbolLabel = if (currentSymbol.isNotEmpty()) currentSymbol else "this stock"
+            chart.setNoDataText("No historical price data available for $symbolLabel on PSX feed")
+            chart.data = null
+            chart.invalidate()
+            volChart.setNoDataText("")
+            volChart.data = null
+            volChart.invalidate()
+            return
+        }
 
         val positiveColor = ContextCompat.getColor(requireContext(), R.color.color_positive)
         val negativeColor = ContextCompat.getColor(requireContext(), R.color.color_negative)
@@ -329,16 +395,16 @@ class StockDetailFragment : Fragment() {
             decreasingColor = negativeColor
             decreasingPaintStyle = Paint.Style.FILL
             neutralColor = Color.GRAY
-            shadowWidth = 0.8f
+            shadowWidth = 1.0f
         }
 
         chart.data = CandleData(candleDataSet)
-        chart.setVisibleXRangeMaximum(50f)
+        val visibleRange = if (candleEntries.size > 25) 25f else candleEntries.size.toFloat().coerceAtLeast(5f)
+        chart.setVisibleXRangeMaximum(visibleRange)
         chart.moveViewToX(candleEntries.size.toFloat())
         chart.invalidate()
 
         // Volume bar chart
-        val volChart = volumeChart ?: return
         val barEntries = candles.mapIndexed { index, candle ->
             BarEntry(index.toFloat(), candle.volume.toFloat())
         }
@@ -355,7 +421,7 @@ class StockDetailFragment : Fragment() {
         volChart.data = BarData(barDataSet).apply {
             barWidth = 0.8f
         }
-        volChart.setVisibleXRangeMaximum(50f)
+        volChart.setVisibleXRangeMaximum(visibleRange)
         volChart.moveViewToX(barEntries.size.toFloat())
         volChart.invalidate()
     }
@@ -363,9 +429,9 @@ class StockDetailFragment : Fragment() {
     private fun updateTimeframeTabs(selected: String) {
         val tabs = listOf(
             binding.tab1d to "1D",
-            binding.tabDaily to "Daily",
-            binding.tabWeekly to "Weekly",
-            binding.tab1m to "1M"
+            binding.tab1w to "1W",
+            binding.tab1m to "1M",
+            binding.tab1y to "1Y"
         )
 
         tabs.forEach { (tab, tf) ->
@@ -667,6 +733,7 @@ class StockDetailFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        lastRenderedSuccess = null
         candleChart = null
         volumeChart = null
         _binding = null

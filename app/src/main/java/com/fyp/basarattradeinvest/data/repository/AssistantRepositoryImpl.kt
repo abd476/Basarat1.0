@@ -11,13 +11,21 @@ import com.fyp.basarattradeinvest.domain.model.assistant.AssistantConversation
 import com.fyp.basarattradeinvest.domain.model.assistant.AssistantConversationWithMessages
 import com.fyp.basarattradeinvest.domain.model.assistant.AssistantStreamEvent
 import com.fyp.basarattradeinvest.domain.repository.AssistantRepository
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.nio.charset.StandardCharsets
 
 /**
  * Repository implementation for the AI Investment Assistant module.
@@ -58,54 +66,104 @@ class AssistantRepositoryImpl(
                 message = message,
                 conversationId = conversationId
             )
-            val response = apiService.chatStream(request)
+            val call = apiService.chatStream(request)
+            coroutineScope {
+                // Keep the underlying HTTP call cancellable after response headers arrive.
+                val cancellationWatcher = launch(start = CoroutineStart.UNDISPATCHED) {
+                    try {
+                        awaitCancellation()
+                    } finally {
+                        call.cancel()
+                    }
+                }
 
-            if (!response.isSuccessful) {
-                val errorBody = response.errorBody()?.string()
-                emit(Result.failure(Exception(parseErrorMessage(response.code(), errorBody))))
-                return@flow
-            }
+                try {
+                    val response = call.execute()
+                    if (!response.isSuccessful) {
+                        val errorBody = response.errorBody()?.use { it.string() }
+                        emit(Result.failure(Exception(parseErrorMessage(response.code(), errorBody))))
+                        return@coroutineScope
+                    }
 
-            val body = response.body()
-            if (body == null) {
-                emit(Result.failure(Exception("Empty response from server")))
-                return@flow
-            }
+                    val body = response.body()
+                    if (body == null) {
+                        emit(Result.failure(Exception("Empty response from server")))
+                        return@coroutineScope
+                    }
 
-            val reader = BufferedReader(InputStreamReader(body.byteStream()))
+                    body.use { responseBody ->
+                        val reader = BufferedReader(
+                            InputStreamReader(responseBody.byteStream(), StandardCharsets.UTF_8)
+                        )
+                        val dataLines = mutableListOf<String>()
+                        var eventName: String? = null
 
-            try {
-                var line: String?
-                while (reader.readLine().also { line = it } != null) {
-                    val currentLine = line ?: continue
+                        suspend fun dispatchSseFrame(): Boolean {
+                            val data = dataLines.joinToString("\n")
+                            val namedEvent = eventName
+                            dataLines.clear()
+                            eventName = null
 
-                    // SSE protocol: lines starting with "data: " or "data:" contain the payload
-                    if (currentLine.startsWith("data:", ignoreCase = true)) {
-                        val data = currentLine.substringAfter("data:").trim()
+                            val streamEvent = when {
+                                data.trim() == "[DONE]" -> AssistantStreamEvent.Done()
+                                data.isNotEmpty() -> parseStreamEvent(data, namedEvent)
+                                namedEvent.equals("done", ignoreCase = true) ||
+                                    namedEvent.equals("complete", ignoreCase = true) -> AssistantStreamEvent.Done()
+                                else -> null
+                            } ?: return false
 
-                        if (data.isEmpty()) continue
-
-                        // Direct check for [DONE] token termination
-                        if (data == "[DONE]") {
-                            emit(Result.success(AssistantStreamEvent.Done()))
-                            break
+                            emit(Result.success(streamEvent))
+                            return streamEvent is AssistantStreamEvent.Done ||
+                                streamEvent is AssistantStreamEvent.Error
                         }
 
-                        val streamEvent = parseStreamEvent(data)
-                        if (streamEvent != null) {
-                            emit(Result.success(streamEvent))
-                            if (streamEvent is AssistantStreamEvent.Done) {
-                                break
+                        try {
+                            while (true) {
+                                currentCoroutineContext().ensureActive()
+                                val line = reader.readLine() ?: break
+                                if (line.isEmpty()) {
+                                    if (dispatchSseFrame()) break
+                                    continue
+                                }
+                                if (line.startsWith(":")) continue // SSE comment / heartbeat
+
+                                val separator = line.indexOf(':')
+                                val field = if (separator >= 0) line.substring(0, separator) else line
+                                val rawValue = if (separator >= 0) line.substring(separator + 1) else ""
+                                val value = rawValue.removePrefix(" ")
+                                when (field) {
+                                    "data" -> dataLines += value
+                                    "event" -> eventName = value
+                                    else -> {
+                                        // Also accept a one-line JSON payload from deployments
+                                        // that return a final object instead of SSE frames.
+                                        if (dataLines.isEmpty() && line.trimStart().startsWith("{")) {
+                                            val parsed = parseStreamEvent(line)
+                                            if (parsed != null) {
+                                                emit(Result.success(parsed))
+                                                if (parsed is AssistantStreamEvent.Done ||
+                                                    parsed is AssistantStreamEvent.Error
+                                                ) break
+                                            }
+                                        }
+                                    }
+                                }
                             }
+
+                            // SSE permits a final frame at EOF without a trailing blank line.
+                            if (dataLines.isNotEmpty() || eventName != null) dispatchSseFrame()
+                        } finally {
+                            reader.close()
                         }
                     }
-                    // SSE comments (':') and blank lines are ignored per SSE spec
+                } finally {
+                    cancellationWatcher.cancel()
                 }
-            } finally {
-                reader.close()
-                body.close()
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
+            currentCoroutineContext().ensureActive()
             emit(Result.failure(Exception(getNetworkErrorMessage(e))))
         }
     }.flowOn(Dispatchers.IO)
@@ -220,18 +278,18 @@ class AssistantRepositoryImpl(
      * - {"event": "error", "error": "...", "conversation_id": "..."}
      * Also supports generic JSON and fallback raw text chunks.
      */
-    internal fun parseStreamEvent(data: String): AssistantStreamEvent? {
+    internal fun parseStreamEvent(data: String, sseEventName: String? = null): AssistantStreamEvent? {
         return try {
             val json = com.google.gson.JsonParser.parseString(data).asJsonObject
             val eventType = if (json.has("event") && !json.get("event").isJsonNull) {
                 json.get("event").asString
-            } else null
+            } else sseEventName
 
             val convId = if (json.has("conversation_id") && !json.get("conversation_id").isJsonNull) {
                 json.get("conversation_id").asString
             } else null
 
-            when (eventType) {
+            when (eventType?.lowercase()) {
                 "start" -> AssistantStreamEvent.Start(convId)
                 "chunk" -> {
                     val chunkText = when {
@@ -279,7 +337,11 @@ class AssistantRepositoryImpl(
         } catch (e: Exception) {
             // Not JSON — fallback to treating raw string as a text chunk if non-blank
             if (data.isNotBlank()) {
-                AssistantStreamEvent.Chunk(data)
+                when (sseEventName?.lowercase()) {
+                    "done", "complete" -> AssistantStreamEvent.Done(fullResponse = data)
+                    "error" -> AssistantStreamEvent.Error(data)
+                    else -> AssistantStreamEvent.Chunk(data)
+                }
             } else {
                 null
             }

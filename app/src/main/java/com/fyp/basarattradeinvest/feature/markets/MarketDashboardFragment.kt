@@ -9,19 +9,21 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fyp.basarattradeinvest.R
+import com.fyp.basarattradeinvest.core.notifications.NotificationBadgeState
 import com.fyp.basarattradeinvest.databinding.FragmentMarketDashboardBinding
 import com.fyp.basarattradeinvest.domain.model.IndexConstituent
 import com.fyp.basarattradeinvest.domain.model.MarketIndex
 import com.fyp.basarattradeinvest.domain.model.MarketOverview
 import com.fyp.basarattradeinvest.domain.model.MarketSentiment
 import com.fyp.basarattradeinvest.domain.model.SymbolFilterType
+import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 import com.fyp.basarattradeinvest.feature.markets.adapter.ConstituentAdapter
 import com.fyp.basarattradeinvest.feature.markets.adapter.MarketStockAdapter
 import com.fyp.basarattradeinvest.feature.markets.adapter.SectorPerformanceAdapter
@@ -33,7 +35,7 @@ class MarketDashboardFragment : Fragment() {
     private var _binding: FragmentMarketDashboardBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: MarketDashboardViewModel by viewModels()
+    private val viewModel: MarketDashboardViewModel by activityViewModels()
 
     private val stockAdapter = MarketStockAdapter { stock ->
         val bundle = Bundle().apply { putString("symbol", stock.symbol) }
@@ -65,6 +67,8 @@ class MarketDashboardFragment : Fragment() {
         setupTabListeners()
         setupTopBarListeners()
         observeUiState()
+        observeNotificationBadge()
+        viewModel.ensureLoaded()
     }
 
     private fun setupRecyclerViews() {
@@ -128,7 +132,7 @@ class MarketDashboardFragment : Fragment() {
             Toast.makeText(requireContext(), "Menu drawer", Toast.LENGTH_SHORT).show()
         }
         binding.ivTopNotifications.setOnClickListener {
-            findNavController().navigate(R.id.action_marketDashboard_to_notifications)
+            findNavController().navigate(R.id.notificationsFragment)
         }
         binding.ivTopSearch.setOnClickListener {
             findNavController().navigate(R.id.stockSearchFragment)
@@ -151,10 +155,40 @@ class MarketDashboardFragment : Fragment() {
         binding.chipRecommendations.setOnClickListener {
             findNavController().navigate(R.id.recommendationsFragment)
         }
+        binding.chipSmartSelection.setOnClickListener {
+            findNavController().navigate(R.id.smart_selection_fragment)
+        }
+        binding.chipIpo.setOnClickListener {
+            findNavController().navigate(R.id.ipoFragment)
+        }
+        binding.chipEtf.setOnClickListener {
+            findNavController().navigate(R.id.etfDirectoryFragment)
+        }
 
         binding.fabChatAssistant.setOnClickListener {
-            findNavController().navigate(R.id.action_marketDashboard_to_assistant)
+            findNavController().navigate(R.id.assistantConversationsFragment)
         }
+    }
+
+    private fun observeNotificationBadge() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                NotificationBadgeState.unreadCount.collect { unreadCount ->
+                    binding.tvNotificationsBadge.visibility = if (unreadCount > 0) View.VISIBLE else View.GONE
+                    binding.tvNotificationsBadge.text = if (unreadCount > 99) "99+" else unreadCount.toString()
+                }
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.setLiveUpdatesActive(true)
+    }
+
+    override fun onStop() {
+        viewModel.setLiveUpdatesActive(false)
+        super.onStop()
     }
 
     private fun observeUiState() {
@@ -168,12 +202,13 @@ class MarketDashboardFragment : Fragment() {
                         is MarketDashboardUiState.Success -> {
                             binding.swipeRefreshLayout.isRefreshing = false
                             binding.tvLastUpdated.text = "• Updated ${state.lastUpdated}"
+                            bindLiveConnection(state)
                             bindIndices(state.indices)
                             bindOverview(state.overview)
                             bindSentiment(state.sentiment)
-                            sectorAdapter.submitList(state.sectors)
+                            sectorAdapter.submitList(state.sectors.toList())
                             bindFilterTabs(state.selectedFilter)
-                            stockAdapter.submitList(state.topSymbols)
+                            stockAdapter.submitList(state.topSymbols.toList())
                             bindConstituents(state.constituents, state.selectedConstituentIndex, state.isConstituentsLoading)
                         }
                         is MarketDashboardUiState.Empty -> {
@@ -188,6 +223,24 @@ class MarketDashboardFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun bindLiveConnection(state: MarketDashboardUiState.Success) {
+        if (state.liveQuotes.values.any { it.isStale }) {
+            binding.tvQuoteBannerText.text = "Market data delayed"
+            return
+        }
+        binding.tvQuoteBannerText.text = when (val connection = state.wsConnectionState) {
+            WsConnectionState.Live -> "Live PSX quote stream connected"
+            is WsConnectionState.Connecting -> "Connecting to live PSX quotes"
+            is WsConnectionState.Reconnecting -> "Reconnecting to live PSX quotes"
+            is WsConnectionState.Delayed -> if (state.liveQuotes.values.any { it.isStale }) {
+                "Market data delayed"
+            } else {
+                "Live quotes reconnecting · ${connection.nextRetryInSeconds}s"
+            }
+            WsConnectionState.Idle, WsConnectionState.Closed -> "Live PSX quotes disconnected"
         }
     }
 

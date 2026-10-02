@@ -180,6 +180,68 @@ class ForecastModuleUnitTest {
         assertEquals(0.02, domain.marketContext?.marketReturn5d ?: 0.0, 0.001)
     }
 
+    @Test
+    fun testForecastDtoMapperResolvesNullTargetsForSideways() {
+        // Reproduces the exact backend scenario from user screenshot:
+        // direction is "sideways", gateReason is "near_tie", confidence 61%, target_price/stop_loss are null
+        val dto = ForecastResponseDto(
+            symbol = "OGDC",
+            horizon = "1D",
+            direction = "sideways",
+            confidence = 0.61,
+            targetDate = "2026-09-18",
+            asOfDate = "2026-09-17",
+            currentPrice = 106.99,
+            targetPrice = null,
+            stopLoss = null,
+            upsidePct = null,
+            downsidePct = null,
+            riskRewardRatio = null,
+            probabilities = ForecastProbabilitiesDto(bullish = 61.0, bearish = 39.0, sideways = 0.0)
+        )
+
+        val domain = ForecastDtoMapper.mapToDomain(dto)
+
+        assertNotNull("Target price should be dynamically resolved instead of null", domain.targetPrice)
+        assertNotNull("Stop loss should be dynamically resolved instead of null", domain.stopLoss)
+        assertNotNull("Upside pct should be calculated", domain.upsidePct)
+        assertNotNull("Downside pct should be calculated", domain.downsidePct)
+        assertNotNull("Risk/reward should be calculated", domain.riskRewardRatio)
+
+        // For 106.99 with slight bullish tilt, target should be above currentPrice, stop loss below currentPrice
+        assertTrue(domain.targetPrice!! > 106.99)
+        assertTrue(domain.stopLoss!! < 106.99)
+        assertTrue(domain.upsidePct!! > 0.0)
+        assertTrue(domain.downsidePct!! < 0.0)
+        assertTrue(domain.riskRewardRatio!! > 0.0)
+    }
+
+    @Test
+    fun testForecastRecalculateTargetsWithFallbackPrice() {
+        // When backend currentPrice is null, recalculateTargets uses live quote price
+        val dto = ForecastResponseDto(
+            symbol = "LUCK",
+            horizon = "1W",
+            direction = "bullish",
+            confidence = 0.75,
+            targetDate = "2026-09-25",
+            asOfDate = "2026-09-18",
+            currentPrice = null,
+            targetPrice = null,
+            stopLoss = null
+        )
+
+        val initialDomain = ForecastDtoMapper.mapToDomain(dto)
+        assertNull(initialDomain.currentPrice)
+
+        val recalculated = ForecastDtoMapper.recalculateTargets(initialDomain, livePrice = 420.00)
+        assertEquals(420.00, recalculated.currentPrice ?: 0.0, 0.01)
+        assertNotNull(recalculated.targetPrice)
+        assertNotNull(recalculated.stopLoss)
+        assertTrue(recalculated.targetPrice!! > 420.00)
+        assertTrue(recalculated.stopLoss!! < 420.00)
+    }
+
     // 3. Repository Tests
     @Test
     fun testForecastRepositorySuccess() = runBlocking {

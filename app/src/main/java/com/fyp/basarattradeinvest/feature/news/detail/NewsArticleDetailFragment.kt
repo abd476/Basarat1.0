@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -25,7 +25,7 @@ class NewsArticleDetailFragment : Fragment() {
     private var _binding: FragmentNewsArticleDetailBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: NewsArticleDetailViewModel by viewModels()
+    private val viewModel: NewsArticleDetailViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,7 +45,7 @@ class NewsArticleDetailFragment : Fragment() {
         observeUiState()
 
         if (articleId.isNotBlank()) {
-            viewModel.loadArticle(articleId)
+            viewModel.ensureLoaded(articleId)
         } else {
             binding.tvErrorMessage.text = "Article ID not provided"
             binding.layoutErrorState.visibility = View.VISIBLE
@@ -100,25 +100,10 @@ class NewsArticleDetailFragment : Fragment() {
         binding.tvArticleHeadline.text = article.headline
         binding.tvArticleBody.text = article.snippet
 
-        // FinBERT Sentiment Badge
-        val sign = if (article.sentimentScore > 0) "+" else ""
-        val sentimentText = String.format(Locale.US, "%s%.2f %s", sign, article.sentimentScore, article.sentimentLabel)
-        binding.tvArticleSentiment.text = sentimentText
-
-        when {
-            article.sentimentScore > 0.20 -> {
-                binding.tvArticleSentiment.setBackgroundResource(R.drawable.bg_badge_positive)
-                binding.tvArticleSentiment.setTextColor(ContextCompat.getColor(context, R.color.color_positive))
-            }
-            article.sentimentScore < -0.20 -> {
-                binding.tvArticleSentiment.setBackgroundResource(R.drawable.bg_badge_negative)
-                binding.tvArticleSentiment.setTextColor(ContextCompat.getColor(context, R.color.color_negative))
-            }
-            else -> {
-                binding.tvArticleSentiment.setBackgroundResource(R.drawable.bg_badge_neutral)
-                binding.tvArticleSentiment.setTextColor(ContextCompat.getColor(context, R.color.color_text_secondary))
-            }
-        }
+        // Generic news detail screens must not render sentiment badges.
+        // Sentiment analysis is only relevant in dedicated stock/portfolio sentiment flows.
+        binding.tvArticleSentiment.visibility = View.GONE
+        binding.tvArticleSentiment.text = ""
 
         // Symbols chips
         binding.layoutSymbolsContainer.removeAllViews()

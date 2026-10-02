@@ -6,7 +6,7 @@
         android:title="@string/nav_home" />
     <item
         android:id="@+id/nav_markets"
-        android:icon="@drawable/ic_nav_markets"
+        android:icon="@drawable/chart_2_svgrepo_com"
         android:title="@string/nav_markets" />
     <item
         android:id="@+id/nav_portfolio"

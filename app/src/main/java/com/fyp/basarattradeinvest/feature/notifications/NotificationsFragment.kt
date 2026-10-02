@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
+import com.fyp.basarattradeinvest.core.notifications.NotificationBadgeState
 import com.fyp.basarattradeinvest.databinding.FragmentNotificationsBinding
 import com.fyp.basarattradeinvest.feature.notifications.adapter.NotificationsAdapter
 import kotlinx.coroutines.launch
@@ -39,6 +40,7 @@ class NotificationsFragment : Fragment() {
         setupRecyclerView()
         setupListeners()
         observeData()
+        viewLifecycleOwner.lifecycleScope.launch { NotificationBadgeState.refresh() }
     }
 
     override fun onDestroyView() {

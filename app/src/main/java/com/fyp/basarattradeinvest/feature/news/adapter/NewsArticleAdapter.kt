@@ -37,25 +37,10 @@ class NewsArticleAdapter(
             binding.tvNewsSource.text = if (item.isOfficial) "${item.source} • Official" else item.source
             binding.tvNewsTime.text = item.timestamp
 
-            // Sentiment FinBERT Badge
-            val sign = if (item.sentimentScore > 0) "+" else ""
-            val sentimentText = String.format(Locale.US, "%s%.2f %s", sign, item.sentimentScore, item.sentimentLabel)
-            binding.tvNewsSentiment.text = sentimentText
-
-            when {
-                item.sentimentScore > 0.20 -> {
-                    binding.tvNewsSentiment.setBackgroundResource(R.drawable.bg_badge_positive)
-                    binding.tvNewsSentiment.setTextColor(ContextCompat.getColor(context, R.color.color_positive))
-                }
-                item.sentimentScore < -0.20 -> {
-                    binding.tvNewsSentiment.setBackgroundResource(R.drawable.bg_badge_negative)
-                    binding.tvNewsSentiment.setTextColor(ContextCompat.getColor(context, R.color.color_negative))
-                }
-                else -> {
-                    binding.tvNewsSentiment.setBackgroundResource(R.drawable.bg_badge_neutral)
-                    binding.tvNewsSentiment.setTextColor(ContextCompat.getColor(context, R.color.color_text_secondary))
-                }
-            }
+            // Sentiment is intentionally hidden in the generic news feed.
+            // Use dedicated stock/portfolio sentiment screens for sentiment analysis.
+            binding.tvNewsSentiment.visibility = View.GONE
+            binding.tvNewsSentiment.text = ""
 
             binding.tvNewsHeadline.text = item.headline
             binding.tvNewsSnippet.text = item.snippet

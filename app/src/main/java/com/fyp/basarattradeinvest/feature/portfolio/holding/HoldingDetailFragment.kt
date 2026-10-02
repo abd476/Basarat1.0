@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -27,7 +27,7 @@ class HoldingDetailFragment : Fragment() {
     private var _binding: FragmentHoldingDetailBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: HoldingDetailViewModel by viewModels { HoldingDetailViewModel.Factory() }
+    private val viewModel: HoldingDetailViewModel by activityViewModels { HoldingDetailViewModel.Factory() }
     private var symbol: String = "LUCK"
     private lateinit var transactionAdapter: TransactionAdapter
 
@@ -57,7 +57,9 @@ class HoldingDetailFragment : Fragment() {
         setupListeners()
         observeState()
 
-        viewModel.loadHolding(symbol)
+        if (viewModel.shouldLoadHolding(symbol)) {
+            viewModel.loadHolding(symbol)
+        }
     }
 
     private fun setupRecyclerView() {
@@ -96,14 +98,17 @@ class HoldingDetailFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     when (state) {
                         is HoldingDetailUiState.Loading -> {
-                            binding.progressLoading.visibility = View.VISIBLE
+                            binding.progressLoading.visibility = View.GONE
+                            binding.layoutHoldingSkeleton.visibility = View.VISIBLE
                         }
                         is HoldingDetailUiState.Success -> {
                             binding.progressLoading.visibility = View.GONE
+                            binding.layoutHoldingSkeleton.visibility = View.GONE
                             renderDetail(state.detail)
                         }
                         is HoldingDetailUiState.Error -> {
                             binding.progressLoading.visibility = View.GONE
+                            binding.layoutHoldingSkeleton.visibility = View.GONE
                             Toast.makeText(requireContext(), state.message, Toast.LENGTH_LONG).show()
                         }
                     }

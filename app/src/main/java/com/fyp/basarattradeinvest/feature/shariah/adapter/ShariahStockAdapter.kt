@@ -36,14 +36,27 @@ class ShariahStockAdapter(
             binding.tvDividendBadge.visibility = if (item.hasDividend) View.VISIBLE else View.GONE
             binding.tvStockCode.text = item.code
 
-            binding.tvStockPrice.text = String.format(Locale.US, "%.2f", item.price)
+            binding.tvStockPrice.text = if (item.price.isFinite()) {
+                String.format(Locale.US, "%.2f", item.price)
+            } else {
+                "N/A"
+            }
 
-            val prefix = if (item.changePercent >= 0) "+" else ""
-            binding.tvStockChange.text = String.format(Locale.US, "%s%.2f%%", prefix, item.changePercent)
-            val changeColor = if (item.changePercent >= 0) R.color.color_positive else R.color.color_negative
-            binding.tvStockChange.setTextColor(ContextCompat.getColor(context, changeColor))
+            if (item.changePercent.isFinite()) {
+                val prefix = if (item.changePercent >= 0) "+" else ""
+                binding.tvStockChange.text = String.format(Locale.US, "%s%.2f%%", prefix, item.changePercent)
+                val changeColor = if (item.changePercent >= 0) R.color.color_positive else R.color.color_negative
+                binding.tvStockChange.setTextColor(ContextCompat.getColor(context, changeColor))
+            } else {
+                binding.tvStockChange.text = "N/A"
+                binding.tvStockChange.setTextColor(ContextCompat.getColor(context, R.color.color_text_secondary))
+            }
 
-            binding.tvStockPurification.text = item.purificationRate
+            binding.tvStockPurification.text = if (item.purificationRate.isNullOrBlank() || item.purificationRate.equals("N/A", ignoreCase = true)) {
+                "N/A"
+            } else {
+                item.purificationRate
+            }
 
             binding.root.setOnClickListener {
                 onItemClick(item)

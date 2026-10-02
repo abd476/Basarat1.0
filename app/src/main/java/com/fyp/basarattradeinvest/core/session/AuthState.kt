@@ -6,3 +6,7 @@ sealed interface AuthState {
     data object Unauthenticated : AuthState
     data object SessionExpired : AuthState
 }
+
+sealed interface SessionEvent {
+    data object RefreshTemporarilyUnavailable : SessionEvent
+}

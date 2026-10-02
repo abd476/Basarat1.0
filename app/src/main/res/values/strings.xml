@@ -27,17 +27,22 @@
     <string name="onboarding_get_started">Get Started</string>
 
     <!-- Auth Titles & Subtitles -->
-    <string name="welcome_back_title">Welcome back</string>
+    <string name="welcome_back_title">Welcome Back</string>
     <string name="welcome_back_subtitle">Access your orders, wishlist, and\nexclusive offers by logging in.</string>
-    <string name="signup_title">Sign up Account</string>
+    <string name="auth_login_subtitle">Track. Analyze. Invest.</string>
+    <string name="signup_title">Create Your Account</string>
+    <string name="auth_signup_subtitle">Join BASARAT and start your investment journey today.</string>
+    <string name="auth_security_note">Your account and personal data stay protected.</string>
     <string name="signup_subtitle">Join now for a faster, smarter\nshopping experience.</string>
 
     <!-- Auth Fields & Labels -->
     <string name="label_name">Name</string>
     <string name="hint_name">Enter you name</string>
     <string name="label_email">Email</string>
-    <string name="hint_email">Enter you email</string>
+    <string name="hint_email">Enter your email</string>
     <string name="label_password">Password</string>
+    <string name="label_confirm_password">Confirm Password</string>
+    <string name="hint_confirm_password">Re-enter your password</string>
     <string name="hint_password">Enter you password</string>
     <string name="remember_me">Remember me</string>
     <string name="forgot_password">Forgot password?</string>
@@ -45,6 +50,11 @@
     <!-- Actions & Social -->
     <string name="sign_in">Sign in</string>
     <string name="sign_up">Sign up</string>
+    <string name="create_account">Create Account</string>
+    <string name="sign_in_arrow">Sign in</string>
+    <string name="password_visibility">Toggle password visibility</string>
+    <string name="navigate_back">Navigate back</string>
+    <string name="agree_terms">I agree to the Terms &amp; Conditions and Privacy Policy</string>
     <string name="or_divider">OR</string>
     <string name="continue_with_google">Continue with Google</string>
     <string name="continue_with_apple">Continue with Apple</string>
@@ -52,12 +62,7 @@
     <string name="already_have_account">Already have an account?</string>
 
     <!-- Alerts Module -->
-    <string name="title_alerts">Alerts &amp; Notifications</string>
-    <string name="tab_alert_rules">My Rules</string>
-    <string name="tab_alert_history">History</string>
-    <string name="create_alert_rule">Create Alert Rule</string>
-    <string name="edit_alert_rule">Edit Alert Rule</string>
-    <string name="delete_alert_rule">Delete Alert Rule</string>
+    <string name="title_alert_history">Alert History</string>
 
     <!-- Notifications Module -->
     <string name="title_notifications">Notifications</string>
@@ -84,6 +89,33 @@
 
     <!-- AI Assistant Module -->
     <string name="title_assistant">AI Assistant</string>
+    <string name="assistant_greeting">Hi, %1$s</string>
+    <string name="assistant_default_user">Investor</string>
+    <string name="assistant_welcome_subtitle">Your AI investment assistant</string>
+    <string name="assistant_welcome_description">Ask me anything about PSX, stocks, market trends, or your portfolio. I\'m here to help you make better investment decisions.</string>
+    <string name="assistant_bot_description">BASARAT AI assistant</string>
+    <string name="assistant_open_history">Open conversation history</string>
+    <string name="assistant_composer_hint">Ask about stocks, market, portfolio...</string>
+    <string name="assistant_send_message">Send message</string>
+    <string name="assistant_stop_generating">Stop Generating</string>
+    <string name="assistant_regenerate">Regenerate</string>
+    <string name="common_retry">Retry</string>
+    <string name="smart_selection_title">Smart Selection</string>
+    <string name="smart_selection_subtitle">Explore model signals and price levels</string>
+    <string name="smart_selection_candidates">SELECT A STOCK</string>
+    <string name="smart_selection_price_history">Price history · 1 month</string>
+    <string name="smart_selection_current_price">Current price</string>
+    <string name="smart_selection_target">Target price</string>
+    <string name="smart_selection_stop">Stop loss</string>
+    <string name="smart_selection_confidence">Confidence %1$d%%</string>
+    <string name="smart_selection_no_candidates">No live smart selections are available right now.</string>
+    <string name="smart_selection_disclaimer">Model-based levels are estimates for decision support and are not guaranteed outcomes.</string>
+    <string name="smart_selection_chart_unavailable">Price history is temporarily unavailable.</string>
+    <string name="smart_selection_no_levels">Live target and stop levels are not available for this stock.</string>
+    <string name="smart_selection_chart_description">Candlestick chart with current price, target and stop loss levels</string>
+    <string name="smart_selection_live_target">Target · PKR %1$.2f</string>
+    <string name="smart_selection_live_stop">Stop · PKR %1$.2f</string>
+    <string name="stock_detail_open_ai_recommendation">Open AI recommendation and risk details</string>
     <string name="delete_conversation_title">Delete Conversation</string>
     <string name="delete_conversation_message">Are you sure you want to delete this conversation? This action cannot be undone.</string>
     <string name="delete">Delete</string>

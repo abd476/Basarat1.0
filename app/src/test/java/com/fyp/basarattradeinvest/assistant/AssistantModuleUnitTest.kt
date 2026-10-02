@@ -14,14 +14,19 @@ import com.fyp.basarattradeinvest.data.repository.AssistantRepositoryImpl
 import com.fyp.basarattradeinvest.domain.model.assistant.MessageRole
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.Request
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
+import okio.Timeout
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 
 class AssistantModuleUnitTest {
 
@@ -42,16 +47,53 @@ class AssistantModuleUnitTest {
             return Response.success(chatResponse)
         }
 
-        override suspend fun chatStream(request: AssistantChatRequestDto): Response<ResponseBody> {
-            if (shouldFail) {
-                return Response.error(500, "{\"detail\":\"Stream error\"}".toResponseBody("application/json".toMediaTypeOrNull()))
-            }
+        override fun chatStream(request: AssistantChatRequestDto): Call<ResponseBody> {
             val sseData = "data: {\"event\":\"start\",\"conversation_id\":\"conv-101\"}\n\n" +
                     "data: {\"event\":\"chunk\",\"chunk\":\"Analysis: \",\"conversation_id\":\"conv-101\"}\n\n" +
                     "data: {\"event\":\"chunk\",\"chunk\":\"Market is bullish.\",\"conversation_id\":\"conv-101\"}\n\n" +
                     "data: {\"event\":\"done\",\"conversation_id\":\"conv-101\",\"full_response\":\"Analysis: Market is bullish.\"}\n\n"
             val body = sseData.toResponseBody("text/event-stream".toMediaTypeOrNull())
-            return Response.success(body)
+            val fail = shouldFail
+
+            return object : Call<ResponseBody> {
+                private var executed = false
+                private var canceled = false
+
+                override fun execute(): Response<ResponseBody> {
+                    check(!executed) { "Call already executed" }
+                    executed = true
+                    return if (fail) {
+                        Response.error(
+                            500,
+                            "{\"detail\":\"Stream error\"}".toResponseBody("application/json".toMediaTypeOrNull())
+                        )
+                    } else {
+                        Response.success(body)
+                    }
+                }
+
+                override fun enqueue(callback: Callback<ResponseBody>) {
+                    try {
+                        callback.onResponse(this, execute())
+                    } catch (error: IOException) {
+                        callback.onFailure(this, error)
+                    }
+                }
+
+                override fun isExecuted(): Boolean = executed
+
+                override fun cancel() {
+                    canceled = true
+                }
+
+                override fun isCanceled(): Boolean = canceled
+
+                override fun clone(): Call<ResponseBody> = chatStream(request)
+
+                override fun request(): Request = Request.Builder().url("http://localhost/").build()
+
+                override fun timeout(): Timeout = Timeout.NONE
+            }
         }
 
         override suspend fun listConversations(limit: Int?, offset: Int?): Response<AssistantConversationListResponseDto> {

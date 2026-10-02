@@ -52,27 +52,27 @@ data class PivotPoints(
 
 data class FundamentalMetrics(
     // Valuation Multiples
-    val peRatio: Double,
-    val sectorPeAvg: Double,
-    val forwardPe: Double,
-    val pbRatio: Double,
-    val evEbitda: Double,
-    val pegRatio: Double,
+    val peRatio: Double? = null,
+    val sectorPeAvg: Double? = null,
+    val forwardPe: Double? = null,
+    val pbRatio: Double? = null,
+    val evEbitda: Double? = null,
+    val pegRatio: Double? = null,
     // Profitability & Returns
-    val eps: Double,
-    val roe: Double,
-    val roa: Double,
-    val dividendYield: Double,
-    val netProfitMargin: Double,
+    val eps: Double? = null,
+    val roe: Double? = null,
+    val roa: Double? = null,
+    val dividendYield: Double? = null,
+    val netProfitMargin: Double? = null,
     // Solvency & Financial Health
-    val debtToEquity: Double,
-    val currentRatio: Double,
-    val quickRatio: Double,
-    val interestCoverage: Double,
+    val debtToEquity: Double? = null,
+    val currentRatio: Double? = null,
+    val quickRatio: Double? = null,
+    val interestCoverage: Double? = null,
     // Annual Performance
-    val revenueTTM: String,
-    val revenueGrowthYoY: Double,
-    val netIncomeTTM: String,
-    val netIncomeGrowthYoY: Double,
-    val freeCashFlowTTM: String
+    val revenueTTM: String? = null,
+    val revenueGrowthYoY: Double? = null,
+    val netIncomeTTM: String? = null,
+    val netIncomeGrowthYoY: Double? = null,
+    val freeCashFlowTTM: String? = null
 )

@@ -10,6 +10,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.Route
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 class TokenAuthenticator(
@@ -26,6 +27,9 @@ class TokenAuthenticator(
         private val lock = Any()
     }
 
+    private enum class RefreshOutcome { SUCCESS, REJECTED, TEMPORARY_FAILURE }
+    private var retryRefreshAfterMillis: Long = 0L
+
     override fun authenticate(route: Route?, response: Response): Request? {
         val requestUrl = response.request.url.encodedPath
 
@@ -34,12 +38,6 @@ class TokenAuthenticator(
             requestUrl.endsWith("/api/v1/auth/login") ||
             requestUrl.endsWith("/api/v1/auth/logout")
         ) {
-            return null
-        }
-
-        // Limit retry attempts to avoid infinite loops on broken endpoints
-        if (responseCount(response) >= 2) {
-            SessionManager.notifySessionExpired()
             return null
         }
 
@@ -56,31 +54,51 @@ class TokenAuthenticator(
                     .build()
             }
 
+            // Limit retries to the original request plus one authenticated retry.
+            if (responseCount(response) >= 2) {
+                SessionManager.notifySessionExpired()
+                return null
+            }
+
             val refreshToken = SessionManager.getRefreshToken()
             if (refreshToken.isNullOrBlank()) {
                 SessionManager.notifySessionExpired()
                 return null
             }
 
-            // Perform synchronous refresh call
-            val refreshSuccess = executeRefresh(refreshToken)
-            return if (refreshSuccess) {
-                val newAccessToken = SessionManager.getAccessToken()
-                if (!newAccessToken.isNullOrBlank()) {
-                    response.request.newBuilder()
-                        .header("Authorization", "Bearer $newAccessToken")
-                        .build()
-                } else {
+            if (System.currentTimeMillis() < retryRefreshAfterMillis) return null
+
+            return when (executeRefresh(refreshToken)) {
+                RefreshOutcome.SUCCESS -> {
+                    retryRefreshAfterMillis = 0L
+                    val newAccessToken = SessionManager.getAccessToken()
+                    if (!newAccessToken.isNullOrBlank()) {
+                        response.request.newBuilder()
+                            .header("Authorization", "Bearer $newAccessToken")
+                            .build()
+                    } else {
+                        SessionManager.notifySessionExpired()
+                        null
+                    }
+                }
+                RefreshOutcome.REJECTED -> {
+                    retryRefreshAfterMillis = 0L
+                    SessionManager.notifySessionExpired()
                     null
                 }
-            } else {
-                SessionManager.notifySessionExpired()
-                null
+                RefreshOutcome.TEMPORARY_FAILURE -> {
+                    // Product decision: any request the backend rejects with 401 that we
+                    // cannot recover via refresh routes the user back to login, rather than
+                    // leaving a protected screen showing an on-screen "not authenticated" error.
+                    retryRefreshAfterMillis = 0L
+                    SessionManager.notifySessionExpired()
+                    null
+                }
             }
         }
     }
 
-    private fun executeRefresh(refreshToken: String): Boolean {
+    private fun executeRefresh(refreshToken: String): RefreshOutcome {
         return try {
             val jsonPayload = JsonObject().apply {
                 addProperty("refresh_token", refreshToken)
@@ -97,23 +115,30 @@ class TokenAuthenticator(
                 .header("Content-Type", "application/json")
                 .build()
 
-            val refreshResponse = refreshClient.newCall(refreshRequest).execute()
-            if (refreshResponse.isSuccessful) {
-                val bodyString = refreshResponse.body?.string()
-                if (!bodyString.isNullOrBlank()) {
-                    val json = gson.fromJson(bodyString, JsonObject::class.java)
-                    val newAccessToken = json.get("access_token")?.asString
-                    val newRefreshToken = json.get("refresh_token")?.asString ?: refreshToken
+            refreshClient.newCall(refreshRequest).execute().use { refreshResponse ->
+                if (refreshResponse.isSuccessful) {
+                    val bodyString = refreshResponse.body?.string()
+                    if (!bodyString.isNullOrBlank()) {
+                        val json = gson.fromJson(bodyString, JsonObject::class.java)
+                        val newAccessToken = json.get("access_token")?.asString
+                        val newRefreshToken = json.get("refresh_token")?.asString ?: refreshToken
 
-                    if (!newAccessToken.isNullOrBlank()) {
-                        SessionManager.updateTokens(newAccessToken, newRefreshToken)
-                        return true
+                        if (!newAccessToken.isNullOrBlank()) {
+                            SessionManager.updateTokens(newAccessToken, newRefreshToken)
+                            return RefreshOutcome.SUCCESS
+                        }
                     }
+                    RefreshOutcome.TEMPORARY_FAILURE
+                } else if (refreshResponse.code in setOf(400, 401, 403, 422)) {
+                    RefreshOutcome.REJECTED
+                } else {
+                    RefreshOutcome.TEMPORARY_FAILURE
                 }
             }
-            false
+        } catch (_: IOException) {
+            RefreshOutcome.TEMPORARY_FAILURE
         } catch (_: Exception) {
-            false
+            RefreshOutcome.TEMPORARY_FAILURE
         }
     }
 

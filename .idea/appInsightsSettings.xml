@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.basarat.app" />
+                  <option name="mobileSdkAppId" value="1:331046829607:android:b2c2d7d67983eff845d802" />
+                  <option name="projectId" value="basarat-4c25b" />
+                  <option name="projectNumber" value="331046829607" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

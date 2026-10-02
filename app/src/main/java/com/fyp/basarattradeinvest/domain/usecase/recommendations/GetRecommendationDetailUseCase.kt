@@ -6,7 +6,7 @@ import com.fyp.basarattradeinvest.domain.repository.RecommendationsRepository
 class GetRecommendationDetailUseCase(
     private val repository: RecommendationsRepository
 ) {
-    suspend operator fun invoke(symbol: String): Result<RecommendationDetail> {
-        return repository.getRecommendationDetail(symbol)
+    suspend operator fun invoke(symbol: String, knownPrice: Double? = null): Result<RecommendationDetail> {
+        return repository.getRecommendationDetail(symbol, knownPrice)
     }
 }

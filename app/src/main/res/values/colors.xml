@@ -58,10 +58,48 @@
     <color name="color_chip_selected_bg">#E6F8F3</color>
     <color name="color_chip_selected_stroke">#18B981</color>
     <color name="color_dividend_orange">#FF9800</color>
+    <color name="color_skeleton">#E8ECEA</color>
 
     <!-- Semantic Aliases for Components -->
     <color name="color_brand_primary">@color/color_basarat_green</color>
     <color name="color_border">@color/color_divider</color>
     <color name="color_down">@color/color_negative</color>
     <color name="color_loading_overlay">#99FFFFFF</color>
+
+    <!-- Chart Mode Pills & Timeframes (Light Mode) -->
+    <color name="color_pill_selected_bg">#E9ECEF</color>
+    <color name="color_pill_unselected_bg">#F7F9F8</color>
+    <color name="color_timeframe_selected_bg">#E9ECEF</color>
+
+    <!-- Authentication presentation -->
+    <color name="auth_background_start">#F7FBF9</color>
+    <color name="auth_background_end">#EEF7F3</color>
+    <color name="auth_surface">#FFFFFF</color>
+    <color name="auth_surface_stroke">#DCEBE4</color>
+    <color name="auth_curve">#1200B894</color>
+    <color name="auth_curve_secondary">#0D087F5B</color>
+    <color name="auth_primary_start">#079B78</color>
+    <color name="auth_primary_end">#087F5B</color>
+    <color name="auth_primary_ripple">#33FFFFFF</color>
+    <color name="auth_logo_tile_start">#E2F7EF</color>
+    <color name="auth_logo_tile_end">#F5FCF8</color>
+
+    <!-- Floating bottom navigation -->
+    <color name="nav_bar_background">#FFFFFF</color>
+    <color name="nav_bar_border">#E8EDF0</color>
+    <color name="nav_item_selected_background">#DFF4E9</color>
+    <color name="nav_item_selected_tint">#078F66</color>
+    <color name="nav_item_unselected_tint">#87939C</color>
+
+    <!-- Assistant chat presentation -->
+    <color name="assistant_chat_background">#FBFDFC</color>
+    <color name="assistant_chat_wash">#DDF8EF</color>
+    <color name="assistant_chat_chart">#5500B894</color>
+    <color name="assistant_avatar_fill">#DFF7EE</color>
+    <color name="assistant_avatar_stroke">#BCEBDD</color>
+    <color name="assistant_composer_fill">#FAFCFB</color>
+    <color name="assistant_composer_border">#D8E9E2</color>
+    <color name="assistant_composer_sparkle_fill">#EAF8F2</color>
+    <color name="assistant_header_chip_fill">#F0FAF6</color>
+    <color name="assistant_header_chip_border">#DDF1E9</color>
 </resources>

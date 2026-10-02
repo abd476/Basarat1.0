@@ -142,7 +142,9 @@
                     android:textColor="@color/color_positive"
                     android:textSize="11sp"
                     android:textStyle="bold"
-                    tools:text="+0.75 Bullish" />
+                    android:visibility="gone"
+                    tools:text="+0.75 Bullish"
+                    tools:visibility="gone" />
             </LinearLayout>
 
             <!-- Headline -->

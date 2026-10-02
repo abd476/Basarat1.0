@@ -8,6 +8,7 @@ import com.fyp.basarattradeinvest.data.remote.dto.assistant.AssistantConversatio
 import com.fyp.basarattradeinvest.data.remote.dto.assistant.AssistantConversationResponseDto
 import com.fyp.basarattradeinvest.data.remote.dto.assistant.AssistantConversationUpdateDto
 import okhttp3.ResponseBody
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -46,9 +47,9 @@ interface AssistantApiService {
     @Streaming
     @retrofit2.http.Headers("Accept: text/event-stream")
     @POST("api/v1/assistant/chat/stream")
-    suspend fun chatStream(
+    fun chatStream(
         @Body request: AssistantChatRequestDto
-    ): Response<ResponseBody>
+    ): Call<ResponseBody>
 
     // ─── Conversations ───
 

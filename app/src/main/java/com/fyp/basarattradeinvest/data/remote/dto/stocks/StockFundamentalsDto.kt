@@ -1,17 +1,24 @@
 package com.fyp.basarattradeinvest.data.remote.dto.stocks
 
+import com.google.gson.JsonElement
 import com.google.gson.annotations.SerializedName
 
 data class FundamentalsResponseDto(
     @SerializedName("symbol") val symbol: String,
+    @SerializedName("data_status") val dataStatus: String? = null,
+    @SerializedName("data_message") val dataMessage: String? = null,
     @SerializedName("company_profile") val companyProfile: CompanyProfileDto? = null,
     @SerializedName("equity_profile") val equityProfile: EquityProfileDto? = null,
+    @SerializedName("ratios") val ratios: FinancialRatiosDto? = null,
     @SerializedName("financial_ratios") val financialRatios: FinancialRatiosDto? = null,
     @SerializedName("trading_limits") val tradingLimits: TradingLimitsDto? = null,
+    @SerializedName("dividend_history") val dividendHistory: List<DividendHistoryItemDto>? = null,
     @SerializedName("dividends") val dividends: List<DividendHistoryItemDto>? = null,
+    @SerializedName("financial_reports") val financialReports: List<FinancialReportItemDto>? = null,
     @SerializedName("announcements") val announcements: List<AnnouncementItemDto>? = null,
     @SerializedName("metrics") val metrics: List<FundamentalMetricDto>? = null,
-    @SerializedName("extras") val extras: FundamentalsExtrasDto? = null
+    @SerializedName("extras") val extras: FundamentalsExtrasDto? = null,
+    @SerializedName("sector_overview") val sectorOverview: SectorOverviewDto? = null
 )
 
 data class CompanyProfileDto(
@@ -53,11 +60,22 @@ data class TradingLimitsDto(
 )
 
 data class DividendHistoryItemDto(
+    @SerializedName("ex_date") val exDate: String? = null,
+    @SerializedName("cash_amount") val cashAmount: String? = null,
+    @SerializedName("record_date") val recordDate: String? = null,
+    @SerializedName("pay_date") val payDate: String? = null,
     @SerializedName("announcement_date") val announcementDate: String? = null,
     @SerializedName("financial_year") val financialYear: String? = null,
     @SerializedName("type") val type: String? = null,
     @SerializedName("amount_per_share") val amountPerShare: Double? = null,
     @SerializedName("dividend_pct") val dividendPct: Double? = null
+)
+
+data class FinancialReportItemDto(
+    @SerializedName("report_type") val reportType: String? = null,
+    @SerializedName("period_ended") val periodEnded: String? = null,
+    @SerializedName("posting_date") val postingDate: String? = null,
+    @SerializedName("url") val url: String? = null
 )
 
 data class AnnouncementItemDto(
@@ -68,11 +86,25 @@ data class AnnouncementItemDto(
 )
 
 data class FundamentalMetricDto(
-    @SerializedName("name") val name: String,
-    @SerializedName("value") val value: String,
+    @SerializedName("key") val key: String? = null,
+    @SerializedName("name") val name: String? = null,
+    @SerializedName("value") val value: JsonElement? = null,
+    @SerializedName("note") val note: String? = null,
     @SerializedName("category") val category: String? = null,
     @SerializedName("trend") val trend: String? = null
-)
+) {
+    fun getValueAsString(): String? = when {
+        value == null || value.isJsonNull -> null
+        value.isJsonPrimitive -> value.asString
+        else -> value.toString()
+    }
+
+    fun getValueAsDouble(): Double? = when {
+        value == null || value.isJsonNull -> null
+        value.isJsonPrimitive -> value.asString.toDoubleOrNull()
+        else -> null
+    }
+}
 
 data class FundamentalsExtrasDto(
     @SerializedName("book_value_per_share") val bookValuePerShare: Double? = null,
@@ -82,5 +114,20 @@ data class FundamentalsExtrasDto(
     @SerializedName("quick_ratio") val quickRatio: Double? = null,
     @SerializedName("roe_pct") val roePct: Double? = null,
     @SerializedName("roa_pct") val roaPct: Double? = null,
-    @SerializedName("interest_coverage") val interestCoverage: Double? = null
+    @SerializedName("interest_coverage") val interestCoverage: Double? = null,
+    @SerializedName("year_change_pct") val yearChangePct: Double? = null,
+    @SerializedName("ytd_change_pct") val ytdChangePct: Double? = null,
+    @SerializedName("gross_profit_margin_pct") val grossProfitMarginPct: Double? = null,
+    @SerializedName("net_profit_margin_pct") val netProfitMarginPct: Double? = null,
+    @SerializedName("eps_growth_pct") val epsGrowthPct: Double? = null
+)
+
+data class SectorOverviewDto(
+    @SerializedName("sector") val sector: String? = null,
+    @SerializedName("companies_count") val companiesCount: Int? = null,
+    @SerializedName("avg_change_pct") val avgChangePct: Double? = null,
+    @SerializedName("advancing") val advancing: Int? = null,
+    @SerializedName("declining") val declining: Int? = null,
+    @SerializedName("unchanged") val unchanged: Int? = null,
+    @SerializedName("stock_rank") val stockRank: Int? = null
 )

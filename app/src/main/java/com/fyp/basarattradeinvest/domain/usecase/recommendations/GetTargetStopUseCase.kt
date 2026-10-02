@@ -6,7 +6,7 @@ import com.fyp.basarattradeinvest.domain.repository.RecommendationsRepository
 class GetTargetStopUseCase(
     private val repository: RecommendationsRepository
 ) {
-    suspend operator fun invoke(symbol: String): Result<TargetStop> {
-        return repository.getTargetStop(symbol)
+    suspend operator fun invoke(symbol: String, knownPrice: Double? = null): Result<TargetStop> {
+        return repository.getTargetStop(symbol, knownPrice)
     }
 }

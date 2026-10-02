@@ -319,6 +319,50 @@ class CommunityModuleUnitTest {
                 )
             )
         }
+
+        override suspend fun likePost(postId: String): Response<Unit> {
+            if (shouldFail) return Response.error(500, "{\"detail\":\"Internal Error\"}".toResponseBody("application/json".toMediaTypeOrNull()))
+            return Response.success(Unit)
+        }
+
+        override suspend fun unlikePost(postId: String): Response<Unit> {
+            if (shouldFail) return Response.error(500, "{\"detail\":\"Internal Error\"}".toResponseBody("application/json".toMediaTypeOrNull()))
+            return Response.success(Unit)
+        }
+
+        override suspend fun getComments(postId: String, cursor: String?, limit: Int?): Response<com.fyp.basarattradeinvest.data.remote.dto.community.CommunityCommentListResponseDto> {
+            if (shouldFail) return Response.error(500, "{\"detail\":\"Internal Error\"}".toResponseBody("application/json".toMediaTypeOrNull()))
+            return Response.success(
+                com.fyp.basarattradeinvest.data.remote.dto.community.CommunityCommentListResponseDto(
+                    comments = emptyList(),
+                    cursor = null,
+                    hasMore = false
+                )
+            )
+        }
+
+        override suspend fun createComment(
+            postId: String,
+            body: com.fyp.basarattradeinvest.data.remote.dto.community.CommunityCommentCreateDto
+        ): Response<com.fyp.basarattradeinvest.data.remote.dto.community.CommunityCommentResponseDto> {
+            if (shouldFail) return Response.error(500, "{\"detail\":\"Internal Error\"}".toResponseBody("application/json".toMediaTypeOrNull()))
+            return Response.success(
+                com.fyp.basarattradeinvest.data.remote.dto.community.CommunityCommentResponseDto(
+                    id = "c-1",
+                    postId = postId,
+                    authorId = "me-123",
+                    authorUsername = "my_user",
+                    authorFullName = "My Name",
+                    authorAvatarUrl = null,
+                    parentCommentId = body.parentCommentId,
+                    content = body.content,
+                    status = "PUBLISHED",
+                    replyCount = 0,
+                    createdAt = "2026-09-24T18:00:00Z",
+                    updatedAt = "2026-09-24T18:00:00Z"
+                )
+            )
+        }
     }
 
     private lateinit var fakeApi: FakeCommunityApiService
@@ -521,28 +565,23 @@ class CommunityModuleUnitTest {
     }
 
     @Test
-    fun testRepository_gracefulFallback_whenApiFails() = runBlocking {
+    fun testRepository_handlesFailure_whenApiFails() = runBlocking {
         fakeApi.shouldFail = true
 
         val myProfile = repository.getMyProfile()
-        assertTrue(myProfile.isSuccess)
-        assertNotNull(myProfile.getOrNull())
+        assertTrue(myProfile.isFailure)
 
         val userProfile = repository.getUserProfile("test-id")
-        assertTrue(userProfile.isSuccess)
-        assertNotNull(userProfile.getOrNull())
+        assertTrue(userProfile.isFailure)
 
         val myPosts = repository.getMyPosts()
-        assertTrue(myPosts.isSuccess)
-        assertTrue(myPosts.getOrNull()!!.posts.isNotEmpty())
+        assertTrue(myPosts.isFailure)
 
         val followers = repository.getFollowers("test-id")
-        assertTrue(followers.isSuccess)
-        assertTrue(followers.getOrNull()!!.users.isNotEmpty())
+        assertTrue(followers.isFailure)
 
         val notifs = repository.getCommunityNotifications()
-        assertTrue(notifs.isSuccess)
-        assertTrue(notifs.getOrNull()!!.notifications.isNotEmpty())
+        assertTrue(notifs.isFailure)
 
         val markRead = repository.markNotificationAsRead("n-fail")
         assertTrue(markRead.isFailure)
