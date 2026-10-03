@@ -22,7 +22,6 @@ import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentStockAnalysisBinding
 import com.fyp.basarattradeinvest.domain.model.CandleEntry
 import com.fyp.basarattradeinvest.domain.model.ForecastDirection
-import com.fyp.basarattradeinvest.domain.model.ForecastHistory
 import com.fyp.basarattradeinvest.domain.model.StockAnalysis
 import com.fyp.basarattradeinvest.domain.model.StockForecast
 import com.fyp.basarattradeinvest.domain.model.TechnicalSignal
@@ -30,7 +29,6 @@ import com.fyp.basarattradeinvest.domain.model.sentiment.SentimentHistory
 import com.fyp.basarattradeinvest.domain.model.sentiment.SentimentNewsItem
 import com.fyp.basarattradeinvest.domain.model.sentiment.StockSentiment
 import com.fyp.basarattradeinvest.feature.sentiment.adapter.SentimentNewsAdapter
-import com.fyp.basarattradeinvest.feature.stock.analysis.adapter.ForecastHistoryAdapter
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -40,7 +38,6 @@ class StockAnalysisFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: StockAnalysisViewModel by activityViewModels()
-    private val forecastHistoryAdapter by lazy { ForecastHistoryAdapter() }
     private val sentimentNewsAdapter by lazy { SentimentNewsAdapter() }
 
     override fun onCreateView(
@@ -70,12 +67,6 @@ class StockAnalysisFragment : Fragment() {
     }
 
     private fun setupRecyclerViews() {
-        binding.rvForecastHistory.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = forecastHistoryAdapter
-            isNestedScrollingEnabled = false
-        }
-
         binding.rvSentimentNews.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = sentimentNewsAdapter
@@ -126,7 +117,6 @@ class StockAnalysisFragment : Fragment() {
 
         // Retry buttons
         binding.btnForecastRetry.setOnClickListener { viewModel.retryForecast() }
-        binding.btnHistoryRetry.setOnClickListener { viewModel.retryHistory() }
         binding.btnStockSentimentRetry.setOnClickListener { viewModel.retrySentiment() }
         binding.btnSentimentHistoryRetry.setOnClickListener { viewModel.retrySentiment() }
         binding.btnSentimentNewsRetry.setOnClickListener { viewModel.retrySentiment() }
@@ -180,7 +170,6 @@ class StockAnalysisFragment : Fragment() {
 
                             // Forecast
                             renderForecastSection(state.forecastState, state.selectedHorizon)
-                            renderForecastHistorySection(state.historyState)
 
                             // Sentiment
                             renderStockSentiment(state.sentimentState)
@@ -616,52 +605,6 @@ class StockAnalysisFragment : Fragment() {
         binding.cardForecastProbabilities.visibility = View.GONE
         binding.cardModelBreakdown.visibility = View.GONE
         binding.cardMarketContext.visibility = View.GONE
-    }
-
-    private fun renderForecastHistorySection(state: ForecastHistorySectionState) {
-        when (state) {
-            is ForecastHistorySectionState.Loading -> {
-                binding.historyProgress.visibility = View.VISIBLE
-                binding.layoutHistoryError.visibility = View.GONE
-                binding.tvHistoryEmpty.visibility = View.GONE
-                binding.rvForecastHistory.visibility = View.GONE
-            }
-            is ForecastHistorySectionState.Error -> {
-                binding.historyProgress.visibility = View.GONE
-                binding.layoutHistoryError.visibility = View.VISIBLE
-                binding.tvHistoryEmpty.visibility = View.GONE
-                binding.rvForecastHistory.visibility = View.GONE
-                binding.tvHistoryErrorMsg.text = state.message
-            }
-            is ForecastHistorySectionState.Empty -> {
-                binding.historyProgress.visibility = View.GONE
-                binding.layoutHistoryError.visibility = View.GONE
-                binding.tvHistoryEmpty.visibility = View.VISIBLE
-                binding.rvForecastHistory.visibility = View.GONE
-                binding.tvHistoryAccuracyVal.text = "N/A"
-                binding.tvHistoryCountVal.text = "0 Records"
-            }
-            is ForecastHistorySectionState.Success -> {
-                binding.historyProgress.visibility = View.GONE
-                binding.layoutHistoryError.visibility = View.GONE
-                binding.tvHistoryEmpty.visibility = View.GONE
-                binding.rvForecastHistory.visibility = View.VISIBLE
-                bindForecastHistoryData(state.history)
-            }
-        }
-    }
-
-    private fun bindForecastHistoryData(history: ForecastHistory) {
-        val acc = history.accuracy
-        if (acc != null) {
-            val accPct = if (acc <= 1.0) acc * 100 else acc
-            binding.tvHistoryAccuracyVal.text = String.format(Locale.US, "%.1f%%", accPct)
-        } else {
-            binding.tvHistoryAccuracyVal.text = "N/A"
-        }
-
-        binding.tvHistoryCountVal.text = "${history.count} Records"
-        forecastHistoryAdapter.submitList(history.history)
     }
 
     // ─────────────────────────────────────────────────────────────────────────

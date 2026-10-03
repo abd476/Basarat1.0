@@ -18,19 +18,19 @@ import com.google.gson.annotations.SerializedName
  */
 data class SentimentResponseDto(
     @SerializedName("symbol")
-    val symbol: String,
+    val symbol: String? = null,
 
     @SerializedName("score")
-    val score: Float,
+    val score: Float = 0f,
 
     @SerializedName("label")
-    val label: String,
+    val label: String? = null,
 
     @SerializedName("article_count")
-    val articleCount: Int,
+    val articleCount: Int = 0,
 
     @SerializedName("trend")
-    val trend: String,
+    val trend: String? = null,
 
     @SerializedName("source_breakdown")
     val sourceBreakdown: Map<String, Int>?,
@@ -50,13 +50,13 @@ data class SentimentResponseDto(
  */
 data class SentimentHistoryResponseDto(
     @SerializedName("symbol")
-    val symbol: String,
+    val symbol: String? = null,
 
     @SerializedName("period")
-    val period: String,
+    val period: String? = null,
 
     @SerializedName("data")
-    val data: List<SentimentHistoryPointDto>
+    val data: List<SentimentHistoryPointDto>? = null
 )
 
 /**
@@ -71,13 +71,13 @@ data class SentimentHistoryResponseDto(
  */
 data class SentimentHistoryPointDto(
     @SerializedName("date")
-    val date: String,
+    val date: String? = null,
 
     @SerializedName("score")
-    val score: Float,
+    val score: Float = 0f,
 
     @SerializedName("label")
-    val label: String,
+    val label: String? = null,
 
     @SerializedName("article_count")
     val articleCount: Int = 0,
@@ -107,19 +107,19 @@ data class SentimentHistoryPointDto(
  */
 data class SentimentNewsResponseDto(
     @SerializedName("symbol")
-    val symbol: String,
+    val symbol: String? = null,
 
     @SerializedName("items")
-    val items: List<SentimentNewsItemDto>,
+    val items: List<SentimentNewsItemDto>? = null,
 
     @SerializedName("total")
-    val total: Int,
+    val total: Int = 0,
 
     @SerializedName("page")
-    val page: Int,
+    val page: Int = 0,
 
     @SerializedName("limit")
-    val limit: Int
+    val limit: Int = 0
 )
 
 /**
@@ -134,10 +134,10 @@ data class SentimentNewsResponseDto(
  */
 data class SentimentNewsItemDto(
     @SerializedName("id")
-    val id: String,
+    val id: String? = null,
 
     @SerializedName("title")
-    val title: String,
+    val title: String? = null,
 
     @SerializedName("source")
     val source: String?,
@@ -172,10 +172,10 @@ data class SentimentNewsItemDto(
  */
 data class MarketSentimentResponseDto(
     @SerializedName("market_mood")
-    val marketMood: String,
+    val marketMood: String? = null,
 
     @SerializedName("overall_score")
-    val overallScore: Float,
+    val overallScore: Float = 0f,
 
     @SerializedName("article_count")
     val articleCount: Int = 0,

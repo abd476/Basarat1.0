@@ -125,10 +125,10 @@ class ForecastModuleUnitTest {
         assertEquals("LUCK", dto.symbol)
         assertEquals(2, dto.count)
         assertEquals(0.75, dto.accuracy ?: 0.0, 0.01)
-        assertEquals(2, dto.history.size)
-        assertEquals("bullish", dto.history[0].predictedDirection)
-        assertTrue(dto.history[0].actual?.wasCorrect == true)
-        assertFalse(dto.history[1].actual?.wasCorrect == true)
+        assertEquals(2, dto.history!!.size)
+        assertEquals("bullish", dto.history!![0].predictedDirection)
+        assertTrue(dto.history!![0].actual?.wasCorrect == true)
+        assertFalse(dto.history!![1].actual?.wasCorrect == true)
     }
 
     // 2. Mapper Tests

@@ -36,13 +36,14 @@ object ForecastDtoMapper {
             )
         }
 
-        val directionEnum = ForecastDirection.fromString(dto.direction)
+        val directionEnum = ForecastDirection.fromString(dto.direction.orEmpty())
         val resolvedPrice = dto.currentPrice?.takeIf { it > 0.0 } ?: fallbackPrice?.takeIf { it > 0.0 }
+        val resolvedHorizon = dto.horizon ?: "1D"
 
         val targetParams = resolveTargets(
             currentPrice = resolvedPrice,
             direction = directionEnum,
-            horizon = dto.horizon,
+            horizon = resolvedHorizon,
             confidence = dto.confidence,
             bullishProb = probabilitiesDomain?.bullish ?: 50.0,
             bearishProb = probabilitiesDomain?.bearish ?: 50.0,
@@ -54,14 +55,14 @@ object ForecastDtoMapper {
         )
 
         return StockForecast(
-            symbol = dto.symbol,
-            horizon = dto.horizon,
+            symbol = dto.symbol.orEmpty(),
+            horizon = resolvedHorizon,
             direction = directionEnum,
             confidence = dto.confidence,
             currentPrice = resolvedPrice,
             targetPrice = targetParams.targetPrice,
-            targetDate = dto.targetDate,
-            asOfDate = dto.asOfDate,
+            targetDate = dto.targetDate.orEmpty(),
+            asOfDate = dto.asOfDate.orEmpty(),
             stopLoss = targetParams.stopLoss,
             upsidePct = targetParams.upsidePct,
             downsidePct = targetParams.downsidePct,
@@ -206,7 +207,7 @@ object ForecastDtoMapper {
     }
 
     fun mapToDomain(dto: ForecastHistoryResponseDto): ForecastHistory {
-        val records = dto.history.map { item ->
+        val records = dto.history.orEmpty().map { item ->
             val actualDomain = item.actual?.let { act ->
                 ForecastActualOutcome(
                     direction = act.direction ?: "unknown",
@@ -215,17 +216,17 @@ object ForecastDtoMapper {
             }
 
             ForecastHistoryRecord(
-                predictedAt = item.predictedAt,
-                predictedDirection = ForecastDirection.fromString(item.predictedDirection),
+                predictedAt = item.predictedAt.orEmpty(),
+                predictedDirection = ForecastDirection.fromString(item.predictedDirection.orEmpty()),
                 probabilities = item.probabilities ?: emptyMap(),
                 confidence = item.confidence,
-                targetDate = item.targetDate,
+                targetDate = item.targetDate.orEmpty(),
                 actualOutcome = actualDomain
             )
         }
 
         return ForecastHistory(
-            symbol = dto.symbol,
+            symbol = dto.symbol.orEmpty(),
             horizon = dto.horizon ?: "1D",
             count = dto.count,
             accuracy = dto.accuracy,
