@@ -22,7 +22,6 @@ import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentStockAnalysisBinding
 import com.fyp.basarattradeinvest.domain.model.CandleEntry
 import com.fyp.basarattradeinvest.domain.model.ForecastDirection
-import com.fyp.basarattradeinvest.domain.model.ForecastHistory
 import com.fyp.basarattradeinvest.domain.model.StockAnalysis
 import com.fyp.basarattradeinvest.domain.model.StockForecast
 import com.fyp.basarattradeinvest.domain.model.TechnicalSignal
@@ -30,7 +29,6 @@ import com.fyp.basarattradeinvest.domain.model.sentiment.SentimentHistory
 import com.fyp.basarattradeinvest.domain.model.sentiment.SentimentNewsItem
 import com.fyp.basarattradeinvest.domain.model.sentiment.StockSentiment
 import com.fyp.basarattradeinvest.feature.sentiment.adapter.SentimentNewsAdapter
-import com.fyp.basarattradeinvest.feature.stock.analysis.adapter.ForecastHistoryAdapter
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -40,9 +38,7 @@ class StockAnalysisFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: StockAnalysisViewModel by activityViewModels()
-    private val forecastHistoryAdapter by lazy { ForecastHistoryAdapter() }
     private val sentimentNewsAdapter by lazy { SentimentNewsAdapter() }
-    private var lastBoundSuccess: StockAnalysisUiState.Success? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,12 +67,6 @@ class StockAnalysisFragment : Fragment() {
     }
 
     private fun setupRecyclerViews() {
-        binding.rvForecastHistory.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = forecastHistoryAdapter
-            isNestedScrollingEnabled = false
-        }
-
         binding.rvSentimentNews.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = sentimentNewsAdapter
@@ -127,7 +117,6 @@ class StockAnalysisFragment : Fragment() {
 
         // Retry buttons
         binding.btnForecastRetry.setOnClickListener { viewModel.retryForecast() }
-        binding.btnHistoryRetry.setOnClickListener { viewModel.retryHistory() }
         binding.btnStockSentimentRetry.setOnClickListener { viewModel.retrySentiment() }
         binding.btnSentimentHistoryRetry.setOnClickListener { viewModel.retrySentiment() }
         binding.btnSentimentNewsRetry.setOnClickListener { viewModel.retrySentiment() }
@@ -139,7 +128,6 @@ class StockAnalysisFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     when (state) {
                         is StockAnalysisUiState.Loading -> {
-                            lastBoundSuccess = null
                             binding.layoutAnalysisLoading.visibility = View.VISIBLE
                             binding.layoutAnalysisError.visibility = View.GONE
                             binding.layoutTechnicalContent.visibility = View.GONE
@@ -149,7 +137,6 @@ class StockAnalysisFragment : Fragment() {
                             binding.layoutAnalysisLoading.bringToFront()
                         }
                         is StockAnalysisUiState.Error -> {
-                            lastBoundSuccess = null
                             binding.layoutAnalysisLoading.visibility = View.GONE
                             binding.layoutAnalysisError.visibility = View.VISIBLE
                             binding.tvAnalysisErrorMsg.text = state.message
@@ -159,7 +146,6 @@ class StockAnalysisFragment : Fragment() {
                             binding.layoutSentimentContent.visibility = View.GONE
                         }
                         is StockAnalysisUiState.Empty -> {
-                            lastBoundSuccess = null
                             binding.layoutAnalysisLoading.visibility = View.GONE
                             binding.layoutAnalysisError.visibility = View.VISIBLE
                             binding.tvAnalysisErrorMsg.text = "No stock analysis data available."
@@ -172,44 +158,23 @@ class StockAnalysisFragment : Fragment() {
                             binding.layoutAnalysisLoading.visibility = View.GONE
                             binding.layoutAnalysisError.visibility = View.GONE
 
-                            // Each section arrives as its own state emission, so rebind only the
-                            // sections whose input actually changed. Rebuilding a chart restarts
-                            // its entry animation and is the visible cost here.
-                            val previous = lastBoundSuccess
-                            if (previous == null || previous.analysis != state.analysis) {
-                                renderHeader(state.analysis)
-                                renderTechnicalSummary(state.analysis)
-                                renderFundamentals(state.analysis)
-                            }
-                            if (previous == null || previous.selectedTab != state.selectedTab) {
-                                renderTab(state.selectedTab)
-                            }
-                            if (previous == null ||
-                                previous.priceHistoryState != state.priceHistoryState ||
-                                previous.selectedPriceRange != state.selectedPriceRange
-                            ) {
-                                renderPriceHistorySection(state.priceHistoryState, state.selectedPriceRange)
-                            }
-                            if (previous == null ||
-                                previous.forecastState != state.forecastState ||
-                                previous.selectedHorizon != state.selectedHorizon
-                            ) {
-                                renderForecastSection(state.forecastState, state.selectedHorizon)
-                            }
-                            if (previous == null || previous.historyState != state.historyState) {
-                                renderForecastHistorySection(state.historyState)
-                            }
-                            if (previous == null || previous.sentimentState != state.sentimentState) {
-                                renderStockSentiment(state.sentimentState)
-                            }
-                            if (previous == null || previous.sentimentHistoryState != state.sentimentHistoryState) {
-                                renderSentimentHistory(state.sentimentHistoryState)
-                            }
-                            if (previous == null || previous.sentimentNewsState != state.sentimentNewsState) {
-                                renderSentimentNews(state.sentimentNewsState)
-                            }
+                            renderHeader(state.analysis)
+                            renderTab(state.selectedTab)
 
-                            lastBoundSuccess = state
+                            // Technical & Price History
+                            renderTechnicalSummary(state.analysis)
+                            renderPriceHistorySection(state.priceHistoryState, state.selectedPriceRange)
+
+                            // Fundamentals
+                            renderFundamentals(state.analysis)
+
+                            // Forecast
+                            renderForecastSection(state.forecastState, state.selectedHorizon)
+
+                            // Sentiment
+                            renderStockSentiment(state.sentimentState)
+                            renderSentimentHistory(state.sentimentHistoryState)
+                            renderSentimentNews(state.sentimentNewsState)
                         }
                     }
                 }
@@ -642,52 +607,6 @@ class StockAnalysisFragment : Fragment() {
         binding.cardMarketContext.visibility = View.GONE
     }
 
-    private fun renderForecastHistorySection(state: ForecastHistorySectionState) {
-        when (state) {
-            is ForecastHistorySectionState.Loading -> {
-                binding.historyProgress.visibility = View.VISIBLE
-                binding.layoutHistoryError.visibility = View.GONE
-                binding.tvHistoryEmpty.visibility = View.GONE
-                binding.rvForecastHistory.visibility = View.GONE
-            }
-            is ForecastHistorySectionState.Error -> {
-                binding.historyProgress.visibility = View.GONE
-                binding.layoutHistoryError.visibility = View.VISIBLE
-                binding.tvHistoryEmpty.visibility = View.GONE
-                binding.rvForecastHistory.visibility = View.GONE
-                binding.tvHistoryErrorMsg.text = state.message
-            }
-            is ForecastHistorySectionState.Empty -> {
-                binding.historyProgress.visibility = View.GONE
-                binding.layoutHistoryError.visibility = View.GONE
-                binding.tvHistoryEmpty.visibility = View.VISIBLE
-                binding.rvForecastHistory.visibility = View.GONE
-                binding.tvHistoryAccuracyVal.text = "N/A"
-                binding.tvHistoryCountVal.text = "0 Records"
-            }
-            is ForecastHistorySectionState.Success -> {
-                binding.historyProgress.visibility = View.GONE
-                binding.layoutHistoryError.visibility = View.GONE
-                binding.tvHistoryEmpty.visibility = View.GONE
-                binding.rvForecastHistory.visibility = View.VISIBLE
-                bindForecastHistoryData(state.history)
-            }
-        }
-    }
-
-    private fun bindForecastHistoryData(history: ForecastHistory) {
-        val acc = history.accuracy
-        if (acc != null) {
-            val accPct = if (acc <= 1.0) acc * 100 else acc
-            binding.tvHistoryAccuracyVal.text = String.format(Locale.US, "%.1f%%", accPct)
-        } else {
-            binding.tvHistoryAccuracyVal.text = "N/A"
-        }
-
-        binding.tvHistoryCountVal.text = "${history.count} Records"
-        forecastHistoryAdapter.submitList(history.history)
-    }
-
     // ─────────────────────────────────────────────────────────────────────────
     //  TAB 4: SENTIMENT
     // ─────────────────────────────────────────────────────────────────────────
@@ -929,7 +848,6 @@ class StockAnalysisFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        lastBoundSuccess = null
         _binding = null
     }
 }

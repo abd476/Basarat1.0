@@ -29,10 +29,10 @@ class StocksModuleUnitTest {
         """.trimIndent()
 
         val dto = gson.fromJson(json, StockSearchResponseDto::class.java)
-        assertEquals(2, dto.results.size)
-        assertEquals("LUCK", dto.results[0].symbol)
+        assertEquals(2, dto.results!!.size)
+        assertEquals("LUCK", dto.results!![0].symbol)
 
-        val domain = StocksDtoMapper.mapSearchResult(dto.results[0])
+        val domain = StocksDtoMapper.mapSearchResult(dto.results!![0])
         assertEquals("LUCK", domain.symbol)
         assertEquals("Lucky Cement Limited", domain.name)
         assertEquals("Cement", domain.sector)
@@ -88,7 +88,7 @@ class StocksModuleUnitTest {
 
         val dto = gson.fromJson(json, PriceHistoryResponseDto::class.java)
         assertEquals("LUCK", dto.symbol)
-        assertEquals(2, dto.bars.size)
+        assertEquals(2, dto.bars!!.size)
 
         val candles = StocksDtoMapper.mapPriceHistoryToCandles(dto)
         assertEquals(2, candles.size)

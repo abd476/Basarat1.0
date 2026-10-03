@@ -30,24 +30,26 @@
 
         <TextView
             android:id="@+id/tv_title_symbol"
-            android:textAppearance="@style/TextAppearance.Basarat.Subheading"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_weight="1"
             android:text="Stock Recommendation"
-            android:textColor="@color/color_text_primary" />
+            android:textColor="@color/color_text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <!-- Stock Details Action -->
         <TextView
             android:id="@+id/btn_view_stock"
-            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="6dp"
             android:text="Stock Details"
-            android:textColor="@color/color_basarat_green" />
+            android:textColor="@color/color_basarat_green"
+            android:textSize="13sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <FrameLayout
@@ -86,10 +88,11 @@
 
                         <TextView
                             android:id="@+id/tv_symbol"
-                            android:textAppearance="@style/TextAppearance.Basarat.Number.Heading"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/color_text_primary"
+                            android:textSize="26sp"
+                            android:textStyle="bold"
                             tools:text="OGDC" />
 
                         <!-- Signal Badge & Composite Score -->
@@ -102,14 +105,15 @@
 
                             <TextView
                                 android:id="@+id/tv_signal_badge"
-                                android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/bg_badge_positive"
                                 android:paddingHorizontal="14dp"
                                 android:paddingVertical="6dp"
                                 android:text="BUY"
-                                android:textColor="@color/color_positive" />
+                                android:textColor="@color/color_positive"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
 
                             <View
                                 android:layout_width="0dp"
@@ -118,31 +122,32 @@
 
                             <TextView
                                 android:id="@+id/tv_composite_score"
-                                android:textAppearance="@style/TextAppearance.Basarat.Number.Title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/color_text_primary"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
                                 tools:text="Score: +0.42" />
                         </LinearLayout>
 
                         <!-- Confidence Bar / Indicator -->
                         <TextView
                             android:id="@+id/tv_confidence_label"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="14dp"
                             android:text="Engine Confidence: 78%"
-                            android:textColor="@color/color_text_secondary" />
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="13sp" />
 
                         <!-- Current Price -->
                         <TextView
                             android:id="@+id/tv_current_price"
-                            android:textAppearance="@style/TextAppearance.Basarat.Meta"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:textColor="@color/color_text_tertiary"
+                            android:textSize="12sp"
                             tools:text="Current Market Price: PKR 154.60" />
 
                     </LinearLayout>
@@ -166,11 +171,12 @@
                         android:padding="20dp">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Target Price &amp; Risk Levels"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -186,28 +192,29 @@
                                 android:orientation="vertical">
 
                                 <TextView
-                                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Target Price"
-                                    android:textColor="@color/color_text_tertiary" />
+                                    android:textColor="@color/color_text_tertiary"
+                                    android:textSize="12sp" />
 
                                 <TextView
                                     android:id="@+id/tv_detail_target_price"
-                                    android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="4dp"
                                     android:textColor="@color/color_positive"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
                                     tools:text="PKR 168.00" />
 
                                 <TextView
                                     android:id="@+id/tv_upside_pct"
-                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:textColor="@color/color_positive"
+                                    android:textSize="11sp"
                                     tools:text="+8.67% upside" />
                             </LinearLayout>
 
@@ -219,28 +226,29 @@
                                 android:orientation="vertical">
 
                                 <TextView
-                                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Stop Loss"
-                                    android:textColor="@color/color_text_tertiary" />
+                                    android:textColor="@color/color_text_tertiary"
+                                    android:textSize="12sp" />
 
                                 <TextView
                                     android:id="@+id/tv_detail_stop_loss"
-                                    android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="4dp"
                                     android:textColor="@color/color_negative"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
                                     tools:text="PKR 148.50" />
 
                                 <TextView
                                     android:id="@+id/tv_downside_pct"
-                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:textColor="@color/color_negative"
+                                    android:textSize="11sp"
                                     tools:text="-3.95% downside" />
                             </LinearLayout>
                         </LinearLayout>
@@ -248,11 +256,11 @@
                         <!-- Expected Range & ATR info -->
                         <TextView
                             android:id="@+id/tv_expected_range"
-                            android:textAppearance="@style/TextAppearance.Basarat.Meta"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="14dp"
                             android:textColor="@color/color_text_secondary"
+                            android:textSize="12sp"
                             tools:text="Expected Range: PKR 145.00 — PKR 172.00 (ATR-14: 3.80)" />
 
                     </LinearLayout>
@@ -275,11 +283,12 @@
                         android:padding="20dp">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Engine Signal Breakdown"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
 
                         <!-- ML / Technical / Fundamental Scores -->
                         <LinearLayout
@@ -295,19 +304,20 @@
                                 android:orientation="horizontal">
 
                                 <TextView
-                                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:text="GRU / ML Signal"
-                                    android:textColor="@color/color_text_secondary" />
+                                    android:textColor="@color/color_text_secondary"
+                                    android:textSize="13sp" />
 
                                 <TextView
                                     android:id="@+id/tv_signal_ml"
-                                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/color_positive"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold"
                                     tools:text="+0.45" />
                             </LinearLayout>
 
@@ -319,19 +329,20 @@
                                 android:orientation="horizontal">
 
                                 <TextView
-                                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:text="Technical Indicator Signal"
-                                    android:textColor="@color/color_text_secondary" />
+                                    android:textColor="@color/color_text_secondary"
+                                    android:textSize="13sp" />
 
                                 <TextView
                                     android:id="@+id/tv_signal_tech"
-                                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/color_positive"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold"
                                     tools:text="+0.38" />
                             </LinearLayout>
 
@@ -343,39 +354,41 @@
                                 android:orientation="horizontal">
 
                                 <TextView
-                                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:text="Fundamental Signal"
-                                    android:textColor="@color/color_text_secondary" />
+                                    android:textColor="@color/color_text_secondary"
+                                    android:textSize="13sp" />
 
                                 <TextView
                                     android:id="@+id/tv_signal_fund"
-                                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/color_positive"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold"
                                     tools:text="+0.43" />
                             </LinearLayout>
                         </LinearLayout>
 
                         <!-- Reasoning Breakdown -->
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
                             android:text="Model Reasoning"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tv_reasoning_summary"
-                            android:textAppearance="@style/TextAppearance.Basarat.Meta"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:textColor="@color/color_text_secondary"
+                            android:textSize="12sp"
                             tools:text="• ML: Bullish trend confirmed\n• Technical: RSI=38.2 oversold, MACD bullish crossover\n• Fundamental: P/E=6.8 undervalued" />
 
                     </LinearLayout>
@@ -383,13 +396,13 @@
 
                 <!-- Disclaimer -->
                 <TextView
-                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:gravity="center"
                     android:text="Recommendations and target/stop levels are algorithmic models for decision support and do not represent guaranteed outcomes."
-                    android:textColor="@color/color_text_tertiary" />
+                    android:textColor="@color/color_text_tertiary"
+                    android:textSize="11sp" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
@@ -442,12 +455,12 @@
 
             <TextView
                 android:id="@+id/tv_error_message"
-                android:textAppearance="@style/TextAppearance.Basarat.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Unable to load recommendation."
-                android:textColor="@color/color_text_secondary" />
+                android:textColor="@color/color_text_secondary"
+                android:textSize="14sp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_retry"

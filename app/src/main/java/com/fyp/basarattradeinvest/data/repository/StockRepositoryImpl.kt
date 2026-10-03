@@ -94,7 +94,7 @@ class StockRepositoryImpl(
         try {
             val response = apiService.searchStocks(query = query, limit = limit)
             if (response.isSuccessful && response.body() != null) {
-                val results = response.body()!!.results.map { StocksDtoMapper.mapSearchResult(it) }
+                val results = response.body()!!.results.orEmpty().map { StocksDtoMapper.mapSearchResult(it) }
                 Result.success(results)
             } else {
                 fallbackSearch(query)

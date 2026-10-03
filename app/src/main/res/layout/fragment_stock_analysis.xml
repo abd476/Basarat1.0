@@ -42,12 +42,13 @@
 
                 <TextView
                     android:id="@+id/tv_screen_title"
-                    android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="Stock Analysis"
                     android:textColor="@color/color_text_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/layout_top_actions"
                     app:layout_constraintStart_toEndOf="@id/iv_back"
@@ -107,15 +108,15 @@
 
                     <TextView
                         android:id="@+id/tv_stock_symbol"
-                        android:textAppearance="@style/TextAppearance.Basarat.Heading"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/color_text_primary"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
                         tools:text="LUCK" />
 
                     <TextView
                         android:id="@+id/tv_company_name"
-                        android:textAppearance="@style/TextAppearance.Basarat.Body"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -123,6 +124,7 @@
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:textColor="@color/color_text_secondary"
+                        android:textSize="14sp"
                         tools:text="Lucky Cement Limited" />
                 </LinearLayout>
 
@@ -135,16 +137,16 @@
 
                     <TextView
                         android:id="@+id/tv_current_price"
-                        android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="--"
                         android:textColor="@color/color_text_primary"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
                         tools:text="PKR 412.80" />
 
                     <TextView
                         android:id="@+id/tv_price_change"
-                        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
@@ -152,6 +154,8 @@
                         android:paddingHorizontal="8dp"
                         android:paddingVertical="3dp"
                         android:textColor="@color/color_positive"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
                         android:visibility="gone"
                         tools:text="+3.10% (+12.40)"
                         tools:visibility="visible" />
@@ -175,14 +179,14 @@
                     android:layout_height="44dp"
                     android:orientation="horizontal"
                     android:paddingHorizontal="16dp"
-                    android:weightSum="4">
+                    android:weightSum="4.8">
 
                     <!-- Technical Tab -->
                     <LinearLayout
                         android:id="@+id/btn_tab_technical"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
+                        android:layout_weight="1.1"
                         android:clickable="true"
                         android:focusable="true"
                         android:gravity="center"
@@ -190,13 +194,14 @@
 
                         <TextView
                             android:id="@+id/tv_tab_technical_text"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="0dp"
                             android:layout_weight="1"
                             android:gravity="center"
                             android:text="Technical"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
 
                         <View
                             android:id="@+id/indicator_tab_technical"
@@ -211,7 +216,7 @@
                         android:id="@+id/btn_tab_fundamentals"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
+                        android:layout_weight="1.5"
                         android:clickable="true"
                         android:focusable="true"
                         android:gravity="center"
@@ -219,13 +224,14 @@
 
                         <TextView
                             android:id="@+id/tv_tab_fundamentals_text"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="0dp"
                             android:layout_weight="1"
                             android:gravity="center"
                             android:text="Fundamentals"
-                            android:textColor="@color/color_text_secondary" />
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
 
                         <View
                             android:id="@+id/indicator_tab_fundamentals"
@@ -240,7 +246,7 @@
                         android:id="@+id/btn_tab_forecast"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
+                        android:layout_weight="1.1"
                         android:clickable="true"
                         android:focusable="true"
                         android:gravity="center"
@@ -248,13 +254,14 @@
 
                         <TextView
                             android:id="@+id/tv_tab_forecast_text"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="0dp"
                             android:layout_weight="1"
                             android:gravity="center"
                             android:text="Forecast"
-                            android:textColor="@color/color_text_secondary" />
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
 
                         <View
                             android:id="@+id/indicator_tab_forecast"
@@ -269,7 +276,7 @@
                         android:id="@+id/btn_tab_sentiment"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
+                        android:layout_weight="1.1"
                         android:clickable="true"
                         android:focusable="true"
                         android:gravity="center"
@@ -277,13 +284,14 @@
 
                         <TextView
                             android:id="@+id/tv_tab_sentiment_text"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="0dp"
                             android:layout_weight="1"
                             android:gravity="center"
                             android:text="Sentiment"
-                            android:textColor="@color/color_text_secondary" />
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
 
                         <View
                             android:id="@+id/indicator_tab_sentiment"
@@ -317,12 +325,12 @@
                     android:background="@drawable/bg_skeleton" />
 
                 <TextView
-                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:text="Loading analysis data..."
-                    android:textColor="@color/color_text_secondary" />
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="13sp" />
             </LinearLayout>
 
             <!-- Overall Analysis Error State -->
@@ -337,12 +345,12 @@
 
                 <TextView
                     android:id="@+id/tv_analysis_error_msg"
-                    android:textAppearance="@style/TextAppearance.Basarat.Body"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Unable to load stock analysis"
-                    android:textColor="@color/color_negative" />
+                    android:textColor="@color/color_negative"
+                    android:textSize="14sp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_analysis_retry"
@@ -378,12 +386,13 @@
                     android:padding="16dp">
 
                     <TextView
-                        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:letterSpacing="0.04"
                         android:text="TECHNICAL SUMMARY"
-                        android:textColor="@color/color_text_secondary" />
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
 
                     <!-- Buy / Neutral / Sell Counters -->
                     <LinearLayout
@@ -402,19 +411,20 @@
 
                             <TextView
                                 android:id="@+id/tv_count_buy"
-                                android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="--"
-                                android:textColor="@color/color_positive" />
+                                android:textColor="@color/color_positive"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="1dp"
                                 android:text="Buy"
-                                android:textColor="@color/color_text_secondary" />
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -426,19 +436,20 @@
 
                             <TextView
                                 android:id="@+id/tv_count_neutral"
-                                android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="--"
-                                android:textColor="@color/color_text_primary" />
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="1dp"
                                 android:text="Neutral"
-                                android:textColor="@color/color_text_secondary" />
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -450,26 +461,26 @@
 
                             <TextView
                                 android:id="@+id/tv_count_sell"
-                                android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="--"
-                                android:textColor="@color/color_negative" />
+                                android:textColor="@color/color_negative"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="1dp"
                                 android:text="Sell"
-                                android:textColor="@color/color_text_secondary" />
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp" />
                         </LinearLayout>
                     </LinearLayout>
 
                     <!-- Overall Signal Callout -->
                     <TextView
                         android:id="@+id/tv_prominent_signal"
-                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
@@ -478,7 +489,9 @@
                         android:paddingHorizontal="16dp"
                         android:paddingVertical="5dp"
                         android:text="NEUTRAL"
-                        android:textColor="@color/color_text_primary" />
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
 
                     <!-- Visual Signal Meter Bar -->
                     <LinearLayout
@@ -531,12 +544,13 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Title"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Price History"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
 
                         <!-- Range Selector Pills: 1D | 1W | 1M | 1Y -->
                         <LinearLayout
@@ -549,43 +563,47 @@
 
                             <TextView
                                 android:id="@+id/btn_range_1d"
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                                 android:layout_width="38dp"
                                 android:layout_height="match_parent"
                                 android:background="@color/transparent"
                                 android:gravity="center"
                                 android:text="1D"
-                                android:textColor="@color/color_text_secondary" />
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/btn_range_1w"
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                                 android:layout_width="38dp"
                                 android:layout_height="match_parent"
                                 android:background="@color/transparent"
                                 android:gravity="center"
                                 android:text="1W"
-                                android:textColor="@color/color_text_secondary" />
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/btn_range_1m"
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                                 android:layout_width="38dp"
                                 android:layout_height="match_parent"
                                 android:background="@drawable/bg_segmented_tab_active"
                                 android:gravity="center"
                                 android:text="1M"
-                                android:textColor="@color/color_text_primary" />
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/btn_range_1y"
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                                 android:layout_width="38dp"
                                 android:layout_height="match_parent"
                                 android:background="@color/transparent"
                                 android:gravity="center"
                                 android:text="1Y"
-                                android:textColor="@color/color_text_secondary" />
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -610,11 +628,11 @@
                         android:visibility="gone">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Meta"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Unable to load price history"
-                            android:textColor="@color/color_negative" />
+                            android:textColor="@color/color_negative"
+                            android:textSize="12sp" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_chart_retry"
@@ -631,12 +649,12 @@
                     <!-- Chart Empty -->
                     <TextView
                         android:id="@+id/tv_chart_empty"
-                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                         android:layout_width="match_parent"
                         android:layout_height="180dp"
                         android:gravity="center"
                         android:text="No chart data available"
                         android:textColor="@color/color_text_secondary"
+                        android:textSize="13sp"
                         android:visibility="gone" />
 
                     <!-- MPAndroidChart LineChart -->
@@ -660,11 +678,12 @@
                     android:padding="16dp">
 
                     <TextView
-                        android:textAppearance="@style/TextAppearance.Basarat.Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Technical Indicators"
-                        android:textColor="@color/color_text_primary" />
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="match_parent"
@@ -688,38 +707,41 @@
                             android:orientation="vertical">
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="RSI (14)"
-                                android:textColor="@color/color_text_primary" />
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Relative Strength Index"
-                                android:textColor="@color/color_text_secondary" />
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tv_val_rsi"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10dp"
                             android:textColor="@color/color_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
                             tools:text="48.2" />
 
                         <TextView
                             android:id="@+id/tv_badge_rsi"
-                            android:textAppearance="@style/TextAppearance.Basarat.Micro"
                             android:layout_width="72dp"
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_badge_neutral"
                             android:gravity="center"
                             android:paddingVertical="3dp"
                             android:textColor="@color/color_text_secondary"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
                             tools:text="NEUTRAL" />
                     </LinearLayout>
 
@@ -745,38 +767,41 @@
                             android:orientation="vertical">
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="MACD (12,26,9)"
-                                android:textColor="@color/color_text_primary" />
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Moving Average Conv. Div."
-                                android:textColor="@color/color_text_secondary" />
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tv_val_macd"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10dp"
                             android:textColor="@color/color_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
                             tools:text="-1.85" />
 
                         <TextView
                             android:id="@+id/tv_badge_macd"
-                            android:textAppearance="@style/TextAppearance.Basarat.Micro"
                             android:layout_width="72dp"
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_badge_negative"
                             android:gravity="center"
                             android:paddingVertical="3dp"
                             android:textColor="@color/color_negative"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
                             tools:text="SELL" />
                     </LinearLayout>
 
@@ -802,38 +827,41 @@
                             android:orientation="vertical">
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="ADX (14)"
-                                android:textColor="@color/color_text_primary" />
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Average Directional Index"
-                                android:textColor="@color/color_text_secondary" />
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tv_val_adx"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10dp"
                             android:textColor="@color/color_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
                             tools:text="28.4" />
 
                         <TextView
                             android:id="@+id/tv_badge_adx"
-                            android:textAppearance="@style/TextAppearance.Basarat.Micro"
                             android:layout_width="72dp"
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_badge_positive"
                             android:gravity="center"
                             android:paddingVertical="3dp"
                             android:textColor="@color/color_positive"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
                             tools:text="BUY" />
                     </LinearLayout>
 
@@ -859,38 +887,41 @@
                             android:orientation="vertical">
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Bollinger Bands"
-                                android:textColor="@color/color_text_primary" />
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Middle Band (20,2)"
-                                android:textColor="@color/color_text_secondary" />
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tv_val_bb"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10dp"
                             android:textColor="@color/color_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
                             tools:text="418.5" />
 
                         <TextView
                             android:id="@+id/tv_badge_bb"
-                            android:textAppearance="@style/TextAppearance.Basarat.Micro"
                             android:layout_width="72dp"
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_badge_neutral"
                             android:gravity="center"
                             android:paddingVertical="3dp"
                             android:textColor="@color/color_text_secondary"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
                             tools:text="NEUTRAL" />
                     </LinearLayout>
 
@@ -916,38 +947,41 @@
                             android:orientation="vertical">
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="SMA (20)"
-                                android:textColor="@color/color_text_primary" />
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Simple Moving Average"
-                                android:textColor="@color/color_text_secondary" />
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tv_val_sma"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10dp"
                             android:textColor="@color/color_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
                             tools:text="415.20" />
 
                         <TextView
                             android:id="@+id/tv_badge_sma"
-                            android:textAppearance="@style/TextAppearance.Basarat.Micro"
                             android:layout_width="72dp"
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_badge_positive"
                             android:gravity="center"
                             android:paddingVertical="3dp"
                             android:textColor="@color/color_positive"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
                             tools:text="BUY" />
                     </LinearLayout>
 
@@ -968,37 +1002,40 @@
                             android:orientation="vertical">
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Stochastic (14,3)"
-                                android:textColor="@color/color_text_primary" />
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Fast Oscillator"
-                                android:textColor="@color/color_text_secondary" />
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tv_val_stoch"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10dp"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tv_badge_stoch"
-                            android:textAppearance="@style/TextAppearance.Basarat.Micro"
                             android:layout_width="72dp"
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_badge_neutral"
                             android:gravity="center"
                             android:paddingVertical="3dp"
-                            android:textColor="@color/color_text_secondary" />
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -1025,11 +1062,12 @@
                     android:padding="16dp">
 
                     <TextView
-                        android:textAppearance="@style/TextAppearance.Basarat.Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Valuation Multiples"
-                        android:textColor="@color/color_text_primary" />
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="match_parent"
@@ -1046,20 +1084,21 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="P/E Ratio (TTM)"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_pe"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
                             android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
                             tools:text="8.42x" />
                     </LinearLayout>
 
@@ -1072,20 +1111,21 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Forward P/E"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_forward_pe"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <!-- Price to Book -->
@@ -1097,20 +1137,21 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Price to Book (P/B)"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_pb"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
                             android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
                             tools:text="1.65x" />
                     </LinearLayout>
 
@@ -1123,20 +1164,21 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="PEG Ratio"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_peg"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <!-- EV / EBITDA -->
@@ -1148,20 +1190,21 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="EV / EBITDA"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_ev_ebitda"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -1177,11 +1220,12 @@
                     android:padding="16dp">
 
                     <TextView
-                        android:textAppearance="@style/TextAppearance.Basarat.Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Profitability &amp; Returns"
-                        android:textColor="@color/color_text_primary" />
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="match_parent"
@@ -1198,20 +1242,21 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Earnings Per Share (EPS)"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_eps"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
                             android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
                             tools:text="PKR 48.90" />
                     </LinearLayout>
 
@@ -1224,20 +1269,21 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Return on Equity (ROE)"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_roe"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
                             android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
                             tools:text="18.2%" />
                     </LinearLayout>
 
@@ -1250,20 +1296,21 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Return on Assets (ROA)"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_roa"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <!-- Net Margin -->
@@ -1275,20 +1322,21 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Net Profit Margin"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_net_margin"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <!-- Dividend Yield -->
@@ -1300,20 +1348,21 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Dividend Yield"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_div_yield"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
                             android:textColor="@color/color_positive"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
                             tools:text="4.20%" />
                     </LinearLayout>
                 </LinearLayout>
@@ -1330,11 +1379,12 @@
                     android:padding="16dp">
 
                     <TextView
-                        android:textAppearance="@style/TextAppearance.Basarat.Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Financial Health &amp; Solvency"
-                        android:textColor="@color/color_text_primary" />
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="match_parent"
@@ -1351,20 +1401,21 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Debt / Equity"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_de"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
                             android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
                             tools:text="0.45" />
                     </LinearLayout>
 
@@ -1377,20 +1428,21 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Current Ratio"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_current_ratio"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <!-- Quick Ratio -->
@@ -1402,20 +1454,21 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Quick Ratio"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_quick_ratio"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <!-- Interest Coverage -->
@@ -1427,20 +1480,21 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Interest Coverage"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_interest_coverage"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -1456,11 +1510,12 @@
                     android:padding="16dp">
 
                     <TextView
-                        android:textAppearance="@style/TextAppearance.Basarat.Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Financials &amp; Cash Flow"
-                        android:textColor="@color/color_text_primary" />
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="match_parent"
@@ -1477,20 +1532,21 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Revenue (TTM)"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_revenue"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <!-- Net Income TTM -->
@@ -1502,20 +1558,21 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Net Income (TTM)"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_net_income"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <!-- Free Cash Flow -->
@@ -1527,20 +1584,21 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Free Cash Flow"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tv_val_fcf"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N/A"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -1566,11 +1624,12 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Forecast Horizon:"
-                        android:textColor="@color/color_text_secondary" />
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -1582,33 +1641,36 @@
 
                         <TextView
                             android:id="@+id/btn_horizon_1d"
-                            android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                             android:layout_width="44dp"
                             android:layout_height="match_parent"
                             android:background="@drawable/bg_segmented_tab_active"
                             android:gravity="center"
                             android:text="1D"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/btn_horizon_1w"
-                            android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                             android:layout_width="44dp"
                             android:layout_height="match_parent"
                             android:background="@color/transparent"
                             android:gravity="center"
                             android:text="1W"
-                            android:textColor="@color/color_text_secondary" />
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/btn_horizon_1m"
-                            android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                             android:layout_width="44dp"
                             android:layout_height="match_parent"
                             android:background="@color/transparent"
                             android:gravity="center"
                             android:text="1M"
-                            android:textColor="@color/color_text_secondary" />
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -1629,12 +1691,12 @@
                         android:background="@drawable/bg_skeleton" />
 
                     <TextView
-                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="Loading ML forecast..."
-                        android:textColor="@color/color_text_secondary" />
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <!-- 6C. ERROR STATE -->
@@ -1650,12 +1712,12 @@
 
                     <TextView
                         android:id="@+id/tv_forecast_error_msg"
-                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="Unable to load forecast data."
-                        android:textColor="@color/color_negative" />
+                        android:textColor="@color/color_negative"
+                        android:textSize="13sp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_forecast_retry"
@@ -1695,19 +1757,20 @@
                             android:orientation="horizontal">
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Title"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="Price Prediction"
-                                android:textColor="@color/color_text_primary" />
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/tv_forecast_dates"
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp"
                                 tools:text="Target: 2026-09-28 (As of 2026-09-25)" />
                         </LinearLayout>
 
@@ -1721,18 +1784,18 @@
 
                             <TextView
                                 android:id="@+id/tv_forecast_direction_badge"
-                                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/bg_badge_positive"
                                 android:paddingHorizontal="10dp"
                                 android:paddingVertical="4dp"
                                 android:textColor="@color/color_positive"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
                                 tools:text="BULLISH" />
 
                             <TextView
                                 android:id="@+id/tv_forecast_signal_rating"
-                                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
@@ -1740,36 +1803,40 @@
                                 android:paddingHorizontal="10dp"
                                 android:paddingVertical="4dp"
                                 android:textColor="@color/color_basarat_green"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
                                 tools:text="STRONG BUY" />
 
                             <TextView
                                 android:id="@+id/tv_forecast_confidence"
-                                android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
                                 android:layout_weight="1"
                                 android:gravity="end"
                                 android:textColor="@color/color_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
                                 tools:text="82% Confidence" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tv_forecast_summary"
-                            android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:textColor="@color/color_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
                             tools:text="Overall forecast: Bullish. Target PKR 445.00 with +7.8% upside." />
 
                         <TextView
                             android:id="@+id/tv_forecast_meta"
-                            android:textAppearance="@style/TextAppearance.Basarat.Caption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:textColor="@color/color_text_secondary"
+                            android:textSize="11sp"
                             tools:text="Forecast confidence: 82% • Target date: 2026-09-28" />
 
                         <View
@@ -1792,26 +1859,27 @@
                                 android:orientation="vertical">
 
                                 <TextView
-                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Target Price"
-                                    android:textColor="@color/color_text_secondary" />
+                                    android:textColor="@color/color_text_secondary"
+                                    android:textSize="11sp" />
 
                                 <TextView
                                     android:id="@+id/tv_forecast_target_price"
-                                    android:textAppearance="@style/TextAppearance.Basarat.Number.Title"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/color_positive"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
                                     tools:text="PKR 445.00" />
 
                                 <TextView
                                     android:id="@+id/tv_forecast_upside_pct"
-                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/color_positive"
+                                    android:textSize="11sp"
                                     tools:text="+7.8% upside" />
                             </LinearLayout>
 
@@ -1822,26 +1890,27 @@
                                 android:orientation="vertical">
 
                                 <TextView
-                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Stop Loss"
-                                    android:textColor="@color/color_text_secondary" />
+                                    android:textColor="@color/color_text_secondary"
+                                    android:textSize="11sp" />
 
                                 <TextView
                                     android:id="@+id/tv_forecast_stop_loss"
-                                    android:textAppearance="@style/TextAppearance.Basarat.Number.Title"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/color_negative"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
                                     tools:text="PKR 398.00" />
 
                                 <TextView
                                     android:id="@+id/tv_forecast_downside_pct"
-                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/color_negative"
+                                    android:textSize="11sp"
                                     tools:text="-3.6% risk" />
                             </LinearLayout>
 
@@ -1852,26 +1921,27 @@
                                 android:orientation="vertical">
 
                                 <TextView
-                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Risk / Reward"
-                                    android:textColor="@color/color_text_secondary" />
+                                    android:textColor="@color/color_text_secondary"
+                                    android:textSize="11sp" />
 
                                 <TextView
                                     android:id="@+id/tv_forecast_risk_reward"
-                                    android:textAppearance="@style/TextAppearance.Basarat.Title"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/color_text_primary"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
                                     tools:text="2.17" />
 
                                 <TextView
                                     android:id="@+id/tv_forecast_current_price"
-                                    android:textAppearance="@style/TextAppearance.Basarat.Micro"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/color_text_secondary"
+                                    android:textSize="10sp"
                                     tools:text="Ref: PKR 412.80" />
                             </LinearLayout>
                         </LinearLayout>
@@ -1891,11 +1961,12 @@
                         tools:visibility="visible">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Probability Distribution"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
 
                         <!-- Segmented Distribution Meter -->
                         <LinearLayout
@@ -1936,31 +2007,33 @@
 
                             <TextView
                                 android:id="@+id/tv_prob_bullish_val"
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:textColor="@color/color_positive"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
                                 tools:text="Bullish: 65.0%" />
 
                             <TextView
                                 android:id="@+id/tv_prob_sideways_val"
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:gravity="center"
                                 android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp"
                                 tools:text="Sideways: 25.0%" />
 
                             <TextView
                                 android:id="@+id/tv_prob_bearish_val"
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:gravity="end"
                                 android:textColor="@color/color_negative"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
                                 tools:text="Bearish: 10.0%" />
                         </LinearLayout>
                     </LinearLayout>
@@ -1979,11 +2052,12 @@
                         tools:visibility="visible">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Model Ensemble Breakdown"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
 
                         <!-- GRU Model Row -->
                         <LinearLayout
@@ -1994,29 +2068,31 @@
                             android:orientation="horizontal">
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                 android:layout_width="70dp"
                                 android:layout_height="wrap_content"
                                 android:text="GRU"
-                                android:textColor="@color/color_text_primary" />
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/tv_gru_direction"
-                                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/color_positive"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
                                 tools:text="BULLISH" />
 
                             <TextView
                                 android:id="@+id/tv_gru_pcts"
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
                                 android:layout_weight="1"
                                 android:gravity="end"
                                 android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp"
                                 tools:text="72% Bull • 28% Bear" />
                         </LinearLayout>
 
@@ -2029,29 +2105,31 @@
                             android:orientation="horizontal">
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                 android:layout_width="70dp"
                                 android:layout_height="wrap_content"
                                 android:text="XGBoost"
-                                android:textColor="@color/color_text_primary" />
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/tv_xgb_direction"
-                                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/color_positive"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
                                 tools:text="BULLISH" />
 
                             <TextView
                                 android:id="@+id/tv_xgb_pcts"
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
                                 android:layout_weight="1"
                                 android:gravity="end"
                                 android:textColor="@color/color_text_secondary"
+                                android:textSize="11sp"
                                 tools:text="68% Bull • 32% Bear" />
                         </LinearLayout>
                     </LinearLayout>
@@ -2070,11 +2148,12 @@
                         tools:visibility="visible">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Market &amp; Benchmark Context"
-                            android:textColor="@color/color_text_primary" />
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -2083,19 +2162,20 @@
                             android:orientation="horizontal">
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Meta"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="KSE Returns (5D / 20D)"
-                                android:textColor="@color/color_text_secondary" />
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="12sp" />
 
                             <TextView
                                 android:id="@+id/tv_context_market_returns"
-                                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/color_text_primary"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
                                 tools:text="+1.8% / +4.2%" />
                         </LinearLayout>
 
@@ -2106,167 +2186,34 @@
                             android:orientation="horizontal">
 
                             <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Meta"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="Stock Relative Return"
-                                android:textColor="@color/color_text_secondary" />
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="12sp" />
 
                             <TextView
                                 android:id="@+id/tv_context_stock_relative"
-                                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/color_positive"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
                                 tools:text="+3.5% relative" />
                         </LinearLayout>
                     </LinearLayout>
 
-                    <!-- MODEL ACCURACY & HISTORY SECTION -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
-                        android:layout_marginTop="16dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Forecast History &amp; Accuracy"
-                            android:textColor="@color/color_text_primary" />
-
-                        <!-- Accuracy Banner -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:background="@drawable/bg_card_clean"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:padding="16dp">
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Overall Accuracy"
-                                    android:textColor="@color/color_text_secondary" />
-
-                                <TextView
-                                    android:id="@+id/tv_history_accuracy_val"
-                                    android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="2dp"
-                                    android:textColor="@color/color_basarat_green"
-                                    tools:text="68.5%" />
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:gravity="end"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Scored Predictions"
-                                    android:textColor="@color/color_text_secondary" />
-
-                                <TextView
-                                    android:id="@+id/tv_history_count_val"
-                                    android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="2dp"
-                                    android:textColor="@color/color_text_primary"
-                                    tools:text="30 Records" />
-                            </LinearLayout>
-                        </LinearLayout>
-
-                        <!-- History Loading State -->
-                        <View
-                            android:id="@+id/history_progress"
-                            android:layout_width="match_parent"
-                            android:layout_height="120dp"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="16dp"
-                            android:background="@drawable/bg_skeleton"
-                            android:visibility="gone" />
-
-                        <!-- History Error State -->
-                        <LinearLayout
-                            android:id="@+id/layout_history_error"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
-                            android:gravity="center"
-                            android:orientation="vertical"
-                            android:visibility="gone">
-
-                            <TextView
-                                android:id="@+id/tv_history_error_msg"
-                                android:textAppearance="@style/TextAppearance.Basarat.Meta"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Unable to load forecast history"
-                                android:textColor="@color/color_negative" />
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btn_history_retry"
-                                android:layout_width="wrap_content"
-                                android:layout_height="36dp"
-                                android:layout_marginTop="6dp"
-                                android:text="Retry History"
-                                android:textAllCaps="false"
-                                android:textSize="11sp"
-                                app:backgroundTint="@color/color_button_primary_bg"
-                                app:cornerRadius="6dp" />
-                        </LinearLayout>
-
-                        <!-- History Empty State -->
-                        <TextView
-                            android:id="@+id/tv_history_empty"
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:gravity="center"
-                            android:text="No historical predictions recorded for this stock yet."
-                            android:textColor="@color/color_text_secondary"
-                            android:visibility="gone" />
-
-                        <!-- History List -->
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/rv_forecast_history"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:nestedScrollingEnabled="false" />
-
-                    </LinearLayout>
-
                     <!-- Prediction Disclaimer -->
                     <TextView
-                        android:textAppearance="@style/TextAppearance.Basarat.Caption"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="16dp"
                         android:layout_marginTop="16dp"
                         android:lineSpacingExtra="2dp"
                         android:text="Notice: AI predictions are probabilistic projections generated by deep learning models for decision-support purposes only. They do not constitute guaranteed outcomes or registered financial advice."
-                        android:textColor="@color/color_text_tertiary" />
+                        android:textColor="@color/color_text_tertiary"
+                        android:textSize="11sp" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -2290,11 +2237,12 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:textAppearance="@style/TextAppearance.Basarat.Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Sentiment Analysis"
-                        android:textColor="@color/color_text_primary" />
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <!-- Stock Sentiment Loading -->
                     <View
@@ -2318,11 +2266,11 @@
 
                         <TextView
                             android:id="@+id/tv_stock_sentiment_error_msg"
-                            android:textAppearance="@style/TextAppearance.Basarat.Meta"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Unable to load sentiment data."
-                            android:textColor="@color/color_negative" />
+                            android:textColor="@color/color_negative"
+                            android:textSize="12sp" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_stock_sentiment_retry"
@@ -2355,29 +2303,31 @@
 
                             <TextView
                                 android:id="@+id/tv_sentiment_stock_label"
-                                android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:textColor="@color/color_text_primary"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
                                 tools:text="BULLISH" />
 
                             <TextView
                                 android:id="@+id/tv_sentiment_stock_score_value"
-                                android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/color_positive"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
                                 tools:text="+0.35" />
                         </LinearLayout>
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Caption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:text="Score scale: −1.0 (Bearish) → +1.0 (Bullish)"
-                            android:textColor="@color/color_text_secondary" />
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="11sp" />
 
                         <!-- Score Bar Meter -->
                         <FrameLayout
@@ -2421,29 +2371,30 @@
 
                             <TextView
                                 android:id="@+id/tv_sentiment_article_count"
-                                android:textAppearance="@style/TextAppearance.Basarat.Meta"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:textColor="@color/color_text_secondary"
+                                android:textSize="12sp"
                                 tools:text="Articles Scored: 24" />
 
                             <TextView
                                 android:id="@+id/tv_sentiment_trend"
-                                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/color_text_primary"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
                                 tools:text="Trend: Improving" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/tv_sentiment_sources_count"
-                            android:textAppearance="@style/TextAppearance.Basarat.Caption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:textColor="@color/color_text_tertiary"
+                            android:textSize="11sp"
                             tools:text="18 news items • 6 community signals" />
                     </LinearLayout>
                 </LinearLayout>
@@ -2460,11 +2411,12 @@
                     android:padding="16dp">
 
                     <TextView
-                        android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Sentiment Trend (30 Days)"
-                        android:textColor="@color/color_text_primary" />
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
                     <View
                         android:id="@+id/progress_sentiment_history"
@@ -2485,11 +2437,11 @@
                         android:visibility="gone">
 
                         <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Meta"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Unable to load sentiment history."
-                            android:textColor="@color/color_negative" />
+                            android:textColor="@color/color_negative"
+                            android:textSize="12sp" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_sentiment_history_retry"
@@ -2505,12 +2457,12 @@
 
                     <TextView
                         android:id="@+id/tv_sentiment_history_empty"
-                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="match_parent"
                         android:layout_height="120dp"
                         android:gravity="center"
                         android:text="No sentiment trend history available"
                         android:textColor="@color/color_text_secondary"
+                        android:textSize="12sp"
                         android:visibility="gone" />
 
                     <com.github.mikephil.charting.charts.LineChart
@@ -2530,19 +2482,20 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:textAppearance="@style/TextAppearance.Basarat.Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="FinBERT Annotated News"
-                        android:textColor="@color/color_text_primary" />
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:textAppearance="@style/TextAppearance.Basarat.Caption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text="Real-time news articles evaluated by financial sentiment AI"
-                        android:textColor="@color/color_text_secondary" />
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="11sp" />
 
                     <!-- News Loading -->
                     <View
@@ -2566,11 +2519,11 @@
 
                         <TextView
                             android:id="@+id/tv_sentiment_news_error_msg"
-                            android:textAppearance="@style/TextAppearance.Basarat.Meta"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Unable to load sentiment news"
-                            android:textColor="@color/color_negative" />
+                            android:textColor="@color/color_negative"
+                            android:textSize="12sp" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_sentiment_news_retry"
@@ -2587,13 +2540,13 @@
                     <!-- News Empty -->
                     <TextView
                         android:id="@+id/tv_sentiment_news_empty"
-                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         android:gravity="center"
                         android:text="No sentiment news available for this symbol."
                         android:textColor="@color/color_text_secondary"
+                        android:textSize="13sp"
                         android:visibility="gone" />
 
                     <!-- News List -->
