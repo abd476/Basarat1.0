@@ -12,6 +12,11 @@ import android.text.style.StyleSpan
  */
 object AssistantMarkdownFormatter {
 
+    // format() runs per message per rebind, so the patterns and span are built once, not per line.
+    private val HEADER_REGEX = Regex("^(#{1,3})\\s+(.+)$")
+    private val BOLD_REGEX = Regex("\\*\\*(.*?)\\*\\*")
+    private val BOLD_SPAN = StyleSpan(Typeface.BOLD)
+
     fun format(text: String): CharSequence {
         if (text.isEmpty()) return ""
         return try {
@@ -29,7 +34,7 @@ object AssistantMarkdownFormatter {
             val line = lines[i]
 
             // Check for headers: e.g. ### Header or ## Header
-            val headerMatch = Regex("^(#{1,3})\\s+(.+)$").find(line)
+            val headerMatch = HEADER_REGEX.find(line)
             if (headerMatch != null) {
                 val headerLevel = headerMatch.groupValues[1].length
                 val headerText = headerMatch.groupValues[2]
@@ -37,7 +42,7 @@ object AssistantMarkdownFormatter {
                 appendInlineFormatted(ssb, headerText)
                 val end = ssb.length
                 val sizeMultiplier = if (headerLevel == 1) 1.25f else if (headerLevel == 2) 1.15f else 1.08f
-                ssb.setSpan(StyleSpan(Typeface.BOLD), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                ssb.setSpan(BOLD_SPAN, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 ssb.setSpan(RelativeSizeSpan(sizeMultiplier), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             } else if (line.trimStart().startsWith("- ") || line.trimStart().startsWith("* ")) {
                 val bulletContent = line.trimStart().drop(2)
@@ -57,8 +62,7 @@ object AssistantMarkdownFormatter {
 
     private fun appendInlineFormatted(ssb: SpannableStringBuilder, text: String) {
         var cursor = 0
-        val boldRegex = Regex("\\*\\*(.*?)\\*\\*")
-        val matches = boldRegex.findAll(text)
+        val matches = BOLD_REGEX.findAll(text)
 
         for (match in matches) {
             val range = match.range
@@ -69,7 +73,7 @@ object AssistantMarkdownFormatter {
             val spanStart = ssb.length
             ssb.append(boldText)
             val spanEnd = ssb.length
-            ssb.setSpan(StyleSpan(Typeface.BOLD), spanStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            ssb.setSpan(BOLD_SPAN, spanStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             cursor = range.last + 1
         }
 
@@ -82,13 +86,13 @@ object AssistantMarkdownFormatter {
         val lines = text.split("\n")
         return lines.joinToString("\n") { line ->
             var formatted = line
-            val headerMatch = Regex("^(#{1,3})\\s+(.+)$").find(formatted)
+            val headerMatch = HEADER_REGEX.find(formatted)
             if (headerMatch != null) {
                 formatted = headerMatch.groupValues[2]
             } else if (formatted.trimStart().startsWith("- ") || formatted.trimStart().startsWith("* ")) {
                 formatted = "• " + formatted.trimStart().drop(2)
             }
-            formatted.replace(Regex("\\*\\*(.*?)\\*\\*"), "$1")
+            formatted.replace(BOLD_REGEX, "$1")
         }
     }
 }
