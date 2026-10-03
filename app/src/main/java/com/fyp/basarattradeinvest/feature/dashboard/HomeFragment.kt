@@ -124,6 +124,10 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.editProfileFragment)
         }
 
+        binding.btnMenu.setOnClickListener {
+            (requireActivity() as? com.fyp.basarattradeinvest.MainActivity)?.openDrawer()
+        }
+
         // 3. Watchlist "View All"
         binding.btnViewWatchlist.setOnClickListener {
             findNavController().navigate(R.id.nav_markets)
