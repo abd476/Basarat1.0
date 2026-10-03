@@ -32,6 +32,8 @@ class CommunityProfileFragment : Fragment() {
 
     private lateinit var postAdapter: CommunityPostAdapter
     private var targetUserId: String? = null
+    private var lastBoundHeader: Pair<CommunityProfile, CommunityFeedMode>? = null
+    private var lastBoundPosts: List<CommunityPost>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -179,26 +181,38 @@ class CommunityProfileFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     when (state) {
                         is CommunityProfileUiState.Loading -> {
+                            lastBoundHeader = null
+                            lastBoundPosts = null
                             binding.layoutProfileSkeleton.visibility = View.VISIBLE
                             binding.progressBar.visibility = View.GONE
                             binding.layoutError.visibility = View.GONE
                         }
                         is CommunityProfileUiState.Success -> {
                             binding.layoutProfileSkeleton.visibility = View.GONE
-                            binding.progressBar.visibility = View.GONE
                             binding.layoutError.visibility = View.GONE
                             binding.swipeRefresh.isRefreshing = false
-                            bindProfile(state.profile)
-                            bindFeedModeTabs(state.feedMode, state.profile.isOwnProfile)
-                            postAdapter.submitList(state.posts)
+                            // The header arrives before the feed, so only the post area waits.
+                            binding.progressBar.visibility =
+                                if (state.isPostsLoading) View.VISIBLE else View.GONE
 
-                            if (state.posts.isEmpty()) {
-                                binding.layoutEmptyPosts.visibility = View.VISIBLE
-                            } else {
-                                binding.layoutEmptyPosts.visibility = View.GONE
+                            val header = state.profile to state.feedMode
+                            if (lastBoundHeader != header) {
+                                bindProfile(state.profile)
+                                bindFeedModeTabs(state.feedMode, state.profile.isOwnProfile)
+                                lastBoundHeader = header
                             }
+
+                            if (lastBoundPosts != state.posts) {
+                                postAdapter.submitList(state.posts)
+                                lastBoundPosts = state.posts
+                            }
+
+                            binding.layoutEmptyPosts.visibility =
+                                if (!state.isPostsLoading && state.posts.isEmpty()) View.VISIBLE else View.GONE
                         }
                         is CommunityProfileUiState.Error -> {
+                            lastBoundHeader = null
+                            lastBoundPosts = null
                             binding.layoutProfileSkeleton.visibility = View.GONE
                             binding.progressBar.visibility = View.GONE
                             binding.swipeRefresh.isRefreshing = false
@@ -259,6 +273,8 @@ class CommunityProfileFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        lastBoundHeader = null
+        lastBoundPosts = null
         _binding = null
     }
 }

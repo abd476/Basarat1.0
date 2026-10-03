@@ -16,7 +16,8 @@ sealed interface CommunityProfileUiState {
         val posts: List<CommunityPost>,
         val hasMorePosts: Boolean,
         val isRefreshing: Boolean = false,
-        val feedMode: CommunityFeedMode = CommunityFeedMode.COMMUNITY_FEED
+        val feedMode: CommunityFeedMode = CommunityFeedMode.COMMUNITY_FEED,
+        val isPostsLoading: Boolean = false
     ) : CommunityProfileUiState
 
     data class Error(

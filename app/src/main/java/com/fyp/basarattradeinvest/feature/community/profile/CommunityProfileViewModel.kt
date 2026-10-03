@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.data.repository.CommunityRepositoryImpl
 import com.fyp.basarattradeinvest.domain.model.community.CommunityPost
+import com.fyp.basarattradeinvest.domain.model.community.CommunityPostList
 import com.fyp.basarattradeinvest.domain.model.community.CommunityProfile
 import com.fyp.basarattradeinvest.domain.repository.CommunityRepository
 import com.fyp.basarattradeinvest.domain.usecase.community.GetCommunityFeedUseCase
@@ -14,6 +15,8 @@ import com.fyp.basarattradeinvest.domain.usecase.community.GetUserCommunityProfi
 import com.fyp.basarattradeinvest.domain.usecase.community.GetUserPostsUseCase
 import com.fyp.basarattradeinvest.domain.usecase.community.LikeCommunityPostUseCase
 import com.fyp.basarattradeinvest.domain.usecase.community.UnlikeCommunityPostUseCase
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -39,6 +42,7 @@ class CommunityProfileViewModel(
     private var postCursor: String? = null
     private var lastSuccessfulFetchAt: Long = 0L
     private val freshnessWindowMs = 5 * 60 * 1000L
+    private var loadGeneration = 0
 
     fun ensureLoaded(userId: String? = null, isRefresh: Boolean = false) {
         val state = _uiState.value
@@ -50,12 +54,14 @@ class CommunityProfileViewModel(
     }
 
     fun loadProfile(userId: String? = null, isRefresh: Boolean = false) {
+        val previousUserId = currentUserId
         currentUserId = userId
-        val isSelf = userId.isNullOrBlank() || userId.equals("me", ignoreCase = true)
+        val generation = ++loadGeneration
+        val isSelf = isSelfProfile(userId)
 
         viewModelScope.launch {
             val currentState = _uiState.value
-            val isSameProfile = currentUserId == userId && currentState is CommunityProfileUiState.Success
+            val isSameProfile = previousUserId == userId && currentState is CommunityProfileUiState.Success
             if (!isRefresh && isSameProfile && System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs) {
                 return@launch
             }
@@ -63,48 +69,40 @@ class CommunityProfileViewModel(
                 _uiState.value = CommunityProfileUiState.Loading
             }
 
-            val profileResult = if (isSelf) {
-                getMyProfileUseCase()
-            } else {
-                getUserProfileUseCase(userId!!)
-            }
-
-            val postsResult = if (isSelf) {
-                if (currentFeedMode == CommunityFeedMode.COMMUNITY_FEED) {
-                    val normalizedPostType = currentPostTypeFilter?.takeIf { it.isNotBlank() && it != "ALL" }
-                    val normalizedStock = currentStockSymbolFilter?.trim()?.takeIf { it.isNotBlank() }
-                    getCommunityFeedUseCase(
-                        stockSymbol = normalizedStock,
-                        postType = normalizedPostType,
-                        mine = false,
-                        cursor = null,
-                        limit = 20
-                    )
-                } else {
-                    getMyPostsUseCase(cursor = null, limit = 20)
+            // Header and feed are independent endpoints; awaiting them one after the other made
+            // the user wait for two round trips before anything was drawn.
+            coroutineScope {
+                val profileDeferred = async {
+                    if (isSelf) getMyProfileUseCase() else getUserProfileUseCase(userId!!)
                 }
-            } else {
-                getUserPostsUseCase(userId = userId!!, cursor = null, limit = 20)
-            }
+                val postsDeferred = async { fetchPosts(isSelf, userId) }
 
-            if (profileResult.isSuccess) {
-                val profile = profileResult.getOrNull()!!
-                val rawPosts = postsResult.getOrNull()?.posts ?: emptyList()
-                val posts = rawPosts.distinctBy { it.id }.distinctBy { "${it.authorDisplayName}_${it.content.trim()}" }
-                val hasMore = postsResult.getOrNull()?.hasMore ?: false
-                postCursor = postsResult.getOrNull()?.cursor
+                val profileResult = profileDeferred.await()
+                if (generation != loadGeneration) return@coroutineScope
+
+                val profile = profileResult.getOrNull()
+                if (profile == null) {
+                    postsDeferred.cancel()
+                    val errorMsg = profileResult.exceptionOrNull()?.message ?: "Unable to load community profile"
+                    _uiState.value = CommunityProfileUiState.Error(errorMsg)
+                    return@coroutineScope
+                }
 
                 lastSuccessfulFetchAt = System.currentTimeMillis()
+                // Keep the posts already on screen while a refresh of the same profile is in flight.
+                val retained = if (isSameProfile) (currentState as? CommunityProfileUiState.Success) else null
                 _uiState.value = CommunityProfileUiState.Success(
                     profile = profile,
-                    posts = posts,
-                    hasMorePosts = hasMore,
+                    posts = retained?.posts ?: emptyList(),
+                    hasMorePosts = retained?.hasMorePosts ?: false,
                     isRefreshing = false,
-                    feedMode = currentFeedMode
+                    feedMode = currentFeedMode,
+                    isPostsLoading = true
                 )
-            } else {
-                val errorMsg = profileResult.exceptionOrNull()?.message ?: "Unable to load community profile"
-                _uiState.value = CommunityProfileUiState.Error(errorMsg)
+
+                val postsResult = postsDeferred.await()
+                if (generation != loadGeneration) return@coroutineScope
+                publishPosts(postsResult)
             }
         }
     }
@@ -114,20 +112,81 @@ class CommunityProfileViewModel(
             return
         }
         currentFeedMode = mode
-        loadProfile(userId = currentUserId, isRefresh = true)
+        reloadPosts()
     }
 
     fun setCommunityFilter(postType: String? = null, stockSymbol: String? = null) {
-        currentPostTypeFilter = postType?.takeIf { it.isNotBlank() && it != "ALL" }
-        currentStockSymbolFilter = stockSymbol?.trim()?.takeIf { it.isNotBlank() }
-        loadProfile(userId = currentUserId, isRefresh = true)
+        val nextPostType = postType?.takeIf { it.isNotBlank() && it != "ALL" }
+        val nextStockSymbol = stockSymbol?.trim()?.takeIf { it.isNotBlank() }
+        val unchanged = nextPostType == currentPostTypeFilter && nextStockSymbol == currentStockSymbolFilter
+        currentPostTypeFilter = nextPostType
+        currentStockSymbolFilter = nextStockSymbol
+        if (unchanged && _uiState.value is CommunityProfileUiState.Success) return
+        reloadPosts()
     }
 
     fun clearCommunityFilter() {
         currentPostTypeFilter = null
         currentStockSymbolFilter = null
-        loadProfile(userId = currentUserId, isRefresh = true)
+        reloadPosts()
     }
+
+    /** Feed filters only change the post list, so the header is not re-requested. */
+    private fun reloadPosts() {
+        val userId = currentUserId
+        val currentState = _uiState.value
+        if (currentState !is CommunityProfileUiState.Success) {
+            loadProfile(userId = userId, isRefresh = true)
+            return
+        }
+
+        val generation = ++loadGeneration
+        val isSelf = isSelfProfile(userId)
+        _uiState.value = currentState.copy(isPostsLoading = true, feedMode = currentFeedMode)
+
+        viewModelScope.launch {
+            val postsResult = fetchPosts(isSelf, userId)
+            if (generation != loadGeneration) return@launch
+            publishPosts(postsResult)
+        }
+    }
+
+    private suspend fun fetchPosts(isSelf: Boolean, userId: String?): Result<CommunityPostList> {
+        return if (isSelf) {
+            if (currentFeedMode == CommunityFeedMode.COMMUNITY_FEED) {
+                getCommunityFeedUseCase(
+                    stockSymbol = currentStockSymbolFilter,
+                    postType = currentPostTypeFilter,
+                    mine = false,
+                    cursor = null,
+                    limit = 20
+                )
+            } else {
+                getMyPostsUseCase(cursor = null, limit = 20)
+            }
+        } else {
+            getUserPostsUseCase(userId = userId!!, cursor = null, limit = 20)
+        }
+    }
+
+    private fun publishPosts(postsResult: Result<CommunityPostList>) {
+        val currentState = _uiState.value as? CommunityProfileUiState.Success ?: return
+        val payload = postsResult.getOrNull()
+        val rawPosts = payload?.posts ?: emptyList()
+        val posts = rawPosts.distinctBy { it.id }.distinctBy { "${it.authorDisplayName}_${it.content.trim()}" }
+        postCursor = payload?.cursor
+
+        _uiState.value = currentState.copy(
+            posts = posts,
+            hasMorePosts = payload?.hasMore ?: false,
+            isRefreshing = false,
+            isPostsLoading = false,
+            feedMode = currentFeedMode
+        )
+    }
+
+    private fun isSelfProfile(userId: String?): Boolean =
+        userId.isNullOrBlank() || userId.equals("me", ignoreCase = true)
 
     fun toggleLike(post: CommunityPost) {
         val currentState = _uiState.value as? CommunityProfileUiState.Success ?: return
