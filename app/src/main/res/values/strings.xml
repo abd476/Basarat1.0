@@ -16,6 +16,7 @@
     <string name="drawer_etf">ETFs</string>
     <string name="drawer_ipo">IPOs</string>
     <string name="drawer_recommendations">Recommendations</string>
+    <string name="drawer_smart_selection">Smart Selection</string>
     <string name="drawer_news">News &amp; Events</string>
     <string name="drawer_risk">Risk &amp; Analysis</string>
     <string name="drawer_notifications">Notifications</string>

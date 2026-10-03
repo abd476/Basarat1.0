@@ -33,6 +33,10 @@
             android:icon="@drawable/ic_drawer_bulb"
             android:title="@string/drawer_recommendations" />
         <item
+            android:id="@+id/smart_selection_fragment"
+            android:icon="@drawable/ic_chip_smart"
+            android:title="@string/drawer_smart_selection" />
+        <item
             android:id="@+id/newsEventsFragment"
             android:icon="@drawable/ic_chip_news"
             android:title="@string/drawer_news" />
