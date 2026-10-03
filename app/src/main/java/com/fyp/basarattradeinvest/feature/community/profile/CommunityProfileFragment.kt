@@ -184,7 +184,7 @@ class CommunityProfileFragment : Fragment() {
                             lastBoundHeader = null
                             lastBoundPosts = null
                             binding.layoutProfileSkeleton.visibility = View.VISIBLE
-                            binding.progressBar.visibility = View.GONE
+                            binding.layoutPostsSkeleton.visibility = View.GONE
                             binding.layoutError.visibility = View.GONE
                         }
                         is CommunityProfileUiState.Success -> {
@@ -192,8 +192,10 @@ class CommunityProfileFragment : Fragment() {
                             binding.layoutError.visibility = View.GONE
                             binding.swipeRefresh.isRefreshing = false
                             // The header arrives before the feed, so only the post area waits.
-                            binding.progressBar.visibility =
-                                if (state.isPostsLoading) View.VISIBLE else View.GONE
+                            // Retained posts stay on screen during a refresh, so the skeleton is
+                            // for the first page only.
+                            binding.layoutPostsSkeleton.visibility =
+                                if (state.isPostsLoading && state.posts.isEmpty()) View.VISIBLE else View.GONE
 
                             val header = state.profile to state.feedMode
                             if (lastBoundHeader != header) {
@@ -214,7 +216,7 @@ class CommunityProfileFragment : Fragment() {
                             lastBoundHeader = null
                             lastBoundPosts = null
                             binding.layoutProfileSkeleton.visibility = View.GONE
-                            binding.progressBar.visibility = View.GONE
+                            binding.layoutPostsSkeleton.visibility = View.GONE
                             binding.swipeRefresh.isRefreshing = false
                             binding.layoutError.visibility = View.VISIBLE
                             binding.tvErrorMessage.text = state.message

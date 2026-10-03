@@ -367,6 +367,33 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
+                <!-- Feed skeleton: the header paints before the posts arrive -->
+                <LinearLayout
+                    android:id="@+id/layout_posts_skeleton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="gone">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:background="@drawable/bg_skeleton" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_skeleton" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_skeleton" />
+                </LinearLayout>
+
                 <!-- Empty State for Posts -->
                 <LinearLayout
                     android:id="@+id/layout_empty_posts"
@@ -449,15 +476,6 @@
             android:layout_marginTop="12dp"
             android:background="@drawable/bg_skeleton" />
     </LinearLayout>
-
-    <!-- Loading Indicator -->
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:indeterminateTint="@color/color_brand_primary"
-        android:visibility="gone" />
 
     <!-- Error State View -->
     <LinearLayout
