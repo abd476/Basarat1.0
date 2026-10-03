@@ -43,15 +43,15 @@
 
                     <TextView
                         android:id="@+id/tv_shariah_symbol"
+                        android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/color_text_primary"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
                         tools:text="LUCK" />
 
                     <TextView
                         android:id="@+id/tv_shariah_badge"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
@@ -59,18 +59,16 @@
                         android:paddingHorizontal="10dp"
                         android:paddingVertical="4dp"
                         android:textColor="@color/color_shariah_teal"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
                         tools:text="KMI-30 Compliant ✓" />
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/tv_shariah_sector"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:textColor="@color/color_text_secondary"
-                    android:textSize="13sp"
                     tools:text="Cement &amp; Construction Materials • PSX" />
             </LinearLayout>
 
@@ -101,20 +99,19 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Methodology"
-                    android:textColor="@color/color_text_tertiary"
-                    android:textSize="11sp" />
+                    android:textColor="@color/color_text_tertiary" />
 
                 <TextView
                     android:id="@+id/tv_shariah_method"
+                    android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:textColor="@color/color_text_primary"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
                     tools:text="AAOIFI &amp; KMI-30" />
             </LinearLayout>
 
@@ -125,20 +122,19 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Compliance Score"
-                    android:textColor="@color/color_text_tertiary"
-                    android:textSize="11sp" />
+                    android:textColor="@color/color_text_tertiary" />
 
                 <TextView
                     android:id="@+id/tv_shariah_score"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:textColor="@color/color_shariah_teal"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
                     tools:text="94.5 / 100" />
             </LinearLayout>
         </LinearLayout>
@@ -146,13 +142,13 @@
         <!-- Compliance Summary Banner -->
         <TextView
             android:id="@+id/tv_compliance_summary"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@drawable/bg_badge_shariah_compliant"
             android:padding="12dp"
             android:textColor="@color/color_text_primary"
-            android:textSize="12sp"
             tools:text="Meets all financial and qualitative screening criteria under the PSX KMI Shariah standard." />
 
         <!-- Sub Tabs / Section Selector -->
@@ -164,6 +160,7 @@
 
             <TextView
                 android:id="@+id/tab_criteria"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="0dp"
                 android:layout_height="36dp"
                 android:layout_marginEnd="6dp"
@@ -171,12 +168,11 @@
                 android:background="@drawable/bg_chip_filter_selected"
                 android:gravity="center"
                 android:text="Screening Criteria (6)"
-                android:textColor="@color/color_positive"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_positive" />
 
             <TextView
                 android:id="@+id/tab_purification"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="0dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="6dp"
@@ -184,9 +180,7 @@
                 android:background="@drawable/bg_chip_filter_unselected"
                 android:gravity="center"
                 android:text="Purification Calculator"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_secondary" />
         </LinearLayout>
 
         <!-- CONTAINER 1: Detailed Criteria -->
@@ -223,21 +217,20 @@
             android:visibility="gone">
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Meta"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Dividend purification deducts the non-compliant income portion from dividends as calculated by the official Shariah compliance engine."
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp" />
+                android:textColor="@color/color_text_secondary" />
 
             <!-- Input: Shares Qty -->
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
                 android:text="Shares Held (Qty)"
-                android:textColor="@color/color_text_primary"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -265,13 +258,12 @@
 
             <!-- Input: Holding Value -->
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:text="Total Holding Value (PKR)"
-                android:textColor="@color/color_text_primary"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -338,20 +330,19 @@
                     android:padding="16dp">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Required Charitable Purification"
-                        android:textColor="@color/color_text_tertiary"
-                        android:textSize="12sp" />
+                        android:textColor="@color/color_text_tertiary" />
 
                     <TextView
                         android:id="@+id/tv_purification_amount"
+                        android:textAppearance="@style/TextAppearance.Basarat.Number.Heading"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:textColor="@color/color_shariah_teal"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
                         tools:text="PKR 300.00" />
 
                     <LinearLayout
@@ -362,29 +353,28 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:textAppearance="@style/TextAppearance.Basarat.Meta"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Purification Rate: "
-                            android:textColor="@color/color_text_secondary"
-                            android:textSize="12sp" />
+                            android:textColor="@color/color_text_secondary" />
 
                         <TextView
                             android:id="@+id/tv_purification_rate"
+                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
                             tools:text="0.1200%" />
                     </LinearLayout>
 
                     <TextView
                         android:id="@+id/tv_purification_notes"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:textColor="@color/color_text_secondary"
-                        android:textSize="11sp"
                         tools:text="Disburse non-compliant dividend portions to registered charity without intention of personal reward." />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -392,12 +382,12 @@
 
         <!-- Religious Disclaimer Notice -->
         <TextView
+            android:textAppearance="@style/TextAppearance.Basarat.Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:gravity="center"
             android:text="Disclaimer: Shariah screening is an automated quantitative check adhering to PSX KMI methodology and does not constitute a certified religious ruling (fatwa)."
-            android:textColor="@color/color_text_tertiary"
-            android:textSize="11sp" />
+            android:textColor="@color/color_text_tertiary" />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

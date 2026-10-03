@@ -21,26 +21,24 @@
 
         <TextView
             android:id="@+id/tv_badge_type"
+            android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_badge_buy"
             android:paddingHorizontal="8dp"
             android:paddingVertical="3dp"
             android:textColor="@color/color_positive"
-            android:textSize="11sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="BUY" />
 
         <TextView
             android:id="@+id/tv_tx_symbol"
+            android:textAppearance="@style/TextAppearance.Basarat.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:textColor="@color/color_text_primary"
-            android:textSize="15sp"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/tv_badge_type"
             app:layout_constraintStart_toEndOf="@id/tv_badge_type"
             app:layout_constraintTop_toTopOf="@id/tv_badge_type"
@@ -48,23 +46,22 @@
 
         <TextView
             android:id="@+id/tv_tx_total"
+            android:textAppearance="@style/TextAppearance.Basarat.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/color_text_primary"
-            android:textSize="15sp"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="PKR 29,040.00" />
 
         <TextView
             android:id="@+id/tv_tx_details"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:layout_marginEnd="8dp"
             android:textColor="@color/color_text_secondary"
-            android:textSize="12sp"
             app:layout_constraintEnd_toStartOf="@id/tv_tx_fee"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_badge_type"
@@ -72,10 +69,10 @@
 
         <TextView
             android:id="@+id/tv_tx_fee"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/color_text_secondary"
-            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@id/tv_tx_details"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/tv_tx_details"
@@ -83,11 +80,11 @@
 
         <TextView
             android:id="@+id/tv_tx_date"
+            android:textAppearance="@style/TextAppearance.Basarat.Caption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textColor="@color/color_text_tertiary"
-            android:textSize="11sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_tx_details"
             tools:text="2026-09-20" />

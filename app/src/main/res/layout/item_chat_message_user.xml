@@ -18,19 +18,19 @@
 
         <TextView
             android:id="@+id/tvUserMessage"
+            android:textAppearance="@style/TextAppearance.Basarat.Body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/color_text_primary"
-            android:textSize="14sp"
             android:lineSpacingExtra="4dp" />
 
         <TextView
             android:id="@+id/tvUserTimestamp"
+            android:textAppearance="@style/TextAppearance.Basarat.Caption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:textColor="@color/color_text_tertiary"
-            android:textSize="11sp"
             android:layout_marginTop="4dp" />
 
     </LinearLayout>

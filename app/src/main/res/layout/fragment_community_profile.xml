@@ -25,13 +25,12 @@
 
                 <TextView
                     android:id="@+id/tv_toolbar_title"
+                    android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:text="Community Profile"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/color_text_primary" />
 
                 <!-- Notifications icon with unread badge -->
                 <FrameLayout
@@ -53,6 +52,7 @@
 
                     <TextView
                         android:id="@+id/tv_notif_badge"
+                        android:textAppearance="@style/TextAppearance.Basarat.Micro"
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:layout_gravity="top|end"
@@ -62,8 +62,6 @@
                         android:backgroundTint="@color/color_negative"
                         android:gravity="center"
                         android:textColor="@android:color/white"
-                        android:textSize="9sp"
-                        android:textStyle="bold"
                         android:visibility="gone"
                         tools:text="3"
                         tools:visibility="visible" />
@@ -120,26 +118,26 @@
 
                         <TextView
                             android:id="@+id/tv_profile_full_name"
+                            android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
                             android:textColor="@color/color_text_primary"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
                             tools:text="Tariq Mahmood" />
 
                         <TextView
                             android:id="@+id/tv_profile_username"
+                            android:textAppearance="@style/TextAppearance.Basarat.Body"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:textColor="@color/color_text_secondary"
-                            android:textSize="14sp"
                             tools:text="@tariq_equity" />
 
                         <!-- Follow Status Badge if other user -->
                         <TextView
                             android:id="@+id/tv_follow_status_badge"
+                            android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
@@ -148,8 +146,6 @@
                             android:paddingVertical="4dp"
                             android:text="Following"
                             android:textColor="@color/color_brand_primary"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
                             android:visibility="gone"
                             tools:visibility="visible" />
 
@@ -172,20 +168,19 @@
 
                                 <TextView
                                     android:id="@+id/tv_stats_posts_count"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/color_text_primary"
-                                    android:textSize="18sp"
-                                    android:textStyle="bold"
                                     tools:text="14" />
 
                                 <TextView
+                                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:text="Posts"
-                                    android:textColor="@color/color_text_secondary"
-                                    android:textSize="12sp" />
+                                    android:textColor="@color/color_text_secondary" />
                             </LinearLayout>
 
                             <!-- Followers (clickable) -->
@@ -203,20 +198,19 @@
 
                                 <TextView
                                     android:id="@+id/tv_stats_followers_count"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/color_brand_primary"
-                                    android:textSize="18sp"
-                                    android:textStyle="bold"
                                     tools:text="142" />
 
                                 <TextView
+                                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:text="Followers"
-                                    android:textColor="@color/color_text_secondary"
-                                    android:textSize="12sp" />
+                                    android:textColor="@color/color_text_secondary" />
                             </LinearLayout>
 
                             <!-- Following (clickable) -->
@@ -234,20 +228,19 @@
 
                                 <TextView
                                     android:id="@+id/tv_stats_following_count"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/color_brand_primary"
-                                    android:textSize="18sp"
-                                    android:textStyle="bold"
                                     tools:text="48" />
 
                                 <TextView
+                                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:text="Following"
-                                    android:textColor="@color/color_text_secondary"
-                                    android:textSize="12sp" />
+                                    android:textColor="@color/color_text_secondary" />
                             </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
@@ -255,13 +248,12 @@
 
                 <!-- Top Community Post Filters -->
                 <TextView
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:text="Explore Posts"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/color_text_primary" />
 
                 <HorizontalScrollView
                     android:layout_width="match_parent"
@@ -310,12 +302,12 @@
                 </HorizontalScrollView>
 
                 <TextView
+                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Use the category filters below to browse posts by type."
-                    android:textColor="@color/color_text_secondary"
-                    android:textSize="12sp" />
+                    android:textColor="@color/color_text_secondary" />
 
                 <!-- Post Feed Selector Tabs -->
                 <LinearLayout
@@ -330,6 +322,7 @@
 
                     <TextView
                         android:id="@+id/tab_all_feed"
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -338,12 +331,11 @@
                         android:focusable="true"
                         android:gravity="center"
                         android:text="Community Feed"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_primary" />
 
                     <TextView
                         android:id="@+id/tab_my_posts"
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -352,20 +344,18 @@
                         android:focusable="true"
                         android:gravity="center"
                         android:text="My Posts"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp" />
+                        android:textColor="@color/color_text_secondary" />
                 </LinearLayout>
 
                 <!-- Section Header: Published Posts -->
                 <TextView
                     android:id="@+id/tv_section_posts"
+                    android:textAppearance="@style/TextAppearance.Basarat.Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:text="Community Feed"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/color_text_primary" />
 
                 <!-- Feed skeleton: the header paints before the posts arrive -->
                 <LinearLayout
@@ -406,11 +396,11 @@
                     tools:visibility="gone">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Body"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="No posts published yet"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="14sp" />
+                        android:textColor="@color/color_text_secondary" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_create_first_post"
@@ -490,11 +480,11 @@
 
         <TextView
             android:id="@+id/tv_error_message"
+            android:textAppearance="@style/TextAppearance.Basarat.Body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="@color/color_text_secondary"
-            android:textSize="14sp"
             tools:text="Unable to load community profile" />
 
         <com.google.android.material.button.MaterialButton

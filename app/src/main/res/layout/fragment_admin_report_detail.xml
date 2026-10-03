@@ -38,13 +38,12 @@
 
                 <TextView
                     android:id="@+id/tv_header_title"
+                    android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="Report Review"
                     android:textColor="@color/color_text_primary"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/tv_header_status"
                     app:layout_constraintStart_toEndOf="@id/iv_back"
@@ -52,14 +51,13 @@
 
                 <TextView
                     android:id="@+id/tv_header_status"
+                    android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_badge_positive"
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="4dp"
                     android:textColor="@color/color_positive"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -89,12 +87,11 @@
                     android:padding="16dp">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Report Information"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_primary" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -103,19 +100,18 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="120dp"
                             android:layout_height="wrap_content"
                             android:text="Report ID:"
-                            android:textColor="@color/color_text_secondary"
-                            android:textSize="13sp" />
+                            android:textColor="@color/color_text_secondary" />
 
                         <TextView
                             android:id="@+id/tv_report_id"
+                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
                             tools:text="rep_9f8e7d6c" />
                     </LinearLayout>
 
@@ -126,18 +122,18 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="120dp"
                             android:layout_height="wrap_content"
                             android:text="Reported Object:"
-                            android:textColor="@color/color_text_secondary"
-                            android:textSize="13sp" />
+                            android:textColor="@color/color_text_secondary" />
 
                         <TextView
                             android:id="@+id/tv_target_type_desc"
+                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
                             tools:text="Post (#post_104)" />
                     </LinearLayout>
 
@@ -148,18 +144,18 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="120dp"
                             android:layout_height="wrap_content"
                             android:text="Reporter:"
-                            android:textColor="@color/color_text_secondary"
-                            android:textSize="13sp" />
+                            android:textColor="@color/color_text_secondary" />
 
                         <TextView
                             android:id="@+id/tv_reporter_desc"
+                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="@color/color_text_primary"
-                            android:textSize="13sp"
                             tools:text="@investor_ali" />
                     </LinearLayout>
 
@@ -170,19 +166,18 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                             android:layout_width="120dp"
                             android:layout_height="wrap_content"
                             android:text="Report Reason:"
-                            android:textColor="@color/color_text_secondary"
-                            android:textSize="13sp" />
+                            android:textColor="@color/color_text_secondary" />
 
                         <TextView
                             android:id="@+id/tv_reason_desc"
+                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="@color/color_negative"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
                             tools:text="Misleading market manipulation advice" />
                     </LinearLayout>
                 </LinearLayout>
@@ -212,58 +207,55 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:textAppearance="@style/TextAppearance.Basarat.Title"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Reported Content"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
+                            android:textColor="@color/color_text_primary" />
 
                         <TextView
                             android:id="@+id/tv_post_moderation_status"
+                            android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_badge_neutral"
                             android:paddingHorizontal="8dp"
                             android:paddingVertical="3dp"
                             android:textColor="@color/color_text_primary"
-                            android:textSize="11sp"
-                            android:textStyle="bold"
                             tools:text="PUBLISHED" />
                     </LinearLayout>
 
                     <TextView
                         android:id="@+id/tv_content_body"
+                        android:textAppearance="@style/TextAppearance.Basarat.Body"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:lineSpacingExtra="3dp"
                         android:textColor="@color/color_text_primary"
-                        android:textSize="14sp"
                         tools:text="This is the full text of the reported post or comment for administrator review." />
 
                     <TextView
                         android:id="@+id/tv_content_stats"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:textColor="@color/color_text_tertiary"
-                        android:textSize="12sp"
                         tools:text="Author: @trader99 • Reports: 3 • Likes: 12 • Comments: 4" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Moderation Actions -->
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:text="Moderation Actions"
-                android:textColor="@color/color_text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <!-- Report Status Update Buttons -->
             <LinearLayout

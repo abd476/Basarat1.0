@@ -28,6 +28,7 @@
 
         <TextView
             android:id="@+id/tv_top_title"
+            android:textAppearance="@style/TextAppearance.Basarat.Subheading"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -35,8 +36,6 @@
             android:maxLines="1"
             android:text="ETF Detail"
             android:textColor="@color/color_text_primary"
-            android:textSize="17sp"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/iv_back"
@@ -57,14 +56,13 @@
 
         <TextView
             android:id="@+id/tv_etf_name"
+            android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:ellipsize="end"
             android:maxLines="2"
             android:textColor="@color/color_text_primary"
-            android:textSize="20sp"
-            android:textStyle="bold"
             tools:text="HBL Total Treasury ETF" />
 
         <LinearLayout
@@ -76,18 +74,18 @@
 
             <TextView
                 android:id="@+id/tv_etf_symbol"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_badge_stock_symbol"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="3dp"
                 android:textColor="@color/color_text_primary"
-                android:textSize="12sp"
-                android:textStyle="bold"
                 tools:text="HBLTETF" />
 
             <TextView
                 android:id="@+id/tv_etf_shariah"
+                android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -96,8 +94,6 @@
                 android:paddingVertical="3dp"
                 android:text="Shariah"
                 android:textColor="@color/color_shariah_teal"
-                android:textSize="11sp"
-                android:textStyle="bold"
                 android:visibility="gone"
                 tools:visibility="visible" />
         </LinearLayout>
@@ -111,22 +107,20 @@
 
             <TextView
                 android:id="@+id/tv_etf_price"
+                android:textAppearance="@style/TextAppearance.Basarat.Display"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_text_primary"
-                android:textSize="30sp"
-                android:textStyle="bold"
                 tools:text="106.51" />
 
             <TextView
                 android:id="@+id/tv_etf_change"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginBottom="4dp"
                 android:textColor="@color/color_positive"
-                android:textSize="14sp"
-                android:textStyle="bold"
                 tools:text="-0.39 (-0.36%)" />
         </LinearLayout>
 
@@ -141,37 +135,34 @@
 
             <TextView
                 android:id="@+id/tab_overview"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                 android:layout_width="0dp"
                 android:layout_height="34dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_pill_chart_toggle_selected"
                 android:gravity="center"
                 android:text="Overview"
-                android:textColor="@color/color_text_primary"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <TextView
                 android:id="@+id/tab_history"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                 android:layout_width="0dp"
                 android:layout_height="34dp"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="History"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_secondary" />
 
             <TextView
                 android:id="@+id/tab_performance"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                 android:layout_width="0dp"
                 android:layout_height="34dp"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="Performance"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_secondary" />
         </LinearLayout>
     </LinearLayout>
 
@@ -200,12 +191,12 @@
 
                 <TextView
                     android:id="@+id/tv_etf_description"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
                     android:lineSpacingExtra="3dp"
                     android:textColor="@color/color_text_secondary"
-                    android:textSize="13sp"
                     tools:text="First sovereign debt ETF tracking high-yield Pakistan Treasury Bills and PIBs." />
 
                 <TextView
@@ -237,11 +228,11 @@
 
                 <TextView
                     android:id="@+id/tv_quote_as_of"
+                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:textColor="@color/color_text_tertiary"
-                    android:textSize="11sp"
                     tools:text="As of 01 Oct 2026, 21:21 · psx_live" />
             </LinearLayout>
 
@@ -262,39 +253,36 @@
 
                     <TextView
                         android:id="@+id/btn_tf_1m"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="30dp"
                         android:background="@drawable/bg_pill_chart_toggle_selected"
                         android:gravity="center"
                         android:paddingHorizontal="16dp"
                         android:text="1M"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_primary" />
 
                     <TextView
                         android:id="@+id/btn_tf_3m"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="30dp"
                         android:layout_marginStart="8dp"
                         android:gravity="center"
                         android:paddingHorizontal="16dp"
                         android:text="3M"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_secondary" />
 
                     <TextView
                         android:id="@+id/btn_tf_1y"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="30dp"
                         android:layout_marginStart="8dp"
                         android:gravity="center"
                         android:paddingHorizontal="16dp"
                         android:text="1Y"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_secondary" />
                 </LinearLayout>
 
                 <!-- OHLCV table header -->
@@ -311,48 +299,48 @@
                     tools:visibility="visible">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="28"
                         android:text="Date"
-                        android:textColor="@color/color_text_tertiary"
-                        android:textSize="11sp" />
+                        android:textColor="@color/color_text_tertiary" />
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="18"
                         android:gravity="end"
                         android:text="Open"
-                        android:textColor="@color/color_text_tertiary"
-                        android:textSize="11sp" />
+                        android:textColor="@color/color_text_tertiary" />
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="18"
                         android:gravity="end"
                         android:text="High"
-                        android:textColor="@color/color_text_tertiary"
-                        android:textSize="11sp" />
+                        android:textColor="@color/color_text_tertiary" />
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="18"
                         android:gravity="end"
                         android:text="Low"
-                        android:textColor="@color/color_text_tertiary"
-                        android:textSize="11sp" />
+                        android:textColor="@color/color_text_tertiary" />
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="18"
                         android:gravity="end"
                         android:text="Close"
-                        android:textColor="@color/color_text_tertiary"
-                        android:textSize="11sp" />
+                        android:textColor="@color/color_text_tertiary" />
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -384,11 +372,11 @@
 
                     <TextView
                         android:id="@+id/tv_history_message"
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp"
                         tools:text="No history available" />
 
                     <Button
@@ -414,11 +402,11 @@
 
                 <TextView
                     android:id="@+id/tv_perf_benchmark"
+                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
                     android:textColor="@color/color_text_secondary"
-                    android:textSize="12sp"
                     tools:text="Benchmark: PSX Government Debt Index" />
 
                 <!-- Comparison table header -->
@@ -433,31 +421,31 @@
                     android:weightSum="100">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="34"
                         android:text="Period"
-                        android:textColor="@color/color_text_tertiary"
-                        android:textSize="11sp" />
+                        android:textColor="@color/color_text_tertiary" />
 
                     <TextView
                         android:id="@+id/tv_perf_col_etf"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="33"
                         android:gravity="end"
                         android:text="ETF"
-                        android:textColor="@color/color_text_tertiary"
-                        android:textSize="11sp" />
+                        android:textColor="@color/color_text_tertiary" />
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="33"
                         android:gravity="end"
                         android:text="Benchmark"
-                        android:textColor="@color/color_text_tertiary"
-                        android:textSize="11sp" />
+                        android:textColor="@color/color_text_tertiary" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -499,11 +487,11 @@
 
                     <TextView
                         android:id="@+id/tv_performance_message"
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp"
                         tools:text="No performance data" />
 
                     <Button
@@ -552,11 +540,11 @@
 
         <TextView
             android:id="@+id/tv_error_message"
+            android:textAppearance="@style/TextAppearance.Basarat.Body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="@color/color_text_secondary"
-            android:textSize="14sp"
             tools:text="Unable to load ETF" />
 
         <Button

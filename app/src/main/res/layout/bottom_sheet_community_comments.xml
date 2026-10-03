@@ -31,15 +31,15 @@
             android:orientation="horizontal">
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Comments"
-                android:textColor="@color/color_text_primary"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <TextView
                 android:id="@+id/tv_header_count"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -47,8 +47,6 @@
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="2dp"
                 android:textColor="@color/color_brand_primary"
-                android:textSize="12sp"
-                android:textStyle="bold"
                 tools:text="3" />
         </LinearLayout>
 
@@ -112,21 +110,20 @@
                 app:tint="@color/color_text_secondary" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="No comments yet"
-                android:textColor="@color/color_text_primary"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Be the first to share your thoughts on this trade idea!"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="13sp" />
+                android:textColor="@color/color_text_secondary" />
         </LinearLayout>
     </FrameLayout>
 

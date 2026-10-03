@@ -9,6 +9,7 @@
     <!-- Top Bar with SKIP Button -->
     <TextView
         android:id="@+id/tv_skip"
+        android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -18,8 +19,6 @@
         android:paddingHorizontal="12dp"
         android:text="@string/onboarding_skip"
         android:textColor="@color/color_text_secondary"
-        android:textSize="13sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -86,13 +85,12 @@
 
         <TextView
             android:id="@+id/tv_action_label"
+            android:textAppearance="@style/TextAppearance.Basarat.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/onboarding_next"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textColor="@color/white" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

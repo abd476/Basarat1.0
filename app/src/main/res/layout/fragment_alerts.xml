@@ -33,13 +33,12 @@
 
             <TextView
                 android:id="@+id/tv_title"
+                android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="@string/title_alert_history"
                 android:textColor="@color/color_text_primary"
-                android:textSize="18sp"
-                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/btn_header_refresh"
                 app:layout_constraintStart_toEndOf="@id/btn_back"
@@ -125,12 +124,12 @@
                     android:indeterminateTint="@color/color_brand_primary" />
 
                 <TextView
+                    android:textAppearance="@style/TextAppearance.Basarat.Body"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="Loading alerts..."
-                    android:textColor="@color/color_text_secondary"
-                    android:textSize="14sp" />
+                    android:textColor="@color/color_text_secondary" />
             </LinearLayout>
 
             <LinearLayout
@@ -150,23 +149,22 @@
 
                 <TextView
                     android:id="@+id/tv_empty_title"
+                    android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="No alerts yet"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/color_text_primary" />
 
                 <TextView
                     android:id="@+id/tv_empty_description"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
                     android:text="Price alerts will appear here after the backend triggers them."
-                    android:textColor="@color/color_text_secondary"
-                    android:textSize="14sp" />
+                    android:textColor="@color/color_text_secondary" />
             </LinearLayout>
 
             <LinearLayout
@@ -180,12 +178,12 @@
 
                 <TextView
                     android:id="@+id/tv_error_message"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Unable to load alert history. Please check your network connection."
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="15sp" />
+                    android:textColor="@color/color_text_primary" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_retry"

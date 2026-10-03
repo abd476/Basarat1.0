@@ -21,17 +21,17 @@
 
         <TextView
             android:id="@+id/tv_holding_symbol"
+            android:textAppearance="@style/TextAppearance.Basarat.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/color_text_primary"
-            android:textSize="16sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="LUCK" />
 
         <TextView
             android:id="@+id/tv_holding_weight"
+            android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -39,8 +39,6 @@
             android:paddingHorizontal="6dp"
             android:paddingVertical="2dp"
             android:textColor="@color/color_text_secondary"
-            android:textSize="11sp"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/tv_holding_symbol"
             app:layout_constraintStart_toEndOf="@id/tv_holding_symbol"
             app:layout_constraintTop_toTopOf="@id/tv_holding_symbol"
@@ -48,6 +46,7 @@
 
         <TextView
             android:id="@+id/tv_holding_company"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
@@ -55,7 +54,6 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/color_text_secondary"
-            android:textSize="12sp"
             app:layout_constraintEnd_toStartOf="@id/tv_holding_current_price"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_holding_symbol"
@@ -63,22 +61,21 @@
 
         <TextView
             android:id="@+id/tv_holding_current_price"
+            android:textAppearance="@style/TextAppearance.Basarat.Number.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/color_text_primary"
-            android:textSize="16sp"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="PKR 412.50" />
 
         <TextView
             android:id="@+id/tv_holding_market_value"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:textColor="@color/color_text_secondary"
-            android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_holding_current_price"
             tools:text="Val: PKR 206,250" />
@@ -93,22 +90,21 @@
 
         <TextView
             android:id="@+id/tv_holding_shares_cost"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:textColor="@color/color_text_secondary"
-            android:textSize="12sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider_holding"
             tools:text="500 shares • Avg: PKR 380.00" />
 
         <TextView
             android:id="@+id/tv_holding_pnl"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:textSize="13sp"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider_holding"
             tools:text="+PKR 16,250 (+8.55%)" />

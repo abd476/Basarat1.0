@@ -8,21 +8,20 @@
 
     <TextView
         android:id="@+id/tv_label"
+        android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textColor="@color/color_text_secondary"
-        android:textSize="13sp"
         tools:text="Floor Price" />
 
     <TextView
         android:id="@+id/tv_value"
+        android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="end"
         android:textColor="@color/color_text_primary"
-        android:textSize="13sp"
-        android:textStyle="bold"
         tools:text="PKR 30.00" />
 
 </LinearLayout>

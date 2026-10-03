@@ -40,19 +40,18 @@
                 android:layout_marginStart="8dp">
 
                 <TextView
+                    android:textAppearance="@style/TextAppearance.Basarat.Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Sentiment Analysis"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/color_text_primary" />
 
                 <TextView
                     android:id="@+id/tv_symbol_subtitle"
+                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/color_text_secondary"
-                    android:textSize="12sp"
                     tools:text="OGDC" />
             </LinearLayout>
 
@@ -62,15 +61,14 @@
         <!--  MARKET SENTIMENT SECTION                               -->
         <!-- ═══════════════════════════════════════════════════════ -->
         <TextView
+            android:textAppearance="@style/TextAppearance.Basarat.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="8dp"
             android:text="Market Sentiment"
-            android:textColor="@color/color_text_primary"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textColor="@color/color_text_primary" />
 
         <!-- Market Loading -->
         <ProgressBar
@@ -93,10 +91,10 @@
 
             <TextView
                 android:id="@+id/tv_market_error_msg"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_text_secondary"
-                android:textSize="13sp"
                 android:gravity="center"
                 tools:text="Unable to load market sentiment." />
 
@@ -135,22 +133,20 @@
 
                     <TextView
                         android:id="@+id/tv_market_mood"
+                        android:textAppearance="@style/TextAppearance.Basarat.Heading"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textSize="22sp"
-                        android:textStyle="bold"
                         android:textColor="@color/color_text_primary"
                         tools:text="BULLISH" />
 
                     <TextView
                         android:id="@+id/tv_market_mood_badge"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingHorizontal="12dp"
                         android:paddingVertical="4dp"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
                         tools:text="BULLISH"
                         tools:background="@drawable/bg_badge_positive" />
                 </LinearLayout>
@@ -158,11 +154,11 @@
                 <!-- Overall Score -->
                 <TextView
                     android:id="@+id/tv_market_overall_score"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:textColor="@color/color_text_secondary"
-                    android:textSize="13sp"
                     tools:text="Overall Score: +0.35 (scale: −1 to +1)" />
 
                 <!-- Divider -->
@@ -187,18 +183,17 @@
                         android:gravity="center">
                         <TextView
                             android:id="@+id/tv_market_advancing"
+                            android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/color_positive"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
                             tools:text="42" />
                         <TextView
+                            android:textAppearance="@style/TextAppearance.Basarat.Caption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Advancing"
-                            android:textColor="@color/color_text_secondary"
-                            android:textSize="11sp" />
+                            android:textColor="@color/color_text_secondary" />
                     </LinearLayout>
 
                     <!-- Declining -->
@@ -210,18 +205,17 @@
                         android:gravity="center">
                         <TextView
                             android:id="@+id/tv_market_declining"
+                            android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/color_negative"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
                             tools:text="28" />
                         <TextView
+                            android:textAppearance="@style/TextAppearance.Basarat.Caption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Declining"
-                            android:textColor="@color/color_text_secondary"
-                            android:textSize="11sp" />
+                            android:textColor="@color/color_text_secondary" />
                     </LinearLayout>
 
                     <!-- Unchanged -->
@@ -233,18 +227,17 @@
                         android:gravity="center">
                         <TextView
                             android:id="@+id/tv_market_unchanged"
+                            android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/color_text_secondary"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
                             tools:text="10" />
                         <TextView
+                            android:textAppearance="@style/TextAppearance.Basarat.Caption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Unchanged"
-                            android:textColor="@color/color_text_secondary"
-                            android:textSize="11sp" />
+                            android:textColor="@color/color_text_secondary" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -257,20 +250,20 @@
 
                     <TextView
                         android:id="@+id/tv_market_ad_ratio"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textColor="@color/color_text_secondary"
-                        android:textSize="12sp"
                         tools:text="A/D Ratio: 1.50" />
 
                     <TextView
                         android:id="@+id/tv_market_article_count"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textColor="@color/color_text_secondary"
-                        android:textSize="12sp"
                         android:gravity="end"
                         tools:text="Articles: 248" />
                 </LinearLayout>
@@ -284,20 +277,20 @@
 
                     <TextView
                         android:id="@+id/tv_market_news_avg"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textColor="@color/color_text_secondary"
-                        android:textSize="12sp"
                         tools:text="News Avg: +0.28" />
 
                     <TextView
                         android:id="@+id/tv_market_community_avg"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textColor="@color/color_text_secondary"
-                        android:textSize="12sp"
                         android:gravity="end"
                         tools:text="Community Avg: +0.12" />
                 </LinearLayout>
@@ -309,15 +302,14 @@
         <!--  STOCK SENTIMENT SECTION                                -->
         <!-- ═══════════════════════════════════════════════════════ -->
         <TextView
+            android:textAppearance="@style/TextAppearance.Basarat.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="8dp"
             android:text="Stock Sentiment"
-            android:textColor="@color/color_text_primary"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textColor="@color/color_text_primary" />
 
         <!-- Stock Sentiment Loading -->
         <ProgressBar
@@ -340,10 +332,10 @@
 
             <TextView
                 android:id="@+id/tv_stock_sentiment_error_msg"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_text_secondary"
-                android:textSize="13sp"
                 android:gravity="center"
                 tools:text="Unable to load sentiment data." />
 
@@ -382,32 +374,30 @@
 
                     <TextView
                         android:id="@+id/tv_stock_label"
+                        android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
                         android:textColor="@color/color_text_primary"
                         tools:text="POSITIVE" />
 
                     <TextView
                         android:id="@+id/tv_stock_score_value"
+                        android:textAppearance="@style/TextAppearance.Basarat.Number.Heading"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="22sp"
-                        android:textStyle="bold"
                         tools:text="+0.35"
                         tools:textColor="@color/color_positive" />
                 </LinearLayout>
 
                 <!-- Score scale label -->
                 <TextView
+                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:text="Score scale: −1.0 (Bearish) → +1.0 (Bullish)"
-                    android:textColor="@color/color_text_secondary"
-                    android:textSize="11sp" />
+                    android:textColor="@color/color_text_secondary" />
 
                 <!-- Score bar -->
                 <FrameLayout
@@ -455,19 +445,19 @@
 
                     <TextView
                         android:id="@+id/tv_stock_article_count"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textColor="@color/color_text_secondary"
-                        android:textSize="12sp"
                         tools:text="Articles Analyzed: 24" />
 
                     <TextView
                         android:id="@+id/tv_stock_trend"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/color_text_secondary"
-                        android:textSize="12sp"
                         tools:text="Trend: Improving ↑" />
                 </LinearLayout>
 
@@ -482,19 +472,19 @@
 
                     <TextView
                         android:id="@+id/tv_news_source_count"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textColor="@color/color_text_secondary"
-                        android:textSize="12sp"
                         tools:text="News: 18 articles" />
 
                     <TextView
                         android:id="@+id/tv_community_source_count"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/color_text_secondary"
-                        android:textSize="12sp"
                         tools:text="Community: 6 posts" />
                 </LinearLayout>
 
@@ -505,15 +495,14 @@
         <!--  SENTIMENT HISTORY SECTION                              -->
         <!-- ═══════════════════════════════════════════════════════ -->
         <TextView
+            android:textAppearance="@style/TextAppearance.Basarat.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="8dp"
             android:text="Sentiment History"
-            android:textColor="@color/color_text_primary"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textColor="@color/color_text_primary" />
 
         <!-- Period Pills -->
         <HorizontalScrollView
@@ -529,73 +518,72 @@
 
                 <TextView
                     android:id="@+id/pill_period_1d"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
                     android:layout_marginEnd="6dp"
                     android:gravity="center"
                     android:paddingHorizontal="14dp"
                     android:text="1D"
-                    android:textSize="13sp"
                     android:textColor="@color/color_text_secondary"
                     android:background="@drawable/bg_chip_filter_unselected" />
 
                 <TextView
                     android:id="@+id/pill_period_1w"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
                     android:layout_marginEnd="6dp"
                     android:gravity="center"
                     android:paddingHorizontal="14dp"
                     android:text="1W"
-                    android:textSize="13sp"
                     android:textColor="@color/color_text_secondary"
                     android:background="@drawable/bg_chip_filter_unselected" />
 
                 <TextView
                     android:id="@+id/pill_period_1m"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
                     android:layout_marginEnd="6dp"
                     android:gravity="center"
                     android:paddingHorizontal="14dp"
                     android:text="1M"
-                    android:textSize="13sp"
                     android:textColor="@color/color_text_primary"
-                    android:textStyle="bold"
                     android:background="@drawable/bg_chip_filter_selected" />
 
                 <TextView
                     android:id="@+id/pill_period_3m"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
                     android:layout_marginEnd="6dp"
                     android:gravity="center"
                     android:paddingHorizontal="14dp"
                     android:text="3M"
-                    android:textSize="13sp"
                     android:textColor="@color/color_text_secondary"
                     android:background="@drawable/bg_chip_filter_unselected" />
 
                 <TextView
                     android:id="@+id/pill_period_6m"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
                     android:layout_marginEnd="6dp"
                     android:gravity="center"
                     android:paddingHorizontal="14dp"
                     android:text="6M"
-                    android:textSize="13sp"
                     android:textColor="@color/color_text_secondary"
                     android:background="@drawable/bg_chip_filter_unselected" />
 
                 <TextView
                     android:id="@+id/pill_period_1y"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
                     android:gravity="center"
                     android:paddingHorizontal="14dp"
                     android:text="1Y"
-                    android:textSize="13sp"
                     android:textColor="@color/color_text_secondary"
                     android:background="@drawable/bg_chip_filter_unselected" />
             </LinearLayout>
@@ -622,10 +610,10 @@
 
             <TextView
                 android:id="@+id/tv_history_error_msg"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_text_secondary"
-                android:textSize="13sp"
                 android:gravity="center"
                 tools:text="Unable to load sentiment history." />
 
@@ -641,13 +629,13 @@
         <!-- History Empty -->
         <TextView
             android:id="@+id/tv_history_empty"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="16dp"
             android:gravity="center"
             android:text="No historical data available for this period."
             android:textColor="@color/color_text_secondary"
-            android:textSize="13sp"
             android:visibility="gone" />
 
         <!-- History Chart (MPAndroidChart LineChart) -->
@@ -672,13 +660,12 @@
             android:gravity="center_vertical">
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Latest News"
-                android:textColor="@color/color_text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
         </LinearLayout>
 
@@ -703,10 +690,10 @@
 
             <TextView
                 android:id="@+id/tv_news_error_msg"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_text_secondary"
-                android:textSize="13sp"
                 android:gravity="center"
                 tools:text="Unable to load news." />
 
@@ -722,13 +709,13 @@
         <!-- News Empty -->
         <TextView
             android:id="@+id/tv_news_empty"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="16dp"
             android:gravity="center"
             android:text="No news articles found for this stock."
             android:textColor="@color/color_text_secondary"
-            android:textSize="13sp"
             android:visibility="gone" />
 
         <!-- News RecyclerView (non-scrollable — inside NestedScrollView) -->

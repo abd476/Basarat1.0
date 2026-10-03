@@ -16,13 +16,12 @@
     <!-- Avatar circle/square with initials e.g. LC -->
     <TextView
         android:id="@+id/tv_holding_avatar"
+        android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:background="@drawable/bg_avatar_symbol"
         android:gravity="center"
         android:textColor="#22D3EE"
-        android:textSize="13sp"
-        android:textStyle="bold"
         tools:text="LC" />
 
     <!-- Symbol + SHR-C badge + Company name/shares -->
@@ -41,15 +40,15 @@
 
             <TextView
                 android:id="@+id/tv_holding_symbol"
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_text_primary"
-                android:textSize="15sp"
-                android:textStyle="bold"
                 tools:text="LUCK" />
 
             <TextView
                 android:id="@+id/tv_holding_shrc_badge"
+                android:textAppearance="@style/TextAppearance.Basarat.Micro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
@@ -57,20 +56,18 @@
                 android:paddingHorizontal="5dp"
                 android:paddingVertical="2dp"
                 android:text="SHR-C"
-                android:textColor="#14A89B"
-                android:textSize="9sp"
-                android:textStyle="bold" />
+                android:textColor="#14A89B" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/tv_holding_subtitle"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/color_text_secondary"
-            android:textSize="12sp"
             tools:text="Lucky Cement • 2,000 sh..." />
     </LinearLayout>
 
@@ -83,20 +80,18 @@
 
         <TextView
             android:id="@+id/tv_holding_value"
+            android:textAppearance="@style/TextAppearance.Basarat.Number.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/color_text_primary"
-            android:textSize="15sp"
-            android:textStyle="bold"
             tools:text="Rs. 1,685,000" />
 
         <TextView
             android:id="@+id/tv_holding_price_change"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:textSize="12sp"
-            android:textStyle="bold"
             tools:text="Rs. 842.50 +2.84%" />
     </LinearLayout>
 </LinearLayout>

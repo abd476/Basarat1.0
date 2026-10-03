@@ -52,20 +52,19 @@
                 android:alpha="0.7" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="No conversations yet"
                 android:textColor="@color/color_text_primary"
-                android:textSize="18sp"
-                android:textStyle="bold"
                 android:layout_marginTop="16dp" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Start a conversation with your AI investment assistant"
                 android:textColor="@color/color_text_secondary"
-                android:textSize="14sp"
                 android:gravity="center"
                 android:layout_marginTop="8dp"
                 android:layout_marginHorizontal="24dp" />
@@ -84,10 +83,10 @@
 
             <TextView
                 android:id="@+id/tvErrorMessage"
+                android:textAppearance="@style/TextAppearance.Basarat.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_negative"
-                android:textSize="14sp"
                 android:gravity="center" />
 
             <com.google.android.material.button.MaterialButton

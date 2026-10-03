@@ -17,45 +17,43 @@
         <!-- Time -->
         <TextView
             android:id="@+id/tv_trade_time"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="30"
             android:textColor="@color/color_text_secondary"
-            android:textSize="13sp"
             tools:text="15:28:42" />
 
         <!-- Price -->
         <TextView
             android:id="@+id/tv_trade_price"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="25"
             android:gravity="end"
             android:textColor="@color/color_text_primary"
-            android:textSize="13sp"
-            android:textStyle="bold"
             tools:text="58.95" />
 
         <!-- Volume -->
         <TextView
             android:id="@+id/tv_trade_volume"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="25"
             android:gravity="end"
             android:textColor="@color/color_text_secondary"
-            android:textSize="13sp"
             tools:text="12,500" />
 
         <!-- Type (BUY/SELL) -->
         <TextView
             android:id="@+id/tv_trade_type"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="20"
             android:gravity="end"
-            android:textSize="12sp"
-            android:textStyle="bold"
             tools:text="BUY"
             tools:textColor="@color/color_positive" />
     </LinearLayout>

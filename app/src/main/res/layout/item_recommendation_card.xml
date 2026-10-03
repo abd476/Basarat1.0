@@ -28,15 +28,15 @@
 
             <TextView
                 android:id="@+id/tv_symbol"
+                android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_text_primary"
-                android:textSize="18sp"
-                android:textStyle="bold"
                 tools:text="OGDC" />
 
             <TextView
                 android:id="@+id/tv_signal_badge"
+                android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -44,9 +44,7 @@
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="3dp"
                 android:text="BUY"
-                android:textColor="@color/color_positive"
-                android:textSize="11sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_positive" />
 
             <View
                 android:layout_width="0dp"
@@ -56,25 +54,24 @@
             <!-- Confidence / Score -->
             <TextView
                 android:id="@+id/tv_confidence"
+                android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_badge_neutral"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="3dp"
                 android:textColor="@color/color_text_secondary"
-                android:textSize="11sp"
-                android:textStyle="bold"
                 tools:text="Score: +0.45 (82%)" />
         </LinearLayout>
 
         <!-- Summary text -->
         <TextView
             android:id="@+id/tv_summary"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:textColor="@color/color_text_secondary"
-            android:textSize="13sp"
             tools:text="Strong buy: ML+Technical agree bullish, RSI=38 oversold" />
 
         <!-- Divider -->
@@ -99,20 +96,19 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Target Price"
-                    android:textColor="@color/color_text_tertiary"
-                    android:textSize="11sp" />
+                    android:textColor="@color/color_text_tertiary" />
 
                 <TextView
                     android:id="@+id/tv_target_price"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:textColor="@color/color_positive"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
                     tools:text="PKR 168.00" />
             </LinearLayout>
 
@@ -123,20 +119,19 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Stop Loss"
-                    android:textColor="@color/color_text_tertiary"
-                    android:textSize="11sp" />
+                    android:textColor="@color/color_text_tertiary" />
 
                 <TextView
                     android:id="@+id/tv_stop_loss"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:textColor="@color/color_negative"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
                     tools:text="PKR 148.50" />
             </LinearLayout>
 

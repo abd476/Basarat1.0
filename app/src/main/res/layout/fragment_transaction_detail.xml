@@ -33,14 +33,13 @@
                 app:tint="@color/color_text_primary" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:layout_weight="1"
                 android:text="Transaction Detail"
-                android:textColor="@color/color_text_primary"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
         </LinearLayout>
 
@@ -68,45 +67,42 @@
 
                     <TextView
                         android:id="@+id/tv_detail_type_badge"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_badge_buy"
                         android:paddingHorizontal="10dp"
                         android:paddingVertical="4dp"
                         android:textColor="@color/color_positive"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
                         tools:text="BUY" />
 
                     <TextView
                         android:id="@+id/tv_detail_symbol"
+                        android:textAppearance="@style/TextAppearance.Basarat.Heading"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:textColor="@color/color_text_primary"
-                        android:textSize="22sp"
-                        android:textStyle="bold"
                         tools:text="OGDC" />
 
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/tv_detail_total"
+                    android:textAppearance="@style/TextAppearance.Basarat.Display"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:textColor="@color/color_text_primary"
-                    android:textSize="28sp"
-                    android:textStyle="bold"
                     tools:text="PKR 29,040.00" />
 
                 <TextView
                     android:id="@+id/tv_detail_subtotal"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:textColor="@color/color_text_secondary"
-                    android:textSize="13sp"
                     tools:text="Total gross trade value" />
 
                 <View
@@ -121,20 +117,19 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Quantity"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp" />
+                        android:textColor="@color/color_text_secondary" />
 
                     <TextView
                         android:id="@+id/tv_detail_quantity"
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/color_text_primary"
-                        android:textSize="13sp"
-                        android:textStyle="bold"
                         tools:text="200 Shares" />
 
                 </LinearLayout>
@@ -146,20 +141,19 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Execution Price"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp" />
+                        android:textColor="@color/color_text_secondary" />
 
                     <TextView
                         android:id="@+id/tv_detail_price"
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/color_text_primary"
-                        android:textSize="13sp"
-                        android:textStyle="bold"
                         tools:text="PKR 145.20" />
 
                 </LinearLayout>
@@ -171,20 +165,19 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Broker / SECP Fee"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp" />
+                        android:textColor="@color/color_text_secondary" />
 
                     <TextView
                         android:id="@+id/tv_detail_fee"
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/color_text_primary"
-                        android:textSize="13sp"
-                        android:textStyle="bold"
                         tools:text="PKR 15.00" />
 
                 </LinearLayout>
@@ -196,20 +189,19 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Transaction Date"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp" />
+                        android:textColor="@color/color_text_secondary" />
 
                     <TextView
                         android:id="@+id/tv_detail_date"
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/color_text_primary"
-                        android:textSize="13sp"
-                        android:textStyle="bold"
                         tools:text="2026-09-20" />
 
                 </LinearLayout>
@@ -222,10 +214,10 @@
 
                 <TextView
                     android:id="@+id/tv_detail_tx_id"
+                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/color_text_tertiary"
-                    android:textSize="11sp"
                     tools:text="ID: tx_9a87bf23c • Created: 2026-09-20 10:30" />
 
             </LinearLayout>

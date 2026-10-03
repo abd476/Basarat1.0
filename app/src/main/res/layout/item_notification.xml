@@ -43,14 +43,13 @@
         <!-- Notification Title -->
         <TextView
             android:id="@+id/tv_notification_title"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="8dp"
             android:text="Market Update"
             android:textColor="@color/color_text_primary"
-            android:textSize="14sp"
-            android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/tv_notification_time"
             app:layout_constraintStart_toEndOf="@id/iv_notif_icon"
             app:layout_constraintTop_toTopOf="parent" />
@@ -58,23 +57,23 @@
         <!-- Timestamp -->
         <TextView
             android:id="@+id/tv_notification_time"
+            android:textAppearance="@style/TextAppearance.Basarat.Caption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="10m ago"
             android:textColor="@color/color_text_tertiary"
-            android:textSize="11sp"
             app:layout_constraintBaseline_toBaselineOf="@id/tv_notification_title"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <!-- Message Body -->
         <TextView
             android:id="@+id/tv_notification_message"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:text="KSE-100 gained +450 points during early morning trading."
             android:textColor="@color/color_text_secondary"
-            android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/tv_notification_title"
             app:layout_constraintTop_toBottomOf="@id/tv_notification_title" />

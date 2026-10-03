@@ -28,20 +28,19 @@
 
         <TextView
             android:id="@+id/tvConversationTitle"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/color_text_primary"
-            android:textSize="14sp"
-            android:textStyle="bold"
             android:maxLines="1"
             android:ellipsize="end" />
 
         <TextView
             android:id="@+id/tvConversationDate"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/color_text_secondary"
-            android:textSize="12sp"
             android:layout_marginTop="2dp" />
 
     </LinearLayout>

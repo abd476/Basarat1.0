@@ -51,11 +51,11 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="No IPOs available"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="14sp" />
+                android:textColor="@color/color_text_secondary" />
         </LinearLayout>
 
         <!-- Error state -->
@@ -74,11 +74,11 @@
 
             <TextView
                 android:id="@+id/tv_error_message"
+                android:textAppearance="@style/TextAppearance.Basarat.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textColor="@color/color_text_secondary"
-                android:textSize="14sp"
                 tools:text="Unable to load IPOs" />
 
             <Button
