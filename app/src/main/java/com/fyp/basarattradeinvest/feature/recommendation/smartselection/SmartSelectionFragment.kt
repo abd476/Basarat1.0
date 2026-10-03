@@ -275,10 +275,9 @@ class SmartSelectionFragment : Fragment() {
             shadowWidth = 1f
         }
         chart.data = CandleData(dataSet)
+        val axisLabelFormat = SimpleDateFormat("dd/MM", Locale.getDefault())
         chart.xAxis.valueFormatter = IndexAxisValueFormatter(
-            candles.map { candle ->
-                SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(candle.timestamp))
-            }
+            candles.map { candle -> axisLabelFormat.format(Date(candle.timestamp)) }
         )
 
         val axis = chart.axisRight

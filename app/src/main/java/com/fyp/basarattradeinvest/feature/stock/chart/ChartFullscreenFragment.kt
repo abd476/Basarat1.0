@@ -46,6 +46,9 @@ class ChartFullscreenFragment : Fragment() {
 
     private var symbol: String = "LUCK"
     private var cachedCandles: List<CandleEntry> = emptyList()
+    private var lastBoundDetail: StockDetail? = null
+    private var lastBoundCandles: List<CandleEntry>? = null
+    private var lastBoundOhlcCandle: CandleEntry? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -238,6 +241,9 @@ class ChartFullscreenFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     when (state) {
                         is ChartFullscreenUiState.Loading -> {
+                            lastBoundDetail = null
+                            lastBoundCandles = null
+                            lastBoundOhlcCandle = null
                             binding.progressLoading.visibility = View.VISIBLE
                             binding.chartContainer.visibility = View.GONE
                             binding.volumeContainer.visibility = View.GONE
@@ -248,9 +254,23 @@ class ChartFullscreenFragment : Fragment() {
                             binding.chartContainer.visibility = View.VISIBLE
                             binding.layoutErrorState.visibility = View.GONE
 
-                            bindHeader(state.stockDetail)
+                            if (lastBoundDetail != state.stockDetail) {
+                                bindHeader(state.stockDetail)
+                                lastBoundDetail = state.stockDetail
+                            }
                             cachedCandles = state.candles
-                            bindCandles(state.candles)
+
+                            // Tapping an indicator or drawing tool emits a new state with the same
+                            // candles; rebuilding the datasets would restart the chart and jump the
+                            // viewport back to the newest candle.
+                            if (lastBoundCandles != state.candles) {
+                                bindCandles(state.candles)
+                                // Only memoise once the datasets are really attached; bindCandles
+                                // returns early while the charts are still being created.
+                                if (candleChart != null && volumeChart != null) {
+                                    lastBoundCandles = state.candles
+                                }
+                            }
 
                             updateTimeframePills(state.selectedTimeframe)
                             updateIndicatorPills(state.activeIndicators)
@@ -260,11 +280,16 @@ class ChartFullscreenFragment : Fragment() {
                             val showVolume = state.activeIndicators.contains("VOL")
                             binding.volumeContainer.visibility = if (showVolume) View.VISIBLE else View.GONE
 
-                            if (state.candles.isNotEmpty()) {
-                                updateOhlcBanner(state.candles.last())
+                            val latestCandle = state.candles.lastOrNull()
+                            if (latestCandle != null && latestCandle != lastBoundOhlcCandle) {
+                                updateOhlcBanner(latestCandle)
+                                lastBoundOhlcCandle = latestCandle
                             }
                         }
                         is ChartFullscreenUiState.Empty -> {
+                            lastBoundDetail = null
+                            lastBoundCandles = null
+                            lastBoundOhlcCandle = null
                             binding.progressLoading.visibility = View.GONE
                             binding.chartContainer.visibility = View.GONE
                             binding.volumeContainer.visibility = View.GONE
@@ -272,6 +297,9 @@ class ChartFullscreenFragment : Fragment() {
                             binding.tvErrorMessage.text = "No historical candle data found for $symbol"
                         }
                         is ChartFullscreenUiState.Error -> {
+                            lastBoundDetail = null
+                            lastBoundCandles = null
+                            lastBoundOhlcCandle = null
                             binding.progressLoading.visibility = View.GONE
                             binding.chartContainer.visibility = View.GONE
                             binding.volumeContainer.visibility = View.GONE
