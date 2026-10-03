@@ -208,6 +208,30 @@
                                     android:indeterminateTint="@color/color_basarat_green"
                                     android:visibility="gone" />
                             </FrameLayout>
+
+                            <TextView
+                                android:id="@+id/tv_breakout_levels"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:paddingStart="4dp"
+                                android:paddingEnd="4dp"
+                                android:textColor="@color/color_text_secondary"
+                                android:textSize="12sp"
+                                android:visibility="gone"
+                                tools:text="Breakout PKR 124.67 · Breakdown PKR 96.40" />
+
+                            <TextView
+                                android:id="@+id/tv_breakout_status"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:paddingStart="4dp"
+                                android:paddingEnd="4dp"
+                                android:textColor="@color/color_text_tertiary"
+                                android:textSize="11sp"
+                                android:visibility="gone"
+                                tools:text="Trading 1.85% below the breakout level" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 

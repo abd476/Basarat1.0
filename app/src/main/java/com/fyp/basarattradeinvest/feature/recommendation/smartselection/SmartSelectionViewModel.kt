@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.data.repository.RecommendationsRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.StockRepositoryImpl
+import com.fyp.basarattradeinvest.domain.model.CandleEntry
 import com.fyp.basarattradeinvest.domain.model.recommendations.StockRecommendation
 import com.fyp.basarattradeinvest.domain.repository.RecommendationsRepository
 import com.fyp.basarattradeinvest.domain.repository.StockRepository
@@ -108,7 +109,8 @@ class SmartSelectionViewModel(
                     targetStop = targetStop,
                     currentPrice = price,
                     targetPrice = target,
-                    stopLoss = stop
+                    stopLoss = stop,
+                    breakout = buildBreakout(candles)
                 )
                 setupCache[normalizedSymbol] = CachedSetup(setup, System.currentTimeMillis())
 
@@ -148,6 +150,28 @@ class SmartSelectionViewModel(
         loadCandidates()
     }
 
+    private fun buildBreakout(candles: List<CandleEntry>): BreakoutLevels? {
+        if (candles.size < MIN_BREAKOUT_BARS) return null
+        val last = candles.last()
+        val prior = candles.dropLast(1)
+        val resistance = prior.maxOf { it.high.toDouble() }
+        val support = prior.minOf { it.low.toDouble() }
+        val lastClose = last.close.toDouble()
+        if (resistance <= 0.0 || support <= 0.0 || lastClose <= 0.0) return null
+
+        val averageVolume = prior.map { it.volume.toDouble() }.average()
+        val volumeRatio = if (averageVolume > 0.0) last.volume / averageVolume else 0.0
+
+        return BreakoutLevels(
+            resistance = resistance,
+            support = support,
+            lastClose = lastClose,
+            distanceToBreakoutPct = ((resistance - lastClose) / lastClose) * 100.0,
+            volumeRatio = volumeRatio,
+            isConfirmed = lastClose > resistance && volumeRatio >= VOLUME_CONFIRMATION_RATIO
+        )
+    }
+
     private data class CachedSetup(
         val setup: SmartSelectionSetup,
         val savedAt: Long
@@ -155,5 +179,7 @@ class SmartSelectionViewModel(
 
     private companion object {
         const val SETUP_CACHE_TTL_MS = 3 * 60 * 1000L
+        const val MIN_BREAKOUT_BARS = 5
+        const val VOLUME_CONFIRMATION_RATIO = 1.5
     }
 }
