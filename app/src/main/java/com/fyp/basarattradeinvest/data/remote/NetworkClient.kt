@@ -8,6 +8,7 @@ import com.fyp.basarattradeinvest.data.remote.api.MarketApiService
 import com.fyp.basarattradeinvest.data.remote.live.LiveMarketDataSource
 import com.fyp.basarattradeinvest.data.repository.LiveMarketRepositoryImpl
 import com.fyp.basarattradeinvest.domain.repository.LiveMarketRepository
+import okhttp3.Dispatcher
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -64,7 +65,14 @@ object NetworkClient {
     private val authInterceptor = AuthInterceptor()
     private val tokenAuthenticator = TokenAuthenticator(BASE_URL)
 
+    // Every screen talks to the same host, so OkHttp's default of 5 concurrent requests per host
+    // made a screen's own fan-out (Portfolio fires 5) queue behind Home/Market/notification calls.
+    private val dispatcher = Dispatcher().apply {
+        maxRequestsPerHost = 12
+    }
+
     private val okHttpClient = OkHttpClient.Builder()
+        .dispatcher(dispatcher)
         .addInterceptor(authInterceptor)
         .addInterceptor(streamAwareLoggingInterceptor)
         .authenticator(tokenAuthenticator)
