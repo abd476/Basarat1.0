@@ -49,6 +49,7 @@ class ChartFullscreenFragment : Fragment() {
     private var lastBoundDetail: StockDetail? = null
     private var lastBoundCandles: List<CandleEntry>? = null
     private var lastBoundOhlcCandle: CandleEntry? = null
+    private val ohlcDateFormat = java.text.SimpleDateFormat("yyyy-MM-dd", Locale.US)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -330,7 +331,7 @@ class ChartFullscreenFragment : Fragment() {
     }
 
     private fun updateOhlcBanner(candle: CandleEntry) {
-        val dateStr = java.text.SimpleDateFormat("yyyy-MM-dd", Locale.US).format(java.util.Date(candle.timestamp))
+        val dateStr = ohlcDateFormat.format(java.util.Date(candle.timestamp))
         binding.tvOhlcDate.text = dateStr
         binding.tvOhlcOpen.text = String.format(Locale.US, "O: %.2f", candle.open)
         binding.tvOhlcHigh.text = String.format(Locale.US, "H: %.2f", candle.high)

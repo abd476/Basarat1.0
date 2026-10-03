@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentStockDetailBinding
 import com.fyp.basarattradeinvest.domain.model.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.NewsArticle
 import com.fyp.basarattradeinvest.domain.model.StockDetail
 import com.fyp.basarattradeinvest.domain.model.StockTrade
 import com.fyp.basarattradeinvest.feature.stock.detail.adapter.TradeAdapter
@@ -52,6 +53,7 @@ class StockDetailFragment : Fragment() {
     private var volumeChart: BarChart? = null
     private var currentSymbol: String = "SARCO"
     private var lastRenderedSuccess: StockDetailUiState.Success? = null
+    private val stockNewsBySymbol = HashMap<String, List<NewsArticle>>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -628,11 +630,19 @@ class StockDetailFragment : Fragment() {
         binding.containerTabContent.addView(rv)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            val result = NewsRepositoryImpl().getStockNews(symbol = sym, limit = 10)
+            // Tab taps rebind this section, so reuse the list already fetched for this symbol
+            // instead of re-requesting it each time the user returns to the News tab.
+            val cached = stockNewsBySymbol[sym]
+            val result = if (cached != null) {
+                Result.success(cached)
+            } else {
+                NewsRepositoryImpl().getStockNews(symbol = sym, limit = 10)
+                    .map { page -> page.articles.also { stockNewsBySymbol[sym] = it } }
+            }
             result.fold(
-                onSuccess = { page ->
-                    if (page.articles.isNotEmpty()) {
-                        stockNewsAdapter.submitList(page.articles)
+                onSuccess = { articles ->
+                    if (articles.isNotEmpty()) {
+                        stockNewsAdapter.submitList(articles)
                     } else {
                         val emptyTv = TextView(requireContext()).apply {
                             text = "No recent news articles found for $sym"

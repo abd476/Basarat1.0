@@ -11,6 +11,21 @@ import java.util.TimeZone
 
 object NewsDtoMapper {
 
+    // Mapping runs once per article, so the formatters and the event-date regex are reused
+    // instead of being allocated for every value. They are kept per thread because
+    // SimpleDateFormat is not thread-safe.
+    private val formatters = object : ThreadLocal<HashMap<String, SimpleDateFormat>>() {
+        override fun initialValue(): HashMap<String, SimpleDateFormat> = HashMap()
+    }
+    private val eventDatePattern = Regex("\\d{4}-\\d{2}-\\d{2}")
+
+    private fun formatter(key: String, pattern: String, utc: Boolean = false): SimpleDateFormat =
+        formatters.get()!!.computeIfAbsent(key) {
+            SimpleDateFormat(pattern, Locale.US).apply {
+                if (utc) timeZone = TimeZone.getTimeZone("UTC")
+            }
+        }
+
     fun mapArticleDtoToDomain(dto: NewsArticleResponseDto): NewsArticle {
         val primarySymbol = dto.symbols?.firstOrNull()?.symbol ?: "PSX"
         val allSymbols = dto.symbols?.map { it.symbol } ?: emptyList()
@@ -72,9 +87,7 @@ object NewsDtoMapper {
     internal fun formatRelativeTime(dateString: String?): String {
         if (dateString.isNullOrBlank()) return "Recent"
         try {
-            val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).apply {
-                timeZone = TimeZone.getTimeZone("UTC")
-            }
+            val isoFormat = formatter("iso-utc", "yyyy-MM-dd'T'HH:mm:ss", utc = true)
             // Strip fractional seconds if present
             val cleaned = dateString.substringBefore(".").substringBefore("Z").substringBefore("+")
             val parsedDate = isoFormat.parse(cleaned) ?: return dateString
@@ -89,8 +102,7 @@ object NewsDtoMapper {
                 diffHours < 24 -> "${diffHours}h ago"
                 diffDays < 7 -> "${diffDays}d ago"
                 else -> {
-                    val displayFormat = SimpleDateFormat("MMM dd, yyyy", Locale.US)
-                    displayFormat.format(parsedDate)
+                    formatter("display-date", "MMM dd, yyyy").format(parsedDate)
                 }
             }
         } catch (_: Exception) {
@@ -102,9 +114,9 @@ object NewsDtoMapper {
         if (dateString.isBlank()) return "Upcoming"
         try {
             // Check if format is YYYY-MM-DD
-            if (dateString.matches(Regex("\\d{4}-\\d{2}-\\d{2}"))) {
-                val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-                val outputFormat = SimpleDateFormat("MMM dd, yyyy", Locale.US)
+            if (dateString.matches(eventDatePattern)) {
+                val inputFormat = formatter("event-input-date", "yyyy-MM-dd")
+                val outputFormat = formatter("display-date", "MMM dd, yyyy")
                 val date = inputFormat.parse(dateString)
                 if (date != null) {
                     return outputFormat.format(date)

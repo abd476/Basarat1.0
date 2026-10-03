@@ -190,7 +190,7 @@ class EtfDetailFragment : Fragment() {
             addRow(binding.layoutQuoteMetrics, "Ask", FormatUtils.price(quote.askPrice))
 
             val asOfParts = mutableListOf<String>()
-            FormatUtils.parseDate(quote.dataAsOf)?.let { asOfParts.add("As of ${FormatUtils.dateFull(quote.dataAsOf)}") }
+            FormatUtils.parseDate(quote.dataAsOf)?.let { asOfParts.add("As of ${FormatUtils.dateFull(it)}") }
             if (!quote.quoteSource.isNullOrBlank()) asOfParts.add(quote.quoteSource)
             if (asOfParts.isEmpty()) {
                 binding.tvQuoteAsOf.visibility = View.GONE

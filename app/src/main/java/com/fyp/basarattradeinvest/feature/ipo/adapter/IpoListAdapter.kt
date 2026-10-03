@@ -61,7 +61,7 @@ class IpoListAdapter(
             } else {
                 binding.tvIpoListingDate.visibility = View.VISIBLE
                 val prefix = if (item.status == "LISTED") "Listed" else "Listing"
-                binding.tvIpoListingDate.text = "$prefix ${FormatUtils.dateFull(item.listingDate)}"
+                binding.tvIpoListingDate.text = "$prefix ${FormatUtils.dateFull(date)}"
             }
 
             binding.root.setOnClickListener { onItemClick(item) }
