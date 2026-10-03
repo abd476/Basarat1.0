@@ -25,6 +25,7 @@ import com.fyp.basarattradeinvest.domain.usecase.market.GetTopLosersUseCase
 import com.fyp.basarattradeinvest.domain.usecase.market.GetVolumeSpikesUseCase
 import kotlinx.coroutines.async
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -59,27 +60,21 @@ class MarketDashboardViewModel(
     private var accountGeneration = 0
     private var currentAccountKey: String? = accountKeyForCurrentSession()
     private var marketDataJob: Job? = null
+    private val pendingQuotes = mutableMapOf<String, LiveQuote>()
+    private var quoteFlushJob: Job? = null
 
     init {
-        // Collect live quote ticks → update liveQuotes in Success state
+        // Quote ticks arrive one per symbol, so a single market snapshot would otherwise emit
+        // ~110 states. Accumulate them and publish one update per flush window instead.
         viewModelScope.launch {
             liveMarketRepository.quoteUpdates.collect { quote ->
-                val current = _uiState.value as? MarketDashboardUiState.Success ?: return@collect
-                val updated = current.liveQuotes.toMutableMap()
-                updated[quote.symbol.uppercase()] = quote
-                val updatedTopSymbols = current.topSymbols.map { stock ->
-                    if (!stock.symbol.equals(quote.symbol, ignoreCase = true)) stock
-                    else stock.withQuote(quote)
+                pendingQuotes[quote.symbol.uppercase()] = quote
+                if (quoteFlushJob?.isActive != true) {
+                    quoteFlushJob = viewModelScope.launch {
+                        delay(QUOTE_FLUSH_INTERVAL_MS)
+                        applyPendingQuotes()
+                    }
                 }
-                val updatedConstituents = current.constituents.map { constituent ->
-                    if (!constituent.symbol.equals(quote.symbol, ignoreCase = true)) constituent
-                    else constituent.withQuote(quote)
-                }
-                _uiState.value = current.copy(
-                    liveQuotes = updated,
-                    topSymbols = updatedTopSymbols,
-                    constituents = updatedConstituents
-                )
             }
         }
 
@@ -100,6 +95,9 @@ class MarketDashboardViewModel(
                 accountGeneration++
                 marketDataJob?.cancel()
                 marketDataJob = null
+                pendingQuotes.clear()
+                quoteFlushJob?.cancel()
+                quoteFlushJob = null
                 isMarketDataLoading = false
                 lastSuccessfulFetchAt = 0L
                 currentFilter = SymbolFilterType.GAINERS
@@ -230,6 +228,26 @@ class MarketDashboardViewModel(
         loadMarketData(isRefresh = true)
     }
 
+    private fun applyPendingQuotes() {
+        quoteFlushJob = null
+        if (pendingQuotes.isEmpty()) return
+        val batch = pendingQuotes.toMap()
+        pendingQuotes.clear()
+        val current = _uiState.value as? MarketDashboardUiState.Success ?: return
+        val quoteFor: (String) -> LiveQuote? = { symbol -> batch[symbol.uppercase()] }
+        val quotes = current.liveQuotes.toMutableMap()
+        quotes.putAll(batch)
+        _uiState.value = current.copy(
+            liveQuotes = quotes,
+            topSymbols = current.topSymbols.map { stock ->
+                quoteFor(stock.symbol)?.let { stock.withQuote(it) } ?: stock
+            },
+            constituents = current.constituents.map { constituent ->
+                quoteFor(constituent.symbol)?.let { constituent.withQuote(it) } ?: constituent
+            }
+        )
+    }
+
     fun setLiveUpdatesActive(active: Boolean) {
         if (isLiveUpdatesActive == active) return
         isLiveUpdatesActive = active
@@ -347,4 +365,8 @@ class MarketDashboardViewModel(
                 ?: it.userEmail.takeIf(String::isNotBlank)
         }
         ?.lowercase()
+
+    companion object {
+        private const val QUOTE_FLUSH_INTERVAL_MS = 750L
+    }
 }
