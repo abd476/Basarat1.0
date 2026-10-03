@@ -33,11 +33,16 @@ object NewsDtoMapper {
         val sentimentObj = dto.sentiment
         val sentimentStr = sentimentObj?.label?.lowercase(Locale.ROOT)
         val label = when (sentimentStr) {
-            "bullish", "positive" -> "Neutral"
-            "bearish", "negative" -> "Neutral"
+            "bullish", "positive" -> "Bullish"
+            "bearish", "negative" -> "Bearish"
             else -> "Neutral"
         }
-        val score = 0.0
+        // Only the backend's own score is shown; an unlabelled article stays neutral at zero.
+        val score = sentimentObj?.score ?: when (label) {
+            "Bullish" -> 0.5
+            "Bearish" -> -0.5
+            else -> 0.0
+        }
         val isDiv = dto.eventType?.contains("dividend", ignoreCase = true) == true ||
                 dto.title.contains("dividend", ignoreCase = true) ||
                 (dto.summary?.contains("dividend", ignoreCase = true) == true)
