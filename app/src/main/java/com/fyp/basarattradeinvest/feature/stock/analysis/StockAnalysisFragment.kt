@@ -39,6 +39,7 @@ class StockAnalysisFragment : Fragment() {
 
     private val viewModel: StockAnalysisViewModel by activityViewModels()
     private val sentimentNewsAdapter by lazy { SentimentNewsAdapter() }
+    private var lastBoundSuccess: StockAnalysisUiState.Success? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -128,6 +129,7 @@ class StockAnalysisFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     when (state) {
                         is StockAnalysisUiState.Loading -> {
+                            lastBoundSuccess = null
                             binding.layoutAnalysisLoading.visibility = View.VISIBLE
                             binding.layoutAnalysisError.visibility = View.GONE
                             binding.layoutTechnicalContent.visibility = View.GONE
@@ -137,6 +139,7 @@ class StockAnalysisFragment : Fragment() {
                             binding.layoutAnalysisLoading.bringToFront()
                         }
                         is StockAnalysisUiState.Error -> {
+                            lastBoundSuccess = null
                             binding.layoutAnalysisLoading.visibility = View.GONE
                             binding.layoutAnalysisError.visibility = View.VISIBLE
                             binding.tvAnalysisErrorMsg.text = state.message
@@ -146,6 +149,7 @@ class StockAnalysisFragment : Fragment() {
                             binding.layoutSentimentContent.visibility = View.GONE
                         }
                         is StockAnalysisUiState.Empty -> {
+                            lastBoundSuccess = null
                             binding.layoutAnalysisLoading.visibility = View.GONE
                             binding.layoutAnalysisError.visibility = View.VISIBLE
                             binding.tvAnalysisErrorMsg.text = "No stock analysis data available."
@@ -158,23 +162,41 @@ class StockAnalysisFragment : Fragment() {
                             binding.layoutAnalysisLoading.visibility = View.GONE
                             binding.layoutAnalysisError.visibility = View.GONE
 
-                            renderHeader(state.analysis)
-                            renderTab(state.selectedTab)
+                            // Each section arrives as its own state emission, so rebind only the
+                            // sections whose input actually changed. Rebuilding a chart restarts
+                            // its entry animation and is the visible cost here.
+                            val previous = lastBoundSuccess
+                            if (previous == null || previous.analysis != state.analysis) {
+                                renderHeader(state.analysis)
+                                renderTechnicalSummary(state.analysis)
+                                renderFundamentals(state.analysis)
+                            }
+                            if (previous == null || previous.selectedTab != state.selectedTab) {
+                                renderTab(state.selectedTab)
+                            }
+                            if (previous == null ||
+                                previous.priceHistoryState != state.priceHistoryState ||
+                                previous.selectedPriceRange != state.selectedPriceRange
+                            ) {
+                                renderPriceHistorySection(state.priceHistoryState, state.selectedPriceRange)
+                            }
+                            if (previous == null ||
+                                previous.forecastState != state.forecastState ||
+                                previous.selectedHorizon != state.selectedHorizon
+                            ) {
+                                renderForecastSection(state.forecastState, state.selectedHorizon)
+                            }
+                            if (previous == null || previous.sentimentState != state.sentimentState) {
+                                renderStockSentiment(state.sentimentState)
+                            }
+                            if (previous == null || previous.sentimentHistoryState != state.sentimentHistoryState) {
+                                renderSentimentHistory(state.sentimentHistoryState)
+                            }
+                            if (previous == null || previous.sentimentNewsState != state.sentimentNewsState) {
+                                renderSentimentNews(state.sentimentNewsState)
+                            }
 
-                            // Technical & Price History
-                            renderTechnicalSummary(state.analysis)
-                            renderPriceHistorySection(state.priceHistoryState, state.selectedPriceRange)
-
-                            // Fundamentals
-                            renderFundamentals(state.analysis)
-
-                            // Forecast
-                            renderForecastSection(state.forecastState, state.selectedHorizon)
-
-                            // Sentiment
-                            renderStockSentiment(state.sentimentState)
-                            renderSentimentHistory(state.sentimentHistoryState)
-                            renderSentimentNews(state.sentimentNewsState)
+                            lastBoundSuccess = state
                         }
                     }
                 }
@@ -848,6 +870,7 @@ class StockAnalysisFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        lastBoundSuccess = null
         _binding = null
     }
 }
