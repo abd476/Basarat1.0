@@ -117,6 +117,16 @@
         <item name="android:includeFontPadding">false</item>
     </style>
 
+    <style name="TextAppearance.Basarat.Number.Body.Small" parent="TextAppearance.Basarat.Body.Small">
+        <item name="android:fontFeatureSettings">"tnum"</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.Basarat.Number.Body.Small.Strong" parent="TextAppearance.Basarat.Body.Small.Strong">
+        <item name="android:fontFeatureSettings">"tnum"</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
     <style name="TextAppearance.Basarat.Number.Meta" parent="TextAppearance.Basarat.Meta">
         <item name="android:fontFeatureSettings">"tnum"</item>
         <item name="android:includeFontPadding">false</item>

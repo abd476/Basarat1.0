@@ -191,7 +191,9 @@ class ProfileFragment : Fragment() {
 
         // Update sectors summary if present
         if (profile.sectorPreferences.isNotEmpty()) {
-            binding.tvRiskSummary.text = "${profile.sectorPreferences.size} preferred sectors configured"
+            val count = profile.sectorPreferences.size
+            val noun = if (count == 1) "sector" else "sectors"
+            binding.tvRiskSummary.text = "$count preferred $noun configured"
         }
     }
 

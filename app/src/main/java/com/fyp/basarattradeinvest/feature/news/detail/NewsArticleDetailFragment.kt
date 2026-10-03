@@ -111,9 +111,7 @@ class NewsArticleDetailFragment : Fragment() {
         symbolsToShow.distinct().forEach { sym ->
             val chip = TextView(context).apply {
                 text = sym
-                setTextColor(ContextCompat.getColor(context, R.color.color_text_primary))
-                textSize = 12f
-                setTypeface(typeface, android.graphics.Typeface.BOLD)
+                setTextAppearance(context, R.style.TextAppearance_Basarat_Body_Small_Strong)
                 setBackgroundResource(R.drawable.bg_chip_filter_unselected)
                 setPadding(24, 10, 24, 10)
                 val params = ViewGroup.MarginLayoutParams(

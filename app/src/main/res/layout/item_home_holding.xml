@@ -56,7 +56,7 @@
                 android:paddingHorizontal="5dp"
                 android:paddingVertical="2dp"
                 android:text="SHR-C"
-                android:textColor="#14A89B" />
+                android:textColor="@color/color_shariah_teal" />
         </LinearLayout>
 
         <TextView

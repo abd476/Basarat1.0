@@ -276,7 +276,7 @@
             android:paddingBottom="10dp"
             android:textColor="@color/color_text_primary"
             android:textColorHint="@color/color_input_hint"
-            android:textSize="12sp" />
+            android:textSize="14sp" />
 
         <ImageButton
             android:id="@+id/btnSend"

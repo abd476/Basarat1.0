@@ -646,8 +646,8 @@ class StockDetailFragment : Fragment() {
                     } else {
                         val emptyTv = TextView(requireContext()).apply {
                             text = "No recent news articles found for $sym"
+                            setTextAppearance(requireContext(), R.style.TextAppearance_Basarat_Body_Small)
                             setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_secondary))
-                            textSize = 13f
                             setPadding(16, 32, 16, 32)
                         }
                         binding.containerTabContent.removeAllViews()
@@ -657,8 +657,8 @@ class StockDetailFragment : Fragment() {
                 onFailure = {
                     val errorTv = TextView(requireContext()).apply {
                         text = "Unable to load news for $sym"
+                        setTextAppearance(requireContext(), R.style.TextAppearance_Basarat_Body_Small)
                         setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_secondary))
-                        textSize = 13f
                         setPadding(16, 32, 16, 32)
                     }
                     binding.containerTabContent.removeAllViews()
@@ -700,8 +700,8 @@ class StockDetailFragment : Fragment() {
         val labelTv = TextView(requireContext()).apply {
             layoutParams = android.widget.LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
             text = label
+            setTextAppearance(requireContext(), R.style.TextAppearance_Basarat_Body_Small)
             setTextColor(ContextCompat.getColor(context, R.color.color_text_secondary))
-            textSize = 13f
         }
 
         val valueTv = TextView(requireContext()).apply {
@@ -710,9 +710,7 @@ class StockDetailFragment : Fragment() {
                 android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
             )
             text = value
-            setTextColor(ContextCompat.getColor(context, R.color.color_text_primary))
-            textSize = 13f
-            setTypeface(null, android.graphics.Typeface.BOLD)
+            setTextAppearance(requireContext(), R.style.TextAppearance_Basarat_Number_Body_Small_Strong)
         }
 
         if (label.contains("Shariah", ignoreCase = true)) {
