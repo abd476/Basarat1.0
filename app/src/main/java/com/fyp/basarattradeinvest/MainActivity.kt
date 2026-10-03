@@ -10,6 +10,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -163,6 +166,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupDrawerHeader(navController: androidx.navigation.NavController) {
         val header = binding.navView.getHeaderView(0) ?: return
+        // The drawer panel spans the full screen height, so its wordmark would sit
+        // under the status bar without this inset.
+        val headerBasePaddingTop = header.paddingTop
+        ViewCompat.setOnApplyWindowInsetsListener(header) { view, insets ->
+            val statusBarTop = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            view.updatePadding(top = headerBasePaddingTop + statusBarTop)
+            insets
+        }
         header.findViewById<View>(R.id.btn_drawer_close).setOnClickListener {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
         }
