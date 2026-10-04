@@ -15,49 +15,33 @@
         android:paddingVertical="14dp"
         android:weightSum="100">
 
-        <!-- Column 1: Symbol & Code (Weight 38) -->
+        <!-- Column 1: Symbol & Company Name (Weight 38) -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="38"
             android:orientation="vertical">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_stock_symbol"
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="bottom"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tv_stock_symbol"
-                    android:textAppearance="@style/TextAppearance.Basarat.Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:textColor="@color/color_text_primary"
-                    tools:text="SARCO" />
-
-                <TextView
-                    android:id="@+id/tv_dividend_badge"
-                    android:textAppearance="@style/TextAppearance.Basarat.Micro"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:layout_marginBottom="3dp"
-                    android:text="D"
-                    android:textColor="@color/color_dividend_orange"
-                    tools:visibility="visible" />
-            </LinearLayout>
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/color_text_primary"
+                tools:text="SARCO" />
 
             <TextView
                 android:id="@+id/tv_stock_code"
                 android:textAppearance="@style/TextAppearance.Basarat.Meta"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:textColor="@color/color_text_secondary"
-                tools:text="2030" />
+                tools:text="Sui Northern Gas Pipelines Limited" />
         </LinearLayout>
 
         <!-- Column 2: Price (Weight 20) -->
@@ -91,7 +75,7 @@
             android:layout_weight="22"
             android:gravity="end"
             android:textColor="@color/color_text_primary"
-            tools:text="0.000000" />
+            tools:text="0.38%" />
     </LinearLayout>
 
     <!-- Hairline Divider -->

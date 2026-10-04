@@ -56,6 +56,16 @@ class ShariahScreeningFragment : Fragment() {
         observeUiState()
     }
 
+    override fun onStart() {
+        super.onStart()
+        viewModel.setLiveUpdatesActive(true)
+    }
+
+    override fun onStop() {
+        viewModel.setLiveUpdatesActive(false)
+        super.onStop()
+    }
+
     private fun setupRecyclerView() {
         binding.rvShariahStocks.apply {
             layoutManager = LinearLayoutManager(requireContext())

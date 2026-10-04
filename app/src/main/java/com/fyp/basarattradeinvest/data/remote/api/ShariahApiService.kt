@@ -11,7 +11,7 @@ import retrofit2.http.Query
 
 /**
  * Retrofit service definition for BASARAT Shariah module.
- * Source of truth: OpenAPI at http://16.16.26.247:8000/api/v1/openapi.json
+ * Source of truth: OpenAPI at <base url>/api/v1/openapi.json (see NetworkClient for the host).
  */
 interface ShariahApiService {
 
@@ -31,7 +31,6 @@ interface ShariahApiService {
     @GET("api/v1/shariah/{symbol}/purification")
     suspend fun getShariahPurification(
         @Path("symbol") symbol: String,
-        @Query("holding_qty") holdingQty: Int,
-        @Query("holding_value") holdingValue: Double
+        @Query("dividend_income") dividendIncome: Double
     ): Response<ShariahPurificationResponseDto>
 }

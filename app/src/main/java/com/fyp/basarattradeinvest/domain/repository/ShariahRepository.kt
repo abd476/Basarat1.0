@@ -16,8 +16,7 @@ interface ShariahRepository {
 
     suspend fun calculatePurification(
         symbol: String,
-        holdingQty: Int,
-        holdingValue: Double
+        dividendIncome: Double
     ): Result<DividendPurificationResult>
 
     suspend fun getShariahCompliantStocks(

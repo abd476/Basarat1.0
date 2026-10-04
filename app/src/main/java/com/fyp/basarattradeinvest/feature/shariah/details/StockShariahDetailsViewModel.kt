@@ -65,10 +65,10 @@ class StockShariahDetailsViewModel(
         }
     }
 
-    fun calculatePurification(symbol: String, qty: Int, value: Double) {
+    fun calculatePurification(symbol: String, dividendIncome: Double) {
         viewModelScope.launch {
             _purificationState.value = PurificationCalculationUiState.Calculating
-            val result = calculatePurificationUseCase(symbol, qty, value)
+            val result = calculatePurificationUseCase(symbol, dividendIncome)
             result.fold(
                 onSuccess = { res ->
                     _purificationState.value = PurificationCalculationUiState.Success(res)
