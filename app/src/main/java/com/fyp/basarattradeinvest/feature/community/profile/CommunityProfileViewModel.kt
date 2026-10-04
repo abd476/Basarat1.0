@@ -40,6 +40,10 @@ class CommunityProfileViewModel(
     private var currentPostTypeFilter: String? = null
     private var currentStockSymbolFilter: String? = null
     private var postCursor: String? = null
+    private var isLoadingMore = false
+    // Measured: limit=8 took 22.6s and limit=20 took 23.4s, so the server cost is fixed and a
+    // smaller first page buys nothing. Kept at 20; loadMorePosts() is what exposes posts beyond it.
+    private val pageLimit = 20
     private var lastSuccessfulFetchAt: Long = 0L
     private val freshnessWindowMs = 5 * 60 * 1000L
     private var loadGeneration = 0
@@ -151,29 +155,64 @@ class CommunityProfileViewModel(
         }
     }
 
-    private suspend fun fetchPosts(isSelf: Boolean, userId: String?): Result<CommunityPostList> {
+    private suspend fun fetchPosts(
+        isSelf: Boolean,
+        userId: String?,
+        cursor: String? = null
+    ): Result<CommunityPostList> {
         return if (isSelf) {
             if (currentFeedMode == CommunityFeedMode.COMMUNITY_FEED) {
                 getCommunityFeedUseCase(
                     stockSymbol = currentStockSymbolFilter,
                     postType = currentPostTypeFilter,
                     mine = false,
-                    cursor = null,
-                    limit = 20
+                    cursor = cursor,
+                    limit = pageLimit
                 )
             } else {
-                getMyPostsUseCase(cursor = null, limit = 20)
+                getMyPostsUseCase(cursor = cursor, limit = pageLimit)
             }
         } else {
-            getUserPostsUseCase(userId = userId!!, cursor = null, limit = 20)
+            getUserPostsUseCase(userId = userId!!, cursor = cursor, limit = pageLimit)
         }
     }
+
+    /** Streams the next page in as the user nears the bottom instead of capping the feed at one page. */
+    fun loadMorePosts() {
+        val state = _uiState.value as? CommunityProfileUiState.Success ?: return
+        val cursor = postCursor
+        val userId = currentUserId
+        if (cursor == null || !state.hasMorePosts || isLoadingMore || state.isPostsLoading) return
+        val isSelf = isSelfProfile(userId)
+        if (!isSelf && userId.isNullOrBlank()) return
+
+        isLoadingMore = true
+        val generation = loadGeneration
+        viewModelScope.launch {
+            val page = fetchPosts(isSelf, userId, cursor).getOrNull()
+            if (generation == loadGeneration) appendPosts(page)
+            isLoadingMore = false
+        }
+    }
+
+    private fun appendPosts(page: CommunityPostList?) {
+        if (page == null) return
+        val currentState = _uiState.value as? CommunityProfileUiState.Success ?: return
+        postCursor = page.cursor ?: postCursor
+        _uiState.value = currentState.copy(
+            posts = dedupePosts(currentState.posts + page.posts),
+            hasMorePosts = page.hasMore
+        )
+    }
+
+    private fun dedupePosts(posts: List<CommunityPost>): List<CommunityPost> =
+        posts.distinctBy { it.id }.distinctBy { "${it.authorDisplayName}_${it.content.trim()}" }
 
     private fun publishPosts(postsResult: Result<CommunityPostList>) {
         val currentState = _uiState.value as? CommunityProfileUiState.Success ?: return
         val payload = postsResult.getOrNull()
         val rawPosts = payload?.posts ?: emptyList()
-        val posts = rawPosts.distinctBy { it.id }.distinctBy { "${it.authorDisplayName}_${it.content.trim()}" }
+        val posts = dedupePosts(rawPosts)
         postCursor = payload?.cursor
 
         _uiState.value = currentState.copy(

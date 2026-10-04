@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentCommunityProfileBinding
 import com.fyp.basarattradeinvest.domain.model.community.CommunityPost
@@ -91,6 +92,16 @@ class CommunityProfileFragment : Fragment() {
         binding.rvPosts.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = postAdapter
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (dy <= 0) return
+                    val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+                    val lastVisible = layoutManager.findLastVisibleItemPosition()
+                    if (layoutManager.itemCount > 0 && lastVisible >= layoutManager.itemCount - 3) {
+                        viewModel.loadMorePosts()
+                    }
+                }
+            })
         }
     }
 
