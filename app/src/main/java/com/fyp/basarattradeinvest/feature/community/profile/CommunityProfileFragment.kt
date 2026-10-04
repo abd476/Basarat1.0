@@ -28,7 +28,7 @@ class CommunityProfileFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: CommunityProfileViewModel by activityViewModels {
-        CommunityProfileViewModel.Factory()
+        CommunityProfileViewModel.Factory(appContext = requireContext().applicationContext)
     }
 
     private lateinit var postAdapter: CommunityPostAdapter

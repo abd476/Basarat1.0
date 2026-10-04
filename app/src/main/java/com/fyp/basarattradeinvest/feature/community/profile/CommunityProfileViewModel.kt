@@ -1,8 +1,10 @@
 package com.fyp.basarattradeinvest.feature.community.profile
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.fyp.basarattradeinvest.data.repository.CommunityFeedCache
 import com.fyp.basarattradeinvest.data.repository.CommunityRepositoryImpl
 import com.fyp.basarattradeinvest.domain.model.community.CommunityPost
 import com.fyp.basarattradeinvest.domain.model.community.CommunityPostList
@@ -29,7 +31,8 @@ class CommunityProfileViewModel(
     private val getUserPostsUseCase: GetUserPostsUseCase,
     private val getCommunityFeedUseCase: GetCommunityFeedUseCase,
     private val likePostUseCase: LikeCommunityPostUseCase,
-    private val unlikePostUseCase: UnlikeCommunityPostUseCase
+    private val unlikePostUseCase: UnlikeCommunityPostUseCase,
+    private val appContext: Context? = null
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<CommunityProfileUiState>(CommunityProfileUiState.Loading)
@@ -41,6 +44,9 @@ class CommunityProfileViewModel(
     private var currentStockSymbolFilter: String? = null
     private var postCursor: String? = null
     private var isLoadingMore = false
+    // Whose feed the post list on screen belongs to. The header can land before the feed, and the
+    // list kept while waiting must be the same account's, never the previously viewed profile's.
+    private var displayedPostsUserId: String? = null
     // Measured: limit=8 took 22.6s and limit=20 took 23.4s, so the server cost is fixed and a
     // smaller first page buys nothing. Kept at 20; loadMorePosts() is what exposes posts beyond it.
     private val pageLimit = 20
@@ -64,6 +70,19 @@ class CommunityProfileViewModel(
         val isSelf = isSelfProfile(userId)
 
         viewModelScope.launch {
+            // /community/feed needs ~23s before it can answer, so paint the last snapshot for this
+            // exact profile+filter key first and let the network refresh replace it. Without a
+            // snapshot, anything already on screen belongs to another account or filter and is
+            // dropped rather than shown under a header it does not belong to.
+            val screenBelongsToThisKey = displayedPostsUserId == userId &&
+                _uiState.value is CommunityProfileUiState.Success
+            if (!screenBelongsToThisKey) {
+                if (!seedFromCache() && _uiState.value is CommunityProfileUiState.Success) {
+                    postCursor = null
+                    _uiState.value = CommunityProfileUiState.Loading
+                }
+            }
+
             val currentState = _uiState.value
             val isSameProfile = previousUserId == userId && currentState is CommunityProfileUiState.Success
             if (!isRefresh && isSameProfile && System.currentTimeMillis() - lastSuccessfulFetchAt <= freshnessWindowMs) {
@@ -93,8 +112,11 @@ class CommunityProfileViewModel(
                 }
 
                 lastSuccessfulFetchAt = System.currentTimeMillis()
-                // Keep the posts already on screen while a refresh of the same profile is in flight.
-                val retained = if (isSameProfile) (currentState as? CommunityProfileUiState.Success) else null
+                // Keep the posts already on screen — cached or loaded — while this profile's feed is
+                // still in flight, but never another account's.
+                val retained = if (displayedPostsUserId == userId) {
+                    (currentState as? CommunityProfileUiState.Success)
+                } else null
                 _uiState.value = CommunityProfileUiState.Success(
                     profile = profile,
                     posts = retained?.posts ?: emptyList(),
@@ -146,7 +168,18 @@ class CommunityProfileViewModel(
 
         val generation = ++loadGeneration
         val isSelf = isSelfProfile(userId)
-        _uiState.value = currentState.copy(isPostsLoading = true, feedMode = currentFeedMode)
+        // The previous key's posts must not stay on screen while a different filter loads; swap in
+        // this key's cached page if there is one, otherwise clear them.
+        postCursor = null
+        val seeded = readCacheSnapshot()
+        _uiState.value = currentState.copy(
+            posts = seeded?.posts ?: emptyList(),
+            hasMorePosts = seeded?.hasMore ?: false,
+            isPostsLoading = true,
+            feedMode = currentFeedMode
+        )
+        postCursor = seeded?.cursor
+        displayedPostsUserId = userId
 
         viewModelScope.launch {
             val postsResult = fetchPosts(isSelf, userId)
@@ -199,29 +232,86 @@ class CommunityProfileViewModel(
         if (page == null) return
         val currentState = _uiState.value as? CommunityProfileUiState.Success ?: return
         postCursor = page.cursor ?: postCursor
+        displayedPostsUserId = currentUserId
         _uiState.value = currentState.copy(
             posts = dedupePosts(currentState.posts + page.posts),
             hasMorePosts = page.hasMore
         )
+        writeCache()
     }
 
     private fun dedupePosts(posts: List<CommunityPost>): List<CommunityPost> =
         posts.distinctBy { it.id }.distinctBy { "${it.authorDisplayName}_${it.content.trim()}" }
 
+    private fun readCacheSnapshot(): CommunityFeedCache.Snapshot? {
+        val context = appContext ?: return null
+        val key = CommunityFeedCache.keyFor(
+            userId = currentUserId,
+            feedMode = currentFeedMode.name,
+            postType = currentPostTypeFilter,
+            stockSymbol = currentStockSymbolFilter
+        )
+        return CommunityFeedCache.read(context, key)
+    }
+
+    /** Installs the last snapshot for the current profile+filter key; false when there is none. */
+    private fun seedFromCache(): Boolean {
+        val snapshot = readCacheSnapshot() ?: return false
+        postCursor = snapshot.cursor
+        displayedPostsUserId = currentUserId
+        _uiState.value = CommunityProfileUiState.Success(
+            profile = snapshot.profile,
+            posts = snapshot.posts,
+            hasMorePosts = snapshot.hasMore,
+            feedMode = currentFeedMode,
+            isPostsLoading = true
+        )
+        return true
+    }
+
+    private fun writeCache() {
+        if (appContext == null) return
+        val state = _uiState.value as? CommunityProfileUiState.Success ?: return
+        if (state.posts.isEmpty()) return
+        val key = CommunityFeedCache.keyFor(
+            userId = currentUserId,
+            feedMode = currentFeedMode.name,
+            postType = currentPostTypeFilter,
+            stockSymbol = currentStockSymbolFilter
+        )
+        CommunityFeedCache.write(
+            appContext,
+            key,
+            CommunityFeedCache.Snapshot(
+                profile = state.profile,
+                posts = state.posts,
+                cursor = postCursor,
+                hasMore = state.hasMorePosts,
+                savedAt = System.currentTimeMillis()
+            )
+        )
+    }
+
     private fun publishPosts(postsResult: Result<CommunityPostList>) {
         val currentState = _uiState.value as? CommunityProfileUiState.Success ?: return
         val payload = postsResult.getOrNull()
-        val rawPosts = payload?.posts ?: emptyList()
-        val posts = dedupePosts(rawPosts)
-        postCursor = payload?.cursor
+        if (payload == null) {
+            // A failed refresh keeps what is already on screen instead of replacing it with nothing.
+            _uiState.value = currentState.copy(isPostsLoading = false, feedMode = currentFeedMode)
+            return
+        }
+        val posts = dedupePosts(payload.posts)
+        postCursor = payload.cursor
+        displayedPostsUserId = currentUserId
 
         _uiState.value = currentState.copy(
             posts = posts,
-            hasMorePosts = payload?.hasMore ?: false,
+            hasMorePosts = payload.hasMore,
             isRefreshing = false,
             isPostsLoading = false,
             feedMode = currentFeedMode
         )
+        writeCache()
     }
 
     private fun isSelfProfile(userId: String?): Boolean =
@@ -268,7 +358,8 @@ class CommunityProfileViewModel(
     }
 
     class Factory(
-        private val repository: CommunityRepository = CommunityRepositoryImpl()
+        private val repository: CommunityRepository = CommunityRepositoryImpl(),
+        private val appContext: Context? = null
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -280,7 +371,8 @@ class CommunityProfileViewModel(
                     getUserPostsUseCase = GetUserPostsUseCase(repository),
                     getCommunityFeedUseCase = GetCommunityFeedUseCase(repository),
                     likePostUseCase = LikeCommunityPostUseCase(repository),
-                    unlikePostUseCase = UnlikeCommunityPostUseCase(repository)
+                    unlikePostUseCase = UnlikeCommunityPostUseCase(repository),
+                    appContext = appContext
                 ) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
