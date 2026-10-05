@@ -21,7 +21,6 @@
     <string name="drawer_risk">Risk &amp; Analysis</string>
     <string name="drawer_notifications">Notifications</string>
     <string name="drawer_settings">Settings</string>
-    <string name="drawer_help">Help &amp; Support</string>
     <string name="drawer_logout">Log Out</string>
 
     <!-- Onboarding Step 1 -->

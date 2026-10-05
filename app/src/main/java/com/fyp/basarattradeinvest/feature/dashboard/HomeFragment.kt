@@ -147,11 +147,6 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.newsEventsFragment)
         }
 
-        // 6. AI Assistant Banner -> Chat
-        binding.btnAskAi.setOnClickListener {
-            findNavController().navigate(R.id.assistantChatFragment)
-        }
-
         // 7. Movers Filter Tabs
         binding.btnTabGainers.setOnClickListener { viewModel.selectMoversTab(MoversTab.GAINERS) }
         binding.btnTabLosers.setOnClickListener { viewModel.selectMoversTab(MoversTab.LOSERS) }

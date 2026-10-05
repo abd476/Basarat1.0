@@ -1001,58 +1001,6 @@
                         android:nestedScrollingEnabled="false" />
                 </androidx.cardview.widget.CardView>
 
-                <!-- 8. BASARAT AI Assistant Entry Banner -->
-                <LinearLayout
-                    android:id="@+id/btn_ask_ai"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:background="@drawable/bg_card_clean"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:contentDescription="AI Assistant"
-                            android:src="@drawable/ic_chat_assistant"
-                            app:tint="@color/color_ai_blue" />
-
-                        <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_weight="1"
-                            android:text="BASARAT AI Assistant"
-                            android:textColor="@color/color_text_primary" />
-
-                        <TextView
-                            android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Ask BASARAT →"
-                            android:textColor="@color/color_ai_blue" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:lineSpacingExtra="2dp"
-                        android:text="Ask questions about live PSX trends, FinBERT sentiment, technical signals, or valuation metrics."
-                        android:textColor="@color/color_text_secondary" />
-                </LinearLayout>
-
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
