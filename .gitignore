@@ -14,6 +14,7 @@
 .cxx
 local.properties
 .kotlin/
+.scratch/
 *.json
 !app/google-services.json
 *.ps1
