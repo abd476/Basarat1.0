@@ -62,7 +62,7 @@
             android:icon="@drawable/ic_chart_settings"
             android:title="@string/drawer_settings" />
         <item
-            android:id="@+id/assistantConversationsFragment"
+            android:id="@+id/assistantChatFragment"
             android:icon="@drawable/ic_chat_assistant"
             android:title="@string/title_assistant" />
     </group>
