@@ -1,5 +1,6 @@
 package com.fyp.basarattradeinvest.feature.markets
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +24,7 @@ import com.fyp.basarattradeinvest.domain.model.MarketIndex
 import com.fyp.basarattradeinvest.domain.model.MarketOverview
 import com.fyp.basarattradeinvest.domain.model.MarketSentiment
 import com.fyp.basarattradeinvest.domain.model.SymbolFilterType
+import com.fyp.basarattradeinvest.domain.model.live.MarketSessionStatus
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 import com.fyp.basarattradeinvest.feature.markets.adapter.ConstituentAdapter
 import com.fyp.basarattradeinvest.feature.markets.adapter.MarketStockAdapter
@@ -213,6 +215,9 @@ class MarketDashboardFragment : Fragment() {
                             ) {
                                 bindLiveConnection(state, dataIsStale)
                             }
+                            if (previous == null || previous.marketSession != state.marketSession) {
+                                bindMarketSession(state.marketSession)
+                            }
                             if (previous == null || previous.indices != state.indices) {
                                 bindIndices(state.indices)
                             }
@@ -246,18 +251,33 @@ class MarketDashboardFragment : Fragment() {
                         is MarketDashboardUiState.Empty -> {
                             binding.swipeRefreshLayout.isRefreshing = false
                             lastRenderedSuccess = null
+                            bindMarketSession(null)
                             stockAdapter.submitList(emptyList())
                             constituentAdapter.submitList(emptyList())
                         }
                         is MarketDashboardUiState.Error -> {
                             binding.swipeRefreshLayout.isRefreshing = false
                             lastRenderedSuccess = null
+                            bindMarketSession(null)
                             Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun bindMarketSession(session: MarketSessionStatus?) {
+        binding.dotMarketLive.visibility = if (session == null) View.GONE else View.VISIBLE
+        binding.tvMarketStatus.visibility = if (session == null) View.GONE else View.VISIBLE
+        if (session == null) return
+        val color = ContextCompat.getColor(
+            requireContext(),
+            if (session.isOpen) R.color.color_positive else R.color.color_neutral
+        )
+        binding.tvMarketStatus.text = session.label
+        binding.tvMarketStatus.setTextColor(color)
+        binding.dotMarketLive.backgroundTintList = ColorStateList.valueOf(color)
     }
 
     private fun bindLiveConnection(state: MarketDashboardUiState.Success, dataIsStale: Boolean) {

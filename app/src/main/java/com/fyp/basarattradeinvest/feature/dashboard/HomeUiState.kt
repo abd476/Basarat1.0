@@ -24,7 +24,9 @@ sealed interface HomeUiState {
 
     data class Success(
         val userName: String,
-        val marketStatus: String = "Closed",
+        // Null until the backend answers for this load; the header pill hides rather
+        // than claiming the market is closed.
+        val marketStatus: String? = null,
         val isMarketOpen: Boolean = false,
         val marketIndices: List<MarketIndex> = emptyList(),
         val selectedBenchmarkIndex: MarketIndex? = null,

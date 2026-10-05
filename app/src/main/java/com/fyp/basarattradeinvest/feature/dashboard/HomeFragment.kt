@@ -239,6 +239,7 @@ class HomeFragment : Fragment() {
 
         // Market Status
         if (previous == null || previous.marketStatus != state.marketStatus || previous.isMarketOpen != state.isMarketOpen) {
+            binding.layoutMarketStatus.visibility = if (state.marketStatus == null) View.GONE else View.VISIBLE
             binding.tvMarketStatus.text = state.marketStatus
             val statusColor = if (state.isMarketOpen) {
                 ContextCompat.getColor(context, R.color.color_positive)

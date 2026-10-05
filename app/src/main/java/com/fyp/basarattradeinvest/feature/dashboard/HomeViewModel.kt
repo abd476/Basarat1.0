@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.core.session.AuthState
 import com.fyp.basarattradeinvest.core.session.SessionManager
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
-import com.fyp.basarattradeinvest.data.remote.api.NewsApiService
 import com.fyp.basarattradeinvest.data.repository.AlertsRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.MarketRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.NewsRepositoryImpl
@@ -34,7 +33,6 @@ class HomeViewModel(
     private val newsRepository: NewsRepository = NewsRepositoryImpl(),
     private val usersRepository: UsersRepository = UsersRepositoryImpl(),
     private val alertsRepository: AlertsRepository = AlertsRepositoryImpl(),
-    private val newsApiService: NewsApiService = NetworkClient.newsApiService,
     private val watchlistRepository: WatchlistRepository = NetworkClient.watchlistRepository,
     private val liveMarketRepository: LiveMarketRepository = NetworkClient.liveMarketRepository,
     private val autoLoad: Boolean = true
@@ -174,8 +172,6 @@ class HomeViewModel(
         return (_uiState.value as? HomeUiState.Success)
             ?: HomeUiState.Success(
                 userName = "Investor",
-                marketStatus = "Loading market data...",
-                isMarketOpen = false,
                 selectedTimeframe = currentTimeframe,
                 selectedMoversTab = currentMoversTab,
                 liveQuotes = liveMarketRepository.quoteCache.value,
@@ -297,21 +293,13 @@ class HomeViewModel(
                     }
 
                     launch {
-                        val statusResponse = try {
-                            newsApiService.getMarketStatus()
-                        } catch (e: Exception) {
-                            null
+                        val session = liveMarketRepository.getMarketSessionStatus().getOrNull()
+                        applyPartialState(loadGeneration) {
+                            copy(
+                                marketStatus = session?.label,
+                                isMarketOpen = session?.isOpen == true
+                            )
                         }
-                        val statusJson = statusResponse?.takeIf { it.isSuccessful }?.body()
-                        val rawStatus = statusJson?.get("status")?.asString ?: "closed"
-                        val isWeekend = statusJson?.get("is_weekend")?.asBoolean ?: false
-                        val isOpen = rawStatus.equals("open", ignoreCase = true)
-                        val statusLabel = when {
-                            isOpen -> "Market Open"
-                            isWeekend -> "Market Closed (Weekend)"
-                            else -> "Market Closed"
-                        }
-                        applyPartialState(loadGeneration) { copy(marketStatus = statusLabel, isMarketOpen = isOpen) }
                     }
 
                     launch {

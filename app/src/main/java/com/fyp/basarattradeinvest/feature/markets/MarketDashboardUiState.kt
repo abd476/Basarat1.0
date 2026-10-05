@@ -7,6 +7,7 @@ import com.fyp.basarattradeinvest.domain.model.MarketStock
 import com.fyp.basarattradeinvest.domain.model.SectorPerformance
 import com.fyp.basarattradeinvest.domain.model.SymbolFilterType
 import com.fyp.basarattradeinvest.domain.model.live.LiveQuote
+import com.fyp.basarattradeinvest.domain.model.live.MarketSessionStatus
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 
 sealed interface MarketDashboardUiState {
@@ -24,7 +25,9 @@ sealed interface MarketDashboardUiState {
         val isConstituentsLoading: Boolean = false,
         val lastUpdated: String,
         val liveQuotes: Map<String, LiveQuote> = emptyMap(),
-        val wsConnectionState: WsConnectionState = WsConnectionState.Idle
+        val wsConnectionState: WsConnectionState = WsConnectionState.Idle,
+        /** Null when the backend did not report a session; the header hides instead of guessing. */
+        val marketSession: MarketSessionStatus? = null
     ) : MarketDashboardUiState
 
     data object Empty : MarketDashboardUiState

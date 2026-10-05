@@ -140,6 +140,7 @@ class MarketDashboardViewModel(
                 val topSymbolsDeferred = async { fetchSymbolsForFilter(currentFilter) }
                 val sectorsDeferred = async { getSectorPerformancesUseCase() }
                 val constituentsDeferred = async { fetchConstituentsForIndex(currentConstituentIndex) }
+                val sessionDeferred = async { liveMarketRepository.getMarketSessionStatus() }
 
                 // Await only the above-the-fold data first so the dashboard paints as soon as
                 // indices/sentiment/top symbols are ready. Sectors and constituents are
@@ -147,6 +148,7 @@ class MarketDashboardViewModel(
                 val indicesResult = indicesDeferred.await()
                 val sentimentResult = sentimentDeferred.await()
                 val topSymbolsResult = topSymbolsDeferred.await()
+                val marketSession = sessionDeferred.await().getOrNull()
                 if (loadGeneration != accountGeneration) return@launch
 
                 if (indicesResult.isSuccess || sentimentResult.isSuccess) {
@@ -189,7 +191,8 @@ class MarketDashboardViewModel(
                             isConstituentsLoading = true,
                             lastUpdated = currentTime,
                             liveQuotes = liveMarketRepository.quoteCache.value,
-                            wsConnectionState = liveMarketRepository.connectionState.value
+                            wsConnectionState = liveMarketRepository.connectionState.value,
+                            marketSession = marketSession
                         )
                     } else {
                         _uiState.value = MarketDashboardUiState.Empty
