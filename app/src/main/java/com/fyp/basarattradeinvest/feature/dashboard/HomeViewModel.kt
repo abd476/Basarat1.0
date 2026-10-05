@@ -8,6 +8,7 @@ import com.fyp.basarattradeinvest.data.remote.NetworkClient
 import com.fyp.basarattradeinvest.data.repository.AlertsRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.MarketRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.NewsRepositoryImpl
+import com.fyp.basarattradeinvest.data.repository.StockRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.UsersRepositoryImpl
 import com.fyp.basarattradeinvest.domain.model.MarketIndex
 import com.fyp.basarattradeinvest.domain.model.MarketStock
@@ -17,8 +18,10 @@ import com.fyp.basarattradeinvest.domain.repository.AlertsRepository
 import com.fyp.basarattradeinvest.domain.repository.LiveMarketRepository
 import com.fyp.basarattradeinvest.domain.repository.MarketRepository
 import com.fyp.basarattradeinvest.domain.repository.NewsRepository
+import com.fyp.basarattradeinvest.domain.repository.StockRepository
 import com.fyp.basarattradeinvest.domain.repository.UsersRepository
 import com.fyp.basarattradeinvest.domain.repository.WatchlistRepository
+import com.fyp.basarattradeinvest.domain.usecase.market.BuildBenchmarkTrendUseCase
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -35,6 +38,10 @@ class HomeViewModel(
     private val alertsRepository: AlertsRepository = AlertsRepositoryImpl(),
     private val watchlistRepository: WatchlistRepository = NetworkClient.watchlistRepository,
     private val liveMarketRepository: LiveMarketRepository = NetworkClient.liveMarketRepository,
+    private val buildBenchmarkTrend: BuildBenchmarkTrendUseCase = BuildBenchmarkTrendUseCase(
+        marketRepository = marketRepository,
+        stockRepository = StockRepositoryImpl()
+    ),
     private val autoLoad: Boolean = true
 ) : ViewModel() {
 
@@ -43,6 +50,8 @@ class HomeViewModel(
 
     private var currentMoversTab: MoversTab = MoversTab.GAINERS
     private var currentTimeframe: String = "1D"
+    private var currentBenchmarkCode: String? = null
+    private var benchmarkTrendJob: Job? = null
     private var lastSuccessfulFetchAt: Long = 0L
     private val freshnessWindowMs = 5 * 60 * 1000L
     private var isDashboardLoading = false
@@ -275,6 +284,7 @@ class HomeViewModel(
         val shouldSkip = !forceLoad && stateAtStart is HomeUiState.Success && !stateHasExpired()
         if (shouldSkip) return
         isDashboardLoading = true
+        if (forceLoad) buildBenchmarkTrend.invalidateCache()
         val loadGeneration = accountGeneration
         dashboardLoadJob = viewModelScope.launch {
             val hasUsableData = stateAtStart is HomeUiState.Success
@@ -308,6 +318,7 @@ class HomeViewModel(
                             it.code.equals("KSE100", ignoreCase = true) ||
                                 it.name.contains("100", ignoreCase = true)
                         } ?: indices.firstOrNull()
+                        currentBenchmarkCode = kse100?.code
                         applyPartialState(loadGeneration) {
                             copy(
                                 marketIndices = indices,
@@ -377,6 +388,9 @@ class HomeViewModel(
                 flushPendingMutations()
                 if (loadGeneration == accountGeneration) {
                     lastSuccessfulFetchAt = System.currentTimeMillis()
+                    // Kept out of the scope above: the 100-request fan-out must not hold up
+                    // the rest of the dashboard or leave the refresh spinner running.
+                    loadBenchmarkTrend(currentTimeframe, loadGeneration)
                 }
             } catch (cancelled: CancellationException) {
                 throw cancelled
@@ -437,7 +451,36 @@ class HomeViewModel(
         currentTimeframe = timeframe
         val current = _uiState.value
         if (current is HomeUiState.Success) {
-            _uiState.value = current.copy(selectedTimeframe = timeframe)
+            _uiState.value = current.copy(
+                selectedTimeframe = timeframe,
+                benchmarkTrend = BenchmarkTrendUiState.Loading
+            )
+        }
+        loadBenchmarkTrend(timeframe, accountGeneration)
+    }
+
+    private fun loadBenchmarkTrend(timeframe: String, generation: Int) {
+        val indexCode = currentBenchmarkCode
+        if (indexCode == null) {
+            applyPartialState(generation) { copy(benchmarkTrend = BenchmarkTrendUiState.Empty) }
+            return
+        }
+        benchmarkTrendJob?.cancel()
+        val requestGeneration = generation
+        benchmarkTrendJob = viewModelScope.launch {
+            val result = buildBenchmarkTrend(indexCode, timeframe)
+            applyPartialState(requestGeneration) {
+                copy(
+                    benchmarkTrend = result.fold(
+                        onSuccess = { BenchmarkTrendUiState.Success(it) },
+                        onFailure = {
+                            BenchmarkTrendUiState.Error(
+                                it.message ?: "Unable to build the benchmark trend."
+                            )
+                        }
+                    )
+                )
+            }
         }
     }
 

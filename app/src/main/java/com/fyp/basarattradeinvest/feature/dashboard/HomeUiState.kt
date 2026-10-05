@@ -1,6 +1,7 @@
 package com.fyp.basarattradeinvest.feature.dashboard
 
 import com.fyp.basarattradeinvest.domain.model.AlertItem
+import com.fyp.basarattradeinvest.domain.model.BenchmarkTrend
 import com.fyp.basarattradeinvest.domain.model.MarketIndex
 import com.fyp.basarattradeinvest.domain.model.MarketStock
 import com.fyp.basarattradeinvest.domain.model.NewsArticle
@@ -31,6 +32,9 @@ sealed interface HomeUiState {
         val marketIndices: List<MarketIndex> = emptyList(),
         val selectedBenchmarkIndex: MarketIndex? = null,
         val selectedTimeframe: String = "1D",
+        // Derived from constituent price history in a second pass, so it lands after the
+        // benchmark's headline numbers.
+        val benchmarkTrend: BenchmarkTrendUiState = BenchmarkTrendUiState.Empty,
         val watchlist: WatchlistUiState = WatchlistUiState.Loading,
         val topGainers: List<MarketStock> = emptyList(),
         val topLosers: List<MarketStock> = emptyList(),
@@ -67,4 +71,11 @@ sealed interface WatchlistUiState {
     data class Success(val watchlist: Watchlist) : WatchlistUiState
     data object Empty : WatchlistUiState
     data class Error(val message: String) : WatchlistUiState
+}
+
+sealed interface BenchmarkTrendUiState {
+    data object Loading : BenchmarkTrendUiState
+    data class Success(val trend: BenchmarkTrend) : BenchmarkTrendUiState
+    data object Empty : BenchmarkTrendUiState
+    data class Error(val message: String) : BenchmarkTrendUiState
 }

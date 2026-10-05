@@ -502,6 +502,18 @@
                         android:layout_height="120dp"
                         android:layout_marginTop="8dp" />
 
+                    <!-- Provenance of the derived trend line -->
+                    <TextView
+                        android:id="@+id/tv_benchmark_trend_caption"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@color/color_text_secondary"
+                        android:visibility="gone"
+                        tools:text="Equal-weight proxy · 100 stocks · 3 Sep – 1 Oct"
+                        tools:visibility="visible" />
+
                     <!-- High / Low Stats Row -->
                     <LinearLayout
                         android:layout_width="match_parent"

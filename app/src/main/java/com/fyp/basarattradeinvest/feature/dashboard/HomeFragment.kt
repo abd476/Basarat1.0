@@ -26,7 +26,9 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 class HomeFragment : Fragment() {
@@ -45,6 +47,8 @@ class HomeFragment : Fragment() {
         minimumFractionDigits = 2
         maximumFractionDigits = 2
     }
+
+    private val trendSessionFormat = SimpleDateFormat("d MMM", Locale.US)
 
     private val marketStockAdapter by lazy {
         MarketStockAdapter { stock ->
@@ -268,6 +272,9 @@ class HomeFragment : Fragment() {
         if (previous == null || previous.selectedBenchmarkIndex != state.selectedBenchmarkIndex || previous.selectedTimeframe != state.selectedTimeframe) {
             bindBenchmarkCard(state)
         }
+        if (previous == null || previous.benchmarkTrend != state.benchmarkTrend) {
+            bindBenchmarkTrend(state.benchmarkTrend)
+        }
 
         // 4. Watchlist Preview
         if (previous == null || previous.watchlist != state.watchlist) {
@@ -369,36 +376,6 @@ class HomeFragment : Fragment() {
             } else {
                 binding.tvBenchmarkLow.text = "Day Low: --"
             }
-
-            // Render chart points if intraday or high/low points available
-            val points = if (benchmark.intradayPoints.isNotEmpty()) {
-                benchmark.intradayPoints.mapIndexed { idx, p -> Entry(idx.toFloat(), p) }
-            } else if (benchmark.high > 0.0 && benchmark.low > 0.0) {
-                val openApprox = (benchmark.currentPoints - benchmark.changePoints).toFloat()
-                listOf(
-                    Entry(0f, openApprox),
-                    Entry(1f, benchmark.low.toFloat()),
-                    Entry(2f, benchmark.high.toFloat()),
-                    Entry(3f, benchmark.currentPoints.toFloat())
-                )
-            } else {
-                emptyList()
-            }
-
-            if (points.isNotEmpty()) {
-                val dataSet = LineDataSet(points, "Benchmark").apply {
-                    color = trendColor
-                    lineWidth = 2f
-                    setDrawCircles(false)
-                    setDrawValues(false)
-                    mode = LineDataSet.Mode.CUBIC_BEZIER
-                    setDrawFilled(true)
-                    fillColor = trendColor
-                    fillAlpha = 35
-                }
-                binding.chartMarketTrend.data = LineData(dataSet)
-                binding.chartMarketTrend.invalidate()
-            }
         }
 
         // Timeframe selector styles
@@ -417,6 +394,54 @@ class HomeFragment : Fragment() {
                 view.setTextColor(ContextCompat.getColor(context, R.color.color_text_secondary))
             }
         }
+    }
+
+    /**
+     * Plots the derived benchmark trend. No index-history endpoint exists, so this line is an
+     * equal-weight proxy of the constituents and the caption carries that provenance instead of
+     * letting it read as the official index path.
+     */
+    private fun bindBenchmarkTrend(trendState: BenchmarkTrendUiState) {
+        val trend = (trendState as? BenchmarkTrendUiState.Success)?.trend
+        if (trend == null || trend.points.size < 2) {
+            binding.chartMarketTrend.clear()
+            binding.tvBenchmarkTrendCaption.text = when (trendState) {
+                BenchmarkTrendUiState.Loading -> getString(R.string.benchmark_trend_loading)
+                is BenchmarkTrendUiState.Error -> trendState.message
+                else -> getString(R.string.benchmark_trend_empty)
+            }
+            binding.tvBenchmarkTrendCaption.visibility = View.VISIBLE
+            return
+        }
+
+        val isUp = trend.points.last().changePct >= 0f
+        val trendColor = ContextCompat.getColor(
+            requireContext(),
+            if (isUp) R.color.color_positive else R.color.color_negative
+        )
+        val dataSet = LineDataSet(
+            trend.points.mapIndexed { idx, point -> Entry(idx.toFloat(), point.changePct) },
+            "Benchmark"
+        ).apply {
+            color = trendColor
+            lineWidth = 2f
+            setDrawCircles(false)
+            setDrawValues(false)
+            mode = LineDataSet.Mode.CUBIC_BEZIER
+            setDrawFilled(true)
+            fillColor = trendColor
+            fillAlpha = 35
+        }
+        binding.chartMarketTrend.data = LineData(dataSet)
+        binding.chartMarketTrend.invalidate()
+
+        binding.tvBenchmarkTrendCaption.text = getString(
+            R.string.benchmark_trend_caption,
+            trend.stockCount,
+            trendSessionFormat.format(Date(trend.firstSessionTimestamp)),
+            trendSessionFormat.format(Date(trend.lastSessionTimestamp))
+        )
+        binding.tvBenchmarkTrendCaption.visibility = View.VISIBLE
     }
 
     private fun bindWatchlist(state: WatchlistUiState) {

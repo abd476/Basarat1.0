@@ -146,4 +146,9 @@
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="assistant_disclaimer">BASARAT AI provides decision support and informational analysis. It does not constitute financial advisory services.</string>
+
+    <!-- Home — Benchmark trend -->
+    <string name="benchmark_trend_caption">Equal-weight proxy · %1$d constituents · %2$s – %3$s</string>
+    <string name="benchmark_trend_loading">Building the trend from constituent price history…</string>
+    <string name="benchmark_trend_empty">No trend available for this index</string>
 </resources>
