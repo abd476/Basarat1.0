@@ -2,6 +2,7 @@ package com.fyp.basarattradeinvest.data.remote.api
 
 import com.fyp.basarattradeinvest.data.remote.dto.auth.ChangePasswordRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.ForgotPasswordRequest
+import com.fyp.basarattradeinvest.data.remote.dto.auth.GoogleAuthRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.LoginRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.LogoutRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.MessageResponse
@@ -19,8 +20,8 @@ import retrofit2.http.POST
 
 /**
  * Retrofit service definition for BASARAT Authentication endpoints.
- * Defined strictly according to OpenAPI / Swagger contract at:
- * http://16.16.26.247:8000/docs
+ * Defined strictly according to the OpenAPI contract served by the backend at
+ * /api/v1/openapi.json (see NetworkClient for the host).
  */
 interface AuthApiService {
 
@@ -42,6 +43,11 @@ interface AuthApiService {
     @POST("api/v1/auth/login")
     suspend fun login(
         @Body request: LoginRequest
+    ): Response<TokenResponse>
+
+    @POST("api/v1/auth/google")
+    suspend fun continueWithGoogle(
+        @Body request: GoogleAuthRequest
     ): Response<TokenResponse>
 
     @POST("api/v1/auth/refresh")

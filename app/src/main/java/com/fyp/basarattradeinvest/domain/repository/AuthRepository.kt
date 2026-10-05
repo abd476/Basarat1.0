@@ -26,6 +26,14 @@ interface AuthRepository {
         password: String
     ): Result<AuthSession>
 
+    /**
+     * Exchanges a Google OAuth ID token for a BASARAT session. Google-verified
+     * accounts come back already verified, so no email-confirmation step follows.
+     */
+    suspend fun signInWithGoogle(
+        idToken: String
+    ): Result<AuthSession>
+
     suspend fun refresh(
         refreshToken: String
     ): Result<AuthSession>

@@ -9,12 +9,14 @@ import com.fyp.basarattradeinvest.core.notifications.NotificationBadgeState
 import com.fyp.basarattradeinvest.data.remote.api.AuthApiService
 import com.fyp.basarattradeinvest.data.remote.dto.auth.ChangePasswordRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.ForgotPasswordRequest
+import com.fyp.basarattradeinvest.data.remote.dto.auth.GoogleAuthRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.LoginRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.LogoutRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.RefreshRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.ResendVerificationRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.ResetPasswordRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.SignupRequest
+import com.fyp.basarattradeinvest.data.remote.dto.auth.TokenResponse
 import com.fyp.basarattradeinvest.data.remote.dto.auth.VerifyEmailRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.VerifyResetCodeRequest
 import com.fyp.basarattradeinvest.domain.model.AuthSession
@@ -135,32 +137,7 @@ class AuthRepositoryImpl(
             )
             if (response.isSuccessful) {
                 val body = response.body() ?: return@withContext Result.failure(Exception("Empty login response from server"))
-                
-                SessionManager.saveSession(
-                    accessToken = body.accessToken,
-                    refreshToken = body.refreshToken,
-                    userId = body.user?.id?.toString(),
-                    email = body.user?.email ?: email,
-                    fullName = body.user?.fullName
-                )
-
-                val user = body.user?.let {
-                    User(
-                        id = it.id.toString(),
-                        email = it.email,
-                        username = it.username,
-                        fullName = it.fullName
-                    )
-                } ?: User(id = "", email = email)
-
-                Result.success(
-                    AuthSession(
-                        accessToken = body.accessToken,
-                        refreshToken = body.refreshToken,
-                        tokenType = body.tokenType,
-                        user = user
-                    )
-                )
+                persistSession(body, fallbackEmail = email)
             } else {
                 val error = NetworkErrorParser.parseError(response)
                 Result.failure(Exception(error))
@@ -168,6 +145,59 @@ class AuthRepositoryImpl(
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    override suspend fun signInWithGoogle(
+        idToken: String
+    ): Result<AuthSession> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.continueWithGoogle(GoogleAuthRequest(idToken = idToken))
+            if (response.isSuccessful) {
+                val body = response.body()
+                    ?: return@withContext Result.failure(Exception("Empty Google sign-in response from server"))
+                persistSession(body, fallbackEmail = null)
+            } else {
+                val error = NetworkErrorParser.parseError(response)
+                Result.failure(Exception(error))
+            }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Shared tail of every token-returning sign-in: persist the session and hand back
+     * the same [AuthSession] shape the email login produces.
+     */
+    private fun persistSession(body: TokenResponse, fallbackEmail: String?): Result<AuthSession> {
+        val user = body.user?.let {
+            User(
+                id = it.id.toString(),
+                email = it.email,
+                username = it.username,
+                fullName = it.fullName
+            )
+        } ?: fallbackEmail?.let { User(id = "", email = it) }
+            ?: return Result.failure(Exception("Server did not return an account for this sign-in"))
+
+        SessionManager.saveSession(
+            accessToken = body.accessToken,
+            refreshToken = body.refreshToken,
+            userId = body.user?.id?.toString(),
+            email = user.email,
+            fullName = body.user?.fullName
+        )
+
+        return Result.success(
+            AuthSession(
+                accessToken = body.accessToken,
+                refreshToken = body.refreshToken,
+                tokenType = body.tokenType,
+                user = user
+            )
+        )
     }
 
     override suspend fun refresh(refreshToken: String): Result<AuthSession> = withContext(Dispatchers.IO) {

@@ -39,6 +39,14 @@ data class LoginRequest(
     val password: String
 )
 
+// POST /api/v1/auth/google Request
+// The contract also accepts an optional Google `access_token` for avatar fallback, but
+// Credential Manager only hands back the ID token, so it is never sent.
+data class GoogleAuthRequest(
+    @SerializedName("id_token")
+    val idToken: String
+)
+
 // POST /api/v1/auth/refresh Request
 data class RefreshRequest(
     @SerializedName("refresh_token")
@@ -111,7 +119,7 @@ data class ChangePasswordRequest(
     val confirmPassword: String? = null
 )
 
-// Response from /api/v1/auth/login, /api/v1/auth/refresh, /api/v1/auth/verify-email
+// Response from /api/v1/auth/login, /api/v1/auth/google, /api/v1/auth/refresh, /api/v1/auth/verify-email
 data class TokenResponse(
     @SerializedName("access_token")
     val accessToken: String,

@@ -343,6 +343,7 @@
             app:layout_constraintTop_toBottomOf="@id/layout_or_divider">
 
             <ImageView
+                android:id="@+id/iv_google_icon"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginEnd="10dp"
@@ -350,41 +351,20 @@
                 android:src="@drawable/ic_google" />
 
             <TextView
+                android:id="@+id/tv_google_label"
                 android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/continue_with_google"
                 android:textColor="@color/color_button_social_text" />
-        </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/btn_apple_sign_up"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_auth_social_button"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_google_sign_up">
-
-            <ImageView
+            <ProgressBar
+                android:id="@+id/pb_google_loading"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_marginEnd="10dp"
-                android:contentDescription="@string/continue_with_apple"
-                android:src="@drawable/ic_apple"
-                app:tint="@color/color_button_social_text" />
-
-            <TextView
-                android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/continue_with_apple"
-                android:textColor="@color/color_button_social_text" />
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/color_button_social_text"
+                android:visibility="gone" />
         </LinearLayout>
 
         <TextView
@@ -399,7 +379,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_apple_sign_up" />
+            app:layout_constraintTop_toBottomOf="@id/btn_google_sign_up" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

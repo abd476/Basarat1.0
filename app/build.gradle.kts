@@ -67,6 +67,12 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.androidx.work.runtime.ktx)
 
+    // Google Sign-In (Credential Manager). googleid is pinned to 1.1.1: 1.2.x ships
+    // Kotlin 2.4 metadata, which this project's Kotlin 2.2 compiler cannot read.
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
+
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)
