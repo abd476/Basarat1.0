@@ -114,7 +114,9 @@ class RecommendationSettingsFragment : Fragment() {
             }
             is RecommendationSettingsUiState.Error -> {
                 binding.pbLoading.visibility = View.GONE
-                Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                // Sliders keep their XML defaults, so the toast has to say they are not the backend's values.
+                binding.scrollContent.visibility = View.VISIBLE
+                Toast.makeText(requireContext(), state.message, Toast.LENGTH_LONG).show()
             }
         }
     }

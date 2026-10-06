@@ -19,12 +19,11 @@
 
         <TextView
             android:id="@+id/tv_symbol_letter"
+            android:textAppearance="@style/TextAppearance.Basarat.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="O"
-            android:textColor="@color/color_basarat_green"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textColor="@color/color_basarat_green" />
     </LinearLayout>
 
     <!-- Symbol & Name -->
@@ -37,36 +36,34 @@
 
         <TextView
             android:id="@+id/tv_symbol"
+            android:textAppearance="@style/TextAppearance.Basarat.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="OGDC"
-            android:textColor="@color/color_text_primary"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+            android:textColor="@color/color_text_primary" />
 
         <TextView
             android:id="@+id/tv_name"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="Oil &amp; Gas Development Co."
-            android:textColor="@color/color_text_secondary"
-            android:textSize="13sp" />
+            android:textColor="@color/color_text_secondary" />
     </LinearLayout>
 
     <!-- Sector Badge -->
     <TextView
         android:id="@+id/tv_sector"
+        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_badge_neutral"
         android:paddingHorizontal="8dp"
         android:paddingVertical="3dp"
         android:text="Oil &amp; Gas"
-        android:textColor="@color/color_text_secondary"
-        android:textSize="11sp"
-        android:textStyle="bold" />
+        android:textColor="@color/color_text_secondary" />
 
 </LinearLayout>

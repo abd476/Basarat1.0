@@ -38,19 +38,18 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Community Moderation"
-                android:textColor="@color/color_text_primary"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Reports Queue &amp; Audit Log"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="11sp" />
+                android:textColor="@color/color_text_secondary" />
         </LinearLayout>
 
         <ImageView
@@ -82,24 +81,23 @@
 
         <TextView
             android:id="@+id/tab_reports"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:text="Reports Queue"
-            android:textColor="@color/color_brand_primary"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textColor="@color/color_brand_primary" />
 
         <TextView
             android:id="@+id/tab_audit_log"
+            android:textAppearance="@style/TextAppearance.Basarat.Body"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:text="Audit Log"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="14sp" />
+            android:textColor="@color/color_text_secondary" />
     </LinearLayout>
 
     <View
@@ -123,6 +121,7 @@
 
             <TextView
                 android:id="@+id/chip_filter_all"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginEnd="8dp"
@@ -130,12 +129,11 @@
                 android:gravity="center"
                 android:paddingHorizontal="14dp"
                 android:text="All Reports"
-                android:textColor="@color/color_brand_primary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_brand_primary" />
 
             <TextView
                 android:id="@+id/chip_filter_pending"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginEnd="8dp"
@@ -143,11 +141,11 @@
                 android:gravity="center"
                 android:paddingHorizontal="14dp"
                 android:text="Pending"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp" />
+                android:textColor="@color/color_text_secondary" />
 
             <TextView
                 android:id="@+id/chip_filter_reviewed"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginEnd="8dp"
@@ -155,19 +153,18 @@
                 android:gravity="center"
                 android:paddingHorizontal="14dp"
                 android:text="Reviewed"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp" />
+                android:textColor="@color/color_text_secondary" />
 
             <TextView
                 android:id="@+id/chip_filter_dismissed"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:background="@drawable/bg_feature_chip"
                 android:gravity="center"
                 android:paddingHorizontal="14dp"
                 android:text="Dismissed"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp" />
+                android:textColor="@color/color_text_secondary" />
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -234,23 +231,22 @@
 
             <TextView
                 android:id="@+id/tv_empty_title"
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:text="No Reports Found"
-                android:textColor="@color/color_text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <TextView
                 android:id="@+id/tv_empty_message"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:gravity="center"
                 android:text="There are currently no reports in this category."
-                android:textColor="@color/color_text_secondary"
-                android:textSize="13sp" />
+                android:textColor="@color/color_text_secondary" />
         </LinearLayout>
 
         <!-- Error / Access Denied State -->
@@ -273,23 +269,22 @@
 
             <TextView
                 android:id="@+id/tv_error_title"
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:text="Access Denied"
-                android:textColor="@color/color_text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <TextView
                 android:id="@+id/tv_error_message"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:gravity="center"
                 android:text="Administrator or Moderator privileges are required."
-                android:textColor="@color/color_text_secondary"
-                android:textSize="13sp" />
+                android:textColor="@color/color_text_secondary" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_error_action"

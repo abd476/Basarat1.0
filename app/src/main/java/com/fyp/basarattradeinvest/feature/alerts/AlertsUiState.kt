@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.feature.alerts
 
-import com.fyp.basarattradeinvest.domain.model.AlertItem
+import com.fyp.basarattradeinvest.domain.model.alerts.AlertItem
 
 sealed interface AlertsUiState {
     data object Loading : AlertsUiState

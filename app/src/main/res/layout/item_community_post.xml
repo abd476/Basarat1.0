@@ -42,34 +42,32 @@
 
                 <TextView
                     android:id="@+id/tv_post_author"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/color_text_primary"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
                     tools:text="Tariq Mahmood" />
 
                 <TextView
                     android:id="@+id/tv_post_time"
+                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="1dp"
                     android:textColor="@color/color_text_secondary"
-                    android:textSize="11sp"
                     tools:text="2 hours ago" />
             </LinearLayout>
 
             <!-- Stock Ticker Badge if stock post -->
             <TextView
                 android:id="@+id/tv_stock_badge"
+                android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_badge_kmi30"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="4dp"
                 android:textColor="@color/color_brand_primary"
-                android:textSize="11sp"
-                android:textStyle="bold"
                 android:visibility="gone"
                 tools:text="LUCK"
                 tools:visibility="visible" />
@@ -78,12 +76,12 @@
         <!-- Post Content Body -->
         <TextView
             android:id="@+id/tv_post_content"
+            android:textAppearance="@style/TextAppearance.Basarat.Body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:lineSpacingExtra="3dp"
             android:textColor="@color/color_text_primary"
-            android:textSize="14sp"
             tools:text="Lucky Cement (LUCK) showing strong support above 880 PKR. Solid cement sector dispatches reported for the month." />
 
         <!-- Post Image Attachment (if present) -->
@@ -128,11 +126,11 @@
 
                 <TextView
                     android:id="@+id/tv_like_count"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
                     android:textColor="@color/color_text_secondary"
-                    android:textSize="13sp"
                     tools:text="24" />
             </LinearLayout>
 
@@ -159,11 +157,11 @@
 
                 <TextView
                     android:id="@+id/tv_comment_count"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
                     android:textColor="@color/color_text_secondary"
-                    android:textSize="13sp"
                     tools:text="5" />
             </LinearLayout>
         </LinearLayout>

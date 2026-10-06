@@ -6,11 +6,11 @@ import com.fyp.basarattradeinvest.data.remote.dto.market.IndicesResponseDto
 import com.fyp.basarattradeinvest.data.remote.dto.market.LosersResponseDto
 import com.fyp.basarattradeinvest.data.remote.dto.market.SentimentOverviewDto
 import com.fyp.basarattradeinvest.data.remote.dto.market.VolumeSpikesResponseDto
-import com.fyp.basarattradeinvest.data.remote.dto.MarketIndexDto
-import com.fyp.basarattradeinvest.data.remote.dto.MarketOverviewDto
-import com.fyp.basarattradeinvest.data.remote.dto.MarketSentimentDto
-import com.fyp.basarattradeinvest.data.remote.dto.MarketStockDto
-import com.fyp.basarattradeinvest.data.remote.dto.SectorPerformanceDto
+import com.fyp.basarattradeinvest.data.remote.dto.market.MarketIndexDto
+import com.fyp.basarattradeinvest.data.remote.dto.market.MarketOverviewDto
+import com.fyp.basarattradeinvest.data.remote.dto.sentiment.MarketSentimentDto
+import com.fyp.basarattradeinvest.data.remote.dto.market.MarketStockDto
+import com.fyp.basarattradeinvest.data.remote.dto.market.SectorPerformanceDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

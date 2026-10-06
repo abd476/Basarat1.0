@@ -31,13 +31,12 @@
 
         <TextView
             android:id="@+id/tv_title"
+            android:textAppearance="@style/TextAppearance.Basarat.Subheading"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="Article Detail"
             android:textColor="@color/color_text_primary"
-            android:textSize="17sp"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/iv_share"
             app:layout_constraintStart_toEndOf="@id/iv_back"
@@ -93,15 +92,15 @@
 
                 <TextView
                     android:id="@+id/tv_article_source"
+                    android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/color_basarat_green"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
                     tools:text="Business Recorder" />
 
                 <TextView
                     android:id="@+id/tv_official_badge"
+                    android:textAppearance="@style/TextAppearance.Basarat.Micro"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
@@ -110,38 +109,35 @@
                     android:paddingVertical="2dp"
                     android:text="Official"
                     android:textColor="@color/color_text_primary"
-                    android:textSize="10sp"
-                    android:textStyle="bold"
                     android:visibility="gone"
                     tools:visibility="visible" />
 
                 <TextView
+                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="6dp"
                     android:text="•"
-                    android:textColor="@color/color_text_tertiary"
-                    android:textSize="11sp" />
+                    android:textColor="@color/color_text_tertiary" />
 
                 <TextView
                     android:id="@+id/tv_article_time"
+                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textColor="@color/color_text_tertiary"
-                    android:textSize="12sp"
                     tools:text="2h ago" />
 
                 <TextView
                     android:id="@+id/tv_article_sentiment"
+                    android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_badge_positive"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="3dp"
                     android:textColor="@color/color_positive"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
                     android:visibility="gone"
                     tools:text="+0.75 Bullish"
                     tools:visibility="gone" />
@@ -150,13 +146,12 @@
             <!-- Headline -->
             <TextView
                 android:id="@+id/tv_article_headline"
+                android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
                 android:lineSpacingExtra="3dp"
                 android:textColor="@color/color_text_primary"
-                android:textSize="18sp"
-                android:textStyle="bold"
                 tools:text="Lucky Cement reports 24% profit surge on robust export volumes and lower energy costs" />
 
             <!-- Symbols Pills Container -->
@@ -177,11 +172,11 @@
             <!-- Body / Summary -->
             <TextView
                 android:id="@+id/tv_article_body"
+                android:textAppearance="@style/TextAppearance.Basarat.Body"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:lineSpacingExtra="5dp"
                 android:textColor="@color/color_text_secondary"
-                android:textSize="14sp"
                 tools:text="The company posted unconsolidated net earnings of PKR 27.6B for the fiscal year, driven by higher operational efficiency and captive power usage across southern and northern plants." />
 
             <!-- External Read Button -->
@@ -227,11 +222,11 @@
 
         <TextView
             android:id="@+id/tv_error_message"
+            android:textAppearance="@style/TextAppearance.Basarat.Body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Unable to load article details"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="14sp" />
+            android:textColor="@color/color_text_secondary" />
 
         <Button
             android:id="@+id/btn_retry"

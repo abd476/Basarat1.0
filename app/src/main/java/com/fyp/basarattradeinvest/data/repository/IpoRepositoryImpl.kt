@@ -3,10 +3,10 @@ package com.fyp.basarattradeinvest.data.repository
 import com.fyp.basarattradeinvest.core.network.NetworkErrorParser
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
 import com.fyp.basarattradeinvest.data.remote.api.IpoApiService
-import com.fyp.basarattradeinvest.domain.model.IpoCalendarEvent
-import com.fyp.basarattradeinvest.domain.model.IpoItem
-import com.fyp.basarattradeinvest.domain.model.IpoPerformanceSummary
-import com.fyp.basarattradeinvest.domain.model.toDomain
+import com.fyp.basarattradeinvest.domain.model.ipo.IpoCalendarEvent
+import com.fyp.basarattradeinvest.domain.model.ipo.IpoItem
+import com.fyp.basarattradeinvest.domain.model.ipo.IpoPerformanceSummary
+import com.fyp.basarattradeinvest.domain.model.ipo.toDomain
 import com.fyp.basarattradeinvest.domain.repository.IpoRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers

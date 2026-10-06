@@ -3,7 +3,7 @@ package com.fyp.basarattradeinvest.feature.news.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.data.repository.NewsRepositoryImpl
-import com.fyp.basarattradeinvest.domain.usecase.GetNewsAndEventsUseCase
+import com.fyp.basarattradeinvest.domain.usecase.news.GetNewsAndEventsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

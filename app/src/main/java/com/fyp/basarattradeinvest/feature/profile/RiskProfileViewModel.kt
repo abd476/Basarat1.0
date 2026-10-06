@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.data.remote.dto.user.UpdateProfileRequestDto
 import com.fyp.basarattradeinvest.data.repository.UsersRepositoryImpl
-import com.fyp.basarattradeinvest.domain.model.InvestmentProfileOptions
-import com.fyp.basarattradeinvest.domain.model.UserProfile
+import com.fyp.basarattradeinvest.domain.model.auth.InvestmentProfileOptions
+import com.fyp.basarattradeinvest.domain.model.auth.UserProfile
 import com.fyp.basarattradeinvest.domain.usecase.user.GetCurrentUserProfileUseCase
 import com.fyp.basarattradeinvest.domain.usecase.user.GetInvestmentProfileOptionsUseCase
 import com.fyp.basarattradeinvest.domain.usecase.user.UpdateUserProfileUseCase

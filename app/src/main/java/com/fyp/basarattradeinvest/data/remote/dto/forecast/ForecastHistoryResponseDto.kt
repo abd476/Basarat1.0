@@ -7,36 +7,36 @@ import com.google.gson.annotations.SerializedName
  */
 data class ForecastHistoryResponseDto(
     @SerializedName("symbol")
-    val symbol: String,
+    val symbol: String? = null,
 
     @SerializedName("horizon")
     val horizon: String? = null,
 
     @SerializedName("count")
-    val count: Int,
+    val count: Int = 0,
 
     @SerializedName("accuracy")
     val accuracy: Double? = null,
 
     @SerializedName("history")
-    val history: List<ForecastHistoryItemDto> = emptyList()
+    val history: List<ForecastHistoryItemDto>? = null
 )
 
 data class ForecastHistoryItemDto(
     @SerializedName("predicted_at")
-    val predictedAt: String,
+    val predictedAt: String? = null,
 
     @SerializedName("predicted_direction")
-    val predictedDirection: String,
+    val predictedDirection: String? = null,
 
     @SerializedName("probabilities")
     val probabilities: Map<String, Double>? = null,
 
     @SerializedName("confidence")
-    val confidence: Double,
+    val confidence: Double = 0.0,
 
     @SerializedName("target_date")
-    val targetDate: String,
+    val targetDate: String? = null,
 
     @SerializedName("actual")
     val actual: ForecastActualOutcomeDto? = null

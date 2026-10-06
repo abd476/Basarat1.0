@@ -4,7 +4,7 @@ import com.fyp.basarattradeinvest.data.mapper.StocksDtoMapper
 import com.fyp.basarattradeinvest.data.remote.api.StocksApiService
 import com.fyp.basarattradeinvest.data.remote.dto.stocks.*
 import com.fyp.basarattradeinvest.data.repository.StockRepositoryImpl
-import com.fyp.basarattradeinvest.domain.model.TechnicalSignal
+import com.fyp.basarattradeinvest.domain.model.stock.TechnicalSignal
 import com.fyp.basarattradeinvest.domain.usecase.stocks.SearchStocksUseCase
 import com.google.gson.Gson
 import kotlinx.coroutines.runBlocking
@@ -29,10 +29,10 @@ class StocksModuleUnitTest {
         """.trimIndent()
 
         val dto = gson.fromJson(json, StockSearchResponseDto::class.java)
-        assertEquals(2, dto.results.size)
-        assertEquals("LUCK", dto.results[0].symbol)
+        assertEquals(2, dto.results!!.size)
+        assertEquals("LUCK", dto.results!![0].symbol)
 
-        val domain = StocksDtoMapper.mapSearchResult(dto.results[0])
+        val domain = StocksDtoMapper.mapSearchResult(dto.results!![0])
         assertEquals("LUCK", domain.symbol)
         assertEquals("Lucky Cement Limited", domain.name)
         assertEquals("Cement", domain.sector)
@@ -88,7 +88,7 @@ class StocksModuleUnitTest {
 
         val dto = gson.fromJson(json, PriceHistoryResponseDto::class.java)
         assertEquals("LUCK", dto.symbol)
-        assertEquals(2, dto.bars.size)
+        assertEquals(2, dto.bars!!.size)
 
         val candles = StocksDtoMapper.mapPriceHistoryToCandles(dto)
         assertEquals(2, candles.size)

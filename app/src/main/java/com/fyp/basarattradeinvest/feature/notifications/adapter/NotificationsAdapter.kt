@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.ItemNotificationBinding
-import com.fyp.basarattradeinvest.domain.model.InAppNotification
+import com.fyp.basarattradeinvest.domain.model.alerts.InAppNotification
 
 class NotificationsAdapter(
     private val onItemClick: (InAppNotification) -> Unit

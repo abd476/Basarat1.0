@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.domain.usecase.market
 
-import com.fyp.basarattradeinvest.domain.model.MarketStock
+import com.fyp.basarattradeinvest.domain.model.market.MarketStock
 import com.fyp.basarattradeinvest.domain.repository.MarketRepository
 
 class GetTopLosersUseCase(

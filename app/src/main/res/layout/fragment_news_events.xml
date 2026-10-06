@@ -42,21 +42,20 @@
 
             <TextView
                 android:id="@+id/tv_top_title"
+                android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="News &amp; Events"
-                android:textColor="@color/color_text_primary"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <TextView
                 android:id="@+id/tv_top_subtitle"
+                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
                 android:text="PSX Market Intelligence &amp; Notices"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="11sp" />
+                android:textColor="@color/color_text_secondary" />
         </LinearLayout>
 
         <LinearLayout
@@ -129,12 +128,12 @@
 
         <TextView
             android:id="@+id/tv_market_status"
+            android:textAppearance="@style/TextAppearance.Basarat.Caption"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:layout_weight="1"
             android:textColor="@color/color_text_secondary"
-            android:textSize="11sp"
             tools:text="Market: Regular Session • 09:30 - 15:30 PKT" />
     </LinearLayout>
 
@@ -208,19 +207,19 @@
             <!-- All -->
             <TextView
                 android:id="@+id/chip_all"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:background="@drawable/bg_chip_filter_selected"
                 android:gravity="center"
                 android:paddingHorizontal="16dp"
                 android:text="All"
-                android:textColor="@color/color_positive"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_positive" />
 
             <!-- General -->
             <TextView
                 android:id="@+id/chip_general"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginStart="8dp"
@@ -228,13 +227,12 @@
                 android:gravity="center"
                 android:paddingHorizontal="16dp"
                 android:text="General"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_secondary" />
 
             <!-- KSE-100 -->
             <TextView
                 android:id="@+id/chip_kse_100"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginStart="8dp"
@@ -242,13 +240,12 @@
                 android:gravity="center"
                 android:paddingHorizontal="16dp"
                 android:text="KSE-100"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_secondary" />
 
             <!-- Banks -->
             <TextView
                 android:id="@+id/chip_banks"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginStart="8dp"
@@ -256,13 +253,12 @@
                 android:gravity="center"
                 android:paddingHorizontal="16dp"
                 android:text="Banks"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_secondary" />
 
             <!-- Cement -->
             <TextView
                 android:id="@+id/chip_cement"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginStart="8dp"
@@ -270,13 +266,12 @@
                 android:gravity="center"
                 android:paddingHorizontal="16dp"
                 android:text="Cement"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_secondary" />
 
             <!-- Technology -->
             <TextView
                 android:id="@+id/chip_tech"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginStart="8dp"
@@ -284,13 +279,12 @@
                 android:gravity="center"
                 android:paddingHorizontal="16dp"
                 android:text="Technology"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_secondary" />
 
             <!-- Oil & Gas -->
             <TextView
                 android:id="@+id/chip_oil_gas"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginStart="8dp"
@@ -298,13 +292,12 @@
                 android:gravity="center"
                 android:paddingHorizontal="16dp"
                 android:text="Oil &amp; Gas"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_secondary" />
 
             <!-- Fertilizer -->
             <TextView
                 android:id="@+id/chip_fertilizer"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginStart="8dp"
@@ -312,13 +305,12 @@
                 android:gravity="center"
                 android:paddingHorizontal="16dp"
                 android:text="Fertilizer"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_secondary" />
 
             <!-- Corporate -->
             <TextView
                 android:id="@+id/chip_corporate"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginStart="8dp"
@@ -326,13 +318,12 @@
                 android:gravity="center"
                 android:paddingHorizontal="16dp"
                 android:text="Corporate"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_secondary" />
 
             <!-- Earnings -->
             <TextView
                 android:id="@+id/chip_earnings"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginStart="8dp"
@@ -340,13 +331,12 @@
                 android:gravity="center"
                 android:paddingHorizontal="16dp"
                 android:text="Earnings"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_secondary" />
 
             <!-- Dividends -->
             <TextView
                 android:id="@+id/chip_dividends"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginStart="8dp"
@@ -354,9 +344,7 @@
                 android:gravity="center"
                 android:paddingHorizontal="16dp"
                 android:text="Dividends"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_secondary" />
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -410,11 +398,11 @@
         app:layout_constraintTop_toBottomOf="@id/divider_header">
 
         <TextView
+            android:textAppearance="@style/TextAppearance.Basarat.Body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="No PSX News or Events Found"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="14sp" />
+            android:textColor="@color/color_text_secondary" />
     </LinearLayout>
 
     <!-- Error State -->
@@ -432,11 +420,11 @@
 
         <TextView
             android:id="@+id/tv_error_message"
+            android:textAppearance="@style/TextAppearance.Basarat.Body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Unable to load news updates"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="14sp" />
+            android:textColor="@color/color_text_secondary" />
 
         <Button
             android:id="@+id/btn_retry"

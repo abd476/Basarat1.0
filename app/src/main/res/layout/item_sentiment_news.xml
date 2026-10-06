@@ -19,22 +19,21 @@
         <!-- Title — required field, always visible -->
         <TextView
             android:id="@+id/tv_news_title"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/color_text_primary"
-            android:textSize="14sp"
-            android:textStyle="bold"
             android:lineSpacingMultiplier="1.3"
             tools:text="OGDC Reports Record Quarterly Earnings Amid Rising Oil Prices" />
 
         <!-- Source · Date — shown only if either is present (nullable fields) -->
         <TextView
             android:id="@+id/tv_news_source_date"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textColor="@color/color_text_secondary"
-            android:textSize="12sp"
             tools:text="Dawn Business · 2026-09-20" />
 
         <!-- Sentiment badge + score row -->
@@ -48,12 +47,11 @@
             <!-- Sentiment badge (nullable — GONE when no sentiment returned) -->
             <TextView
                 android:id="@+id/tv_news_sentiment_badge"
+                android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="3dp"
-                android:textSize="11sp"
-                android:textStyle="bold"
                 android:visibility="gone"
                 tools:visibility="visible"
                 tools:text="POSITIVE"
@@ -63,11 +61,11 @@
             <!-- Sentiment score (nullable — GONE when no score returned) -->
             <TextView
                 android:id="@+id/tv_news_sentiment_score"
+                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:textColor="@color/color_text_secondary"
-                android:textSize="11sp"
                 android:visibility="gone"
                 tools:visibility="visible"
                 tools:text="Score: +0.72" />

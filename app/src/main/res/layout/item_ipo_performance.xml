@@ -11,28 +11,26 @@
 
     <TextView
         android:id="@+id/tv_perf_symbol"
+        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_badge_stock_symbol"
         android:paddingHorizontal="8dp"
         android:paddingVertical="3dp"
         android:textColor="@color/color_text_primary"
-        android:textSize="12sp"
-        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="FAST" />
 
     <TextView
         android:id="@+id/tv_perf_company"
+        android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/color_text_primary"
-        android:textSize="14sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_perf_symbol"
         app:layout_constraintTop_toTopOf="@id/tv_perf_symbol"
@@ -40,6 +38,7 @@
 
     <TextView
         android:id="@+id/tv_perf_sector"
+        android:textAppearance="@style/TextAppearance.Basarat.Caption"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -47,7 +46,6 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/color_text_secondary"
-        android:textSize="11sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_perf_symbol"
         app:layout_constraintTop_toBottomOf="@id/tv_perf_company"
@@ -75,20 +73,19 @@
             android:orientation="vertical">
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Offer"
-                android:textColor="@color/color_text_tertiary"
-                android:textSize="11sp" />
+                android:textColor="@color/color_text_tertiary" />
 
             <TextView
                 android:id="@+id/tv_perf_offer_price"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:textColor="@color/color_text_primary"
-                android:textSize="14sp"
-                android:textStyle="bold"
                 tools:text="24.45" />
         </LinearLayout>
 
@@ -99,20 +96,19 @@
             android:orientation="vertical">
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="First Day"
-                android:textColor="@color/color_text_tertiary"
-                android:textSize="11sp" />
+                android:textColor="@color/color_text_tertiary" />
 
             <TextView
                 android:id="@+id/tv_perf_first_day"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:textColor="@color/color_text_primary"
-                android:textSize="14sp"
-                android:textStyle="bold"
                 tools:text="+0.00%" />
         </LinearLayout>
 
@@ -124,20 +120,19 @@
             android:orientation="vertical">
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Total"
-                android:textColor="@color/color_text_tertiary"
-                android:textSize="11sp" />
+                android:textColor="@color/color_text_tertiary" />
 
             <TextView
                 android:id="@+id/tv_perf_total_return"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:textColor="@color/color_positive"
-                android:textSize="14sp"
-                android:textStyle="bold"
                 tools:text="+13.70%" />
         </LinearLayout>
     </LinearLayout>

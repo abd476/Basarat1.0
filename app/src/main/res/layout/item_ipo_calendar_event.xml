@@ -18,24 +18,22 @@
 
     <TextView
         android:id="@+id/tv_event_date"
+        android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="14dp"
         android:textColor="@color/color_text_primary"
-        android:textSize="13sp"
-        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@id/view_timeline_dot"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="05 Oct 2026" />
 
     <TextView
         android:id="@+id/tv_event_type"
+        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:textColor="@color/color_basarat_green"
-        android:textSize="12sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_event_date"
         app:layout_constraintTop_toTopOf="parent"
@@ -43,6 +41,7 @@
 
     <TextView
         android:id="@+id/tv_event_company"
+        android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="14dp"
@@ -50,7 +49,6 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/color_text_secondary"
-        android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/view_timeline_dot"
         app:layout_constraintTop_toBottomOf="@id/tv_event_date"
@@ -58,26 +56,25 @@
 
     <TextView
         android:id="@+id/tv_event_symbol"
+        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="14dp"
         android:layout_marginTop="3dp"
         android:textColor="@color/color_text_tertiary"
-        android:textSize="11sp"
-        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@id/view_timeline_dot"
         app:layout_constraintTop_toBottomOf="@id/tv_event_company"
         tools:text="GTECH" />
 
     <TextView
         android:id="@+id/tv_event_price_info"
+        android:textAppearance="@style/TextAppearance.Basarat.Caption"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="3dp"
         android:gravity="end"
         android:textColor="@color/color_text_tertiary"
-        android:textSize="11sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_event_symbol"
         app:layout_constraintTop_toBottomOf="@id/tv_event_company"

@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.domain.usecase.forecast
 
-import com.fyp.basarattradeinvest.domain.model.StockForecast
+import com.fyp.basarattradeinvest.domain.model.stock.StockForecast
 import com.fyp.basarattradeinvest.domain.repository.ForecastRepository
 
 /**

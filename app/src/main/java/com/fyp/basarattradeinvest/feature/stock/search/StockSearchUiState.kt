@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.feature.stock.search
 
-import com.fyp.basarattradeinvest.domain.model.StockSearchResult
+import com.fyp.basarattradeinvest.domain.model.stock.StockSearchResult
 
 sealed interface StockSearchUiState {
     data object Idle : StockSearchUiState

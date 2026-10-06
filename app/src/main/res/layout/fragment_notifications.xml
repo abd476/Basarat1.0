@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/color_background"
+        app:liftOnScrollColor="@color/color_background"
         app:elevation="0dp">
 
         <!-- Top Header Navigation Bar -->
@@ -34,13 +35,12 @@
 
             <TextView
                 android:id="@+id/tv_title"
+                android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="Notifications"
                 android:textColor="@color/color_text_primary"
-                android:textSize="18sp"
-                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/btn_refresh"
                 app:layout_constraintStart_toEndOf="@id/btn_back"
@@ -156,12 +156,12 @@
                     android:indeterminateTint="@color/color_brand_primary" />
 
                 <TextView
+                    android:textAppearance="@style/TextAppearance.Basarat.Body"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="Loading notifications..."
-                    android:textColor="@color/color_text_secondary"
-                    android:textSize="14sp" />
+                    android:textColor="@color/color_text_secondary" />
             </LinearLayout>
 
             <!-- Empty State -->
@@ -183,23 +183,22 @@
 
                 <TextView
                     android:id="@+id/tv_empty_title"
+                    android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="No Notifications Yet"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/color_text_primary" />
 
                 <TextView
                     android:id="@+id/tv_empty_description"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
                     android:text="You're all caught up! When price targets, market updates, or community activity happen, they will appear here."
-                    android:textColor="@color/color_text_secondary"
-                    android:textSize="14sp" />
+                    android:textColor="@color/color_text_secondary" />
             </LinearLayout>
 
             <!-- Error State -->
@@ -215,12 +214,12 @@
 
                 <TextView
                     android:id="@+id/tv_error_message"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Unable to load notifications. Please check your connection."
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="15sp" />
+                    android:textColor="@color/color_text_primary" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_retry"

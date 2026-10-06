@@ -15,7 +15,6 @@ import com.fyp.basarattradeinvest.core.session.SessionManager
 import com.fyp.basarattradeinvest.data.repository.AuthRepositoryImpl
 import com.fyp.basarattradeinvest.databinding.FragmentSplashBinding
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SplashFragment : Fragment() {
@@ -38,8 +37,8 @@ class SplashFragment : Fragment() {
         SessionManager.init(requireContext())
 
         viewLifecycleOwner.lifecycleScope.launch {
-            // Run the token refresh concurrently with a short minimum splash delay so
-            // cold start costs max(delay, refresh) instead of delay + refresh.
+            // Only a token that is close to expiry needs a network round trip; a fresh session
+            // navigates immediately instead of waiting behind a fixed splash floor.
             val refreshJob = async {
                 if (SessionManager.shouldRefreshAccessTokenSoon()) {
                     val refreshToken = SessionManager.getRefreshToken()
@@ -58,7 +57,6 @@ class SplashFragment : Fragment() {
                 }
             }
 
-            delay(600)
             refreshJob.await()
 
             if (isAdded) {

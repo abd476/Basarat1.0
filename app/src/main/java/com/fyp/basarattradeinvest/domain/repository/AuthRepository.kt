@@ -1,8 +1,8 @@
 package com.fyp.basarattradeinvest.domain.repository
 
-import com.fyp.basarattradeinvest.domain.model.AuthSession
-import com.fyp.basarattradeinvest.domain.model.User
-import com.fyp.basarattradeinvest.domain.model.VerifyResetCodeResult
+import com.fyp.basarattradeinvest.domain.model.auth.AuthSession
+import com.fyp.basarattradeinvest.domain.model.auth.User
+import com.fyp.basarattradeinvest.domain.model.auth.VerifyResetCodeResult
 
 interface AuthRepository {
 
@@ -24,6 +24,14 @@ interface AuthRepository {
     suspend fun login(
         email: String,
         password: String
+    ): Result<AuthSession>
+
+    /**
+     * Exchanges a Google OAuth ID token for a BASARAT session. Google-verified
+     * accounts come back already verified, so no email-confirmation step follows.
+     */
+    suspend fun signInWithGoogle(
+        idToken: String
     ): Result<AuthSession>
 
     suspend fun refresh(

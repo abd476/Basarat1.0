@@ -6,12 +6,12 @@ import com.fyp.basarattradeinvest.data.remote.dto.market.IndexItemDto
 import com.fyp.basarattradeinvest.data.remote.dto.market.MarketQuoteItemDto
 import com.fyp.basarattradeinvest.data.remote.dto.market.SectorPerformanceItemDto
 import com.fyp.basarattradeinvest.data.remote.dto.market.SentimentOverviewDto
-import com.fyp.basarattradeinvest.domain.model.IndexConstituent
-import com.fyp.basarattradeinvest.domain.model.IndexConstituents
-import com.fyp.basarattradeinvest.domain.model.MarketIndex
-import com.fyp.basarattradeinvest.domain.model.MarketSentiment
-import com.fyp.basarattradeinvest.domain.model.MarketStock
-import com.fyp.basarattradeinvest.domain.model.SectorPerformance
+import com.fyp.basarattradeinvest.domain.model.market.IndexConstituent
+import com.fyp.basarattradeinvest.domain.model.market.IndexConstituents
+import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
+import com.fyp.basarattradeinvest.domain.model.sentiment.MarketSentiment
+import com.fyp.basarattradeinvest.domain.model.market.MarketStock
+import com.fyp.basarattradeinvest.domain.model.market.SectorPerformance
 import java.util.Locale
 
 fun IndexItemDto.toDomain(): MarketIndex {

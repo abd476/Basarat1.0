@@ -6,11 +6,15 @@ import android.util.LruCache
 import android.view.View
 import android.widget.ImageView
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.concurrent.ConcurrentHashMap
 
 object ImageLoader {
 
@@ -22,6 +26,12 @@ object ImageLoader {
             return bitmap.byteCount / 1024
         }
     }
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
+    // A fling rebinds the same still-loading URL many times; without this each bind started its
+    // own download and full-size decode, which is what spiked RSS far enough for MIUI to reap us.
+    private val inFlight = ConcurrentHashMap<String, Deferred<Bitmap?>>()
 
     fun loadImage(imageView: ImageView, url: String?) {
         if (url.isNullOrBlank()) {
@@ -37,11 +47,20 @@ object ImageLoader {
         }
 
         imageView.tag = url
-
-        CoroutineScope(Dispatchers.Main).launch {
-            val bitmap = withContext(Dispatchers.IO) {
-                downloadBitmap(url)
+        val request = inFlight.getOrPut(url) {
+            scope.async {
+                try {
+                    withContext(Dispatchers.IO) {
+                        downloadBitmap(url, imageView.width, imageView.height)
+                    }
+                } finally {
+                    inFlight.remove(url)
+                }
             }
+        }
+
+        scope.launch {
+            val bitmap = request.await()
             if (bitmap != null) {
                 memoryCache.put(url, bitmap)
                 if (imageView.tag == url) {
@@ -56,7 +75,7 @@ object ImageLoader {
         }
     }
 
-    private fun downloadBitmap(urlStr: String): Bitmap? {
+    private fun downloadBitmap(urlStr: String, targetWidth: Int, targetHeight: Int): Bitmap? {
         return try {
             val url = URL(urlStr)
             val connection = url.openConnection() as HttpURLConnection
@@ -64,11 +83,35 @@ object ImageLoader {
             connection.connectTimeout = 10000
             connection.readTimeout = 10000
             connection.connect()
-            connection.inputStream.use { input ->
-                BitmapFactory.decodeStream(input)
+            val bytes = connection.inputStream.use { it.readBytes() }
+
+            val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
+            if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
+
+            val options = BitmapFactory.Options().apply {
+                inSampleSize = sampleSize(
+                    bounds.outWidth,
+                    bounds.outHeight,
+                    if (targetWidth > 0) targetWidth else MAX_DECODE_WIDTH,
+                    if (targetHeight > 0) targetHeight else MAX_DECODE_WIDTH
+                )
             }
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options)
         } catch (_: Exception) {
             null
         }
     }
+
+    private fun sampleSize(width: Int, height: Int, targetWidth: Int, targetHeight: Int): Int {
+        var sample = 1
+        val longestTarget = maxOf(targetWidth, targetHeight).coerceAtMost(MAX_DECODE_WIDTH)
+        var longestSide = maxOf(width, height)
+        while (longestSide / sample > longestTarget) {
+            sample *= 2
+        }
+        return sample
+    }
+
+    private const val MAX_DECODE_WIDTH = 1080
 }

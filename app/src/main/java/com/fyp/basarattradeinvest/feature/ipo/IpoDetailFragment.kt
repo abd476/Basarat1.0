@@ -18,7 +18,7 @@ import androidx.navigation.fragment.findNavController
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentIpoDetailBinding
 import com.fyp.basarattradeinvest.databinding.ItemDetailLabelValueBinding
-import com.fyp.basarattradeinvest.domain.model.IpoItem
+import com.fyp.basarattradeinvest.domain.model.ipo.IpoItem
 import com.fyp.basarattradeinvest.feature.common.FormatUtils
 import kotlinx.coroutines.launch
 import java.util.Locale

@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.feature.ipo
 
-import com.fyp.basarattradeinvest.domain.model.IpoItem
+import com.fyp.basarattradeinvest.domain.model.ipo.IpoItem
 
 sealed interface IpoDetailUiState {
     data object Loading : IpoDetailUiState

@@ -1,8 +1,8 @@
 package com.fyp.basarattradeinvest.feature.markets
 
-import com.fyp.basarattradeinvest.domain.model.MarketOverview
-import com.fyp.basarattradeinvest.domain.model.MarketSentiment
-import com.fyp.basarattradeinvest.domain.model.SymbolFilterType
+import com.fyp.basarattradeinvest.domain.model.market.MarketOverview
+import com.fyp.basarattradeinvest.domain.model.sentiment.MarketSentiment
+import com.fyp.basarattradeinvest.domain.model.stock.SymbolFilterType
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue

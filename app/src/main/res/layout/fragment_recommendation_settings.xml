@@ -29,14 +29,13 @@
             app:tint="@color/color_text_primary" />
 
         <TextView
+            android:textAppearance="@style/TextAppearance.Basarat.Subheading"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_weight="1"
             android:text="Recommendation Engine Weights"
-            android:textColor="@color/color_text_primary"
-            android:textSize="17sp"
-            android:textStyle="bold" />
+            android:textColor="@color/color_text_primary" />
     </LinearLayout>
 
     <FrameLayout
@@ -74,20 +73,19 @@
                         android:padding="16dp">
 
                         <TextView
+                            android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Model Weight Allocation"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
+                            android:textColor="@color/color_text_primary" />
 
                         <TextView
+                            android:textAppearance="@style/TextAppearance.Basarat.Meta"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:text="Customize how BASARAT balances GRU Deep Learning, Technical Indicators, and Financial Fundamentals when calculating overall stock recommendations."
-                            android:textColor="@color/color_text_secondary"
-                            android:textSize="12sp" />
+                            android:textColor="@color/color_text_secondary" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -115,21 +113,19 @@
                             android:orientation="horizontal">
 
                             <TextView
+                                android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="GRU / Machine Learning"
-                                android:textColor="@color/color_text_primary"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
+                                android:textColor="@color/color_text_primary" />
 
                             <TextView
                                 android:id="@+id/tv_gru_weight_val"
+                                android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/color_basarat_green"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
                                 tools:text="33%" />
                         </LinearLayout>
 
@@ -154,21 +150,19 @@
                             android:orientation="horizontal">
 
                             <TextView
+                                android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="Technical Analysis"
-                                android:textColor="@color/color_text_primary"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
+                                android:textColor="@color/color_text_primary" />
 
                             <TextView
                                 android:id="@+id/tv_tech_weight_val"
+                                android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/color_ai_blue"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
                                 tools:text="33%" />
                         </LinearLayout>
 
@@ -193,21 +187,19 @@
                             android:orientation="horizontal">
 
                             <TextView
+                                android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="Fundamentals"
-                                android:textColor="@color/color_text_primary"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
+                                android:textColor="@color/color_text_primary" />
 
                             <TextView
                                 android:id="@+id/tv_fund_weight_val"
+                                android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/color_gold_accent"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
                                 tools:text="34%" />
                         </LinearLayout>
 
@@ -226,11 +218,11 @@
                         <!-- Normalized Total Indicator -->
                         <TextView
                             android:id="@+id/tv_total_weight"
+                            android:textAppearance="@style/TextAppearance.Basarat.Meta"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:textColor="@color/color_text_secondary"
-                            android:textSize="12sp"
                             tools:text="Total: 100% (Normalized on submit)" />
 
                     </LinearLayout>

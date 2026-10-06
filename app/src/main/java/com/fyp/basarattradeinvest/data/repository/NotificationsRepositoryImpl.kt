@@ -4,7 +4,7 @@ import com.fyp.basarattradeinvest.core.network.NetworkErrorParser
 import com.fyp.basarattradeinvest.data.mapper.NotificationDtoMapper
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
 import com.fyp.basarattradeinvest.data.remote.api.NotificationsApiService
-import com.fyp.basarattradeinvest.domain.model.NotificationFeed
+import com.fyp.basarattradeinvest.domain.model.alerts.NotificationFeed
 import com.fyp.basarattradeinvest.domain.repository.NotificationsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

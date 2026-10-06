@@ -47,33 +47,31 @@
 
                     <TextView
                         android:id="@+id/tv_holding_symbol"
+                        android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/color_text_primary"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
                         tools:text="LUCK" />
 
                     <TextView
                         android:id="@+id/tv_holding_company_sector"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/color_text_secondary"
-                        android:textSize="12sp"
                         tools:text="Lucky Cement Limited • Cement" />
 
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/tv_holding_weight_badge"
+                    android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_tab_unselected"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="4dp"
                     android:textColor="@color/color_text_secondary"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
                     tools:text="18.5% Weight" />
 
             </LinearLayout>
@@ -95,30 +93,27 @@
                     android:padding="18dp">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="MARKET VALUE"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_secondary" />
 
                     <TextView
                         android:id="@+id/tv_detail_market_value"
+                        android:textAppearance="@style/TextAppearance.Basarat.Display"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:textColor="@color/color_text_primary"
-                        android:textSize="28sp"
-                        android:textStyle="bold"
                         tools:text="PKR 206,250.00" />
 
                     <TextView
                         android:id="@+id/tv_detail_unrealized_pnl"
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
                         tools:text="+PKR 16,250.00 (+8.55%)" />
 
                     <View
@@ -140,20 +135,19 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Invested Value"
-                                android:textColor="@color/color_text_tertiary"
-                                android:textSize="11sp" />
+                                android:textColor="@color/color_text_tertiary" />
 
                             <TextView
                                 android:id="@+id/tv_detail_invested_value"
+                                android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
                                 android:textColor="@color/color_text_primary"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
                                 tools:text="PKR 190,000.00" />
 
                         </LinearLayout>
@@ -166,20 +160,19 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Realized P&amp;L"
-                                android:textColor="@color/color_text_tertiary"
-                                android:textSize="11sp" />
+                                android:textColor="@color/color_text_tertiary" />
 
                             <TextView
                                 android:id="@+id/tv_detail_realized_pnl"
+                                android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
                                 android:textColor="@color/color_text_primary"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
                                 tools:text="PKR 0.00" />
 
                         </LinearLayout>
@@ -218,20 +211,19 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Shares Held"
-                                android:textColor="@color/color_text_tertiary"
-                                android:textSize="11sp" />
+                                android:textColor="@color/color_text_tertiary" />
 
                             <TextView
                                 android:id="@+id/tv_detail_shares"
+                                android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
                                 android:textColor="@color/color_text_primary"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
                                 tools:text="500" />
 
                         </LinearLayout>
@@ -243,20 +235,19 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Average Cost"
-                                android:textColor="@color/color_text_tertiary"
-                                android:textSize="11sp" />
+                                android:textColor="@color/color_text_tertiary" />
 
                             <TextView
                                 android:id="@+id/tv_detail_avg_cost"
+                                android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
                                 android:textColor="@color/color_text_primary"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
                                 tools:text="PKR 380.00" />
 
                         </LinearLayout>
@@ -268,20 +259,19 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Current Price"
-                                android:textColor="@color/color_text_tertiary"
-                                android:textSize="11sp" />
+                                android:textColor="@color/color_text_tertiary" />
 
                             <TextView
                                 android:id="@+id/tv_detail_current_price"
+                                android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
                                 android:textColor="@color/color_text_primary"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
                                 tools:text="PKR 412.50" />
 
                         </LinearLayout>
@@ -290,11 +280,11 @@
 
                     <TextView
                         android:id="@+id/tv_detail_price_updated"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:textColor="@color/color_text_tertiary"
-                        android:textSize="11sp"
                         tools:text="Price Status: AVAILABLE • Updated recently" />
 
                 </LinearLayout>
@@ -303,14 +293,13 @@
 
             <!-- Navigation Actions: Stock Details, AI Forecast, Recommendation -->
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 android:layout_marginBottom="8dp"
                 android:text="Stock Intelligence &amp; Analysis"
-                android:textColor="@color/color_text_primary"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -368,14 +357,13 @@
 
             <!-- Holding Transactions -->
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="8dp"
                 android:text="Holding Transactions"
-                android:textColor="@color/color_text_primary"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_holding_transactions"
@@ -386,12 +374,12 @@
 
             <TextView
                 android:id="@+id/tv_empty_transactions"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="No transactions recorded for this holding."
                 android:textColor="@color/color_text_tertiary"
-                android:textSize="13sp"
                 android:visibility="gone" />
 
         </LinearLayout>

@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.ItemSectorPerformanceBinding
-import com.fyp.basarattradeinvest.domain.model.SectorPerformance
+import com.fyp.basarattradeinvest.domain.model.market.SectorPerformance
 import java.util.Locale
 
 class SectorPerformanceAdapter(

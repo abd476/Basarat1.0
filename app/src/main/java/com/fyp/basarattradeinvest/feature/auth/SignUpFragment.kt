@@ -32,6 +32,7 @@ class SignUpFragment : Fragment() {
     private val viewModel: SignUpViewModel by viewModels()
     private var isPasswordVisible = false
     private var isConfirmPasswordVisible = false
+    private var isGoogleSignInInFlight = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -121,13 +122,44 @@ class SignUpFragment : Fragment() {
             viewModel.signUp(name, email, password, confirmPassword)
         }
 
-        binding.btnGoogleSignUp.setOnClickListener {
-            Toast.makeText(requireContext(), "Continue with Google", Toast.LENGTH_SHORT).show()
-        }
+        binding.btnGoogleSignUp.setOnClickListener { startGoogleSignIn() }
+    }
 
-        binding.btnAppleSignUp.setOnClickListener {
-            Toast.makeText(requireContext(), "Continue with Apple", Toast.LENGTH_SHORT).show()
+    private fun startGoogleSignIn() {
+        if (isGoogleSignInInFlight) return
+        isGoogleSignInInFlight = true
+        setGoogleSigningIn(true)
+
+        val activity = requireActivity()
+        viewLifecycleOwner.lifecycleScope.launch {
+            val idToken = GoogleSignInLauncher.requestIdToken(activity).fold(
+                onSuccess = { token ->
+                    if (token == null) finishGoogleSignIn() // User backed out of the picker.
+                    token
+                },
+                onFailure = { error ->
+                    finishGoogleSignIn()
+                    _binding?.let {
+                        Toast.makeText(requireContext(), error.message, Toast.LENGTH_LONG).show()
+                    }
+                    null
+                }
+            )
+            if (idToken != null) viewModel.signInWithGoogle(idToken)
         }
+    }
+
+    private fun finishGoogleSignIn() {
+        isGoogleSignInInFlight = false
+        _binding?.let { setGoogleSigningIn(false) }
+    }
+
+    private fun setGoogleSigningIn(signingIn: Boolean) {
+        binding.pbGoogleLoading.visibility = if (signingIn) View.VISIBLE else View.GONE
+        binding.ivGoogleIcon.visibility = if (signingIn) View.INVISIBLE else View.VISIBLE
+        binding.tvGoogleLabel.visibility = if (signingIn) View.INVISIBLE else View.VISIBLE
+        binding.btnGoogleSignUp.isEnabled = !signingIn
+        binding.btnSignUp.isEnabled = !signingIn
     }
 
     private fun observeUiState() {
@@ -141,14 +173,26 @@ class SignUpFragment : Fragment() {
                             binding.btnSignUp.isEnabled = true
                         }
                         is AuthUiState.Loading -> {
-                            binding.pbLoading.visibility = View.VISIBLE
-                            binding.tvSignUpLabel.visibility = View.GONE
+                            if (!isGoogleSignInInFlight) {
+                                binding.pbLoading.visibility = View.VISIBLE
+                                binding.tvSignUpLabel.visibility = View.GONE
+                            }
                             binding.btnSignUp.isEnabled = false
                         }
                         is AuthUiState.Success -> {
+                            finishGoogleSignIn()
                             binding.pbLoading.visibility = View.GONE
                             binding.tvSignUpLabel.visibility = View.VISIBLE
                             binding.btnSignUp.isEnabled = true
+
+                            if (state.isAuthenticated) {
+                                // Google-verified accounts arrive with tokens already issued,
+                                // so there is no email-confirmation step to walk through.
+                                findNavController().navigate(R.id.action_signUpFragment_to_homeFragment)
+                                viewModel.resetState()
+                                return@collect
+                            }
+
                             Toast.makeText(
                                 requireContext(),
                                 state.message ?: "Account created! Please check your email for the verification code.",
@@ -161,6 +205,7 @@ class SignUpFragment : Fragment() {
                             viewModel.resetState()
                         }
                         is AuthUiState.Error -> {
+                            finishGoogleSignIn()
                             binding.pbLoading.visibility = View.GONE
                             binding.tvSignUpLabel.visibility = View.VISIBLE
                             binding.btnSignUp.isEnabled = true

@@ -18,9 +18,9 @@ import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentEtfDetailBinding
 import com.fyp.basarattradeinvest.databinding.ItemDetailLabelValueBinding
 import com.fyp.basarattradeinvest.databinding.ItemEtfPerformanceRowBinding
-import com.fyp.basarattradeinvest.domain.model.EtfItem
-import com.fyp.basarattradeinvest.domain.model.EtfPerformance
-import com.fyp.basarattradeinvest.domain.model.EtfReturns
+import com.fyp.basarattradeinvest.domain.model.etf.EtfItem
+import com.fyp.basarattradeinvest.domain.model.etf.EtfPerformance
+import com.fyp.basarattradeinvest.domain.model.etf.EtfReturns
 import com.fyp.basarattradeinvest.feature.common.FormatUtils
 import com.fyp.basarattradeinvest.feature.etf.adapter.EtfHistoryAdapter
 import kotlinx.coroutines.launch
@@ -190,7 +190,7 @@ class EtfDetailFragment : Fragment() {
             addRow(binding.layoutQuoteMetrics, "Ask", FormatUtils.price(quote.askPrice))
 
             val asOfParts = mutableListOf<String>()
-            FormatUtils.parseDate(quote.dataAsOf)?.let { asOfParts.add("As of ${FormatUtils.dateFull(quote.dataAsOf)}") }
+            FormatUtils.parseDate(quote.dataAsOf)?.let { asOfParts.add("As of ${FormatUtils.dateFull(it)}") }
             if (!quote.quoteSource.isNullOrBlank()) asOfParts.add(quote.quoteSource)
             if (asOfParts.isEmpty()) {
                 binding.tvQuoteAsOf.visibility = View.GONE

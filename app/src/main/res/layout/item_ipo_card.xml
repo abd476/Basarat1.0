@@ -12,34 +12,33 @@
 
     <TextView
         android:id="@+id/tv_ipo_symbol"
+        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_badge_stock_symbol"
         android:paddingHorizontal="8dp"
         android:paddingVertical="3dp"
         android:textColor="@color/color_text_primary"
-        android:textSize="12sp"
-        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="PRX" />
 
     <TextView
         android:id="@+id/tv_ipo_status"
+        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_badge_neutral"
         android:paddingHorizontal="8dp"
         android:paddingVertical="3dp"
         android:textColor="@color/color_neutral"
-        android:textSize="11sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Upcoming" />
 
     <TextView
         android:id="@+id/tv_ipo_company"
+        android:textAppearance="@style/TextAppearance.Basarat.Title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -47,8 +46,6 @@
         android:ellipsize="end"
         android:maxLines="2"
         android:textColor="@color/color_text_primary"
-        android:textSize="15sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@id/tv_ipo_floor_price"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_ipo_symbol"
@@ -56,6 +53,7 @@
 
     <TextView
         android:id="@+id/tv_ipo_sector"
+        android:textAppearance="@style/TextAppearance.Basarat.Meta"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
@@ -63,7 +61,6 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/color_text_secondary"
-        android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@id/tv_ipo_floor_price"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_ipo_company"
@@ -71,21 +68,20 @@
 
     <TextView
         android:id="@+id/tv_ipo_floor_label"
+        android:textAppearance="@style/TextAppearance.Basarat.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Floor"
         android:textColor="@color/color_text_tertiary"
-        android:textSize="11sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_ipo_company" />
 
     <TextView
         android:id="@+id/tv_ipo_floor_price"
+        android:textAppearance="@style/TextAppearance.Basarat.Number.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/color_text_primary"
-        android:textSize="15sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_ipo_floor_label"
         tools:text="30.00" />
@@ -105,13 +101,12 @@
 
     <TextView
         android:id="@+id/tv_ipo_shariah"
+        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:text="Shariah"
         android:textColor="@color/color_shariah_teal"
-        android:textSize="11sp"
-        android:textStyle="bold"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/iv_ipo_shariah"
         app:layout_constraintStart_toEndOf="@id/iv_ipo_shariah"
@@ -120,11 +115,11 @@
 
     <TextView
         android:id="@+id/tv_ipo_listing_date"
+        android:textAppearance="@style/TextAppearance.Basarat.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:textColor="@color/color_text_secondary"
-        android:textSize="11sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_ipo_sector"
         tools:text="Listing 25 Nov 2026" />

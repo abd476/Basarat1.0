@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.ItemStockTradeBinding
-import com.fyp.basarattradeinvest.domain.model.StockTrade
+import com.fyp.basarattradeinvest.domain.model.stock.StockTrade
 import java.util.Locale
 
 class TradeAdapter : ListAdapter<StockTrade, TradeAdapter.TradeViewHolder>(TradeDiffCallback()) {

@@ -6,16 +6,16 @@ import com.fyp.basarattradeinvest.core.session.AuthState
 import com.fyp.basarattradeinvest.core.session.SessionManager
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
 import com.fyp.basarattradeinvest.data.repository.MarketRepositoryImpl
-import com.fyp.basarattradeinvest.domain.model.IndexConstituent
-import com.fyp.basarattradeinvest.domain.model.MarketOverview
-import com.fyp.basarattradeinvest.domain.model.MarketStock
-import com.fyp.basarattradeinvest.domain.model.SymbolFilterType
+import com.fyp.basarattradeinvest.domain.model.market.IndexConstituent
+import com.fyp.basarattradeinvest.domain.model.market.MarketOverview
+import com.fyp.basarattradeinvest.domain.model.market.MarketStock
+import com.fyp.basarattradeinvest.domain.model.stock.SymbolFilterType
 import com.fyp.basarattradeinvest.domain.model.live.LiveQuote
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 import com.fyp.basarattradeinvest.domain.repository.LiveMarketRepository
 import com.fyp.basarattradeinvest.domain.repository.MarketRepository
-import com.fyp.basarattradeinvest.domain.usecase.GetMarketIndicesUseCase
-import com.fyp.basarattradeinvest.domain.usecase.GetSectorPerformancesUseCase
+import com.fyp.basarattradeinvest.domain.usecase.market.GetMarketIndicesUseCase
+import com.fyp.basarattradeinvest.domain.usecase.market.GetSectorPerformancesUseCase
 import com.fyp.basarattradeinvest.domain.usecase.market.GetKmi30ConstituentsUseCase
 import com.fyp.basarattradeinvest.domain.usecase.market.GetKse100ConstituentsUseCase
 import com.fyp.basarattradeinvest.domain.usecase.market.GetKse30ConstituentsUseCase
@@ -25,6 +25,7 @@ import com.fyp.basarattradeinvest.domain.usecase.market.GetTopLosersUseCase
 import com.fyp.basarattradeinvest.domain.usecase.market.GetVolumeSpikesUseCase
 import kotlinx.coroutines.async
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -59,27 +60,21 @@ class MarketDashboardViewModel(
     private var accountGeneration = 0
     private var currentAccountKey: String? = accountKeyForCurrentSession()
     private var marketDataJob: Job? = null
+    private val pendingQuotes = mutableMapOf<String, LiveQuote>()
+    private var quoteFlushJob: Job? = null
 
     init {
-        // Collect live quote ticks → update liveQuotes in Success state
+        // Quote ticks arrive one per symbol, so a single market snapshot would otherwise emit
+        // ~110 states. Accumulate them and publish one update per flush window instead.
         viewModelScope.launch {
             liveMarketRepository.quoteUpdates.collect { quote ->
-                val current = _uiState.value as? MarketDashboardUiState.Success ?: return@collect
-                val updated = current.liveQuotes.toMutableMap()
-                updated[quote.symbol.uppercase()] = quote
-                val updatedTopSymbols = current.topSymbols.map { stock ->
-                    if (!stock.symbol.equals(quote.symbol, ignoreCase = true)) stock
-                    else stock.withQuote(quote)
+                pendingQuotes[quote.symbol.uppercase()] = quote
+                if (quoteFlushJob?.isActive != true) {
+                    quoteFlushJob = viewModelScope.launch {
+                        delay(QUOTE_FLUSH_INTERVAL_MS)
+                        applyPendingQuotes()
+                    }
                 }
-                val updatedConstituents = current.constituents.map { constituent ->
-                    if (!constituent.symbol.equals(quote.symbol, ignoreCase = true)) constituent
-                    else constituent.withQuote(quote)
-                }
-                _uiState.value = current.copy(
-                    liveQuotes = updated,
-                    topSymbols = updatedTopSymbols,
-                    constituents = updatedConstituents
-                )
             }
         }
 
@@ -100,6 +95,9 @@ class MarketDashboardViewModel(
                 accountGeneration++
                 marketDataJob?.cancel()
                 marketDataJob = null
+                pendingQuotes.clear()
+                quoteFlushJob?.cancel()
+                quoteFlushJob = null
                 isMarketDataLoading = false
                 lastSuccessfulFetchAt = 0L
                 currentFilter = SymbolFilterType.GAINERS
@@ -142,6 +140,7 @@ class MarketDashboardViewModel(
                 val topSymbolsDeferred = async { fetchSymbolsForFilter(currentFilter) }
                 val sectorsDeferred = async { getSectorPerformancesUseCase() }
                 val constituentsDeferred = async { fetchConstituentsForIndex(currentConstituentIndex) }
+                val sessionDeferred = async { liveMarketRepository.getMarketSessionStatus() }
 
                 // Await only the above-the-fold data first so the dashboard paints as soon as
                 // indices/sentiment/top symbols are ready. Sectors and constituents are
@@ -149,6 +148,7 @@ class MarketDashboardViewModel(
                 val indicesResult = indicesDeferred.await()
                 val sentimentResult = sentimentDeferred.await()
                 val topSymbolsResult = topSymbolsDeferred.await()
+                val marketSession = sessionDeferred.await().getOrNull()
                 if (loadGeneration != accountGeneration) return@launch
 
                 if (indicesResult.isSuccess || sentimentResult.isSuccess) {
@@ -191,7 +191,8 @@ class MarketDashboardViewModel(
                             isConstituentsLoading = true,
                             lastUpdated = currentTime,
                             liveQuotes = liveMarketRepository.quoteCache.value,
-                            wsConnectionState = liveMarketRepository.connectionState.value
+                            wsConnectionState = liveMarketRepository.connectionState.value,
+                            marketSession = marketSession
                         )
                     } else {
                         _uiState.value = MarketDashboardUiState.Empty
@@ -228,6 +229,26 @@ class MarketDashboardViewModel(
 
     fun refreshData() {
         loadMarketData(isRefresh = true)
+    }
+
+    private fun applyPendingQuotes() {
+        quoteFlushJob = null
+        if (pendingQuotes.isEmpty()) return
+        val batch = pendingQuotes.toMap()
+        pendingQuotes.clear()
+        val current = _uiState.value as? MarketDashboardUiState.Success ?: return
+        val quoteFor: (String) -> LiveQuote? = { symbol -> batch[symbol.uppercase()] }
+        val quotes = current.liveQuotes.toMutableMap()
+        quotes.putAll(batch)
+        _uiState.value = current.copy(
+            liveQuotes = quotes,
+            topSymbols = current.topSymbols.map { stock ->
+                quoteFor(stock.symbol)?.let { stock.withQuote(it) } ?: stock
+            },
+            constituents = current.constituents.map { constituent ->
+                quoteFor(constituent.symbol)?.let { constituent.withQuote(it) } ?: constituent
+            }
+        )
     }
 
     fun setLiveUpdatesActive(active: Boolean) {
@@ -347,4 +368,8 @@ class MarketDashboardViewModel(
                 ?: it.userEmail.takeIf(String::isNotBlank)
         }
         ?.lowercase()
+
+    companion object {
+        private const val QUOTE_FLUSH_INTERVAL_MS = 750L
+    }
 }

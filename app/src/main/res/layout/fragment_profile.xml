@@ -17,12 +17,11 @@
         <!-- Title -->
         <TextView
             android:id="@+id/tv_title"
+            android:textAppearance="@style/TextAppearance.Basarat.Heading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Profile"
             android:textColor="@color/color_text_primary"
-            android:textSize="24sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -59,13 +58,12 @@
                 <!-- User Name -->
                 <TextView
                     android:id="@+id/tv_user_name"
+                    android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:text="Basarat Trader"
                     android:textColor="@color/color_text_primary"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
                     app:layout_constraintEnd_toStartOf="@id/btn_edit_profile"
                     app:layout_constraintStart_toEndOf="@id/iv_avatar"
                     app:layout_constraintTop_toTopOf="@id/iv_avatar" />
@@ -73,13 +71,13 @@
                 <!-- User Email -->
                 <TextView
                     android:id="@+id/tv_user_email"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="2dp"
                     android:text="trader@basarat.pk"
                     android:textColor="@color/color_text_secondary"
-                    android:textSize="14sp"
                     app:layout_constraintEnd_toStartOf="@id/btn_edit_profile"
                     app:layout_constraintStart_toEndOf="@id/iv_avatar"
                     app:layout_constraintTop_toBottomOf="@id/tv_user_name" />
@@ -87,14 +85,13 @@
                 <!-- User Handle / Verification Badge -->
                 <TextView
                     android:id="@+id/tv_user_handle"
+                    android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="4dp"
                     android:text="@string/app_name"
                     android:textColor="@color/color_brand_primary"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
                     app:layout_constraintStart_toEndOf="@id/iv_avatar"
                     app:layout_constraintTop_toBottomOf="@id/tv_user_email" />
 
@@ -117,13 +114,12 @@
         <!-- Section: Investment & Risk Preferences -->
         <TextView
             android:id="@+id/tv_section_investment"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
             android:text="Investment &amp; Risk Profile"
             android:textColor="@color/color_text_secondary"
-            android:textSize="13sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/card_user_info" />
 
@@ -151,24 +147,23 @@
 
                 <TextView
                     android:id="@+id/tv_risk_title"
+                    android:textAppearance="@style/TextAppearance.Basarat.Title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="Risk Tolerance &amp; Sectors"
                     android:textColor="@color/color_text_primary"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
                     app:layout_constraintEnd_toStartOf="@id/iv_risk_chevron"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/tv_risk_summary"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Configure risk appetite, investment horizon, and preferred PSX sectors."
                     android:textColor="@color/color_text_secondary"
-                    android:textSize="13sp"
                     app:layout_constraintEnd_toStartOf="@id/iv_risk_chevron"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_risk_title" />
@@ -186,18 +181,18 @@
 
                     <TextView
                         android:id="@+id/tv_badge_risk"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_chip_filter_selected"
                         android:paddingHorizontal="10dp"
                         android:paddingVertical="4dp"
                         android:text="Moderate"
-                        android:textColor="@color/color_brand_primary"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_brand_primary" />
 
                     <TextView
                         android:id="@+id/tv_badge_horizon"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -205,8 +200,7 @@
                         android:paddingHorizontal="10dp"
                         android:paddingVertical="4dp"
                         android:text="Medium Term"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="11sp" />
+                        android:textColor="@color/color_text_secondary" />
                 </LinearLayout>
 
                 <ImageView
@@ -245,24 +239,23 @@
 
                 <TextView
                     android:id="@+id/tv_engine_title"
+                    android:textAppearance="@style/TextAppearance.Basarat.Title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="Recommendation Engine Weights"
                     android:textColor="@color/color_text_primary"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
                     app:layout_constraintEnd_toStartOf="@id/iv_engine_chevron"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/tv_engine_summary"
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Configure weights for GRU ML, Technicals, and Fundamentals."
                     android:textColor="@color/color_text_secondary"
-                    android:textSize="13sp"
                     app:layout_constraintEnd_toStartOf="@id/iv_engine_chevron"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_engine_title" />
@@ -282,13 +275,12 @@
         <!-- Section: Notifications -->
         <TextView
             android:id="@+id/tv_section_notifications"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
             android:text="Notifications"
             android:textColor="@color/color_text_secondary"
-            android:textSize="13sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/card_engine_weights" />
 
@@ -323,20 +315,19 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Notification Preferences"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_primary" />
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text="Manage channels and alert categories"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp" />
+                        android:textColor="@color/color_text_secondary" />
                 </LinearLayout>
 
                 <ImageView
@@ -378,20 +369,19 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Price &amp; Market Alerts"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_primary" />
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text="View triggered price alerts and notification history"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp" />
+                        android:textColor="@color/color_text_secondary" />
                 </LinearLayout>
 
                 <ImageView
@@ -433,20 +423,19 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="In-App Notifications"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_primary" />
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text="View notification inbox and unread messages"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp" />
+                        android:textColor="@color/color_text_secondary" />
                 </LinearLayout>
 
                 <ImageView
@@ -488,20 +477,19 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="My Community Profile"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_primary" />
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text="View your public trader profile, posts, followers &amp; following"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp" />
+                        android:textColor="@color/color_text_secondary" />
                 </LinearLayout>
 
                 <ImageView
@@ -543,20 +531,19 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Community Notifications"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_primary" />
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text="Followers, likes &amp; post comments inbox"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp" />
+                        android:textColor="@color/color_text_secondary" />
                 </LinearLayout>
 
                 <ImageView
@@ -570,13 +557,12 @@
         <!-- Section: Administration & Moderation -->
         <TextView
             android:id="@+id/tv_section_admin"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
             android:text="Administration &amp; Moderation"
             android:textColor="@color/color_text_secondary"
-            android:textSize="13sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/card_community_notifications" />
 
@@ -620,20 +606,19 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Community Moderation Hub"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_primary" />
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text="Manage reported posts, comments &amp; audit actions"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp" />
+                        android:textColor="@color/color_text_secondary" />
                 </LinearLayout>
 
                 <ImageView
@@ -647,13 +632,12 @@
         <!-- Section: Security Options -->
         <TextView
             android:id="@+id/tv_section_security"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
             android:text="Security Settings"
             android:textColor="@color/color_text_secondary"
-            android:textSize="13sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/card_admin_moderation" />
 
@@ -682,13 +666,12 @@
                 android:padding="16dp">
 
                 <TextView
+                    android:textAppearance="@style/TextAppearance.Basarat.Title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Change Password"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/color_text_primary" />
 
                 <ImageView
                     android:layout_width="20dp"
@@ -701,13 +684,12 @@
         <!-- Section: Session & Account -->
         <TextView
             android:id="@+id/tv_section_account"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
             android:text="Session"
             android:textColor="@color/color_text_secondary"
-            android:textSize="13sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/card_change_password" />
 
@@ -726,13 +708,12 @@
 
             <TextView
                 android:id="@+id/tv_logout_label"
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="Sign Out"
-                android:textColor="@color/color_down"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_down" />
 
             <ProgressBar
                 android:id="@+id/pb_logout"

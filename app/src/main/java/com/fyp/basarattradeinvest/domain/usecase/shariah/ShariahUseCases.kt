@@ -35,11 +35,9 @@ class CalculateDividendPurificationUseCase(
 ) {
     suspend operator fun invoke(
         symbol: String,
-        holdingQty: Int,
-        holdingValue: Double
+        dividendIncome: Double
     ): Result<DividendPurificationResult> {
-        require(holdingQty > 0) { "Holding quantity must be greater than zero." }
-        require(holdingValue > 0.0) { "Holding value must be greater than zero." }
-        return repository.calculatePurification(symbol, holdingQty, holdingValue)
+        require(dividendIncome > 0.0) { "Dividend income must be greater than zero." }
+        return repository.calculatePurification(symbol, dividendIncome)
     }
 }

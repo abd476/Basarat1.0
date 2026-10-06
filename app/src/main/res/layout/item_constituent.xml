@@ -10,13 +10,12 @@
     <!-- Rank Badge -->
     <TextView
         android:id="@+id/tv_constituent_rank"
+        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
         android:layout_width="22dp"
         android:layout_height="22dp"
         android:background="@drawable/bg_rank_other"
         android:gravity="center"
         android:textColor="@color/white"
-        android:textSize="11sp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -36,34 +35,32 @@
 
         <TextView
             android:id="@+id/tv_constituent_symbol"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/color_text_primary"
-            android:textSize="14sp"
-            android:textStyle="bold"
             tools:text="OGDC" />
 
         <TextView
             android:id="@+id/tv_constituent_meta"
+            android:textAppearance="@style/TextAppearance.Basarat.Caption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/color_text_secondary"
-            android:textSize="11sp"
             tools:text="Oil &amp; Gas Dev • Wt: 8.40%" />
     </LinearLayout>
 
     <!-- Price -->
     <TextView
         android:id="@+id/tv_constituent_price"
+        android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
         android:layout_width="85dp"
         android:layout_height="wrap_content"
         android:gravity="end"
         android:textColor="@color/color_text_primary"
-        android:textSize="14sp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/tv_constituent_change"
         app:layout_constraintTop_toTopOf="parent"
@@ -72,12 +69,11 @@
     <!-- % Change -->
     <TextView
         android:id="@+id/tv_constituent_change"
+        android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
         android:layout_width="75dp"
         android:layout_height="wrap_content"
         android:gravity="end"
         android:textColor="@color/color_positive"
-        android:textSize="13sp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

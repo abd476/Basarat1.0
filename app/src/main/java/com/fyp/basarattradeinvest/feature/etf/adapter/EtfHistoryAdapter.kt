@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.databinding.ItemEtfHistoryRowBinding
-import com.fyp.basarattradeinvest.domain.model.EtfHistoryEntry
+import com.fyp.basarattradeinvest.domain.model.etf.EtfHistoryEntry
 import com.fyp.basarattradeinvest.feature.common.FormatUtils
 
 class EtfHistoryAdapter :

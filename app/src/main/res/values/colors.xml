@@ -31,6 +31,7 @@
 
     <!-- Brand & Semantic Palette (Section 11) -->
     <color name="color_basarat_green">#00B894</color>
+    <color name="color_drawer_active_bg">#1A00B894</color>
     <color name="color_brand_green">#00B894</color>
     <color name="color_basarat_green_dark">#087F5B</color>
     <color name="color_positive">#18B981</color>

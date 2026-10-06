@@ -3,7 +3,7 @@ package com.fyp.basarattradeinvest.data.remote.dto.stocks
 import com.google.gson.annotations.SerializedName
 
 data class TechnicalIndicatorsResponseDto(
-    @SerializedName("symbol") val symbol: String,
+    @SerializedName("symbol") val symbol: String? = null,
     @SerializedName("period") val period: Int? = null,
     @SerializedName("overall_signal") val overallSignal: String? = null,
     @SerializedName("summary_message") val summaryMessage: String? = null,
@@ -41,6 +41,6 @@ data class IndicatorSummaryItemDto(
 )
 
 data class IndicatorSeriesDto(
-    @SerializedName("date") val date: String,
+    @SerializedName("date") val date: String? = null,
     @SerializedName("value") val value: Double? = null
 )

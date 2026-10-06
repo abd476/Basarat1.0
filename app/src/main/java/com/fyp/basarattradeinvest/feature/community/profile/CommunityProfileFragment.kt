@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentCommunityProfileBinding
 import com.fyp.basarattradeinvest.domain.model.community.CommunityPost
@@ -27,11 +28,13 @@ class CommunityProfileFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: CommunityProfileViewModel by activityViewModels {
-        CommunityProfileViewModel.Factory()
+        CommunityProfileViewModel.Factory(appContext = requireContext().applicationContext)
     }
 
     private lateinit var postAdapter: CommunityPostAdapter
     private var targetUserId: String? = null
+    private var lastBoundHeader: Pair<CommunityProfile, CommunityFeedMode>? = null
+    private var lastBoundPosts: List<CommunityPost>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,6 +92,16 @@ class CommunityProfileFragment : Fragment() {
         binding.rvPosts.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = postAdapter
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (dy <= 0) return
+                    val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+                    val lastVisible = layoutManager.findLastVisibleItemPosition()
+                    if (layoutManager.itemCount > 0 && lastVisible >= layoutManager.itemCount - 3) {
+                        viewModel.loadMorePosts()
+                    }
+                }
+            })
         }
     }
 
@@ -179,28 +192,42 @@ class CommunityProfileFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     when (state) {
                         is CommunityProfileUiState.Loading -> {
+                            lastBoundHeader = null
+                            lastBoundPosts = null
                             binding.layoutProfileSkeleton.visibility = View.VISIBLE
-                            binding.progressBar.visibility = View.GONE
+                            binding.layoutPostsSkeleton.visibility = View.GONE
                             binding.layoutError.visibility = View.GONE
                         }
                         is CommunityProfileUiState.Success -> {
                             binding.layoutProfileSkeleton.visibility = View.GONE
-                            binding.progressBar.visibility = View.GONE
                             binding.layoutError.visibility = View.GONE
                             binding.swipeRefresh.isRefreshing = false
-                            bindProfile(state.profile)
-                            bindFeedModeTabs(state.feedMode, state.profile.isOwnProfile)
-                            postAdapter.submitList(state.posts)
+                            // The header arrives before the feed, so only the post area waits.
+                            // Retained posts stay on screen during a refresh, so the skeleton is
+                            // for the first page only.
+                            binding.layoutPostsSkeleton.visibility =
+                                if (state.isPostsLoading && state.posts.isEmpty()) View.VISIBLE else View.GONE
 
-                            if (state.posts.isEmpty()) {
-                                binding.layoutEmptyPosts.visibility = View.VISIBLE
-                            } else {
-                                binding.layoutEmptyPosts.visibility = View.GONE
+                            val header = state.profile to state.feedMode
+                            if (lastBoundHeader != header) {
+                                bindProfile(state.profile)
+                                bindFeedModeTabs(state.feedMode, state.profile.isOwnProfile)
+                                lastBoundHeader = header
                             }
+
+                            if (lastBoundPosts != state.posts) {
+                                postAdapter.submitList(state.posts)
+                                lastBoundPosts = state.posts
+                            }
+
+                            binding.layoutEmptyPosts.visibility =
+                                if (!state.isPostsLoading && state.posts.isEmpty()) View.VISIBLE else View.GONE
                         }
                         is CommunityProfileUiState.Error -> {
+                            lastBoundHeader = null
+                            lastBoundPosts = null
                             binding.layoutProfileSkeleton.visibility = View.GONE
-                            binding.progressBar.visibility = View.GONE
+                            binding.layoutPostsSkeleton.visibility = View.GONE
                             binding.swipeRefresh.isRefreshing = false
                             binding.layoutError.visibility = View.VISIBLE
                             binding.tvErrorMessage.text = state.message
@@ -259,6 +286,8 @@ class CommunityProfileFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        lastBoundHeader = null
+        lastBoundPosts = null
         _binding = null
     }
 }

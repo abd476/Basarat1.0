@@ -6,7 +6,7 @@ import com.fyp.basarattradeinvest.core.session.AuthState
 import com.fyp.basarattradeinvest.core.session.SessionManager
 import com.fyp.basarattradeinvest.data.repository.AuthRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.UsersRepositoryImpl
-import com.fyp.basarattradeinvest.domain.model.User
+import com.fyp.basarattradeinvest.domain.model.auth.User
 import com.fyp.basarattradeinvest.domain.usecase.auth.CheckSessionUseCase
 import com.fyp.basarattradeinvest.domain.usecase.auth.LogoutUseCase
 import com.fyp.basarattradeinvest.domain.usecase.user.GetCurrentUserProfileUseCase

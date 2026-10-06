@@ -8,6 +8,7 @@ import com.fyp.basarattradeinvest.data.remote.api.MarketApiService
 import com.fyp.basarattradeinvest.data.remote.live.LiveMarketDataSource
 import com.fyp.basarattradeinvest.data.repository.LiveMarketRepositoryImpl
 import com.fyp.basarattradeinvest.domain.repository.LiveMarketRepository
+import okhttp3.Dispatcher
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -18,10 +19,10 @@ import java.util.concurrent.TimeUnit
 object NetworkClient {
 
     // Live backend host (AWS EC2 FastAPI backend)
-    const val BASE_URL = "http://16.16.26.247:8000/"
+    const val BASE_URL = "http://193.123.84.223:8000/"
 
     // Live PSX Market API host (Real-time Market quotes, gainers, losers, volume spikes, indices, sectors)
-    const val MARKET_BASE_URL = "http://16.16.26.247:8000/"
+    const val MARKET_BASE_URL = "http://193.123.84.223:8000/"
 
     // Sanitized logging interceptor: redacts sensitive Authorization headers & tokens.
     // BASIC (method/url/code/duration) avoids buffering every full response body, which
@@ -64,7 +65,14 @@ object NetworkClient {
     private val authInterceptor = AuthInterceptor()
     private val tokenAuthenticator = TokenAuthenticator(BASE_URL)
 
+    // Every screen talks to the same host, so OkHttp's default of 5 concurrent requests per host
+    // made a screen's own fan-out (Portfolio fires 5) queue behind Home/Market/notification calls.
+    private val dispatcher = Dispatcher().apply {
+        maxRequestsPerHost = 12
+    }
+
     private val okHttpClient = OkHttpClient.Builder()
+        .dispatcher(dispatcher)
         .addInterceptor(authInterceptor)
         .addInterceptor(streamAwareLoggingInterceptor)
         .authenticator(tokenAuthenticator)

@@ -1,12 +1,12 @@
 package com.fyp.basarattradeinvest.domain.repository
 
-import com.fyp.basarattradeinvest.domain.model.IndexConstituents
-import com.fyp.basarattradeinvest.domain.model.MarketIndex
-import com.fyp.basarattradeinvest.domain.model.MarketOverview
-import com.fyp.basarattradeinvest.domain.model.MarketSentiment
-import com.fyp.basarattradeinvest.domain.model.MarketStock
-import com.fyp.basarattradeinvest.domain.model.SectorPerformance
-import com.fyp.basarattradeinvest.domain.model.SymbolFilterType
+import com.fyp.basarattradeinvest.domain.model.market.IndexConstituents
+import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
+import com.fyp.basarattradeinvest.domain.model.market.MarketOverview
+import com.fyp.basarattradeinvest.domain.model.sentiment.MarketSentiment
+import com.fyp.basarattradeinvest.domain.model.market.MarketStock
+import com.fyp.basarattradeinvest.domain.model.market.SectorPerformance
+import com.fyp.basarattradeinvest.domain.model.stock.SymbolFilterType
 
 interface MarketRepository {
     // --- Live BASARAT Endpoints ---

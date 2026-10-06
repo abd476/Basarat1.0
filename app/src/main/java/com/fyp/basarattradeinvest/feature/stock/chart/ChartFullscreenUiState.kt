@@ -1,7 +1,7 @@
 package com.fyp.basarattradeinvest.feature.stock.chart
 
-import com.fyp.basarattradeinvest.domain.model.CandleEntry
-import com.fyp.basarattradeinvest.domain.model.StockDetail
+import com.fyp.basarattradeinvest.domain.model.market.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.stock.StockDetail
 
 sealed interface ChartFullscreenUiState {
     data object Loading : ChartFullscreenUiState

@@ -172,30 +172,6 @@ class StockRecommendationDetailFragment : Fragment() {
         } else {
             binding.tvExpectedRange.visibility = View.GONE
         }
-
-        // Signal Breakdown
-        val ml = detail.individualSignals["ml"] ?: 0.0
-        val tech = detail.individualSignals["technical"] ?: 0.0
-        val fund = detail.individualSignals["fundamental"] ?: 0.0
-
-        binding.tvSignalMl.text = formatScore(ml)
-        binding.tvSignalTech.text = formatScore(tech)
-        binding.tvSignalFund.text = formatScore(fund)
-
-        // Model Reasoning
-        val reasoningBuilder = StringBuilder()
-        detail.reasoning.forEach { (source, map) ->
-            val sourceTitle = source.uppercase()
-            val entries = map.values.joinToString(", ")
-            reasoningBuilder.append("• $sourceTitle: $entries\n")
-        }
-        val reasoningText = reasoningBuilder.toString().trim()
-        binding.tvReasoningSummary.text = if (reasoningText.isNotEmpty()) reasoningText else "Model reasoning generated from historical indicators and ML sequences."
-    }
-
-    private fun formatScore(score: Double): String {
-        val sign = if (score >= 0) "+" else ""
-        return String.format(Locale.US, "%s%.2f", sign, score)
     }
 
     override fun onDestroyView() {
