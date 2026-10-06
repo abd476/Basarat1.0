@@ -1,6 +1,7 @@
 package com.fyp.basarattradeinvest.data.remote.live
 
 import android.util.Log
+import com.fyp.basarattradeinvest.core.network.NetworkErrorParser
 import com.fyp.basarattradeinvest.data.remote.api.LiveMarketApiService
 import com.fyp.basarattradeinvest.data.remote.dto.live.RestQuotesResponseDto
 import com.fyp.basarattradeinvest.data.remote.dto.live.WsClientMessageDto
@@ -8,6 +9,7 @@ import com.fyp.basarattradeinvest.data.remote.dto.live.WsQuoteDataDto
 import com.fyp.basarattradeinvest.data.remote.dto.live.WsServerMessageDto
 import com.fyp.basarattradeinvest.domain.model.live.LiveQuote
 import com.fyp.basarattradeinvest.domain.model.live.LiveQuoteSource
+import com.fyp.basarattradeinvest.domain.model.live.MarketSessionStatus
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
@@ -138,6 +140,28 @@ class LiveMarketDataSource(
      */
     fun getCachedQuote(symbol: String): LiveQuote? =
         _quoteCache.value[symbol.uppercase()]
+
+    /**
+     * Real trading-session state from the discovery endpoint. Fails rather than
+     * guessing when the backend does not report `is_market_open`, so callers can
+     * hide the indicator instead of asserting a session they never observed.
+     */
+    suspend fun getMarketSessionStatus(): Result<MarketSessionStatus> {
+        return try {
+            val response = liveMarketApiService.getLiveMarketStatus()
+            if (!response.isSuccessful) {
+                return Result.failure(Exception(NetworkErrorParser.parseError(response)))
+            }
+            val body = response.body()
+            val isOpen = body?.isMarketOpen
+                ?: return Result.failure(Exception("Market session status unavailable"))
+            Result.success(MarketSessionStatus(isOpen = isOpen))
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (error: Exception) {
+            Result.failure(error)
+        }
+    }
 
     /**
      * Release all resources. Call from Application.onTerminate or test teardown.

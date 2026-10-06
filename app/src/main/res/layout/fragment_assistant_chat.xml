@@ -25,14 +25,14 @@
             android:src="@drawable/img_1" />
 
         <TextView
+            android:textAppearance="@style/TextAppearance.Basarat.Body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:fontFamily="sans-serif-medium"
             android:letterSpacing="0.24"
             android:text="BASARAT"
-            android:textColor="@color/color_text_primary"
-            android:textSize="14sp" />
+            android:textColor="@color/color_text_primary" />
 
         <Space
             android:layout_width="0dp"
@@ -57,12 +57,12 @@
                 app:tint="@color/color_basarat_green" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Meta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:text="@string/title_assistant"
                 android:textColor="@color/color_basarat_green"
-                android:textSize="12sp"
                 android:fontFamily="sans-serif-medium" />
         </LinearLayout>
 
@@ -103,11 +103,11 @@
 
             <TextView
                 android:id="@+id/tvErrorMessage"
+                android:textAppearance="@style/TextAppearance.Basarat.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textColor="@color/color_negative"
-                android:textSize="14sp" />
+                android:textColor="@color/color_negative" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRetry"
@@ -154,39 +154,39 @@
 
             <TextView
                 android:id="@+id/tvAssistantGreeting"
+                android:textAppearance="@style/TextAppearance.Basarat.Heading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13dp"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="@color/color_text_primary"
-                android:textSize="22sp"
                 tools:text="Hi, Abdul Rehman" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Body"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:fontFamily="sans-serif-medium"
                 android:text="@string/assistant_welcome_subtitle"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="14sp" />
+                android:textColor="@color/color_text_secondary" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13dp"
                 android:lineSpacingExtra="3dp"
                 android:text="@string/assistant_welcome_description"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="13sp" />
+                android:textColor="@color/color_text_secondary" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="11dp"
                 android:text="@string/assistant_disclaimer"
-                android:textColor="@color/color_text_tertiary"
-                android:textSize="11sp" />
+                android:textColor="@color/color_text_tertiary" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -276,7 +276,7 @@
             android:paddingBottom="10dp"
             android:textColor="@color/color_text_primary"
             android:textColorHint="@color/color_input_hint"
-            android:textSize="12sp" />
+            android:textSize="14sp" />
 
         <ImageButton
             android:id="@+id/btnSend"

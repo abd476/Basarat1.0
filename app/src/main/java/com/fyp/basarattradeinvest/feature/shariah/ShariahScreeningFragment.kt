@@ -17,7 +17,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentShariahScreeningBinding
-import com.fyp.basarattradeinvest.domain.model.ShariahStock
+import com.fyp.basarattradeinvest.domain.model.shariah.ShariahStock
 import com.fyp.basarattradeinvest.feature.shariah.adapter.ShariahStockAdapter
 import kotlinx.coroutines.launch
 
@@ -54,6 +54,16 @@ class ShariahScreeningFragment : Fragment() {
         setupListeners()
         setupSortingHeaders()
         observeUiState()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.setLiveUpdatesActive(true)
+    }
+
+    override fun onStop() {
+        viewModel.setLiveUpdatesActive(false)
+        super.onStop()
     }
 
     private fun setupRecyclerView() {

@@ -54,14 +54,16 @@ class ConversationListAdapter(
             btnDelete.setOnClickListener { onDeleteClick(conversation) }
         }
 
+        // Built once per recycled holder; binds ran these on the UI thread only.
+        private val isoParser = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.US).apply {
+            timeZone = java.util.TimeZone.getTimeZone("UTC")
+        }
+        private val displayFormatter = java.text.SimpleDateFormat("MMM d, hh:mm a", java.util.Locale.US)
+
         private fun formatDate(isoTimestamp: String): String {
             return try {
-                val parser = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.US)
-                parser.timeZone = java.util.TimeZone.getTimeZone("UTC")
-                val date = parser.parse(isoTimestamp.take(19)) ?: return ""
-                val formatter = java.text.SimpleDateFormat("MMM d, hh:mm a", java.util.Locale.US)
-                formatter.timeZone = java.util.TimeZone.getDefault()
-                formatter.format(date)
+                val date = isoParser.parse(isoTimestamp.take(19)) ?: return ""
+                displayFormatter.format(date)
             } catch (e: Exception) {
                 ""
             }

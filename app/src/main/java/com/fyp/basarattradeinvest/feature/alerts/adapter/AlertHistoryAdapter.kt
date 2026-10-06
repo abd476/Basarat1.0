@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.ItemAlertHistoryBinding
-import com.fyp.basarattradeinvest.domain.model.AlertItem
+import com.fyp.basarattradeinvest.domain.model.alerts.AlertItem
 
 class AlertHistoryAdapter(
     private val onAlertClick: (AlertItem) -> Unit

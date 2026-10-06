@@ -12,14 +12,13 @@
 
     <TextView
         android:id="@+id/tv_etf_symbol"
+        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_badge_stock_symbol"
         android:paddingHorizontal="8dp"
         android:paddingVertical="3dp"
         android:textColor="@color/color_text_primary"
-        android:textSize="12sp"
-        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="HBLTETF" />
@@ -40,29 +39,28 @@
 
     <TextView
         android:id="@+id/tv_etf_price"
+        android:textAppearance="@style/TextAppearance.Basarat.Number.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/color_text_primary"
-        android:textSize="16sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="106.51" />
 
     <TextView
         android:id="@+id/tv_etf_change"
+        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
         android:textColor="@color/color_positive"
-        android:textSize="12sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_etf_price"
         tools:text="-0.36%" />
 
     <TextView
         android:id="@+id/tv_etf_name"
+        android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -70,8 +68,6 @@
         android:ellipsize="end"
         android:maxLines="2"
         android:textColor="@color/color_text_primary"
-        android:textSize="14sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@id/tv_etf_price"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_etf_symbol"
@@ -79,6 +75,7 @@
 
     <TextView
         android:id="@+id/tv_etf_manager"
+        android:textAppearance="@style/TextAppearance.Basarat.Meta"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
@@ -86,7 +83,6 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/color_text_secondary"
-        android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@id/tv_etf_price"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_etf_name"
@@ -94,6 +90,7 @@
 
     <TextView
         android:id="@+id/tv_etf_category"
+        android:textAppearance="@style/TextAppearance.Basarat.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -101,7 +98,6 @@
         android:paddingHorizontal="8dp"
         android:paddingVertical="3dp"
         android:textColor="@color/color_text_secondary"
-        android:textSize="11sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_etf_manager"
         tools:text="Treasury / Debt ETF" />

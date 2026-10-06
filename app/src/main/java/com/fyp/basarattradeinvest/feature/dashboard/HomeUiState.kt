@@ -1,9 +1,10 @@
 package com.fyp.basarattradeinvest.feature.dashboard
 
-import com.fyp.basarattradeinvest.domain.model.AlertItem
-import com.fyp.basarattradeinvest.domain.model.MarketIndex
-import com.fyp.basarattradeinvest.domain.model.MarketStock
-import com.fyp.basarattradeinvest.domain.model.NewsArticle
+import com.fyp.basarattradeinvest.domain.model.alerts.AlertItem
+import com.fyp.basarattradeinvest.domain.model.market.BenchmarkTrend
+import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
+import com.fyp.basarattradeinvest.domain.model.market.MarketStock
+import com.fyp.basarattradeinvest.domain.model.news.NewsArticle
 import com.fyp.basarattradeinvest.domain.model.live.LiveQuote
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 import com.fyp.basarattradeinvest.domain.model.portfolio.HoldingItem
@@ -24,11 +25,16 @@ sealed interface HomeUiState {
 
     data class Success(
         val userName: String,
-        val marketStatus: String = "Closed",
+        // Null until the backend answers for this load; the header pill hides rather
+        // than claiming the market is closed.
+        val marketStatus: String? = null,
         val isMarketOpen: Boolean = false,
         val marketIndices: List<MarketIndex> = emptyList(),
         val selectedBenchmarkIndex: MarketIndex? = null,
         val selectedTimeframe: String = "1D",
+        // Derived from constituent price history in a second pass, so it lands after the
+        // benchmark's headline numbers.
+        val benchmarkTrend: BenchmarkTrendUiState = BenchmarkTrendUiState.Empty,
         val watchlist: WatchlistUiState = WatchlistUiState.Loading,
         val topGainers: List<MarketStock> = emptyList(),
         val topLosers: List<MarketStock> = emptyList(),
@@ -65,4 +71,11 @@ sealed interface WatchlistUiState {
     data class Success(val watchlist: Watchlist) : WatchlistUiState
     data object Empty : WatchlistUiState
     data class Error(val message: String) : WatchlistUiState
+}
+
+sealed interface BenchmarkTrendUiState {
+    data object Loading : BenchmarkTrendUiState
+    data class Success(val trend: BenchmarkTrend) : BenchmarkTrendUiState
+    data object Empty : BenchmarkTrendUiState
+    data class Error(val message: String) : BenchmarkTrendUiState
 }

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.ItemEtfCardBinding
-import com.fyp.basarattradeinvest.domain.model.EtfItem
+import com.fyp.basarattradeinvest.domain.model.etf.EtfItem
 import com.fyp.basarattradeinvest.feature.common.FormatUtils
 
 class EtfListAdapter(

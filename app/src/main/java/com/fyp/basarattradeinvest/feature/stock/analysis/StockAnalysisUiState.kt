@@ -1,9 +1,9 @@
 package com.fyp.basarattradeinvest.feature.stock.analysis
 
-import com.fyp.basarattradeinvest.domain.model.CandleEntry
-import com.fyp.basarattradeinvest.domain.model.ForecastHistory
-import com.fyp.basarattradeinvest.domain.model.StockAnalysis
-import com.fyp.basarattradeinvest.domain.model.StockForecast
+import com.fyp.basarattradeinvest.domain.model.market.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.stock.ForecastHistory
+import com.fyp.basarattradeinvest.domain.model.stock.StockAnalysis
+import com.fyp.basarattradeinvest.domain.model.stock.StockForecast
 import com.fyp.basarattradeinvest.domain.model.sentiment.SentimentHistory
 import com.fyp.basarattradeinvest.domain.model.sentiment.SentimentNewsItem
 import com.fyp.basarattradeinvest.domain.model.sentiment.StockSentiment

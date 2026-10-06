@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.domain.usecase.stocks
 
-import com.fyp.basarattradeinvest.domain.model.StockDetail
+import com.fyp.basarattradeinvest.domain.model.stock.StockDetail
 import com.fyp.basarattradeinvest.domain.repository.StockRepository
 
 class GetStockOverviewUseCase(

@@ -40,21 +40,20 @@
 
             <TextView
                 android:id="@+id/tv_top_title"
+                android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Shariah"
-                android:textColor="@color/color_text_primary"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <TextView
                 android:id="@+id/tv_top_subtitle"
+                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
                 android:text="Shariah Compliant Companies"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="11sp" />
+                android:textColor="@color/color_text_secondary" />
         </LinearLayout>
 
         <LinearLayout
@@ -151,19 +150,19 @@
         <!-- All Stocks -->
         <TextView
             android:id="@+id/chip_all_stocks"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:background="@drawable/bg_chip_filter_selected"
             android:gravity="center"
             android:paddingHorizontal="14dp"
             android:text="All Stocks"
-            android:textColor="@color/color_positive"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textColor="@color/color_positive" />
 
         <!-- KMI-30 -->
         <TextView
             android:id="@+id/chip_kmi_30"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_marginStart="8dp"
@@ -171,13 +170,12 @@
             android:gravity="center"
             android:paddingHorizontal="16dp"
             android:text="KMI-30"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textColor="@color/color_text_secondary" />
 
         <!-- KMI All Share -->
         <TextView
             android:id="@+id/chip_kmi_all_share"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_marginStart="8dp"
@@ -185,9 +183,7 @@
             android:gravity="center"
             android:paddingHorizontal="14dp"
             android:text="KMI All Share"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textColor="@color/color_text_secondary" />
     </LinearLayout>
 
     <!-- Table Header Row (4 Columns matching screenshot) -->
@@ -205,46 +201,46 @@
         <!-- Symbol -->
         <TextView
             android:id="@+id/th_symbol"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="38"
             android:gravity="start"
             android:text="Symbol"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="12sp" />
+            android:textColor="@color/color_text_secondary" />
 
         <!-- Price ⇅ -->
         <TextView
             android:id="@+id/th_price"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="20"
             android:gravity="end"
             android:text="Price ⇅"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="12sp" />
+            android:textColor="@color/color_text_secondary" />
 
         <!-- %Chg ⇅ -->
         <TextView
             android:id="@+id/th_change"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="20"
             android:gravity="end"
             android:text="%Chg ⇅"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="12sp" />
+            android:textColor="@color/color_text_secondary" />
 
         <!-- Purification ⇅ -->
         <TextView
             android:id="@+id/th_purification"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="22"
             android:gravity="end"
             android:text="Purification ⇅"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="12sp" />
+            android:textColor="@color/color_text_secondary" />
     </LinearLayout>
 
     <!-- Stock List RecyclerView -->
@@ -284,11 +280,11 @@
         app:layout_constraintTop_toBottomOf="@id/layout_table_header">
 
         <TextView
+            android:textAppearance="@style/TextAppearance.Basarat.Body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="No PSX Shariah Compliant Stocks Found"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="14sp" />
+            android:textColor="@color/color_text_secondary" />
     </LinearLayout>
 
     <!-- Error State -->
@@ -306,11 +302,11 @@
 
         <TextView
             android:id="@+id/tv_error_message"
+            android:textAppearance="@style/TextAppearance.Basarat.Body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Unable to load stocks"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="14sp" />
+            android:textColor="@color/color_text_secondary" />
 
         <Button
             android:id="@+id/btn_retry"

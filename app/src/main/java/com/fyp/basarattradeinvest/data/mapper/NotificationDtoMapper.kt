@@ -2,8 +2,8 @@ package com.fyp.basarattradeinvest.data.mapper
 
 import com.fyp.basarattradeinvest.data.remote.dto.notifications.NotificationItemDto
 import com.fyp.basarattradeinvest.data.remote.dto.notifications.NotificationsListResponseDto
-import com.fyp.basarattradeinvest.domain.model.InAppNotification
-import com.fyp.basarattradeinvest.domain.model.NotificationFeed
+import com.fyp.basarattradeinvest.domain.model.alerts.InAppNotification
+import com.fyp.basarattradeinvest.domain.model.alerts.NotificationFeed
 
 object NotificationDtoMapper {
 

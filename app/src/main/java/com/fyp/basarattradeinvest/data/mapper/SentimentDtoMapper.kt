@@ -28,11 +28,11 @@ object SentimentDtoMapper {
         val newsCount = dto.sourceBreakdown?.get("news") ?: 0
         val communityCount = dto.sourceBreakdown?.get("community") ?: 0
         return StockSentiment(
-            symbol = dto.symbol,
+            symbol = dto.symbol.orEmpty(),
             score = dto.score,
-            label = dto.label,
+            label = dto.label ?: "neutral",
             articleCount = dto.articleCount,
-            trend = dto.trend,
+            trend = dto.trend ?: "stable",
             newsSourceCount = newsCount,
             communitySourceCount = communityCount
         )
@@ -42,17 +42,17 @@ object SentimentDtoMapper {
 
     fun mapSentimentHistory(dto: SentimentHistoryResponseDto): SentimentHistory {
         return SentimentHistory(
-            symbol = dto.symbol,
-            period = dto.period,
-            data = dto.data.map { mapHistoryPoint(it) }
+            symbol = dto.symbol.orEmpty(),
+            period = dto.period ?: "1M",
+            data = dto.data.orEmpty().map { mapHistoryPoint(it) }
         )
     }
 
     private fun mapHistoryPoint(dto: SentimentHistoryPointDto): SentimentHistoryPoint {
         return SentimentHistoryPoint(
-            date = dto.date,
+            date = dto.date.orEmpty(),
             score = dto.score,
-            label = dto.label,
+            label = dto.label ?: "neutral",
             articleCount = dto.articleCount,
             positiveRatio = dto.positiveRatio,
             neutralRatio = dto.neutralRatio,
@@ -65,8 +65,8 @@ object SentimentDtoMapper {
 
     fun mapSentimentNewsPage(dto: SentimentNewsResponseDto): SentimentNewsPage {
         return SentimentNewsPage(
-            symbol = dto.symbol,
-            items = dto.items.map { mapNewsItem(it) },
+            symbol = dto.symbol.orEmpty(),
+            items = dto.items.orEmpty().map { mapNewsItem(it) },
             total = dto.total,
             page = dto.page,
             limit = dto.limit
@@ -75,8 +75,8 @@ object SentimentDtoMapper {
 
     private fun mapNewsItem(dto: SentimentNewsItemDto): SentimentNewsItem {
         return SentimentNewsItem(
-            id = dto.id,
-            title = dto.title,
+            id = dto.id ?: dto.url.orEmpty(),
+            title = dto.title.orEmpty(),
             source = dto.source,
             publishedAt = dto.publishedAt,
             url = dto.url,
@@ -91,7 +91,7 @@ object SentimentDtoMapper {
     fun mapMarketSentimentOverview(dto: MarketSentimentResponseDto): MarketSentimentOverview {
         val dist = dto.scoreDistribution
         return MarketSentimentOverview(
-            marketMood = dto.marketMood,
+            marketMood = dto.marketMood ?: "neutral",
             overallScore = dto.overallScore,
             articleCount = dto.articleCount,
             communityPostCount = dto.communityPostCount,

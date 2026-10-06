@@ -35,13 +35,12 @@
 
                 <TextView
                     android:id="@+id/tv_title"
+                    android:textAppearance="@style/TextAppearance.Basarat.Subheading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:text="Create Community Post"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/color_text_primary" />
 
                 <ImageView
                     android:id="@+id/btn_close"
@@ -59,13 +58,12 @@
 
             <!-- Tag / Post Type Selection -->
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:text="Select Post Tag"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_secondary" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chip_group_tag"
@@ -108,13 +106,12 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
                     android:text="Stock Ticker"
-                    android:textColor="@color/color_text_secondary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/color_text_secondary" />
 
                 <!-- Quick PSX Ticker Chips -->
                 <HorizontalScrollView
@@ -311,6 +308,7 @@
 
                 <TextView
                     android:id="@+id/tv_image_status"
+                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
@@ -318,18 +316,17 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:textColor="@color/color_text_secondary"
-                    android:textSize="12sp"
                     tools:text="1 photo selected" />
             </LinearLayout>
 
             <!-- Error message if validation or API fails -->
             <TextView
                 android:id="@+id/tv_error_message"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:textColor="@color/color_negative"
-                android:textSize="13sp"
                 android:visibility="gone"
                 tools:text="Please provide post content"
                 tools:visibility="visible" />

@@ -20,21 +20,19 @@
 
         <TextView
             android:id="@+id/tv_percentile_label"
+            android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/color_text_tertiary"
-            android:textSize="11sp"
-            android:textStyle="bold"
             tools:text="P5" />
 
         <TextView
             android:id="@+id/tv_percentile_value"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:textColor="@color/color_text_primary"
-            android:textSize="13sp"
-            android:textStyle="bold"
             tools:text="-12.4%" />
 
     </LinearLayout>

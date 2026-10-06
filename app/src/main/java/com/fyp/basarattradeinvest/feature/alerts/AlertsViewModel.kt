@@ -3,7 +3,7 @@ package com.fyp.basarattradeinvest.feature.alerts
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.data.repository.AlertsRepositoryImpl
-import com.fyp.basarattradeinvest.domain.model.AlertItem
+import com.fyp.basarattradeinvest.domain.model.alerts.AlertItem
 import com.fyp.basarattradeinvest.domain.usecase.alerts.GetAlertsUseCase
 import com.fyp.basarattradeinvest.domain.usecase.alerts.MarkAlertReadUseCase
 import kotlinx.coroutines.flow.MutableStateFlow

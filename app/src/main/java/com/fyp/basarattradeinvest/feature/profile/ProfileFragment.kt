@@ -14,7 +14,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentProfileBinding
-import com.fyp.basarattradeinvest.domain.model.UserProfile
+import com.fyp.basarattradeinvest.domain.model.auth.UserProfile
 import com.fyp.basarattradeinvest.feature.auth.AuthUiState
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
@@ -191,7 +191,9 @@ class ProfileFragment : Fragment() {
 
         // Update sectors summary if present
         if (profile.sectorPreferences.isNotEmpty()) {
-            binding.tvRiskSummary.text = "${profile.sectorPreferences.size} preferred sectors configured"
+            val count = profile.sectorPreferences.size
+            val noun = if (count == 1) "sector" else "sectors"
+            binding.tvRiskSummary.text = "$count preferred $noun configured"
         }
     }
 

@@ -32,14 +32,13 @@
                 app:tint="@color/color_text_primary" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:layout_weight="1"
                 android:text="Transaction History"
-                android:textColor="@color/color_text_primary"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_record_trade"
@@ -80,6 +79,7 @@
 
             <TextView
                 android:id="@+id/chip_type_all"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_tab_selected"
@@ -88,12 +88,11 @@
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="6dp"
                 android:text="ALL"
-                android:textColor="@color/color_button_primary_text"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_button_primary_text" />
 
             <TextView
                 android:id="@+id/chip_type_buy"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -103,12 +102,11 @@
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="6dp"
                 android:text="BUY ONLY"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_secondary" />
 
             <TextView
                 android:id="@+id/chip_type_sell"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -118,19 +116,17 @@
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="6dp"
                 android:text="SELL ONLY"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_secondary" />
 
         </LinearLayout>
 
         <TextView
             android:id="@+id/tv_total_count"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:textColor="@color/color_text_tertiary"
-            android:textSize="12sp"
             tools:text="Showing 20 transactions" />
 
         <!-- Recycler -->
@@ -153,20 +149,19 @@
             android:visibility="gone">
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="No Transactions Found"
-                android:textColor="@color/color_text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Record a BUY or SELL transaction to track history."
-                android:textColor="@color/color_text_secondary"
-                android:textSize="13sp" />
+                android:textColor="@color/color_text_secondary" />
 
         </LinearLayout>
 

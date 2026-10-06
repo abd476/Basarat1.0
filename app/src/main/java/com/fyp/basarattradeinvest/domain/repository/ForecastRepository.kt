@@ -1,7 +1,7 @@
 package com.fyp.basarattradeinvest.domain.repository
 
-import com.fyp.basarattradeinvest.domain.model.ForecastHistory
-import com.fyp.basarattradeinvest.domain.model.StockForecast
+import com.fyp.basarattradeinvest.domain.model.stock.ForecastHistory
+import com.fyp.basarattradeinvest.domain.model.stock.StockForecast
 
 /**
  * Repository contract for BASARAT ML Forecast operations

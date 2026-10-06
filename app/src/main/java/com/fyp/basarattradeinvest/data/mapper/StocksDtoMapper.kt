@@ -6,15 +6,15 @@ import com.fyp.basarattradeinvest.data.remote.dto.stocks.PriceHistoryResponseDto
 import com.fyp.basarattradeinvest.data.remote.dto.stocks.StockOverviewDto
 import com.fyp.basarattradeinvest.data.remote.dto.stocks.StockSearchResultDto
 import com.fyp.basarattradeinvest.data.remote.dto.stocks.TechnicalIndicatorsResponseDto
-import com.fyp.basarattradeinvest.domain.model.CandleEntry
-import com.fyp.basarattradeinvest.domain.model.FundamentalMetrics
-import com.fyp.basarattradeinvest.domain.model.PivotPoints
-import com.fyp.basarattradeinvest.domain.model.StockDetail
-import com.fyp.basarattradeinvest.domain.model.StockSearchResult
-import com.fyp.basarattradeinvest.domain.model.TechnicalAnalysis
-import com.fyp.basarattradeinvest.domain.model.TechnicalIndicator
-import com.fyp.basarattradeinvest.domain.model.TechnicalSignal
-import com.fyp.basarattradeinvest.domain.model.TechnicalSummary
+import com.fyp.basarattradeinvest.domain.model.market.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.stock.FundamentalMetrics
+import com.fyp.basarattradeinvest.domain.model.stock.PivotPoints
+import com.fyp.basarattradeinvest.domain.model.stock.StockDetail
+import com.fyp.basarattradeinvest.domain.model.stock.StockSearchResult
+import com.fyp.basarattradeinvest.domain.model.stock.TechnicalAnalysis
+import com.fyp.basarattradeinvest.domain.model.stock.TechnicalIndicator
+import com.fyp.basarattradeinvest.domain.model.stock.TechnicalSignal
+import com.fyp.basarattradeinvest.domain.model.stock.TechnicalSummary
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -22,14 +22,16 @@ import java.util.Locale
 object StocksDtoMapper {
 
     fun mapSearchResult(dto: StockSearchResultDto): StockSearchResult {
+        val symbol = dto.symbol.orEmpty().uppercase()
         return StockSearchResult(
-            symbol = dto.symbol.uppercase(),
-            name = dto.name ?: "${dto.symbol} Corporation",
+            symbol = symbol,
+            name = dto.name ?: "$symbol Corporation",
             sector = dto.sector ?: "General"
         )
     }
 
     fun mapOverviewToStockDetail(dto: StockOverviewDto): StockDetail {
+        val symbol = dto.symbol.orEmpty().uppercase()
         val currentLtp = dto.ltp ?: 0.0
         val change = dto.change ?: 0.0
         val changePct = dto.changePct ?: 0.0
@@ -47,9 +49,9 @@ object StocksDtoMapper {
         val currentTime = SimpleDateFormat("dd/MM-HH:mm:ss", Locale.US).format(Date())
 
         return StockDetail(
-            symbol = dto.symbol.uppercase(),
-            code = dto.symbol.uppercase(),
-            companyName = dto.name ?: "${dto.symbol} Limited",
+            symbol = symbol,
+            code = symbol,
+            companyName = dto.name ?: "$symbol Limited",
             sector = dto.sector ?: "General",
             price = currentLtp,
             changeAmount = change,
@@ -74,14 +76,14 @@ object StocksDtoMapper {
     }
 
     fun mapPriceHistoryToCandles(dto: PriceHistoryResponseDto): List<CandleEntry> {
-        val bars = dto.bars
+        val bars = dto.bars.orEmpty()
         if (bars.isEmpty()) return emptyList()
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
 
         return bars.map { bar ->
             val timestamp = try {
-                dateFormat.parse(bar.date)?.time ?: System.currentTimeMillis()
+                dateFormat.parse(bar.date.orEmpty())?.time ?: System.currentTimeMillis()
             } catch (e: Exception) {
                 System.currentTimeMillis()
             }

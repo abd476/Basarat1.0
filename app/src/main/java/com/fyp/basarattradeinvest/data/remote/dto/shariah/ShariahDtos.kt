@@ -4,20 +4,38 @@ import com.google.gson.annotations.SerializedName
 
 /**
  * Data Transfer Objects for Shariah Module.
- * Authoritative schema matches backend OpenAPI contract at /api/v1/shariah/
+ * Field names match the live schema at /api/v1/openapi.json
+ * (components.schemas.ShariahKMI30Response / ShariahScreeningResponse /
+ * ShariahCriteriaResponse / ShariahPurificationResponse).
  */
 
 data class ShariahKmi30ResponseDto(
     @SerializedName("index")
-    val index: String? = "KMI-30",
+    val index: String? = null,
 
     @SerializedName("total_constituents")
     val totalConstituents: Int? = null,
+
+    @SerializedName("as_of")
+    val asOf: String? = null,
+
+    @SerializedName("is_stale")
+    val isStale: Boolean = false,
+
+    @SerializedName("effective_from")
+    val effectiveFrom: String? = null,
+
+    @SerializedName("source_url")
+    val sourceUrl: String? = null,
 
     @SerializedName("constituents")
     val constituents: List<Kmi30ConstituentDto> = emptyList()
 )
 
+/**
+ * The KMI-30 Shariah list carries screening ratios only — it has no price, change,
+ * weight or sector fields. Quotes come from the live market layer.
+ */
 data class Kmi30ConstituentDto(
     @SerializedName("symbol")
     val symbol: String,
@@ -25,49 +43,31 @@ data class Kmi30ConstituentDto(
     @SerializedName("name")
     val name: String? = null,
 
-    @SerializedName("ldcp")
-    val ldcp: Double? = null,
-
-    @SerializedName("current")
-    val current: Double? = null,
-
-    @SerializedName("change")
-    val change: Double? = null,
-
-    @SerializedName("change_pct")
-    val changePct: Double? = null,
-
-    @SerializedName("weight_pct")
-    val weightPct: Double? = null,
-
-    @SerializedName("index_points")
-    val indexPoints: Double? = null,
-
-    @SerializedName("volume")
-    val volume: Long? = null,
-
-    @SerializedName("freefloat_m")
-    val freefloatM: Double? = null,
-
-    @SerializedName("market_cap_m")
-    val marketCapM: Double? = null,
-
-    @SerializedName("sector")
-    val sector: String? = null,
-
-    @SerializedName("purification_rate")
-    val purificationRate: Double? = null,
-
     @SerializedName("is_shariah_compliant")
-    val isShariahCompliant: Boolean? = true
+    val isShariahCompliant: Boolean? = null,
+
+    @SerializedName("debt_ratio")
+    val debtRatio: Double? = null,
+
+    @SerializedName("interest_income_ratio")
+    val interestIncomeRatio: Double? = null,
+
+    @SerializedName("data_as_of")
+    val dataAsOf: String? = null,
+
+    @SerializedName("purification_rate_provisional")
+    val purificationRateProvisional: Boolean = false
 )
 
 data class ShariahScreeningResponseDto(
     @SerializedName("symbol")
     val symbol: String,
 
+    @SerializedName("screening_available")
+    val screeningAvailable: Boolean = true,
+
     @SerializedName("is_shariah_compliant")
-    val isShariahCompliant: Boolean,
+    val isShariahCompliant: Boolean = true,
 
     @SerializedName("overall_score")
     val overallScore: Double? = null,
@@ -77,6 +77,21 @@ data class ShariahScreeningResponseDto(
 
     @SerializedName("screened_at")
     val screenedAt: String? = null,
+
+    @SerializedName("data_as_of")
+    val dataAsOf: String? = null,
+
+    @SerializedName("data_is_stale")
+    val dataIsStale: Boolean = false,
+
+    @SerializedName("effective_from")
+    val effectiveFrom: String? = null,
+
+    @SerializedName("source_url")
+    val sourceUrl: String? = null,
+
+    @SerializedName("purification_rate_provisional")
+    val purificationRateProvisional: Boolean = false,
 
     @SerializedName("sector")
     val sector: String? = null,
@@ -92,11 +107,23 @@ data class ShariahCriteriaResponseDto(
     @SerializedName("symbol")
     val symbol: String,
 
+    @SerializedName("screening_available")
+    val screeningAvailable: Boolean = true,
+
     @SerializedName("is_shariah_compliant")
     val isShariahCompliant: Boolean = true,
 
     @SerializedName("criteria")
-    val criteria: List<ShariahCriterionDto> = emptyList()
+    val criteria: List<ShariahCriterionDto> = emptyList(),
+
+    @SerializedName("data_as_of")
+    val dataAsOf: String? = null,
+
+    @SerializedName("data_is_stale")
+    val dataIsStale: Boolean = false,
+
+    @SerializedName("source_url")
+    val sourceUrl: String? = null
 )
 
 data class ShariahCriterionDto(
@@ -104,27 +131,27 @@ data class ShariahCriterionDto(
     val name: String,
 
     @SerializedName("threshold")
-    val threshold: Double,
+    val threshold: Double? = null,
 
     @SerializedName("value")
     val value: Double? = null,
 
     @SerializedName("passed")
-    val passed: Boolean,
+    val passed: Boolean? = null,
 
     @SerializedName("description")
-    val description: String? = null
+    val description: String? = null,
+
+    @SerializedName("exception")
+    val exception: String? = null
 )
 
 data class ShariahPurificationResponseDto(
     @SerializedName("symbol")
     val symbol: String,
 
-    @SerializedName("holding_qty")
-    val holdingQty: Int,
-
-    @SerializedName("holding_value")
-    val holdingValue: Double,
+    @SerializedName("dividend_income")
+    val dividendIncome: Double,
 
     @SerializedName("purification_amount")
     val purificationAmount: Double,
@@ -133,5 +160,14 @@ data class ShariahPurificationResponseDto(
     val purificationRate: Double,
 
     @SerializedName("notes")
-    val notes: String? = null
+    val notes: String? = null,
+
+    @SerializedName("data_as_of")
+    val dataAsOf: String? = null,
+
+    @SerializedName("data_is_stale")
+    val dataIsStale: Boolean = false,
+
+    @SerializedName("rate_is_provisional")
+    val rateIsProvisional: Boolean = false
 )

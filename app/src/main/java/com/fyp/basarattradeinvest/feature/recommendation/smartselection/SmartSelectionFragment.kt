@@ -16,7 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentSmartSelectionBinding
-import com.fyp.basarattradeinvest.domain.model.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.market.CandleEntry
 import com.fyp.basarattradeinvest.domain.model.recommendations.RecommendationSignal
 import com.fyp.basarattradeinvest.domain.model.recommendations.StockRecommendation
 import com.github.mikephil.charting.charts.CandleStickChart
@@ -152,10 +152,12 @@ class SmartSelectionFragment : Fragment() {
                 getString(R.string.smart_selection_confidence, (it.confidence * 100).toInt())
             }.orEmpty()
             binding.tvSummary.text = selected?.summary.orEmpty()
+            bindBreakout(null)
             if (renderedSetup != null) clearChart()
         } else {
             if (setup != renderedSetup) {
-                bindChart(setup.candles, setup.currentPrice, setup.targetPrice, setup.stopLoss)
+                bindChart(setup.candles, setup.currentPrice, setup.targetPrice, setup.stopLoss, setup.breakout)
+                bindBreakout(setup.breakout)
                 renderedSetup = setup
             }
             binding.tvCurrentPrice.text = setup.currentPrice?.let {
@@ -245,7 +247,8 @@ class SmartSelectionFragment : Fragment() {
         candles: List<CandleEntry>,
         currentPrice: Double?,
         targetPrice: Double?,
-        stopLoss: Double?
+        stopLoss: Double?,
+        breakout: BreakoutLevels?
     ) {
         val chart = priceChart ?: return
         if (candles.isEmpty()) {
@@ -275,10 +278,9 @@ class SmartSelectionFragment : Fragment() {
             shadowWidth = 1f
         }
         chart.data = CandleData(dataSet)
+        val axisLabelFormat = SimpleDateFormat("dd/MM", Locale.getDefault())
         chart.xAxis.valueFormatter = IndexAxisValueFormatter(
-            candles.map { candle ->
-                SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(candle.timestamp))
-            }
+            candles.map { candle -> axisLabelFormat.format(Date(candle.timestamp)) }
         )
 
         val axis = chart.axisRight
@@ -317,19 +319,61 @@ class SmartSelectionFragment : Fragment() {
             ))
         }
 
+        breakout?.let { levels ->
+            axis.addLimitLine(createLevelLine(
+                levels.resistance,
+                getString(R.string.smart_selection_breakout_line, levels.resistance),
+                ContextCompat.getColor(requireContext(), R.color.color_gold_accent)
+            ))
+            axis.addLimitLine(createLevelLine(
+                levels.support,
+                getString(R.string.smart_selection_breakdown_line, levels.support),
+                ContextCompat.getColor(requireContext(), R.color.color_neutral),
+                labelPosition = LimitLine.LimitLabelPosition.RIGHT_BOTTOM
+            ))
+        }
+
         chart.setVisibleXRangeMaximum(minOf(30f, entries.size.toFloat().coerceAtLeast(5f)))
         chart.moveViewToX(entries.size.toFloat())
         chart.notifyDataSetChanged()
         chart.invalidate()
     }
 
-    private fun createLevelLine(value: Double, label: String, color: Int): LimitLine =
+    private fun bindBreakout(breakout: BreakoutLevels?) {
+        if (breakout == null) {
+            binding.tvBreakoutLevels.visibility = View.GONE
+            binding.tvBreakoutStatus.visibility = View.GONE
+            return
+        }
+
+        binding.tvBreakoutLevels.text = getString(
+            R.string.smart_selection_breakout_levels,
+            breakout.resistance,
+            breakout.support
+        )
+        binding.tvBreakoutStatus.text = when {
+            breakout.isConfirmed -> getString(R.string.smart_selection_breakout_confirmed, breakout.volumeRatio)
+            breakout.distanceToBreakoutPct > 0.0 ->
+                getString(R.string.smart_selection_breakout_below, breakout.distanceToBreakoutPct)
+            else ->
+                getString(R.string.smart_selection_breakout_above, -breakout.distanceToBreakoutPct)
+        }
+        binding.tvBreakoutLevels.visibility = View.VISIBLE
+        binding.tvBreakoutStatus.visibility = View.VISIBLE
+    }
+
+    private fun createLevelLine(
+        value: Double,
+        label: String,
+        color: Int,
+        labelPosition: LimitLine.LimitLabelPosition = LimitLine.LimitLabelPosition.RIGHT_TOP
+    ): LimitLine =
         LimitLine(value.toFloat(), label).apply {
             lineColor = color
             lineWidth = 1.2f
             textColor = color
             textSize = 8f
-            labelPosition = LimitLine.LimitLabelPosition.RIGHT_TOP
+            this.labelPosition = labelPosition
             enableDashedLine(6f, 4f, 0f)
         }
 

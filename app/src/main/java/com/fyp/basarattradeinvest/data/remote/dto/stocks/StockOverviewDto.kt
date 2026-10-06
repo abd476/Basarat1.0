@@ -3,7 +3,7 @@ package com.fyp.basarattradeinvest.data.remote.dto.stocks
 import com.google.gson.annotations.SerializedName
 
 data class StockOverviewDto(
-    @SerializedName("symbol") val symbol: String,
+    @SerializedName("symbol") val symbol: String? = null,
     @SerializedName("name") val name: String? = null,
     @SerializedName("sector") val sector: String? = null,
     @SerializedName("current_price") val currentPrice: Double? = null,

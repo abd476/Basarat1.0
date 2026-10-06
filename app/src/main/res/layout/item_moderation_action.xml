@@ -25,18 +25,18 @@
 
             <TextView
                 android:id="@+id/tv_action_badge"
+                android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_badge_neutral"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="3dp"
                 android:textColor="@color/color_text_primary"
-                android:textSize="11sp"
-                android:textStyle="bold"
                 tools:text="REMOVE_POST" />
 
             <TextView
                 android:id="@+id/tv_moderator_name"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -44,35 +44,33 @@
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:textColor="@color/color_text_primary"
-                android:textSize="13sp"
-                android:textStyle="bold"
                 tools:text="Mod: @admin_ahmed" />
 
             <TextView
                 android:id="@+id/tv_action_timestamp"
+                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_text_tertiary"
-                android:textSize="11sp"
                 tools:text="Today 14:20" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/tv_action_target"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:textColor="@color/color_text_secondary"
-            android:textSize="12sp"
             tools:text="Target: Post #p_1032 | Report #r_481" />
 
         <TextView
             android:id="@+id/tv_action_reason"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:textColor="@color/color_text_tertiary"
-            android:textSize="12sp"
             tools:text="Reason: Automated moderation trigger" />
 
     </LinearLayout>

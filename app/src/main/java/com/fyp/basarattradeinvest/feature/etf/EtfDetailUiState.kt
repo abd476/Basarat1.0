@@ -1,8 +1,8 @@
 package com.fyp.basarattradeinvest.feature.etf
 
-import com.fyp.basarattradeinvest.domain.model.EtfHistoryEntry
-import com.fyp.basarattradeinvest.domain.model.EtfItem
-import com.fyp.basarattradeinvest.domain.model.EtfPerformance
+import com.fyp.basarattradeinvest.domain.model.etf.EtfHistoryEntry
+import com.fyp.basarattradeinvest.domain.model.etf.EtfItem
+import com.fyp.basarattradeinvest.domain.model.etf.EtfPerformance
 
 enum class EtfDetailTab { OVERVIEW, HISTORY, PERFORMANCE }
 

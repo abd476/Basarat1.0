@@ -3,6 +3,7 @@ package com.fyp.basarattradeinvest.data.repository
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
 import com.fyp.basarattradeinvest.data.remote.live.LiveMarketDataSource
 import com.fyp.basarattradeinvest.domain.model.live.LiveQuote
+import com.fyp.basarattradeinvest.domain.model.live.MarketSessionStatus
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 import com.fyp.basarattradeinvest.domain.repository.LiveMarketRepository
 import kotlinx.coroutines.flow.SharedFlow
@@ -32,4 +33,7 @@ class LiveMarketRepositoryImpl(
         dataSource.setSubscriptions(owner, symbols)
 
     override fun getCachedQuote(symbol: String): LiveQuote? = dataSource.getCachedQuote(symbol)
+
+    override suspend fun getMarketSessionStatus(): Result<MarketSessionStatus> =
+        dataSource.getMarketSessionStatus()
 }

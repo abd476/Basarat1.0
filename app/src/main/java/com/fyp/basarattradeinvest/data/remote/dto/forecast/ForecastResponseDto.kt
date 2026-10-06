@@ -7,16 +7,16 @@ import com.google.gson.annotations.SerializedName
  */
 data class ForecastResponseDto(
     @SerializedName("symbol")
-    val symbol: String,
+    val symbol: String? = null,
 
     @SerializedName("horizon")
-    val horizon: String,
+    val horizon: String? = null,
 
     @SerializedName("direction")
-    val direction: String,
+    val direction: String? = null,
 
     @SerializedName("confidence")
-    val confidence: Double,
+    val confidence: Double = 0.0,
 
     @SerializedName("current_price")
     val currentPrice: Double? = null,
@@ -25,10 +25,10 @@ data class ForecastResponseDto(
     val targetPrice: Double? = null,
 
     @SerializedName("target_date")
-    val targetDate: String,
+    val targetDate: String? = null,
 
     @SerializedName("as_of_date")
-    val asOfDate: String,
+    val asOfDate: String? = null,
 
     @SerializedName("stop_loss")
     val stopLoss: Double? = null,

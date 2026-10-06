@@ -35,20 +35,19 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Listed IPOs"
-                        android:textColor="@color/color_text_tertiary"
-                        android:textSize="12sp" />
+                        android:textColor="@color/color_text_tertiary" />
 
                     <TextView
                         android:id="@+id/tv_total_listed"
+                        android:textAppearance="@style/TextAppearance.Basarat.Heading"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:textColor="@color/color_text_primary"
-                        android:textSize="22sp"
-                        android:textStyle="bold"
                         tools:text="3" />
                 </LinearLayout>
 
@@ -60,34 +59,32 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Avg listing-day gain"
-                        android:textColor="@color/color_text_tertiary"
-                        android:textSize="12sp" />
+                        android:textColor="@color/color_text_tertiary" />
 
                     <TextView
                         android:id="@+id/tv_avg_gain"
+                        android:textAppearance="@style/TextAppearance.Basarat.Heading"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:textColor="@color/color_text_primary"
-                        android:textSize="22sp"
-                        android:textStyle="bold"
                         tools:text="+0.00%" />
                 </LinearLayout>
             </LinearLayout>
 
             <TextView
                 android:id="@+id/title_top_performers"
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="18dp"
                 android:text="Top Performers"
-                android:textColor="@color/color_text_primary"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_top_performers"
@@ -98,14 +95,13 @@
 
             <TextView
                 android:id="@+id/title_recent_listings"
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="18dp"
                 android:text="Recent Listings"
-                android:textColor="@color/color_text_primary"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_recent_listings"
@@ -145,11 +141,11 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
+            android:textAppearance="@style/TextAppearance.Basarat.Body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="No IPO performance data"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="14sp" />
+            android:textColor="@color/color_text_secondary" />
     </LinearLayout>
 
     <LinearLayout
@@ -167,11 +163,11 @@
 
         <TextView
             android:id="@+id/tv_error_message"
+            android:textAppearance="@style/TextAppearance.Basarat.Body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="@color/color_text_secondary"
-            android:textSize="14sp"
             tools:text="Unable to load performance" />
 
         <Button

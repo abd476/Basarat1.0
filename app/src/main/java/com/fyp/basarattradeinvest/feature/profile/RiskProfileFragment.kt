@@ -15,8 +15,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentRiskProfileBinding
-import com.fyp.basarattradeinvest.domain.model.InvestmentProfileOptions
-import com.fyp.basarattradeinvest.domain.model.UserProfile
+import com.fyp.basarattradeinvest.domain.model.auth.InvestmentProfileOptions
+import com.fyp.basarattradeinvest.domain.model.auth.UserProfile
 import com.fyp.basarattradeinvest.feature.auth.AuthUiState
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.launch

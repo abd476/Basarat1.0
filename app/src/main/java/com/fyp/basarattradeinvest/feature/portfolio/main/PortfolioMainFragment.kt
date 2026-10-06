@@ -528,21 +528,28 @@ class PortfolioMainFragment : Fragment() {
             return
         }
 
+        // Direction of the window being plotted, so a falling curve cannot read as a
+        // gain. Lifetime P/L is shown separately in the header.
+        val trendColor = ContextCompat.getColor(
+            requireContext(),
+            if (entries.last().y >= entries.first().y) R.color.color_positive else R.color.color_negative
+        )
+
         val dataSet = LineDataSet(entries, "Portfolio Performance").apply {
             mode = LineDataSet.Mode.CUBIC_BEZIER
             cubicIntensity = 0.2f
             setDrawCircles(false)
             setDrawValues(false)
             lineWidth = 2.5f
-            color = Color.parseColor("#00B894") // BASARAT Green
+            color = trendColor
 
             setDrawFilled(true)
-            fillColor = Color.parseColor("#00B894")
+            fillColor = trendColor
             fillAlpha = 45
 
             setDrawHighlightIndicators(true)
             setDrawHorizontalHighlightIndicator(false)
-            highLightColor = Color.parseColor("#087F5B")
+            highLightColor = trendColor
             highlightLineWidth = 1.2f
             enableDashedHighlightLine(10f, 5f, 0f)
         }

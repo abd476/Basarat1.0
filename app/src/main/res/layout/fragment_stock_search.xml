@@ -108,12 +108,12 @@
                 android:indeterminateTint="@color/color_basarat_green" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:text="Searching PSX stocks..."
-                android:textColor="@color/color_text_secondary"
-                android:textSize="14sp" />
+                android:textColor="@color/color_text_secondary" />
         </LinearLayout>
 
         <!-- 3. Idle / Start Typing State -->
@@ -135,22 +135,21 @@
                 app:tint="@color/color_text_tertiary" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Search PSX Stocks"
-                android:textColor="@color/color_text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:gravity="center"
                 android:text="Type a symbol like OGDC, LUCK, MEBL or company name"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="13sp" />
+                android:textColor="@color/color_text_secondary" />
         </LinearLayout>
 
         <!-- 4. Empty Results State -->
@@ -165,22 +164,21 @@
             android:visibility="gone">
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="No Stocks Found"
-                android:textColor="@color/color_text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <TextView
                 android:id="@+id/tv_empty_message"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:gravity="center"
                 android:text="We couldn't find any stocks matching your search."
-                android:textColor="@color/color_text_secondary"
-                android:textSize="13sp" />
+                android:textColor="@color/color_text_secondary" />
         </LinearLayout>
 
         <!-- 5. Error State -->
@@ -196,12 +194,12 @@
 
             <TextView
                 android:id="@+id/tv_error_message"
+                android:textAppearance="@style/TextAppearance.Basarat.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Unable to load search results."
-                android:textColor="@color/color_text_secondary"
-                android:textSize="14sp" />
+                android:textColor="@color/color_text_secondary" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_retry"

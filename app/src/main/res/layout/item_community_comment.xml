@@ -35,31 +35,30 @@
 
             <TextView
                 android:id="@+id/tv_comment_author"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textColor="@color/color_text_primary"
-                android:textSize="13sp"
-                android:textStyle="bold"
                 tools:text="Tariq Mahmood" />
 
             <TextView
                 android:id="@+id/tv_comment_time"
+                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_text_secondary"
-                android:textSize="11sp"
                 tools:text="10 min ago" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/tv_comment_content"
+            android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:lineSpacingExtra="2dp"
             android:textColor="@color/color_text_primary"
-            android:textSize="13sp"
             tools:text="Great technical breakdown. Watching the resistance level closely on high volume." />
     </LinearLayout>
 </LinearLayout>

@@ -39,20 +39,19 @@
 
             <TextView
                 android:id="@+id/tv_user_name"
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_text_primary"
-                android:textSize="15sp"
-                android:textStyle="bold"
                 tools:text="Tariq Mahmood" />
 
             <TextView
                 android:id="@+id/tv_username"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:textColor="@color/color_text_secondary"
-                android:textSize="13sp"
                 tools:text="@tariq_equity" />
         </LinearLayout>
 

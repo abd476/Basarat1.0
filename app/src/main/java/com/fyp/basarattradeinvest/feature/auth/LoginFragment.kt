@@ -34,6 +34,7 @@ class LoginFragment : Fragment() {
 
     private val viewModel: LoginViewModel by viewModels()
     private var isPasswordVisible = false
+    private var isGoogleSignInInFlight = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -112,13 +113,44 @@ class LoginFragment : Fragment() {
             findNavController().navigate(R.id.action_loginFragment_to_forgotPasswordFragment)
         }
 
-        binding.btnGoogleSignIn.setOnClickListener {
-            Toast.makeText(requireContext(), "Continue with Google", Toast.LENGTH_SHORT).show()
-        }
+        binding.btnGoogleSignIn.setOnClickListener { startGoogleSignIn() }
+    }
 
-        binding.btnAppleSignIn.setOnClickListener {
-            Toast.makeText(requireContext(), "Continue with Apple", Toast.LENGTH_SHORT).show()
+    private fun startGoogleSignIn() {
+        if (isGoogleSignInInFlight) return
+        isGoogleSignInInFlight = true
+        setGoogleSigningIn(true)
+
+        val activity = requireActivity()
+        viewLifecycleOwner.lifecycleScope.launch {
+            val idToken = GoogleSignInLauncher.requestIdToken(activity).fold(
+                onSuccess = { token ->
+                    if (token == null) finishGoogleSignIn() // User backed out of the picker.
+                    token
+                },
+                onFailure = { error ->
+                    finishGoogleSignIn()
+                    _binding?.let {
+                        Toast.makeText(requireContext(), error.message, Toast.LENGTH_LONG).show()
+                    }
+                    null
+                }
+            )
+            if (idToken != null) viewModel.signInWithGoogle(idToken)
         }
+    }
+
+    private fun finishGoogleSignIn() {
+        isGoogleSignInInFlight = false
+        _binding?.let { setGoogleSigningIn(false) }
+    }
+
+    private fun setGoogleSigningIn(signingIn: Boolean) {
+        binding.pbGoogleLoading.visibility = if (signingIn) View.VISIBLE else View.GONE
+        binding.ivGoogleIcon.visibility = if (signingIn) View.INVISIBLE else View.VISIBLE
+        binding.tvGoogleLabel.visibility = if (signingIn) View.INVISIBLE else View.VISIBLE
+        binding.btnGoogleSignIn.isEnabled = !signingIn
+        binding.btnSignIn.isEnabled = !signingIn
     }
 
     private fun observeUiState() {
@@ -132,11 +164,14 @@ class LoginFragment : Fragment() {
                             binding.btnSignIn.isEnabled = true
                         }
                         is AuthUiState.Loading -> {
-                            binding.pbLoading.visibility = View.VISIBLE
-                            binding.tvSignInLabel.visibility = View.GONE
+                            if (!isGoogleSignInInFlight) {
+                                binding.pbLoading.visibility = View.VISIBLE
+                                binding.tvSignInLabel.visibility = View.GONE
+                            }
                             binding.btnSignIn.isEnabled = false
                         }
                         is AuthUiState.Success -> {
+                            finishGoogleSignIn()
                             binding.pbLoading.visibility = View.GONE
                             binding.tvSignInLabel.visibility = View.VISIBLE
                             binding.btnSignIn.isEnabled = true
@@ -156,6 +191,7 @@ class LoginFragment : Fragment() {
                             viewModel.resetState()
                         }
                         is AuthUiState.Error -> {
+                            finishGoogleSignIn()
                             binding.pbLoading.visibility = View.GONE
                             binding.tvSignInLabel.visibility = View.VISIBLE
                             binding.btnSignIn.isEnabled = true

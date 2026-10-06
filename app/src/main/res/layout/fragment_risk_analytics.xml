@@ -45,19 +45,18 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Risk Analytics"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_primary" />
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Portfolio VaR, Monte Carlo &amp; Stress Tests"
-                        android:textColor="@color/color_text_tertiary"
-                        android:textSize="11sp" />
+                        android:textColor="@color/color_text_tertiary" />
 
                 </LinearLayout>
 
@@ -67,21 +66,20 @@
             <!-- 1. VALUE AT RISK (VaR & CVaR) SECTION      -->
             <!-- ========================================== -->
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="Value at Risk (Historical)"
-                android:textColor="@color/color_text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Meta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="Statistical estimation of potential downside loss over a chosen time horizon."
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp" />
+                android:textColor="@color/color_text_secondary" />
 
             <!-- Horizon & Confidence Filter Chips -->
             <LinearLayout
@@ -98,6 +96,7 @@
 
                     <TextView
                         android:id="@+id/chip_horiz_1d"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_tab_selected"
@@ -106,12 +105,11 @@
                         android:paddingHorizontal="10dp"
                         android:paddingVertical="5dp"
                         android:text="1D"
-                        android:textColor="@color/color_button_primary_text"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_button_primary_text" />
 
                     <TextView
                         android:id="@+id/chip_horiz_1w"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
@@ -121,12 +119,11 @@
                         android:paddingHorizontal="10dp"
                         android:paddingVertical="5dp"
                         android:text="1W"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_secondary" />
 
                     <TextView
                         android:id="@+id/chip_horiz_1m"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
@@ -136,9 +133,7 @@
                         android:paddingHorizontal="10dp"
                         android:paddingVertical="5dp"
                         android:text="1M"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_secondary" />
 
                 </LinearLayout>
 
@@ -155,6 +150,7 @@
 
                     <TextView
                         android:id="@+id/chip_conf_90"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_tab_unselected"
@@ -163,12 +159,11 @@
                         android:paddingHorizontal="10dp"
                         android:paddingVertical="5dp"
                         android:text="90%"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_secondary" />
 
                     <TextView
                         android:id="@+id/chip_conf_95"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
@@ -178,12 +173,11 @@
                         android:paddingHorizontal="10dp"
                         android:paddingVertical="5dp"
                         android:text="95%"
-                        android:textColor="@color/color_button_primary_text"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_button_primary_text" />
 
                     <TextView
                         android:id="@+id/chip_conf_99"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
@@ -193,9 +187,7 @@
                         android:paddingHorizontal="10dp"
                         android:paddingVertical="5dp"
                         android:text="99%"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_secondary" />
 
                 </LinearLayout>
 
@@ -238,11 +230,11 @@
 
                         <TextView
                             android:id="@+id/tv_var_error"
+                            android:textAppearance="@style/TextAppearance.Basarat.Meta"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Unable to load VaR metrics"
-                            android:textColor="@color/color_negative"
-                            android:textSize="12sp" />
+                            android:textColor="@color/color_negative" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_retry_var"
@@ -275,30 +267,29 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Value at Risk (VaR)"
-                                    android:textColor="@color/color_text_tertiary"
-                                    android:textSize="11sp" />
+                                    android:textColor="@color/color_text_tertiary" />
 
                                 <TextView
                                     android:id="@+id/tv_var_value"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Number.Heading"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:textColor="@color/color_negative"
-                                    android:textSize="22sp"
-                                    android:textStyle="bold"
                                     tools:text="-2.34%" />
 
                                 <TextView
                                     android:id="@+id/tv_var_desc"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Micro"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:text="Max expected loss at 95% conf"
-                                    android:textColor="@color/color_text_secondary"
-                                    android:textSize="10sp" />
+                                    android:textColor="@color/color_text_secondary" />
 
                             </LinearLayout>
 
@@ -315,29 +306,28 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Conditional VaR (CVaR)"
-                                    android:textColor="@color/color_text_tertiary"
-                                    android:textSize="11sp" />
+                                    android:textColor="@color/color_text_tertiary" />
 
                                 <TextView
                                     android:id="@+id/tv_cvar_value"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Number.Heading"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:textColor="@color/color_negative"
-                                    android:textSize="22sp"
-                                    android:textStyle="bold"
                                     tools:text="-3.51%" />
 
                                 <TextView
+                                    android:textAppearance="@style/TextAppearance.Basarat.Micro"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:text="Expected tail shortfall"
-                                    android:textColor="@color/color_text_secondary"
-                                    android:textSize="10sp" />
+                                    android:textColor="@color/color_text_secondary" />
 
                             </LinearLayout>
 
@@ -362,20 +352,19 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Annualized Volatility"
-                                    android:textColor="@color/color_text_tertiary"
-                                    android:textSize="11sp" />
+                                    android:textColor="@color/color_text_tertiary" />
 
                                 <TextView
                                     android:id="@+id/tv_volatility_value"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:textColor="@color/color_text_primary"
-                                    android:textSize="14sp"
-                                    android:textStyle="bold"
                                     tools:text="18.56%" />
 
                             </LinearLayout>
@@ -388,20 +377,19 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Observations Used"
-                                    android:textColor="@color/color_text_tertiary"
-                                    android:textSize="11sp" />
+                                    android:textColor="@color/color_text_tertiary" />
 
                                 <TextView
                                     android:id="@+id/tv_observations_value"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:textColor="@color/color_text_primary"
-                                    android:textSize="14sp"
-                                    android:textStyle="bold"
                                     tools:text="252 trading days" />
 
                             </LinearLayout>
@@ -418,21 +406,20 @@
             <!-- 2. MONTE CARLO SIMULATION SECTION          -->
             <!-- ========================================== -->
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="Monte Carlo Simulation"
-                android:textColor="@color/color_text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Meta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="GBM stochastic simulation over multiple trajectory paths."
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp" />
+                android:textColor="@color/color_text_secondary" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -530,12 +517,11 @@
 
                         <TextView
                             android:id="@+id/tv_mc_status"
+                            android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:textColor="@color/color_brand_primary"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
                             tools:text="Simulating paths (Job #abc123, attempt 3)..." />
 
                     </LinearLayout>
@@ -543,11 +529,11 @@
                     <!-- Error View -->
                     <TextView
                         android:id="@+id/tv_mc_error"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:textColor="@color/color_negative"
-                        android:textSize="12sp"
                         android:visibility="gone"
                         tools:text="Simulation failed to start" />
 
@@ -561,12 +547,11 @@
                         android:visibility="gone">
 
                         <TextView
+                            android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Terminal Return Percentiles"
-                            android:textColor="@color/color_text_tertiary"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
+                            android:textColor="@color/color_text_tertiary" />
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rv_mc_percentiles"
@@ -594,20 +579,19 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Mean Expected Return"
-                                    android:textColor="@color/color_text_tertiary"
-                                    android:textSize="11sp" />
+                                    android:textColor="@color/color_text_tertiary" />
 
                                 <TextView
                                     android:id="@+id/tv_mc_mean_return"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:textColor="@color/color_text_primary"
-                                    android:textSize="13sp"
-                                    android:textStyle="bold"
                                     tools:text="+3.24%" />
 
                             </LinearLayout>
@@ -619,20 +603,19 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Probability of Loss"
-                                    android:textColor="@color/color_text_tertiary"
-                                    android:textSize="11sp" />
+                                    android:textColor="@color/color_text_tertiary" />
 
                                 <TextView
                                     android:id="@+id/tv_mc_prob_loss"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:textColor="@color/color_negative"
-                                    android:textSize="13sp"
-                                    android:textStyle="bold"
                                     tools:text="38.5%" />
 
                             </LinearLayout>
@@ -653,20 +636,19 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Max Drawdown"
-                                    android:textColor="@color/color_text_tertiary"
-                                    android:textSize="11sp" />
+                                    android:textColor="@color/color_text_tertiary" />
 
                                 <TextView
                                     android:id="@+id/tv_mc_max_drawdown"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:textColor="@color/color_negative"
-                                    android:textSize="13sp"
-                                    android:textStyle="bold"
                                     tools:text="-18.2%" />
 
                             </LinearLayout>
@@ -678,20 +660,19 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Best Case Scenario"
-                                    android:textColor="@color/color_text_tertiary"
-                                    android:textSize="11sp" />
+                                    android:textColor="@color/color_text_tertiary" />
 
                                 <TextView
                                     android:id="@+id/tv_mc_best_case"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:textColor="@color/color_positive"
-                                    android:textSize="13sp"
-                                    android:textStyle="bold"
                                     tools:text="+24.6%" />
 
                             </LinearLayout>
@@ -708,21 +689,20 @@
             <!-- 3. STRESS TESTING SECTION                  -->
             <!-- ========================================== -->
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="Stress Testing"
-                android:textColor="@color/color_text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Meta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="Impact simulation of macro shocks &amp; historical market crises on your portfolio."
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp" />
+                android:textColor="@color/color_text_secondary" />
 
             <!-- Scenario Selection Chips -->
             <HorizontalScrollView
@@ -738,6 +718,7 @@
 
                     <TextView
                         android:id="@+id/chip_scenario_2008"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_tab_selected"
@@ -746,12 +727,11 @@
                         android:paddingHorizontal="12dp"
                         android:paddingVertical="6dp"
                         android:text="2008 Crash"
-                        android:textColor="@color/color_button_primary_text"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_button_primary_text" />
 
                     <TextView
                         android:id="@+id/chip_scenario_covid"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -761,12 +741,11 @@
                         android:paddingHorizontal="12dp"
                         android:paddingVertical="6dp"
                         android:text="COVID Crash"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_secondary" />
 
                     <TextView
                         android:id="@+id/chip_scenario_pkr"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -776,12 +755,11 @@
                         android:paddingHorizontal="12dp"
                         android:paddingVertical="6dp"
                         android:text="PKR Devaluation"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_secondary" />
 
                     <TextView
                         android:id="@+id/chip_scenario_rate"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -791,9 +769,7 @@
                         android:paddingHorizontal="12dp"
                         android:paddingVertical="6dp"
                         android:text="Rate Hike"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_secondary" />
 
                 </LinearLayout>
 
@@ -836,11 +812,11 @@
 
                         <TextView
                             android:id="@+id/tv_stress_error"
+                            android:textAppearance="@style/TextAppearance.Basarat.Meta"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Unable to load stress test scenario"
-                            android:textColor="@color/color_negative"
-                            android:textSize="12sp" />
+                            android:textColor="@color/color_negative" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_retry_stress"
@@ -862,20 +838,19 @@
 
                         <TextView
                             android:id="@+id/tv_stress_name"
+                            android:textAppearance="@style/TextAppearance.Basarat.Title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/color_text_primary"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
                             tools:text="2008 Global Financial Crisis" />
 
                         <TextView
                             android:id="@+id/tv_stress_desc"
+                            android:textAppearance="@style/TextAppearance.Basarat.Meta"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:textColor="@color/color_text_secondary"
-                            android:textSize="12sp"
                             tools:text="Simulates market drawdown of the 2008 Lehman collapse crisis." />
 
                         <!-- Stressed Value & Impact Highlight Card -->
@@ -894,28 +869,27 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Portfolio Impact"
-                                    android:textColor="@color/color_text_tertiary"
-                                    android:textSize="11sp" />
+                                    android:textColor="@color/color_text_tertiary" />
 
                                 <TextView
                                     android:id="@+id/tv_stress_impact_pct"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:textColor="@color/color_negative"
-                                    android:textSize="20sp"
-                                    android:textStyle="bold"
                                     tools:text="-45.0%" />
 
                                 <TextView
                                     android:id="@+id/tv_stress_impact_value"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/color_text_secondary"
-                                    android:textSize="12sp"
                                     tools:text="-PKR 450,000" />
 
                             </LinearLayout>
@@ -928,28 +902,27 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Stressed Value"
-                                    android:textColor="@color/color_text_tertiary"
-                                    android:textSize="11sp" />
+                                    android:textColor="@color/color_text_tertiary" />
 
                                 <TextView
                                     android:id="@+id/tv_stress_stressed_val"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:textColor="@color/color_text_primary"
-                                    android:textSize="18sp"
-                                    android:textStyle="bold"
                                     tools:text="PKR 550,000" />
 
                                 <TextView
                                     android:id="@+id/tv_stress_current_val"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/color_text_tertiary"
-                                    android:textSize="11sp"
                                     tools:text="Current: PKR 1,000,000" />
 
                             </LinearLayout>
@@ -970,20 +943,19 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Worst Case Loss"
-                                    android:textColor="@color/color_text_tertiary"
-                                    android:textSize="11sp" />
+                                    android:textColor="@color/color_text_tertiary" />
 
                                 <TextView
                                     android:id="@+id/tv_stress_worst_loss"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:textColor="@color/color_negative"
-                                    android:textSize="13sp"
-                                    android:textStyle="bold"
                                     tools:text="-60.0%" />
 
                             </LinearLayout>
@@ -995,20 +967,19 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Vol. Multiplier"
-                                    android:textColor="@color/color_text_tertiary"
-                                    android:textSize="11sp" />
+                                    android:textColor="@color/color_text_tertiary" />
 
                                 <TextView
                                     android:id="@+id/tv_stress_vol_mult"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:textColor="@color/color_text_primary"
-                                    android:textSize="13sp"
-                                    android:textStyle="bold"
                                     tools:text="2.5x" />
 
                             </LinearLayout>
@@ -1021,20 +992,19 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Recovery Time"
-                                    android:textColor="@color/color_text_tertiary"
-                                    android:textSize="11sp" />
+                                    android:textColor="@color/color_text_tertiary" />
 
                                 <TextView
                                     android:id="@+id/tv_stress_recovery_days"
+                                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
                                     android:textColor="@color/color_text_primary"
-                                    android:textSize="13sp"
-                                    android:textStyle="bold"
                                     tools:text="540 Days" />
 
                             </LinearLayout>
@@ -1043,14 +1013,13 @@
 
                         <!-- Per-Holding Breakdown Subheader -->
                         <TextView
+                            android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
                             android:layout_marginBottom="8dp"
                             android:text="Holding Impact Breakdown"
-                            android:textColor="@color/color_text_tertiary"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
+                            android:textColor="@color/color_text_tertiary" />
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rv_holding_impacts"
@@ -1068,6 +1037,7 @@
             <!-- 4. REGULATORY & RISK DISCLAIMER            -->
             <!-- ========================================== -->
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="28dp"
@@ -1075,7 +1045,6 @@
                 android:padding="12dp"
                 android:text="Disclaimer: Risk analytics, Value-at-Risk (VaR), Monte Carlo stochastic simulations, and stress tests are algorithmic statistical models based on historical price distributions. They do not constitute guaranteed returns, guaranteed loss ceilings, or certified financial advisory services. Always manage risk responsibly."
                 android:textColor="@color/color_text_tertiary"
-                android:textSize="11sp"
                 android:lineSpacingExtra="2dp" />
 
         </LinearLayout>

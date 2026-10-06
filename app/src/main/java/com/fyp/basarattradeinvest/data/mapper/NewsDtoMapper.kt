@@ -2,14 +2,29 @@ package com.fyp.basarattradeinvest.data.mapper
 
 import com.fyp.basarattradeinvest.data.remote.dto.news.EventResponseDto
 import com.fyp.basarattradeinvest.data.remote.dto.news.NewsArticleResponseDto
-import com.fyp.basarattradeinvest.domain.model.CorporateEvent
-import com.fyp.basarattradeinvest.domain.model.NewsArticle
+import com.fyp.basarattradeinvest.domain.model.market.CorporateEvent
+import com.fyp.basarattradeinvest.domain.model.news.NewsArticle
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
 object NewsDtoMapper {
+
+    // Mapping runs once per article, so the formatters and the event-date regex are reused
+    // instead of being allocated for every value. They are kept per thread because
+    // SimpleDateFormat is not thread-safe.
+    private val formatters = object : ThreadLocal<HashMap<String, SimpleDateFormat>>() {
+        override fun initialValue(): HashMap<String, SimpleDateFormat> = HashMap()
+    }
+    private val eventDatePattern = Regex("\\d{4}-\\d{2}-\\d{2}")
+
+    private fun formatter(key: String, pattern: String, utc: Boolean = false): SimpleDateFormat =
+        formatters.get()!!.computeIfAbsent(key) {
+            SimpleDateFormat(pattern, Locale.US).apply {
+                if (utc) timeZone = TimeZone.getTimeZone("UTC")
+            }
+        }
 
     fun mapArticleDtoToDomain(dto: NewsArticleResponseDto): NewsArticle {
         val primarySymbol = dto.symbols?.firstOrNull()?.symbol ?: "PSX"
@@ -18,11 +33,16 @@ object NewsDtoMapper {
         val sentimentObj = dto.sentiment
         val sentimentStr = sentimentObj?.label?.lowercase(Locale.ROOT)
         val label = when (sentimentStr) {
-            "bullish", "positive" -> "Neutral"
-            "bearish", "negative" -> "Neutral"
+            "bullish", "positive" -> "Bullish"
+            "bearish", "negative" -> "Bearish"
             else -> "Neutral"
         }
-        val score = 0.0
+        // Only the backend's own score is shown; an unlabelled article stays neutral at zero.
+        val score = sentimentObj?.score ?: when (label) {
+            "Bullish" -> 0.5
+            "Bearish" -> -0.5
+            else -> 0.0
+        }
         val isDiv = dto.eventType?.contains("dividend", ignoreCase = true) == true ||
                 dto.title.contains("dividend", ignoreCase = true) ||
                 (dto.summary?.contains("dividend", ignoreCase = true) == true)
@@ -72,9 +92,7 @@ object NewsDtoMapper {
     internal fun formatRelativeTime(dateString: String?): String {
         if (dateString.isNullOrBlank()) return "Recent"
         try {
-            val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).apply {
-                timeZone = TimeZone.getTimeZone("UTC")
-            }
+            val isoFormat = formatter("iso-utc", "yyyy-MM-dd'T'HH:mm:ss", utc = true)
             // Strip fractional seconds if present
             val cleaned = dateString.substringBefore(".").substringBefore("Z").substringBefore("+")
             val parsedDate = isoFormat.parse(cleaned) ?: return dateString
@@ -89,8 +107,7 @@ object NewsDtoMapper {
                 diffHours < 24 -> "${diffHours}h ago"
                 diffDays < 7 -> "${diffDays}d ago"
                 else -> {
-                    val displayFormat = SimpleDateFormat("MMM dd, yyyy", Locale.US)
-                    displayFormat.format(parsedDate)
+                    formatter("display-date", "MMM dd, yyyy").format(parsedDate)
                 }
             }
         } catch (_: Exception) {
@@ -102,9 +119,9 @@ object NewsDtoMapper {
         if (dateString.isBlank()) return "Upcoming"
         try {
             // Check if format is YYYY-MM-DD
-            if (dateString.matches(Regex("\\d{4}-\\d{2}-\\d{2}"))) {
-                val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-                val outputFormat = SimpleDateFormat("MMM dd, yyyy", Locale.US)
+            if (dateString.matches(eventDatePattern)) {
+                val inputFormat = formatter("event-input-date", "yyyy-MM-dd")
+                val outputFormat = formatter("display-date", "MMM dd, yyyy")
                 val date = inputFormat.parse(dateString)
                 if (date != null) {
                     return outputFormat.format(date)

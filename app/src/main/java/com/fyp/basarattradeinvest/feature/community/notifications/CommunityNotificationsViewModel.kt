@@ -11,6 +11,7 @@ import com.fyp.basarattradeinvest.domain.usecase.community.GetCommunityNotificat
 import com.fyp.basarattradeinvest.domain.usecase.community.GetUnreadCommunityNotificationCountUseCase
 import com.fyp.basarattradeinvest.domain.usecase.community.MarkAllCommunityNotificationsReadUseCase
 import com.fyp.basarattradeinvest.domain.usecase.community.MarkCommunityNotificationReadUseCase
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,8 +36,10 @@ class CommunityNotificationsViewModel(
                 _uiState.value = CommunityNotificationsUiState.Loading
             }
 
-            val notifsResult = getNotificationsUseCase(page = 1, limit = 50, unreadOnly = unreadOnly)
-            val unreadResult = getUnreadCountUseCase()
+            val notifsDeferred = async { getNotificationsUseCase(page = 1, limit = 50, unreadOnly = unreadOnly) }
+            val unreadDeferred = async { getUnreadCountUseCase() }
+            val notifsResult = notifsDeferred.await()
+            val unreadResult = unreadDeferred.await()
 
             val unreadCount = unreadResult.getOrNull()?.unreadCount ?: 0
 

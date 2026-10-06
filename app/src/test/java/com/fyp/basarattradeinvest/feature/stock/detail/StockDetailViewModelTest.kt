@@ -7,13 +7,32 @@ import com.fyp.basarattradeinvest.domain.model.recommendations.RecommendationSig
 import com.fyp.basarattradeinvest.domain.model.recommendations.StockRecommendation
 import com.fyp.basarattradeinvest.domain.model.recommendations.TargetStop
 import com.fyp.basarattradeinvest.domain.repository.RecommendationsRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class StockDetailViewModelTest {
+
+    @Before
+    fun setUp() {
+        // viewModelScope launches on Dispatchers.Main, which has no looper in JVM tests.
+        Dispatchers.setMain(UnconfinedTestDispatcher())
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
 
     private class FakeRecommendationsRepository : RecommendationsRepository {
         override suspend fun getRecommendations(

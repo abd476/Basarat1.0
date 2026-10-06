@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.feature.notifications
 
-import com.fyp.basarattradeinvest.domain.model.InAppNotification
+import com.fyp.basarattradeinvest.domain.model.alerts.InAppNotification
 
 sealed interface NotificationsUiState {
     data object Loading : NotificationsUiState

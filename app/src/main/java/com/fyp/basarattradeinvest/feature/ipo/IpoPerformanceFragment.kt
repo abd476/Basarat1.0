@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fyp.basarattradeinvest.databinding.FragmentIpoPerformanceBinding
-import com.fyp.basarattradeinvest.domain.model.IpoPerformanceItem
+import com.fyp.basarattradeinvest.domain.model.ipo.IpoPerformanceItem
 import com.fyp.basarattradeinvest.feature.common.FormatUtils
 import com.fyp.basarattradeinvest.feature.ipo.adapter.IpoPerformanceAdapter
 import kotlinx.coroutines.launch

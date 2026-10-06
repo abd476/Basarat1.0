@@ -1,6 +1,7 @@
 package com.fyp.basarattradeinvest.domain.repository
 
 import com.fyp.basarattradeinvest.domain.model.live.LiveQuote
+import com.fyp.basarattradeinvest.domain.model.live.MarketSessionStatus
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,4 +31,10 @@ interface LiveMarketRepository {
 
     /** Retrieve the latest cached quote for a symbol (null if not yet received). */
     fun getCachedQuote(symbol: String): LiveQuote?
+
+    /**
+     * Current PSX trading session. A failure means the session is unknown and the
+     * caller must not present it as closed.
+     */
+    suspend fun getMarketSessionStatus(): Result<MarketSessionStatus>
 }

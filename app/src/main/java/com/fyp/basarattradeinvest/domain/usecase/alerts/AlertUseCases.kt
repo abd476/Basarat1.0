@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.domain.usecase.alerts
 
-import com.fyp.basarattradeinvest.domain.model.AlertItem
+import com.fyp.basarattradeinvest.domain.model.alerts.AlertItem
 import com.fyp.basarattradeinvest.domain.repository.AlertsRepository
 
 class GetAlertsUseCase(private val repository: AlertsRepository) {

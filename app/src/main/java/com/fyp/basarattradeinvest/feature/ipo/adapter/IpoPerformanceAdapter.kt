@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.ItemIpoPerformanceBinding
-import com.fyp.basarattradeinvest.domain.model.IpoPerformanceItem
+import com.fyp.basarattradeinvest.domain.model.ipo.IpoPerformanceItem
 import com.fyp.basarattradeinvest.feature.common.FormatUtils
 
 class IpoPerformanceAdapter :
@@ -28,7 +28,7 @@ class IpoPerformanceAdapter :
             val parts = mutableListOf<String>()
             if (!item.sector.isNullOrBlank()) parts.add(item.sector)
             FormatUtils.parseDate(item.listingDate)?.let {
-                parts.add("Listed ${FormatUtils.dateFull(item.listingDate)}")
+                parts.add("Listed ${FormatUtils.dateFull(it)}")
             }
             if (parts.isEmpty()) {
                 binding.tvPerfSector.visibility = View.GONE

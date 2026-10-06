@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.domain.usecase.stocks
 
-import com.fyp.basarattradeinvest.domain.model.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.market.CandleEntry
 import com.fyp.basarattradeinvest.domain.repository.StockRepository
 
 class GetStockPriceHistoryUseCase(

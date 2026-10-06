@@ -14,6 +14,8 @@ object FormatUtils {
 
     const val NA = "N/A"
 
+    private const val PARSE_CACHE_MAX = 256
+
     private val ISO_PATTERNS = listOf(
         "yyyy-MM-dd'T'HH:mm:ss.SSSSSS",
         "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
@@ -21,6 +23,21 @@ object FormatUtils {
         "yyyy-MM-dd HH:mm:ss",
         "yyyy-MM-dd"
     )
+
+    // These helpers run per list row and repeat across rebind passes, where allocating a
+    // SimpleDateFormat for every value was the dominant cost. Formatters are per thread
+    // because SimpleDateFormat is not thread-safe.
+    private val formatters = object : ThreadLocal<HashMap<String, SimpleDateFormat>>() {
+        override fun initialValue(): HashMap<String, SimpleDateFormat> = HashMap()
+    }
+    private val parsedDates = object : ThreadLocal<HashMap<String, Date?>>() {
+        override fun initialValue(): HashMap<String, Date?> = HashMap()
+    }
+
+    private fun formatter(pattern: String): SimpleDateFormat =
+        formatters.get()!!.computeIfAbsent(pattern) {
+            SimpleDateFormat(pattern, Locale.US).apply { isLenient = false }
+        }
 
     fun price(value: Double?): String =
         if (value == null) NA else String.format(Locale.US, "%.2f", value)
@@ -61,27 +78,34 @@ object FormatUtils {
     /** Full date: "25 Nov 2026". Returns [NA] when null/unparseable. */
     fun dateFull(raw: String?): String {
         val d = parseDate(raw) ?: return NA
-        return SimpleDateFormat("dd MMM yyyy", Locale.US).format(d)
+        return dateFull(d)
     }
+
+    /** Full date for an already parsed value, so callers avoid a second parse. */
+    fun dateFull(date: Date): String = formatter("dd MMM yyyy").format(date)
 
     /** Short date for table rows: "01 Sep". Returns [NA] when null/unparseable. */
     fun dateShort(raw: String?): String {
         val d = parseDate(raw) ?: return NA
-        return SimpleDateFormat("dd MMM", Locale.US).format(d)
+        return formatter("dd MMM").format(d)
     }
 
     fun parseDate(raw: String?): Date? {
         if (raw.isNullOrBlank()) return null
+        val cache = parsedDates.get()!!
+        if (cache.containsKey(raw)) return cache[raw]
+        if (cache.size >= PARSE_CACHE_MAX) cache.clear()
+        var parsed: Date? = null
         for (pattern in ISO_PATTERNS) {
             try {
-                val sdf = SimpleDateFormat(pattern, Locale.US)
-                sdf.isLenient = false
-                return sdf.parse(raw)
+                parsed = formatter(pattern).parse(raw)
+                break
             } catch (_: ParseException) {
                 // try next pattern
             }
         }
-        return null
+        cache[raw] = parsed
+        return parsed
     }
 
     /** "UPCOMING" -> "Upcoming", "OPEN_FOR_BOOK_BUILDING" -> "Open For Book Building". */

@@ -123,7 +123,7 @@ class SentimentRepositoryImpl(
             val response = apiService.getSentimentHistory(symbol, period, limit)
             if (response.isSuccessful && response.body() != null) {
                 val body = response.body()!!
-                if (body.data.isNotEmpty()) {
+                if (!body.data.isNullOrEmpty()) {
                     return@withContext Result.success(SentimentDtoMapper.mapSentimentHistory(body))
                 }
             }
@@ -191,7 +191,7 @@ class SentimentRepositoryImpl(
             val response = apiService.getSentimentNews(symbol, page, limit, sentiment)
             if (response.isSuccessful && response.body() != null) {
                 val body = response.body()!!
-                if (body.items.isNotEmpty()) {
+                if (!body.items.isNullOrEmpty()) {
                     return@withContext Result.success(SentimentDtoMapper.mapSentimentNewsPage(body))
                 }
             }

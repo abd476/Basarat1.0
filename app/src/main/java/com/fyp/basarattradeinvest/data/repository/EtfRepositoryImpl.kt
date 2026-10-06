@@ -3,11 +3,11 @@ package com.fyp.basarattradeinvest.data.repository
 import com.fyp.basarattradeinvest.core.network.NetworkErrorParser
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
 import com.fyp.basarattradeinvest.data.remote.api.EtfApiService
-import com.fyp.basarattradeinvest.domain.model.EtfHistoryEntry
-import com.fyp.basarattradeinvest.domain.model.EtfItem
-import com.fyp.basarattradeinvest.domain.model.EtfPerformance
-import com.fyp.basarattradeinvest.domain.model.EtfsResult
-import com.fyp.basarattradeinvest.domain.model.toDomain
+import com.fyp.basarattradeinvest.domain.model.etf.EtfHistoryEntry
+import com.fyp.basarattradeinvest.domain.model.etf.EtfItem
+import com.fyp.basarattradeinvest.domain.model.etf.EtfPerformance
+import com.fyp.basarattradeinvest.domain.model.etf.EtfsResult
+import com.fyp.basarattradeinvest.domain.model.etf.toDomain
 import com.fyp.basarattradeinvest.domain.repository.EtfRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers

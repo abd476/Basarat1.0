@@ -1,9 +1,9 @@
 package com.fyp.basarattradeinvest.domain.repository
 
-import com.fyp.basarattradeinvest.domain.model.EtfHistoryEntry
-import com.fyp.basarattradeinvest.domain.model.EtfItem
-import com.fyp.basarattradeinvest.domain.model.EtfPerformance
-import com.fyp.basarattradeinvest.domain.model.EtfsResult
+import com.fyp.basarattradeinvest.domain.model.etf.EtfHistoryEntry
+import com.fyp.basarattradeinvest.domain.model.etf.EtfItem
+import com.fyp.basarattradeinvest.domain.model.etf.EtfPerformance
+import com.fyp.basarattradeinvest.domain.model.etf.EtfsResult
 
 interface EtfRepository {
     suspend fun getEtfs(): Result<EtfsResult>

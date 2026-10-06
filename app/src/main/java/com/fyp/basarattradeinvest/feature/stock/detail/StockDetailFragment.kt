@@ -19,9 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentStockDetailBinding
-import com.fyp.basarattradeinvest.domain.model.CandleEntry
-import com.fyp.basarattradeinvest.domain.model.StockDetail
-import com.fyp.basarattradeinvest.domain.model.StockTrade
+import com.fyp.basarattradeinvest.domain.model.market.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.news.NewsArticle
+import com.fyp.basarattradeinvest.domain.model.stock.StockDetail
+import com.fyp.basarattradeinvest.domain.model.stock.StockTrade
 import com.fyp.basarattradeinvest.feature.stock.detail.adapter.TradeAdapter
 import com.fyp.basarattradeinvest.data.repository.NewsRepositoryImpl
 import com.fyp.basarattradeinvest.feature.news.adapter.NewsArticleAdapter
@@ -52,6 +53,7 @@ class StockDetailFragment : Fragment() {
     private var volumeChart: BarChart? = null
     private var currentSymbol: String = "SARCO"
     private var lastRenderedSuccess: StockDetailUiState.Success? = null
+    private val stockNewsBySymbol = HashMap<String, List<NewsArticle>>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -628,16 +630,24 @@ class StockDetailFragment : Fragment() {
         binding.containerTabContent.addView(rv)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            val result = NewsRepositoryImpl().getStockNews(symbol = sym, limit = 10)
+            // Tab taps rebind this section, so reuse the list already fetched for this symbol
+            // instead of re-requesting it each time the user returns to the News tab.
+            val cached = stockNewsBySymbol[sym]
+            val result = if (cached != null) {
+                Result.success(cached)
+            } else {
+                NewsRepositoryImpl().getStockNews(symbol = sym, limit = 10)
+                    .map { page -> page.articles.also { stockNewsBySymbol[sym] = it } }
+            }
             result.fold(
-                onSuccess = { page ->
-                    if (page.articles.isNotEmpty()) {
-                        stockNewsAdapter.submitList(page.articles)
+                onSuccess = { articles ->
+                    if (articles.isNotEmpty()) {
+                        stockNewsAdapter.submitList(articles)
                     } else {
                         val emptyTv = TextView(requireContext()).apply {
                             text = "No recent news articles found for $sym"
+                            setTextAppearance(requireContext(), R.style.TextAppearance_Basarat_Body_Small)
                             setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_secondary))
-                            textSize = 13f
                             setPadding(16, 32, 16, 32)
                         }
                         binding.containerTabContent.removeAllViews()
@@ -647,8 +657,8 @@ class StockDetailFragment : Fragment() {
                 onFailure = {
                     val errorTv = TextView(requireContext()).apply {
                         text = "Unable to load news for $sym"
+                        setTextAppearance(requireContext(), R.style.TextAppearance_Basarat_Body_Small)
                         setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_secondary))
-                        textSize = 13f
                         setPadding(16, 32, 16, 32)
                     }
                     binding.containerTabContent.removeAllViews()
@@ -690,8 +700,8 @@ class StockDetailFragment : Fragment() {
         val labelTv = TextView(requireContext()).apply {
             layoutParams = android.widget.LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
             text = label
+            setTextAppearance(requireContext(), R.style.TextAppearance_Basarat_Body_Small)
             setTextColor(ContextCompat.getColor(context, R.color.color_text_secondary))
-            textSize = 13f
         }
 
         val valueTv = TextView(requireContext()).apply {
@@ -700,9 +710,7 @@ class StockDetailFragment : Fragment() {
                 android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
             )
             text = value
-            setTextColor(ContextCompat.getColor(context, R.color.color_text_primary))
-            textSize = 13f
-            setTypeface(null, android.graphics.Typeface.BOLD)
+            setTextAppearance(requireContext(), R.style.TextAppearance_Basarat_Number_Body_Small_Strong)
         }
 
         if (label.contains("Shariah", ignoreCase = true)) {

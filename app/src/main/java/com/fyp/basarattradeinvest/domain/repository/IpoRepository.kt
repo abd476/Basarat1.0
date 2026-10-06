@@ -1,8 +1,8 @@
 package com.fyp.basarattradeinvest.domain.repository
 
-import com.fyp.basarattradeinvest.domain.model.IpoCalendarEvent
-import com.fyp.basarattradeinvest.domain.model.IpoItem
-import com.fyp.basarattradeinvest.domain.model.IpoPerformanceSummary
+import com.fyp.basarattradeinvest.domain.model.ipo.IpoCalendarEvent
+import com.fyp.basarattradeinvest.domain.model.ipo.IpoItem
+import com.fyp.basarattradeinvest.domain.model.ipo.IpoPerformanceSummary
 
 interface IpoRepository {
     suspend fun getIpos(): Result<List<IpoItem>>

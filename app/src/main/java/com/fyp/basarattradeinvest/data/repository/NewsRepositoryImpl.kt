@@ -4,11 +4,11 @@ import com.fyp.basarattradeinvest.core.network.NetworkErrorParser
 import com.fyp.basarattradeinvest.data.mapper.NewsDtoMapper
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
 import com.fyp.basarattradeinvest.data.remote.api.NewsApiService
-import com.fyp.basarattradeinvest.domain.model.CorporateEvent
-import com.fyp.basarattradeinvest.domain.model.NewsArticle
-import com.fyp.basarattradeinvest.domain.model.NewsFeedPage
-import com.fyp.basarattradeinvest.domain.model.RefreshResult
-import com.fyp.basarattradeinvest.domain.model.RefreshStatus
+import com.fyp.basarattradeinvest.domain.model.market.CorporateEvent
+import com.fyp.basarattradeinvest.domain.model.news.NewsArticle
+import com.fyp.basarattradeinvest.domain.model.news.NewsFeedPage
+import com.fyp.basarattradeinvest.domain.model.news.RefreshResult
+import com.fyp.basarattradeinvest.domain.model.news.RefreshStatus
 import com.fyp.basarattradeinvest.domain.repository.NewsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

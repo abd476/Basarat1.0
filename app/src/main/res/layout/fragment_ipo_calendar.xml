@@ -13,13 +13,13 @@
 
         <TextView
             android:id="@+id/tv_calendar_summary"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="16dp"
             android:paddingTop="14dp"
             android:paddingBottom="4dp"
             android:textColor="@color/color_text_secondary"
-            android:textSize="12sp"
             android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="10 upcoming milestones"
@@ -63,11 +63,11 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="No upcoming IPO events"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="14sp" />
+                android:textColor="@color/color_text_secondary" />
         </LinearLayout>
 
         <LinearLayout
@@ -85,11 +85,11 @@
 
             <TextView
                 android:id="@+id/tv_error_message"
+                android:textAppearance="@style/TextAppearance.Basarat.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textColor="@color/color_text_secondary"
-                android:textSize="14sp"
                 tools:text="Unable to load calendar" />
 
             <Button

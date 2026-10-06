@@ -13,7 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentIpoDirectoryBinding
-import com.fyp.basarattradeinvest.domain.model.IpoItem
+import com.fyp.basarattradeinvest.domain.model.ipo.IpoItem
 import com.fyp.basarattradeinvest.feature.ipo.adapter.IpoListAdapter
 import kotlinx.coroutines.launch
 

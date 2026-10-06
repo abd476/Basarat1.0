@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.data.repository.NotificationsRepositoryImpl
 import com.fyp.basarattradeinvest.core.notifications.NotificationBadgeState
-import com.fyp.basarattradeinvest.domain.model.InAppNotification
+import com.fyp.basarattradeinvest.domain.model.alerts.InAppNotification
 import com.fyp.basarattradeinvest.domain.usecase.notifications.GetNotificationsUseCase
 import com.fyp.basarattradeinvest.domain.usecase.notifications.MarkNotificationReadUseCase
 import kotlinx.coroutines.flow.MutableStateFlow

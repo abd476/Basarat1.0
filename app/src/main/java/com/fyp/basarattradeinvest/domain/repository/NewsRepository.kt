@@ -1,10 +1,10 @@
 package com.fyp.basarattradeinvest.domain.repository
 
-import com.fyp.basarattradeinvest.domain.model.CorporateEvent
-import com.fyp.basarattradeinvest.domain.model.NewsArticle
-import com.fyp.basarattradeinvest.domain.model.NewsFeedPage
-import com.fyp.basarattradeinvest.domain.model.RefreshResult
-import com.fyp.basarattradeinvest.domain.model.RefreshStatus
+import com.fyp.basarattradeinvest.domain.model.market.CorporateEvent
+import com.fyp.basarattradeinvest.domain.model.news.NewsArticle
+import com.fyp.basarattradeinvest.domain.model.news.NewsFeedPage
+import com.fyp.basarattradeinvest.domain.model.news.RefreshResult
+import com.fyp.basarattradeinvest.domain.model.news.RefreshStatus
 
 interface NewsRepository {
     suspend fun getNewsFeed(

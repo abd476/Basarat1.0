@@ -8,8 +8,8 @@ import com.fyp.basarattradeinvest.data.remote.dto.user.InvestmentProfileOptionsD
 import com.fyp.basarattradeinvest.data.remote.dto.user.UpdateNotificationPrefsRequestDto
 import com.fyp.basarattradeinvest.data.remote.dto.user.UpdateProfileRequestDto
 import com.fyp.basarattradeinvest.data.remote.dto.user.UserProfileResponseDto
-import com.fyp.basarattradeinvest.domain.model.InvestmentProfileOptions
-import com.fyp.basarattradeinvest.domain.model.UserProfile
+import com.fyp.basarattradeinvest.domain.model.auth.InvestmentProfileOptions
+import com.fyp.basarattradeinvest.domain.model.auth.UserProfile
 import com.fyp.basarattradeinvest.domain.repository.UsersRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

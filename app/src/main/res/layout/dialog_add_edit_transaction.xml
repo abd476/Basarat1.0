@@ -9,21 +9,20 @@
 
     <TextView
         android:id="@+id/tv_dialog_title"
+        android:textAppearance="@style/TextAppearance.Basarat.Subheading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Record Transaction"
-        android:textColor="@color/color_text_primary"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textColor="@color/color_text_primary" />
 
     <TextView
         android:id="@+id/tv_dialog_subtitle"
+        android:textAppearance="@style/TextAppearance.Basarat.Meta"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
         android:text="Add a BUY or SELL order to your portfolio."
-        android:textColor="@color/color_text_secondary"
-        android:textSize="12sp" />
+        android:textColor="@color/color_text_secondary" />
 
     <!-- Type Toggle: BUY / SELL -->
     <LinearLayout
@@ -104,11 +103,11 @@
             android:orientation="vertical">
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Popular PSX Stocks:"
-                android:textColor="@color/color_text_tertiary"
-                android:textSize="11sp" />
+                android:textColor="@color/color_text_tertiary" />
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
@@ -124,18 +123,18 @@
 
                     <TextView
                         android:id="@+id/chip_luck"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="26dp"
                         android:background="@drawable/bg_timeframe_container"
                         android:gravity="center"
                         android:paddingHorizontal="10dp"
                         android:text="LUCK"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_primary" />
 
                     <TextView
                         android:id="@+id/chip_ogdc"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="26dp"
                         android:layout_marginStart="6dp"
@@ -143,12 +142,11 @@
                         android:gravity="center"
                         android:paddingHorizontal="10dp"
                         android:text="OGDC"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_primary" />
 
                     <TextView
                         android:id="@+id/chip_sys"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="26dp"
                         android:layout_marginStart="6dp"
@@ -156,12 +154,11 @@
                         android:gravity="center"
                         android:paddingHorizontal="10dp"
                         android:text="SYS"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_primary" />
 
                     <TextView
                         android:id="@+id/chip_hubc"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="26dp"
                         android:layout_marginStart="6dp"
@@ -169,12 +166,11 @@
                         android:gravity="center"
                         android:paddingHorizontal="10dp"
                         android:text="HUBC"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_primary" />
 
                     <TextView
                         android:id="@+id/chip_engro"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="26dp"
                         android:layout_marginStart="6dp"
@@ -182,12 +178,11 @@
                         android:gravity="center"
                         android:paddingHorizontal="10dp"
                         android:text="ENGRO"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_primary" />
 
                     <TextView
                         android:id="@+id/chip_mebl"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="26dp"
                         android:layout_marginStart="6dp"
@@ -195,9 +190,7 @@
                         android:gravity="center"
                         android:paddingHorizontal="10dp"
                         android:text="MEBL"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_text_primary" />
 
                 </LinearLayout>
             </HorizontalScrollView>
@@ -240,12 +233,11 @@
 
                     <TextView
                         android:id="@+id/tv_selected_letter"
+                        android:textAppearance="@style/TextAppearance.Basarat.Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="L"
-                        android:textColor="@color/color_positive"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_positive" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -263,15 +255,15 @@
 
                         <TextView
                             android:id="@+id/tv_selected_symbol"
+                            android:textAppearance="@style/TextAppearance.Basarat.Title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="LUCK"
-                            android:textColor="@color/color_text_primary"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
+                            android:textColor="@color/color_text_primary" />
 
                         <TextView
                             android:id="@+id/tv_selected_sector"
+                            android:textAppearance="@style/TextAppearance.Basarat.Micro"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
@@ -279,30 +271,28 @@
                             android:paddingHorizontal="6dp"
                             android:paddingVertical="1dp"
                             android:text="Materials"
-                            android:textColor="@color/color_text_secondary"
-                            android:textSize="10sp" />
+                            android:textColor="@color/color_text_secondary" />
                     </LinearLayout>
 
                     <TextView
                         android:id="@+id/tv_selected_name"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:text="Lucky Cement Limited"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="12sp" />
+                        android:textColor="@color/color_text_secondary" />
 
                     <TextView
                         android:id="@+id/tv_selected_ltp"
+                        android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text="Market Price: PKR 912.00"
-                        android:textColor="@color/color_positive"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_positive" />
                 </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton
@@ -383,17 +373,18 @@
 
         <TextView
             android:id="@+id/chip_qty_10"
+            android:textAppearance="@style/TextAppearance.Basarat.Caption"
             android:layout_width="wrap_content"
             android:layout_height="24dp"
             android:background="@drawable/bg_timeframe_container"
             android:gravity="center"
             android:paddingHorizontal="10dp"
             android:text="+10"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="11sp" />
+            android:textColor="@color/color_text_secondary" />
 
         <TextView
             android:id="@+id/chip_qty_50"
+            android:textAppearance="@style/TextAppearance.Basarat.Caption"
             android:layout_width="wrap_content"
             android:layout_height="24dp"
             android:layout_marginStart="6dp"
@@ -401,11 +392,11 @@
             android:gravity="center"
             android:paddingHorizontal="10dp"
             android:text="+50"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="11sp" />
+            android:textColor="@color/color_text_secondary" />
 
         <TextView
             android:id="@+id/chip_qty_100"
+            android:textAppearance="@style/TextAppearance.Basarat.Caption"
             android:layout_width="wrap_content"
             android:layout_height="24dp"
             android:layout_marginStart="6dp"
@@ -413,11 +404,11 @@
             android:gravity="center"
             android:paddingHorizontal="10dp"
             android:text="+100"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="11sp" />
+            android:textColor="@color/color_text_secondary" />
 
         <TextView
             android:id="@+id/chip_qty_500"
+            android:textAppearance="@style/TextAppearance.Basarat.Caption"
             android:layout_width="wrap_content"
             android:layout_height="24dp"
             android:layout_marginStart="6dp"
@@ -425,8 +416,7 @@
             android:gravity="center"
             android:paddingHorizontal="10dp"
             android:text="+500"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="11sp" />
+            android:textColor="@color/color_text_secondary" />
 
     </LinearLayout>
 
@@ -450,21 +440,20 @@
             android:paddingVertical="8dp">
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Meta"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Estimated Total Cost:"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp" />
+                android:textColor="@color/color_text_secondary" />
 
             <TextView
                 android:id="@+id/tv_estimated_total"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="PKR 0.00"
-                android:textColor="@color/color_text_primary"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -522,11 +511,11 @@
 
     <TextView
         android:id="@+id/tv_form_error"
+        android:textAppearance="@style/TextAppearance.Basarat.Meta"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:textColor="@color/color_negative"
-        android:textSize="12sp"
         android:visibility="gone" />
 
     <!-- Action Buttons -->

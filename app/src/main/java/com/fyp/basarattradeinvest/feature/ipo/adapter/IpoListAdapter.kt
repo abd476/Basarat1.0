@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.ItemIpoCardBinding
-import com.fyp.basarattradeinvest.domain.model.IpoItem
+import com.fyp.basarattradeinvest.domain.model.ipo.IpoItem
 import com.fyp.basarattradeinvest.feature.common.FormatUtils
 
 class IpoListAdapter(
@@ -61,7 +61,7 @@ class IpoListAdapter(
             } else {
                 binding.tvIpoListingDate.visibility = View.VISIBLE
                 val prefix = if (item.status == "LISTED") "Listed" else "Listing"
-                binding.tvIpoListingDate.text = "$prefix ${FormatUtils.dateFull(item.listingDate)}"
+                binding.tvIpoListingDate.text = "$prefix ${FormatUtils.dateFull(date)}"
             }
 
             binding.root.setOnClickListener { onItemClick(item) }

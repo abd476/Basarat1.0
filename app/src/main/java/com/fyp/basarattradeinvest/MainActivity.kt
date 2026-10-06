@@ -4,10 +4,16 @@ import android.Manifest
 import android.os.Bundle
 import android.os.Build
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -81,6 +87,8 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigation.setupWithNavController(navController)
 
+        setupDrawer(navController)
+
         // Show BottomNavigationView only on main app destinations, hide on Splash, Onboarding & Auth screens
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.nav_home) {
@@ -126,6 +134,101 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private var drawerNotificationsBadge: TextView? = null
+
+    private fun setupDrawer(navController: androidx.navigation.NavController) {
+        // Keep the drawer locked closed so the left-edge swipe does not open it on every
+        // screen; it is opened only from the Home screen's menu button via openDrawer().
+        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        binding.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+            override fun onDrawerOpened(drawerView: View) {
+                binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                binding.navView.getHeaderView(0)?.let(::refreshDrawerHeader)
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+                binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            }
+        })
+
+        setupDrawerHeader(navController)
+        setupDrawerMenu(navController)
+        observeDrawerBadge()
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (binding.navView.menu.findItem(destination.id) != null) {
+                binding.navView.setCheckedItem(destination.id)
+            }
+        }
+    }
+
+    private fun setupDrawerHeader(navController: androidx.navigation.NavController) {
+        val header = binding.navView.getHeaderView(0) ?: return
+        // The drawer panel spans the full screen height, so its wordmark would sit
+        // under the status bar without this inset.
+        val headerBasePaddingTop = header.paddingTop
+        ViewCompat.setOnApplyWindowInsetsListener(header) { view, insets ->
+            val statusBarTop = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            view.updatePadding(top = headerBasePaddingTop + statusBarTop)
+            insets
+        }
+        header.findViewById<View>(R.id.btn_drawer_close).setOnClickListener {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+        }
+        header.findViewById<View>(R.id.layout_drawer_profile).setOnClickListener {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            runCatching { navController.navigate(R.id.nav_you) }
+        }
+        refreshDrawerHeader(header)
+    }
+
+    private fun refreshDrawerHeader(header: View) {
+        val auth = SessionManager.authState.value as? AuthState.Authenticated
+        header.findViewById<TextView>(R.id.tv_drawer_user_name).text =
+            auth?.userName?.takeIf { it.isNotBlank() } ?: "Investor"
+        header.findViewById<TextView>(R.id.tv_drawer_user_email).text = auth?.userEmail.orEmpty()
+    }
+
+    private fun setupDrawerMenu(navController: androidx.navigation.NavController) {
+        val menu = binding.navView.menu
+        for (i in 0 until menu.size()) {
+            val item = menu.getItem(i)
+            val action = layoutInflater.inflate(R.layout.drawer_item_action, binding.navView, false)
+            item.actionView = action
+            if (item.itemId == R.id.notificationsFragment) {
+                drawerNotificationsBadge = action.findViewById(R.id.tv_drawer_badge)
+            }
+        }
+        binding.navView.setNavigationItemSelectedListener { item ->
+            if (item.itemId == R.id.drawer_logout) {
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
+                SessionManager.clearSession()
+                return@setNavigationItemSelectedListener true
+            }
+            val handled = runCatching { navController.navigate(item.itemId) }.isSuccess
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            handled
+        }
+    }
+
+    private fun observeDrawerBadge() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                NotificationBadgeState.unreadCount.collect { count ->
+                    val badge = drawerNotificationsBadge ?: return@collect
+                    badge.visibility = if (count > 0) View.VISIBLE else View.GONE
+                    badge.text = if (count > 99) "99+" else count.toString()
+                }
+            }
+        }
+    }
+
+    /** Opens the navigation drawer. Called from the Home screen's menu button. */
+    fun openDrawer() {
+        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+        binding.drawerLayout.openDrawer(GravityCompat.START)
     }
 
     private fun observeSession() {

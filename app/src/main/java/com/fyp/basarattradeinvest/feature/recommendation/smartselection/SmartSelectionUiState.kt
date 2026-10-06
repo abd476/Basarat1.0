@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.feature.recommendation.smartselection
 
-import com.fyp.basarattradeinvest.domain.model.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.market.CandleEntry
 import com.fyp.basarattradeinvest.domain.model.recommendations.StockRecommendation
 import com.fyp.basarattradeinvest.domain.model.recommendations.TargetStop
 
@@ -20,5 +20,19 @@ data class SmartSelectionSetup(
     val targetStop: TargetStop?,
     val currentPrice: Double?,
     val targetPrice: Double?,
-    val stopLoss: Double?
+    val stopLoss: Double?,
+    val breakout: BreakoutLevels? = null
+)
+
+/**
+ * Breakout levels measured from the candles already fetched for this stock: the prior period
+ * high/low excluding the newest bar, so the trigger level is never the bar being tested.
+ */
+data class BreakoutLevels(
+    val resistance: Double,
+    val support: Double,
+    val lastClose: Double,
+    val distanceToBreakoutPct: Double,
+    val volumeRatio: Double,
+    val isConfirmed: Boolean
 )

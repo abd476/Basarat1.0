@@ -1,10 +1,10 @@
 package com.fyp.basarattradeinvest.feature.stock.detail
 
-import com.fyp.basarattradeinvest.domain.model.CandleEntry
-import com.fyp.basarattradeinvest.domain.model.StockAnalysis
-import com.fyp.basarattradeinvest.domain.model.StockDetail
-import com.fyp.basarattradeinvest.domain.model.StockForecast
-import com.fyp.basarattradeinvest.domain.model.StockTrade
+import com.fyp.basarattradeinvest.domain.model.market.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.stock.StockAnalysis
+import com.fyp.basarattradeinvest.domain.model.stock.StockDetail
+import com.fyp.basarattradeinvest.domain.model.stock.StockForecast
+import com.fyp.basarattradeinvest.domain.model.stock.StockTrade
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 
 sealed interface StockDetailUiState {

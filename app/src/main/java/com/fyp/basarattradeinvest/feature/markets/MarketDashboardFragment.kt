@@ -1,5 +1,6 @@
 package com.fyp.basarattradeinvest.feature.markets
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,11 +19,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.core.notifications.NotificationBadgeState
 import com.fyp.basarattradeinvest.databinding.FragmentMarketDashboardBinding
-import com.fyp.basarattradeinvest.domain.model.IndexConstituent
-import com.fyp.basarattradeinvest.domain.model.MarketIndex
-import com.fyp.basarattradeinvest.domain.model.MarketOverview
-import com.fyp.basarattradeinvest.domain.model.MarketSentiment
-import com.fyp.basarattradeinvest.domain.model.SymbolFilterType
+import com.fyp.basarattradeinvest.domain.model.market.IndexConstituent
+import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
+import com.fyp.basarattradeinvest.domain.model.market.MarketOverview
+import com.fyp.basarattradeinvest.domain.model.sentiment.MarketSentiment
+import com.fyp.basarattradeinvest.domain.model.stock.SymbolFilterType
+import com.fyp.basarattradeinvest.domain.model.live.MarketSessionStatus
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 import com.fyp.basarattradeinvest.feature.markets.adapter.ConstituentAdapter
 import com.fyp.basarattradeinvest.feature.markets.adapter.MarketStockAdapter
@@ -36,6 +38,8 @@ class MarketDashboardFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: MarketDashboardViewModel by activityViewModels()
+
+    private var lastRenderedSuccess: MarketDashboardUiState.Success? = null
 
     private val stockAdapter = MarketStockAdapter { stock ->
         val bundle = Bundle().apply { putString("symbol", stock.symbol) }
@@ -201,23 +205,60 @@ class MarketDashboardFragment : Fragment() {
                         }
                         is MarketDashboardUiState.Success -> {
                             binding.swipeRefreshLayout.isRefreshing = false
-                            binding.tvLastUpdated.text = "• Updated ${state.lastUpdated}"
-                            bindLiveConnection(state)
-                            bindIndices(state.indices)
-                            bindOverview(state.overview)
-                            bindSentiment(state.sentiment)
-                            sectorAdapter.submitList(state.sectors.toList())
-                            bindFilterTabs(state.selectedFilter)
-                            stockAdapter.submitList(state.topSymbols.toList())
-                            bindConstituents(state.constituents, state.selectedConstituentIndex, state.isConstituentsLoading)
+                            val previous = lastRenderedSuccess
+                            if (previous?.lastUpdated != state.lastUpdated) {
+                                binding.tvLastUpdated.text = "• Updated ${state.lastUpdated}"
+                            }
+                            val dataIsStale = state.liveQuotes.values.any { it.isStale }
+                            if (previous == null || previous.wsConnectionState != state.wsConnectionState ||
+                                previous.liveQuotes.values.any { it.isStale } != dataIsStale
+                            ) {
+                                bindLiveConnection(state, dataIsStale)
+                            }
+                            if (previous == null || previous.marketSession != state.marketSession) {
+                                bindMarketSession(state.marketSession)
+                            }
+                            if (previous == null || previous.indices != state.indices) {
+                                bindIndices(state.indices)
+                            }
+                            if (previous == null || previous.overview != state.overview) {
+                                bindOverview(state.overview)
+                            }
+                            if (previous == null || previous.sentiment != state.sentiment) {
+                                bindSentiment(state.sentiment)
+                            }
+                            if (previous == null || previous.sectors != state.sectors) {
+                                sectorAdapter.submitList(state.sectors.toList())
+                            }
+                            if (previous?.selectedFilter != state.selectedFilter) {
+                                bindFilterTabs(state.selectedFilter)
+                            }
+                            if (previous == null || previous.topSymbols != state.topSymbols) {
+                                stockAdapter.submitList(state.topSymbols.toList())
+                            }
+                            if (previous == null || previous.constituents != state.constituents ||
+                                previous.selectedConstituentIndex != state.selectedConstituentIndex ||
+                                previous.isConstituentsLoading != state.isConstituentsLoading
+                            ) {
+                                bindConstituents(
+                                    state.constituents,
+                                    state.selectedConstituentIndex,
+                                    state.isConstituentsLoading
+                                )
+                            }
+                            lastRenderedSuccess = state
                         }
                         is MarketDashboardUiState.Empty -> {
                             binding.swipeRefreshLayout.isRefreshing = false
+                            lastRenderedSuccess = null
+                            bindMarketSession(null)
                             stockAdapter.submitList(emptyList())
                             constituentAdapter.submitList(emptyList())
                         }
                         is MarketDashboardUiState.Error -> {
                             binding.swipeRefreshLayout.isRefreshing = false
+                            lastRenderedSuccess = null
+                            bindMarketSession(null)
                             Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                         }
                     }
@@ -226,8 +267,21 @@ class MarketDashboardFragment : Fragment() {
         }
     }
 
-    private fun bindLiveConnection(state: MarketDashboardUiState.Success) {
-        if (state.liveQuotes.values.any { it.isStale }) {
+    private fun bindMarketSession(session: MarketSessionStatus?) {
+        binding.dotMarketLive.visibility = if (session == null) View.GONE else View.VISIBLE
+        binding.tvMarketStatus.visibility = if (session == null) View.GONE else View.VISIBLE
+        if (session == null) return
+        val color = ContextCompat.getColor(
+            requireContext(),
+            if (session.isOpen) R.color.color_positive else R.color.color_neutral
+        )
+        binding.tvMarketStatus.text = session.label
+        binding.tvMarketStatus.setTextColor(color)
+        binding.dotMarketLive.backgroundTintList = ColorStateList.valueOf(color)
+    }
+
+    private fun bindLiveConnection(state: MarketDashboardUiState.Success, dataIsStale: Boolean) {
+        if (dataIsStale) {
             binding.tvQuoteBannerText.text = "Market data delayed"
             return
         }
@@ -235,11 +289,7 @@ class MarketDashboardFragment : Fragment() {
             WsConnectionState.Live -> "Live PSX quote stream connected"
             is WsConnectionState.Connecting -> "Connecting to live PSX quotes"
             is WsConnectionState.Reconnecting -> "Reconnecting to live PSX quotes"
-            is WsConnectionState.Delayed -> if (state.liveQuotes.values.any { it.isStale }) {
-                "Market data delayed"
-            } else {
-                "Live quotes reconnecting · ${connection.nextRetryInSeconds}s"
-            }
+            is WsConnectionState.Delayed -> "Live quotes reconnecting · ${connection.nextRetryInSeconds}s"
             WsConnectionState.Idle, WsConnectionState.Closed -> "Live PSX quotes disconnected"
         }
     }
@@ -408,6 +458,7 @@ class MarketDashboardFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        lastRenderedSuccess = null
         _binding = null
     }
 }

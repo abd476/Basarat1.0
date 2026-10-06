@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.domain.repository
 
-import com.fyp.basarattradeinvest.domain.model.NotificationFeed
+import com.fyp.basarattradeinvest.domain.model.alerts.NotificationFeed
 
 interface NotificationsRepository {
 

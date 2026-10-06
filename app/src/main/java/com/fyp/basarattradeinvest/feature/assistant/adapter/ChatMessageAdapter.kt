@@ -84,14 +84,15 @@ class ChatMessageAdapter : ListAdapter<ChatMessageItem, RecyclerView.ViewHolder>
 /**
  * Format ISO timestamp to a user-friendly time string.
  */
+private val ISO_UTC_PARSER = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.US).apply {
+    timeZone = java.util.TimeZone.getTimeZone("UTC")
+}
+private val TIME_OF_DAY_FORMATTER = java.text.SimpleDateFormat("hh:mm a", java.util.Locale.US)
+
 private fun formatTimestamp(isoTimestamp: String): String {
     return try {
-        val parser = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.US)
-        parser.timeZone = java.util.TimeZone.getTimeZone("UTC")
-        val date = parser.parse(isoTimestamp.take(19)) ?: return ""
-        val formatter = java.text.SimpleDateFormat("hh:mm a", java.util.Locale.US)
-        formatter.timeZone = java.util.TimeZone.getDefault()
-        formatter.format(date)
+        val date = ISO_UTC_PARSER.parse(isoTimestamp.take(19)) ?: return ""
+        TIME_OF_DAY_FORMATTER.format(date)
     } catch (e: Exception) {
         ""
     }

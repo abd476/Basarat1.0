@@ -4,7 +4,7 @@ import com.google.gson.JsonElement
 import com.google.gson.annotations.SerializedName
 
 data class FundamentalsResponseDto(
-    @SerializedName("symbol") val symbol: String,
+    @SerializedName("symbol") val symbol: String? = null,
     @SerializedName("data_status") val dataStatus: String? = null,
     @SerializedName("data_message") val dataMessage: String? = null,
     @SerializedName("company_profile") val companyProfile: CompanyProfileDto? = null,

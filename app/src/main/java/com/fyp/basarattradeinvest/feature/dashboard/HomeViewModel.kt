@@ -5,24 +5,27 @@ import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.core.session.AuthState
 import com.fyp.basarattradeinvest.core.session.SessionManager
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
-import com.fyp.basarattradeinvest.data.remote.api.NewsApiService
 import com.fyp.basarattradeinvest.data.repository.AlertsRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.MarketRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.NewsRepositoryImpl
+import com.fyp.basarattradeinvest.data.repository.StockRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.UsersRepositoryImpl
-import com.fyp.basarattradeinvest.domain.model.MarketIndex
-import com.fyp.basarattradeinvest.domain.model.MarketStock
+import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
+import com.fyp.basarattradeinvest.domain.model.market.MarketStock
 import com.fyp.basarattradeinvest.domain.model.live.LiveQuote
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 import com.fyp.basarattradeinvest.domain.repository.AlertsRepository
 import com.fyp.basarattradeinvest.domain.repository.LiveMarketRepository
 import com.fyp.basarattradeinvest.domain.repository.MarketRepository
 import com.fyp.basarattradeinvest.domain.repository.NewsRepository
+import com.fyp.basarattradeinvest.domain.repository.StockRepository
 import com.fyp.basarattradeinvest.domain.repository.UsersRepository
 import com.fyp.basarattradeinvest.domain.repository.WatchlistRepository
+import com.fyp.basarattradeinvest.domain.usecase.market.BuildBenchmarkTrendUseCase
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,9 +36,12 @@ class HomeViewModel(
     private val newsRepository: NewsRepository = NewsRepositoryImpl(),
     private val usersRepository: UsersRepository = UsersRepositoryImpl(),
     private val alertsRepository: AlertsRepository = AlertsRepositoryImpl(),
-    private val newsApiService: NewsApiService = NetworkClient.newsApiService,
     private val watchlistRepository: WatchlistRepository = NetworkClient.watchlistRepository,
     private val liveMarketRepository: LiveMarketRepository = NetworkClient.liveMarketRepository,
+    private val buildBenchmarkTrend: BuildBenchmarkTrendUseCase = BuildBenchmarkTrendUseCase(
+        marketRepository = marketRepository,
+        stockRepository = StockRepositoryImpl()
+    ),
     private val autoLoad: Boolean = true
 ) : ViewModel() {
 
@@ -44,6 +50,8 @@ class HomeViewModel(
 
     private var currentMoversTab: MoversTab = MoversTab.GAINERS
     private var currentTimeframe: String = "1D"
+    private var currentBenchmarkCode: String? = null
+    private var benchmarkTrendJob: Job? = null
     private var lastSuccessfulFetchAt: Long = 0L
     private val freshnessWindowMs = 5 * 60 * 1000L
     private var isDashboardLoading = false
@@ -52,42 +60,24 @@ class HomeViewModel(
     private var accountGeneration = 0
     private var currentAccountKey: String? = accountKeyForCurrentSession()
     private var dashboardLoadJob: Job? = null
+    private val pendingQuotes = mutableMapOf<String, LiveQuote>()
+    private var quoteFlushJob: Job? = null
+    private val pendingMutations = mutableListOf<Pair<Int, HomeUiState.Success.() -> HomeUiState.Success>>()
+    private var mutationFlushJob: Job? = null
 
     init {
-        // Collect live quote ticks and merge into current Success state
+        // Quote ticks arrive one per symbol, so a single snapshot would otherwise rebuild the
+        // watchlist and all three movers lists once per symbol. Accumulate and publish once
+        // per flush window instead.
         viewModelScope.launch {
             liveMarketRepository.quoteUpdates.collect { quote ->
-                val current = _uiState.value as? HomeUiState.Success ?: return@collect
-                val updated = current.liveQuotes.toMutableMap()
-                updated[quote.symbol.uppercase()] = quote
-                fun updateStocks(stocks: List<MarketStock>) = stocks.map { stock ->
-                    if (!stock.symbol.equals(quote.symbol, ignoreCase = true)) stock
-                    else stock.copy(
-                        price = quote.current ?: stock.price,
-                        change = quote.change ?: stock.change,
-                        changePercent = quote.changePct ?: stock.changePercent,
-                        volume = quote.volume?.toString() ?: stock.volume
-                    )
+                pendingQuotes[quote.symbol.uppercase()] = quote
+                if (quoteFlushJob?.isActive != true) {
+                    quoteFlushJob = viewModelScope.launch {
+                        delay(QUOTE_FLUSH_INTERVAL_MS)
+                        applyPendingQuotes()
+                    }
                 }
-                val watchlist = current.watchlist as? WatchlistUiState.Success
-                val updatedWatchlist = watchlist?.let { success ->
-                    WatchlistUiState.Success(success.watchlist.copy(items = success.watchlist.items.map { item ->
-                        if (!item.symbol.equals(quote.symbol, ignoreCase = true)) item
-                        else item.copy(
-                            currentPrice = quote.current ?: item.currentPrice,
-                            change = quote.change ?: item.change,
-                            changePercent = quote.changePct ?: item.changePercent,
-                            isStale = quote.isStale
-                        )
-                    }))
-                } ?: current.watchlist
-                _uiState.value = current.copy(
-                    liveQuotes = updated,
-                    watchlist = updatedWatchlist,
-                    topGainers = updateStocks(current.topGainers),
-                    topLosers = updateStocks(current.topLosers),
-                    volumeSpikes = updateStocks(current.volumeSpikes)
-                )
             }
         }
 
@@ -123,6 +113,12 @@ class HomeViewModel(
                 accountGeneration++
                 dashboardLoadJob?.cancel()
                 dashboardLoadJob = null
+                quoteFlushJob?.cancel()
+                quoteFlushJob = null
+                pendingQuotes.clear()
+                mutationFlushJob?.cancel()
+                mutationFlushJob = null
+                pendingMutations.clear()
                 isDashboardLoading = false
                 isWatchlistLoading = false
                 lastSuccessfulFetchAt = 0L
@@ -140,12 +136,51 @@ class HomeViewModel(
         }
     }
 
+    private fun applyPendingQuotes() {
+        quoteFlushJob = null
+        if (pendingQuotes.isEmpty()) return
+        val batch = pendingQuotes.toMap()
+        pendingQuotes.clear()
+        val current = _uiState.value as? HomeUiState.Success ?: return
+
+        fun updateStocks(stocks: List<MarketStock>) = stocks.map { stock ->
+            val quote = batch[stock.symbol.uppercase()] ?: return@map stock
+            stock.copy(
+                price = quote.current ?: stock.price,
+                change = quote.change ?: stock.change,
+                changePercent = quote.changePct ?: stock.changePercent,
+                volume = quote.volume?.toString() ?: stock.volume
+            )
+        }
+
+        val watchlist = current.watchlist as? WatchlistUiState.Success
+        val updatedWatchlist = watchlist?.let { success ->
+            WatchlistUiState.Success(
+                success.watchlist.copy(items = success.watchlist.items.map { item ->
+                    val quote = batch[item.symbol.uppercase()] ?: return@map item
+                    item.copy(
+                        currentPrice = quote.current ?: item.currentPrice,
+                        change = quote.change ?: item.change,
+                        changePercent = quote.changePct ?: item.changePercent,
+                        isStale = quote.isStale
+                    )
+                })
+            )
+        } ?: current.watchlist
+
+        _uiState.value = current.copy(
+            liveQuotes = current.liveQuotes.toMutableMap().apply { putAll(batch) },
+            watchlist = updatedWatchlist,
+            topGainers = updateStocks(current.topGainers),
+            topLosers = updateStocks(current.topLosers),
+            volumeSpikes = updateStocks(current.volumeSpikes)
+        )
+    }
+
     private fun currentSuccessState(): HomeUiState.Success {
         return (_uiState.value as? HomeUiState.Success)
             ?: HomeUiState.Success(
                 userName = "Investor",
-                marketStatus = "Loading market data...",
-                isMarketOpen = false,
                 selectedTimeframe = currentTimeframe,
                 selectedMoversTab = currentMoversTab,
                 liveQuotes = liveMarketRepository.quoteCache.value,
@@ -158,8 +193,27 @@ class HomeViewModel(
         update: HomeUiState.Success.() -> HomeUiState.Success
     ) {
         if (generation != accountGeneration) return
-        val current = currentSuccessState()
-        _uiState.value = update(current)
+        // The nine parallel loads each want to publish; queue them and write the state once per
+        // window so a dashboard load emits one state instead of nine fragment rebind passes.
+        pendingMutations.add(generation to update)
+        if (mutationFlushJob?.isActive != true) {
+            mutationFlushJob = viewModelScope.launch {
+                delay(PARTIAL_FLUSH_INTERVAL_MS)
+                flushPendingMutations()
+            }
+        }
+    }
+
+    private fun flushPendingMutations() {
+        mutationFlushJob = null
+        if (pendingMutations.isEmpty()) return
+        val mutations = pendingMutations.toList()
+        pendingMutations.clear()
+        val fresh = mutations.filter { it.first == accountGeneration }
+        // Writing an empty fold would replace Loading with a synthetic Success and hide the
+        // skeleton with no real data, so drop the batch entirely when the account changed.
+        if (fresh.isEmpty()) return
+        _uiState.value = fresh.fold(currentSuccessState()) { state, (_, update) -> state.update() }
     }
 
     private fun accountKeyForCurrentSession(): String? = accountKeyFor(SessionManager.authState.value)
@@ -230,6 +284,7 @@ class HomeViewModel(
         val shouldSkip = !forceLoad && stateAtStart is HomeUiState.Success && !stateHasExpired()
         if (shouldSkip) return
         isDashboardLoading = true
+        if (forceLoad) buildBenchmarkTrend.invalidateCache()
         val loadGeneration = accountGeneration
         dashboardLoadJob = viewModelScope.launch {
             val hasUsableData = stateAtStart is HomeUiState.Success
@@ -248,21 +303,13 @@ class HomeViewModel(
                     }
 
                     launch {
-                        val statusResponse = try {
-                            newsApiService.getMarketStatus()
-                        } catch (e: Exception) {
-                            null
+                        val session = liveMarketRepository.getMarketSessionStatus().getOrNull()
+                        applyPartialState(loadGeneration) {
+                            copy(
+                                marketStatus = session?.label,
+                                isMarketOpen = session?.isOpen == true
+                            )
                         }
-                        val statusJson = statusResponse?.takeIf { it.isSuccessful }?.body()
-                        val rawStatus = statusJson?.get("status")?.asString ?: "closed"
-                        val isWeekend = statusJson?.get("is_weekend")?.asBoolean ?: false
-                        val isOpen = rawStatus.equals("open", ignoreCase = true)
-                        val statusLabel = when {
-                            isOpen -> "Market Open"
-                            isWeekend -> "Market Closed (Weekend)"
-                            else -> "Market Closed"
-                        }
-                        applyPartialState(loadGeneration) { copy(marketStatus = statusLabel, isMarketOpen = isOpen) }
                     }
 
                     launch {
@@ -271,6 +318,7 @@ class HomeViewModel(
                             it.code.equals("KSE100", ignoreCase = true) ||
                                 it.name.contains("100", ignoreCase = true)
                         } ?: indices.firstOrNull()
+                        currentBenchmarkCode = kse100?.code
                         applyPartialState(loadGeneration) {
                             copy(
                                 marketIndices = indices,
@@ -336,8 +384,13 @@ class HomeViewModel(
                         }
                     }
                 }
+                mutationFlushJob?.cancel()
+                flushPendingMutations()
                 if (loadGeneration == accountGeneration) {
                     lastSuccessfulFetchAt = System.currentTimeMillis()
+                    // Kept out of the scope above: the 100-request fan-out must not hold up
+                    // the rest of the dashboard or leave the refresh spinner running.
+                    loadBenchmarkTrend(currentTimeframe, loadGeneration)
                 }
             } catch (cancelled: CancellationException) {
                 throw cancelled
@@ -398,11 +451,45 @@ class HomeViewModel(
         currentTimeframe = timeframe
         val current = _uiState.value
         if (current is HomeUiState.Success) {
-            _uiState.value = current.copy(selectedTimeframe = timeframe)
+            _uiState.value = current.copy(
+                selectedTimeframe = timeframe,
+                benchmarkTrend = BenchmarkTrendUiState.Loading
+            )
+        }
+        loadBenchmarkTrend(timeframe, accountGeneration)
+    }
+
+    private fun loadBenchmarkTrend(timeframe: String, generation: Int) {
+        val indexCode = currentBenchmarkCode
+        if (indexCode == null) {
+            applyPartialState(generation) { copy(benchmarkTrend = BenchmarkTrendUiState.Empty) }
+            return
+        }
+        benchmarkTrendJob?.cancel()
+        val requestGeneration = generation
+        benchmarkTrendJob = viewModelScope.launch {
+            val result = buildBenchmarkTrend(indexCode, timeframe)
+            applyPartialState(requestGeneration) {
+                copy(
+                    benchmarkTrend = result.fold(
+                        onSuccess = { BenchmarkTrendUiState.Success(it) },
+                        onFailure = {
+                            BenchmarkTrendUiState.Error(
+                                it.message ?: "Unable to build the benchmark trend."
+                            )
+                        }
+                    )
+                )
+            }
         }
     }
 
     fun refresh() {
         loadDashboard(isRefresh = true)
+    }
+
+    companion object {
+        private const val QUOTE_FLUSH_INTERVAL_MS = 750L
+        private const val PARTIAL_FLUSH_INTERVAL_MS = 120L
     }
 }

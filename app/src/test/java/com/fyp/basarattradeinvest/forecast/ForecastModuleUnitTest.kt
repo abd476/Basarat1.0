@@ -4,7 +4,7 @@ import com.fyp.basarattradeinvest.data.mapper.ForecastDtoMapper
 import com.fyp.basarattradeinvest.data.remote.api.ForecastApiService
 import com.fyp.basarattradeinvest.data.remote.dto.forecast.*
 import com.fyp.basarattradeinvest.data.repository.ForecastRepositoryImpl
-import com.fyp.basarattradeinvest.domain.model.ForecastDirection
+import com.fyp.basarattradeinvest.domain.model.stock.ForecastDirection
 import com.fyp.basarattradeinvest.domain.usecase.forecast.GetForecastHistoryUseCase
 import com.fyp.basarattradeinvest.domain.usecase.forecast.GetStockForecastUseCase
 import com.google.gson.Gson
@@ -125,10 +125,10 @@ class ForecastModuleUnitTest {
         assertEquals("LUCK", dto.symbol)
         assertEquals(2, dto.count)
         assertEquals(0.75, dto.accuracy ?: 0.0, 0.01)
-        assertEquals(2, dto.history.size)
-        assertEquals("bullish", dto.history[0].predictedDirection)
-        assertTrue(dto.history[0].actual?.wasCorrect == true)
-        assertFalse(dto.history[1].actual?.wasCorrect == true)
+        assertEquals(2, dto.history!!.size)
+        assertEquals("bullish", dto.history!![0].predictedDirection)
+        assertTrue(dto.history!![0].actual?.wasCorrect == true)
+        assertFalse(dto.history!![1].actual?.wasCorrect == true)
     }
 
     // 2. Mapper Tests

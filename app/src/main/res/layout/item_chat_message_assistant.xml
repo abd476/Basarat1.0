@@ -18,42 +18,41 @@
 
         <!-- AI label -->
         <TextView
+            android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="BASARAT AI"
             android:textColor="@color/color_ai_blue"
-            android:textSize="11sp"
-            android:textStyle="bold"
             android:letterSpacing="0.05"
             android:layout_marginBottom="4dp" />
 
         <TextView
             android:id="@+id/tvAssistantMessage"
+            android:textAppearance="@style/TextAppearance.Basarat.Body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/color_text_primary"
-            android:textSize="14sp"
             android:lineSpacingExtra="4dp" />
 
         <!-- Streaming indicator (animated dots) -->
         <TextView
             android:id="@+id/streamingIndicator"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="●●●"
             android:textColor="@color/color_ai_blue"
-            android:textSize="12sp"
             android:letterSpacing="0.3"
             android:visibility="gone"
             android:layout_marginTop="4dp" />
 
         <TextView
             android:id="@+id/tvAssistantTimestamp"
+            android:textAppearance="@style/TextAppearance.Basarat.Caption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:textColor="@color/color_text_tertiary"
-            android:textSize="11sp"
             android:layout_marginTop="4dp" />
 
     </LinearLayout>

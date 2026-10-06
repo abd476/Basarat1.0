@@ -166,7 +166,7 @@ class RecommendationsModuleUnitTest {
     }
 
     @Test
-    fun testRecommendationsRepositoryImpl_offlineFallback() = runBlocking {
+    fun testRecommendationsRepositoryImpl_failsHonestlyWhenBackendUnavailable() = runBlocking {
         val mockApi = object : RecommendationsApiService {
             override suspend fun getRecommendations(riskProfile: String?, sector: String?, limit: Int): Response<RecommendationsListResponseDto> {
                 return Response.error(500, "Server Error".toResponseBody())
@@ -191,20 +191,17 @@ class RecommendationsModuleUnitTest {
 
         val repository = RecommendationsRepositoryImpl(mockApi)
 
+        // knownPrice keeps the repository from reaching for the live quote endpoint.
         val listRes = repository.getRecommendations("moderate")
-        assertTrue(listRes.isSuccess)
-        assertFalse(listRes.getOrThrow().isEmpty())
+        assertTrue(listRes.isFailure)
 
-        val detailRes = repository.getRecommendationDetail("OGDC")
-        assertTrue(detailRes.isSuccess)
-        assertEquals("OGDC", detailRes.getOrThrow().symbol)
+        val detailRes = repository.getRecommendationDetail("OGDC", knownPrice = 100.0)
+        assertTrue(detailRes.isFailure)
 
-        val targetStopRes = repository.getTargetStop("OGDC")
-        assertTrue(targetStopRes.isSuccess)
-        assertNotNull(targetStopRes.getOrThrow().targetPrice)
+        val targetStopRes = repository.getTargetStop("OGDC", knownPrice = 100.0)
+        assertTrue(targetStopRes.isFailure)
 
         val weightsRes = repository.getEngineWeights()
-        assertTrue(weightsRes.isSuccess)
-        assertEquals(0.33, weightsRes.getOrThrow().gruWeight, 0.001)
+        assertTrue(weightsRes.isFailure)
     }
 }

@@ -50,6 +50,12 @@ class SentimentFragment : Fragment() {
 
     private var currentSymbol: String = ""
 
+    private var lastRenderedMarketSentiment: MarketSentimentSectionState? = null
+    private var lastRenderedStockSentiment: StockSentimentSectionState? = null
+    private var lastRenderedHistory: SentimentHistorySectionState? = null
+    private var lastRenderedNews: SentimentNewsSectionState? = null
+    private var lastRenderedPeriod: String? = null
+
     // Available periods per OpenAPI spec pattern constraint
     private val periods = listOf("1D", "1W", "1M", "3M", "6M", "1Y")
 
@@ -125,11 +131,28 @@ class SentimentFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    renderMarketSentiment(state.marketSentiment)
-                    renderStockSentiment(state.stockSentiment)
-                    renderHistory(state.history)
-                    renderNews(state.news)
-                    updatePeriodPills(state.selectedPeriod)
+                    // Each section arrives as its own emission; rebinding all four every time
+                    // rebuilt the history chart and restarted its entry animation.
+                    if (state.marketSentiment != lastRenderedMarketSentiment) {
+                        renderMarketSentiment(state.marketSentiment)
+                        lastRenderedMarketSentiment = state.marketSentiment
+                    }
+                    if (state.stockSentiment != lastRenderedStockSentiment) {
+                        renderStockSentiment(state.stockSentiment)
+                        lastRenderedStockSentiment = state.stockSentiment
+                    }
+                    if (state.history != lastRenderedHistory) {
+                        renderHistory(state.history)
+                        lastRenderedHistory = state.history
+                    }
+                    if (state.news != lastRenderedNews) {
+                        renderNews(state.news)
+                        lastRenderedNews = state.news
+                    }
+                    if (state.selectedPeriod != lastRenderedPeriod) {
+                        updatePeriodPills(state.selectedPeriod)
+                        lastRenderedPeriod = state.selectedPeriod
+                    }
                 }
             }
         }

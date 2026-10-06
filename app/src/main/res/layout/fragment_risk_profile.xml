@@ -29,13 +29,12 @@
         <!-- Title -->
         <TextView
             android:id="@+id/tv_title"
+            android:textAppearance="@style/TextAppearance.Basarat.Heading"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Risk &amp; Investment Profile"
             android:textColor="@color/color_text_primary"
-            android:textSize="24sp"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn_back" />
@@ -43,12 +42,12 @@
         <!-- Subtitle -->
         <TextView
             android:id="@+id/tv_subtitle"
+            android:textAppearance="@style/TextAppearance.Basarat.Body"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Help BASARAT tailor its technical models, risk scoring, and stock recommendations to your investment style."
             android:textColor="@color/color_text_secondary"
-            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_title" />
@@ -80,12 +79,12 @@
 
             <TextView
                 android:id="@+id/tv_error_message"
+                android:textAppearance="@style/TextAppearance.Basarat.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Unable to load investment options"
-                android:textColor="@color/color_negative"
-                android:textSize="14sp" />
+                android:textColor="@color/color_negative" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_retry"
@@ -111,23 +110,22 @@
             <!-- Section 1: Risk Tolerance -->
             <TextView
                 android:id="@+id/tv_label_risk"
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Risk Tolerance"
                 android:textColor="@color/color_text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tv_desc_risk"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Select how comfortable you are with price fluctuations and market drawdown."
                 android:textColor="@color/color_text_secondary"
-                android:textSize="13sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_label_risk" />
@@ -145,24 +143,23 @@
             <!-- Section 2: Investment Horizon -->
             <TextView
                 android:id="@+id/tv_label_horizon"
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="28dp"
                 android:text="Investment Horizon"
                 android:textColor="@color/color_text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cg_risk_tolerance" />
 
             <TextView
                 android:id="@+id/tv_desc_horizon"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Estimated duration you plan to hold your PSX equities."
                 android:textColor="@color/color_text_secondary"
-                android:textSize="13sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_label_horizon" />
@@ -180,24 +177,23 @@
             <!-- Section 3: Sector Preferences -->
             <TextView
                 android:id="@+id/tv_label_sectors"
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="28dp"
                 android:text="Preferred Sectors"
                 android:textColor="@color/color_text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cg_investment_horizon" />
 
             <TextView
                 android:id="@+id/tv_desc_sectors"
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Choose one or more PSX sectors you wish to prioritize for analysis and discovery."
                 android:textColor="@color/color_text_secondary"
-                android:textSize="13sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_label_sectors" />
@@ -227,13 +223,12 @@
 
                 <TextView
                     android:id="@+id/tv_save_label"
+                    android:textAppearance="@style/TextAppearance.Basarat.Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="Save Preferences"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/white" />
 
                 <ProgressBar
                     android:id="@+id/pb_saving"

@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.databinding.ItemIpoCalendarEventBinding
-import com.fyp.basarattradeinvest.domain.model.IpoCalendarEvent
+import com.fyp.basarattradeinvest.domain.model.ipo.IpoCalendarEvent
 import com.fyp.basarattradeinvest.feature.common.FormatUtils
 
 class IpoCalendarAdapter :

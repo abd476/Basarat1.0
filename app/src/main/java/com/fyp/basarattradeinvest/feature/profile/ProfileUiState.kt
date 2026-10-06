@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.feature.profile
 
-import com.fyp.basarattradeinvest.domain.model.UserProfile
+import com.fyp.basarattradeinvest.domain.model.auth.UserProfile
 
 sealed interface ProfileUiState {
     data object Loading : ProfileUiState

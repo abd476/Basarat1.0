@@ -29,14 +29,13 @@
             app:tint="@color/color_text_primary" />
 
         <TextView
+            android:textAppearance="@style/TextAppearance.Basarat.Subheading"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_weight="1"
             android:text="Stock Recommendations"
-            android:textColor="@color/color_text_primary"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textColor="@color/color_text_primary" />
 
         <!-- Settings Icon (Navigates to Engine Weights) -->
         <ImageView
@@ -67,18 +66,18 @@
 
             <TextView
                 android:id="@+id/pill_risk_conservative"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:background="@drawable/bg_chip_filter_unselected"
                 android:gravity="center"
                 android:paddingHorizontal="14dp"
                 android:text="Conservative"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_secondary" />
 
             <TextView
                 android:id="@+id/pill_risk_moderate"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginStart="8dp"
@@ -86,12 +85,11 @@
                 android:gravity="center"
                 android:paddingHorizontal="14dp"
                 android:text="Moderate"
-                android:textColor="@color/color_positive"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_positive" />
 
             <TextView
                 android:id="@+id/pill_risk_aggressive"
+                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginStart="8dp"
@@ -99,9 +97,7 @@
                 android:gravity="center"
                 android:paddingHorizontal="14dp"
                 android:text="Aggressive"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_secondary" />
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -142,12 +138,12 @@
                 android:indeterminateTint="@color/color_basarat_green" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:text="Calculating recommendations..."
-                android:textColor="@color/color_text_secondary"
-                android:textSize="14sp" />
+                android:textColor="@color/color_text_secondary" />
         </LinearLayout>
 
         <!-- Empty View -->
@@ -162,21 +158,20 @@
             android:visibility="gone">
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="No Recommendations Available"
-                android:textColor="@color/color_text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textColor="@color/color_text_primary" />
 
             <TextView
+                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:gravity="center"
                 android:text="No active recommendations found for this risk profile."
-                android:textColor="@color/color_text_secondary"
-                android:textSize="13sp" />
+                android:textColor="@color/color_text_secondary" />
         </LinearLayout>
 
         <!-- Error View -->
@@ -192,12 +187,12 @@
 
             <TextView
                 android:id="@+id/tv_error_message"
+                android:textAppearance="@style/TextAppearance.Basarat.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Unable to load recommendations."
-                android:textColor="@color/color_text_secondary"
-                android:textSize="14sp" />
+                android:textColor="@color/color_text_secondary" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_retry"
