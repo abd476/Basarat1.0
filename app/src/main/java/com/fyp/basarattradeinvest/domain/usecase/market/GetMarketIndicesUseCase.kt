@@ -1,4 +1,4 @@
-package com.fyp.basarattradeinvest.domain.usecase
+package com.fyp.basarattradeinvest.domain.usecase.market
 
 import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
 import com.fyp.basarattradeinvest.domain.repository.MarketRepository

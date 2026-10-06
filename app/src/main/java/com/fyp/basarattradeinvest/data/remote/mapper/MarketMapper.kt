@@ -1,10 +1,10 @@
 package com.fyp.basarattradeinvest.data.remote.mapper
 
-import com.fyp.basarattradeinvest.data.remote.dto.MarketIndexDto
-import com.fyp.basarattradeinvest.data.remote.dto.MarketOverviewDto
-import com.fyp.basarattradeinvest.data.remote.dto.MarketStockDto
-import com.fyp.basarattradeinvest.data.remote.dto.MarketSentimentDto
-import com.fyp.basarattradeinvest.data.remote.dto.SectorPerformanceDto
+import com.fyp.basarattradeinvest.data.remote.dto.market.MarketIndexDto
+import com.fyp.basarattradeinvest.data.remote.dto.market.MarketOverviewDto
+import com.fyp.basarattradeinvest.data.remote.dto.market.MarketStockDto
+import com.fyp.basarattradeinvest.data.remote.dto.sentiment.MarketSentimentDto
+import com.fyp.basarattradeinvest.data.remote.dto.market.SectorPerformanceDto
 import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
 import com.fyp.basarattradeinvest.domain.model.market.MarketOverview
 import com.fyp.basarattradeinvest.domain.model.sentiment.MarketSentiment

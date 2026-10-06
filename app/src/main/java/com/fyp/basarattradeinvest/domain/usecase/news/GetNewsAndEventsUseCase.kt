@@ -1,4 +1,4 @@
-package com.fyp.basarattradeinvest.domain.usecase
+package com.fyp.basarattradeinvest.domain.usecase.news
 
 import com.fyp.basarattradeinvest.domain.model.market.CorporateEvent
 import com.fyp.basarattradeinvest.domain.model.news.NewsArticle

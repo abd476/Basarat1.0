@@ -1,4 +1,4 @@
-package com.fyp.basarattradeinvest.data.remote.dto
+package com.fyp.basarattradeinvest.data.remote.dto.market
 
 import com.google.gson.annotations.SerializedName
 

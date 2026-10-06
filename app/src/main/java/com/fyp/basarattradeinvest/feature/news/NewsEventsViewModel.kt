@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.data.repository.NewsRepositoryImpl
 import com.fyp.basarattradeinvest.domain.model.news.NewsArticle
-import com.fyp.basarattradeinvest.domain.usecase.GetNewsAndEventsUseCase
+import com.fyp.basarattradeinvest.domain.usecase.news.GetNewsAndEventsUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

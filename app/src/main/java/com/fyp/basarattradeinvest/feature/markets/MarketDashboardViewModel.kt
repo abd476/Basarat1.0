@@ -14,8 +14,8 @@ import com.fyp.basarattradeinvest.domain.model.live.LiveQuote
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 import com.fyp.basarattradeinvest.domain.repository.LiveMarketRepository
 import com.fyp.basarattradeinvest.domain.repository.MarketRepository
-import com.fyp.basarattradeinvest.domain.usecase.GetMarketIndicesUseCase
-import com.fyp.basarattradeinvest.domain.usecase.GetSectorPerformancesUseCase
+import com.fyp.basarattradeinvest.domain.usecase.market.GetMarketIndicesUseCase
+import com.fyp.basarattradeinvest.domain.usecase.market.GetSectorPerformancesUseCase
 import com.fyp.basarattradeinvest.domain.usecase.market.GetKmi30ConstituentsUseCase
 import com.fyp.basarattradeinvest.domain.usecase.market.GetKse100ConstituentsUseCase
 import com.fyp.basarattradeinvest.domain.usecase.market.GetKse30ConstituentsUseCase

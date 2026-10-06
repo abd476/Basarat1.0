@@ -1,4 +1,4 @@
-package com.fyp.basarattradeinvest.domain.usecase
+package com.fyp.basarattradeinvest.domain.usecase.shariah
 
 import com.fyp.basarattradeinvest.domain.model.shariah.ShariahStock
 import com.fyp.basarattradeinvest.domain.repository.ShariahRepository
