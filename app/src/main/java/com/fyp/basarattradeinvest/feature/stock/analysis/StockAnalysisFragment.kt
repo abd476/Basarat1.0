@@ -20,11 +20,11 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentStockAnalysisBinding
-import com.fyp.basarattradeinvest.domain.model.CandleEntry
-import com.fyp.basarattradeinvest.domain.model.ForecastDirection
-import com.fyp.basarattradeinvest.domain.model.StockAnalysis
-import com.fyp.basarattradeinvest.domain.model.StockForecast
-import com.fyp.basarattradeinvest.domain.model.TechnicalSignal
+import com.fyp.basarattradeinvest.domain.model.market.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.stock.ForecastDirection
+import com.fyp.basarattradeinvest.domain.model.stock.StockAnalysis
+import com.fyp.basarattradeinvest.domain.model.stock.StockForecast
+import com.fyp.basarattradeinvest.domain.model.stock.TechnicalSignal
 import com.fyp.basarattradeinvest.domain.model.sentiment.SentimentHistory
 import com.fyp.basarattradeinvest.domain.model.sentiment.SentimentNewsItem
 import com.fyp.basarattradeinvest.domain.model.sentiment.StockSentiment

@@ -1,7 +1,7 @@
 package com.fyp.basarattradeinvest.domain.repository
 
-import com.fyp.basarattradeinvest.domain.model.AlertItem
-import com.fyp.basarattradeinvest.domain.model.QuickAlertResult
+import com.fyp.basarattradeinvest.domain.model.alerts.AlertItem
+import com.fyp.basarattradeinvest.domain.model.alerts.QuickAlertResult
 
 interface AlertsRepository {
 

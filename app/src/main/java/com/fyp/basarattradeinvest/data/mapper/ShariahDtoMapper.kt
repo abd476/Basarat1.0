@@ -6,7 +6,7 @@ import com.fyp.basarattradeinvest.data.remote.dto.shariah.ShariahCriterionDto
 import com.fyp.basarattradeinvest.data.remote.dto.shariah.ShariahKmi30ResponseDto
 import com.fyp.basarattradeinvest.data.remote.dto.shariah.ShariahPurificationResponseDto
 import com.fyp.basarattradeinvest.data.remote.dto.shariah.ShariahScreeningResponseDto
-import com.fyp.basarattradeinvest.domain.model.ShariahStock
+import com.fyp.basarattradeinvest.domain.model.shariah.ShariahStock
 import com.fyp.basarattradeinvest.domain.model.shariah.DividendPurificationResult
 import com.fyp.basarattradeinvest.domain.model.shariah.Kmi30Constituent
 import com.fyp.basarattradeinvest.domain.model.shariah.Kmi30IndexSummary

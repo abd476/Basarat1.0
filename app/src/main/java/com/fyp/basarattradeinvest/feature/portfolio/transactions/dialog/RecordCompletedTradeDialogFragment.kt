@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.fyp.basarattradeinvest.data.repository.PortfolioRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.StockRepositoryImpl
 import com.fyp.basarattradeinvest.databinding.DialogRecordCompletedTradeBinding
-import com.fyp.basarattradeinvest.domain.model.StockSearchResult
+import com.fyp.basarattradeinvest.domain.model.stock.StockSearchResult
 import com.fyp.basarattradeinvest.domain.usecase.portfolio.RecordCompletedTradeUseCase
 import com.fyp.basarattradeinvest.feature.stock.search.StockSearchAdapter
 import kotlinx.coroutines.Job

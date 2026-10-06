@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.ItemIpoPerformanceBinding
-import com.fyp.basarattradeinvest.domain.model.IpoPerformanceItem
+import com.fyp.basarattradeinvest.domain.model.ipo.IpoPerformanceItem
 import com.fyp.basarattradeinvest.feature.common.FormatUtils
 
 class IpoPerformanceAdapter :

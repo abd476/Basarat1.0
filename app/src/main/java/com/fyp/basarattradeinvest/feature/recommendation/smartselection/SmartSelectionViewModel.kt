@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.data.repository.RecommendationsRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.StockRepositoryImpl
-import com.fyp.basarattradeinvest.domain.model.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.market.CandleEntry
 import com.fyp.basarattradeinvest.domain.model.recommendations.StockRecommendation
 import com.fyp.basarattradeinvest.domain.repository.RecommendationsRepository
 import com.fyp.basarattradeinvest.domain.repository.StockRepository

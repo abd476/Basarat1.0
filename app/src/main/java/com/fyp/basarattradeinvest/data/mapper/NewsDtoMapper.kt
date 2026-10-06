@@ -2,8 +2,8 @@ package com.fyp.basarattradeinvest.data.mapper
 
 import com.fyp.basarattradeinvest.data.remote.dto.news.EventResponseDto
 import com.fyp.basarattradeinvest.data.remote.dto.news.NewsArticleResponseDto
-import com.fyp.basarattradeinvest.domain.model.CorporateEvent
-import com.fyp.basarattradeinvest.domain.model.NewsArticle
+import com.fyp.basarattradeinvest.domain.model.market.CorporateEvent
+import com.fyp.basarattradeinvest.domain.model.news.NewsArticle
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

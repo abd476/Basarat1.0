@@ -4,7 +4,7 @@ import com.fyp.basarattradeinvest.data.mapper.StocksDtoMapper
 import com.fyp.basarattradeinvest.data.remote.api.StocksApiService
 import com.fyp.basarattradeinvest.data.remote.dto.stocks.*
 import com.fyp.basarattradeinvest.data.repository.StockRepositoryImpl
-import com.fyp.basarattradeinvest.domain.model.TechnicalSignal
+import com.fyp.basarattradeinvest.domain.model.stock.TechnicalSignal
 import com.fyp.basarattradeinvest.domain.usecase.stocks.SearchStocksUseCase
 import com.google.gson.Gson
 import kotlinx.coroutines.runBlocking

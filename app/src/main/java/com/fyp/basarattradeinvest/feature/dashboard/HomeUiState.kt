@@ -1,10 +1,10 @@
 package com.fyp.basarattradeinvest.feature.dashboard
 
-import com.fyp.basarattradeinvest.domain.model.AlertItem
-import com.fyp.basarattradeinvest.domain.model.BenchmarkTrend
-import com.fyp.basarattradeinvest.domain.model.MarketIndex
-import com.fyp.basarattradeinvest.domain.model.MarketStock
-import com.fyp.basarattradeinvest.domain.model.NewsArticle
+import com.fyp.basarattradeinvest.domain.model.alerts.AlertItem
+import com.fyp.basarattradeinvest.domain.model.market.BenchmarkTrend
+import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
+import com.fyp.basarattradeinvest.domain.model.market.MarketStock
+import com.fyp.basarattradeinvest.domain.model.news.NewsArticle
 import com.fyp.basarattradeinvest.domain.model.live.LiveQuote
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 import com.fyp.basarattradeinvest.domain.model.portfolio.HoldingItem

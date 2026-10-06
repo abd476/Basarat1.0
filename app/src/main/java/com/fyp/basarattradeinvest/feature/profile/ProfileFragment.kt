@@ -14,7 +14,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentProfileBinding
-import com.fyp.basarattradeinvest.domain.model.UserProfile
+import com.fyp.basarattradeinvest.domain.model.auth.UserProfile
 import com.fyp.basarattradeinvest.feature.auth.AuthUiState
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch

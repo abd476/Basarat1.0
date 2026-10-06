@@ -5,8 +5,8 @@ import com.fyp.basarattradeinvest.data.mapper.AlertDtoMapper
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
 import com.fyp.basarattradeinvest.data.remote.api.AlertsApiService
 import com.fyp.basarattradeinvest.data.remote.dto.alerts.QuickAlertRuleCreateDto
-import com.fyp.basarattradeinvest.domain.model.AlertItem
-import com.fyp.basarattradeinvest.domain.model.QuickAlertResult
+import com.fyp.basarattradeinvest.domain.model.alerts.AlertItem
+import com.fyp.basarattradeinvest.domain.model.alerts.QuickAlertResult
 import com.fyp.basarattradeinvest.domain.repository.AlertsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

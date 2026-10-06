@@ -4,13 +4,13 @@ import com.fyp.basarattradeinvest.core.network.NetworkErrorParser
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
 import com.fyp.basarattradeinvest.data.remote.api.MarketApiService
 import com.fyp.basarattradeinvest.data.remote.mapper.toDomain
-import com.fyp.basarattradeinvest.domain.model.IndexConstituents
-import com.fyp.basarattradeinvest.domain.model.MarketIndex
-import com.fyp.basarattradeinvest.domain.model.MarketOverview
-import com.fyp.basarattradeinvest.domain.model.MarketSentiment
-import com.fyp.basarattradeinvest.domain.model.MarketStock
-import com.fyp.basarattradeinvest.domain.model.SectorPerformance
-import com.fyp.basarattradeinvest.domain.model.SymbolFilterType
+import com.fyp.basarattradeinvest.domain.model.market.IndexConstituents
+import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
+import com.fyp.basarattradeinvest.domain.model.market.MarketOverview
+import com.fyp.basarattradeinvest.domain.model.sentiment.MarketSentiment
+import com.fyp.basarattradeinvest.domain.model.market.MarketStock
+import com.fyp.basarattradeinvest.domain.model.market.SectorPerformance
+import com.fyp.basarattradeinvest.domain.model.stock.SymbolFilterType
 import com.fyp.basarattradeinvest.domain.repository.MarketRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -269,11 +269,11 @@ class MarketRepositoryImpl(
 
     private fun getFallbackConstituents(indexName: String, code: String, isShariah: Boolean): IndexConstituents {
         val list = listOf(
-            com.fyp.basarattradeinvest.domain.model.IndexConstituent("OGDC", "Oil & Gas Development Co", 140.0, 142.50, 2.50, 1.79, 8.4, 450.2, 12500000L, 4500.0, 25000.0),
-            com.fyp.basarattradeinvest.domain.model.IndexConstituent("PPL", "Pakistan Petroleum Ltd", 118.0, 121.30, 3.30, 2.80, 6.2, 320.1, 9800000L, 3200.0, 18000.0),
-            com.fyp.basarattradeinvest.domain.model.IndexConstituent("HUBC", "Hub Power Company Ltd", 112.0, 114.20, 2.20, 1.96, 5.8, 290.4, 8400000L, 2900.0, 15000.0),
-            com.fyp.basarattradeinvest.domain.model.IndexConstituent("LUCK", "Lucky Cement Ltd", 780.0, 795.00, 15.00, 1.92, 5.1, 260.0, 3200000L, 2600.0, 14000.0),
-            com.fyp.basarattradeinvest.domain.model.IndexConstituent("ENGRO", "Engro Corporation", 310.0, 314.50, 4.50, 1.45, 4.7, 240.5, 4100000L, 2400.0, 13000.0)
+            com.fyp.basarattradeinvest.domain.model.market.IndexConstituent("OGDC", "Oil & Gas Development Co", 140.0, 142.50, 2.50, 1.79, 8.4, 450.2, 12500000L, 4500.0, 25000.0),
+            com.fyp.basarattradeinvest.domain.model.market.IndexConstituent("PPL", "Pakistan Petroleum Ltd", 118.0, 121.30, 3.30, 2.80, 6.2, 320.1, 9800000L, 3200.0, 18000.0),
+            com.fyp.basarattradeinvest.domain.model.market.IndexConstituent("HUBC", "Hub Power Company Ltd", 112.0, 114.20, 2.20, 1.96, 5.8, 290.4, 8400000L, 2900.0, 15000.0),
+            com.fyp.basarattradeinvest.domain.model.market.IndexConstituent("LUCK", "Lucky Cement Ltd", 780.0, 795.00, 15.00, 1.92, 5.1, 260.0, 3200000L, 2600.0, 14000.0),
+            com.fyp.basarattradeinvest.domain.model.market.IndexConstituent("ENGRO", "Engro Corporation", 310.0, 314.50, 4.50, 1.45, 4.7, 240.5, 4100000L, 2400.0, 13000.0)
         )
         return IndexConstituents(indexName, code, isShariah, list)
     }

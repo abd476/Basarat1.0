@@ -15,7 +15,7 @@ import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.data.repository.PortfolioRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.StockRepositoryImpl
 import com.fyp.basarattradeinvest.databinding.DialogAddEditTransactionBinding
-import com.fyp.basarattradeinvest.domain.model.StockSearchResult
+import com.fyp.basarattradeinvest.domain.model.stock.StockSearchResult
 import com.fyp.basarattradeinvest.domain.usecase.portfolio.CreateTransactionUseCase
 import com.fyp.basarattradeinvest.domain.usecase.portfolio.UpdateTransactionUseCase
 import com.fyp.basarattradeinvest.feature.stock.search.StockSearchAdapter

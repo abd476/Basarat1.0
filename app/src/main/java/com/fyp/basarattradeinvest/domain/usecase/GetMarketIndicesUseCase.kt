@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.domain.usecase
 
-import com.fyp.basarattradeinvest.domain.model.MarketIndex
+import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
 import com.fyp.basarattradeinvest.domain.repository.MarketRepository
 
 class GetMarketIndicesUseCase(

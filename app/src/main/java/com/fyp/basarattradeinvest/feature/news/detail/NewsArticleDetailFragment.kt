@@ -16,7 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentNewsArticleDetailBinding
-import com.fyp.basarattradeinvest.domain.model.NewsArticle
+import com.fyp.basarattradeinvest.domain.model.news.NewsArticle
 import kotlinx.coroutines.launch
 import java.util.Locale
 

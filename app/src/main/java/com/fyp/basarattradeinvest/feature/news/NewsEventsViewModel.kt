@@ -3,7 +3,7 @@ package com.fyp.basarattradeinvest.feature.news
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.data.repository.NewsRepositoryImpl
-import com.fyp.basarattradeinvest.domain.model.NewsArticle
+import com.fyp.basarattradeinvest.domain.model.news.NewsArticle
 import com.fyp.basarattradeinvest.domain.usecase.GetNewsAndEventsUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

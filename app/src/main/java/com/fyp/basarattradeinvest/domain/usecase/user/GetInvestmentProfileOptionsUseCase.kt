@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.domain.usecase.user
 
-import com.fyp.basarattradeinvest.domain.model.InvestmentProfileOptions
+import com.fyp.basarattradeinvest.domain.model.auth.InvestmentProfileOptions
 import com.fyp.basarattradeinvest.domain.repository.UsersRepository
 
 class GetInvestmentProfileOptionsUseCase(private val repository: UsersRepository) {

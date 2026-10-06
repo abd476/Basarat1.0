@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.feature.etf
 
-import com.fyp.basarattradeinvest.domain.model.EtfItem
+import com.fyp.basarattradeinvest.domain.model.etf.EtfItem
 
 sealed interface EtfDirectoryUiState {
     data object Loading : EtfDirectoryUiState

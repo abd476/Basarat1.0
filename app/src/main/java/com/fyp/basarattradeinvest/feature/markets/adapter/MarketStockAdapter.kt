@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.ItemMarketStockBinding
-import com.fyp.basarattradeinvest.domain.model.MarketStock
+import com.fyp.basarattradeinvest.domain.model.market.MarketStock
 import com.fyp.basarattradeinvest.domain.model.live.LiveQuote
 import java.util.Locale
 

@@ -16,7 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentSmartSelectionBinding
-import com.fyp.basarattradeinvest.domain.model.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.market.CandleEntry
 import com.fyp.basarattradeinvest.domain.model.recommendations.RecommendationSignal
 import com.fyp.basarattradeinvest.domain.model.recommendations.StockRecommendation
 import com.github.mikephil.charting.charts.CandleStickChart

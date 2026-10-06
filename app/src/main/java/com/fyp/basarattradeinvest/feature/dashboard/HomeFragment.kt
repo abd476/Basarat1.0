@@ -17,7 +17,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentHomeBinding
-import com.fyp.basarattradeinvest.domain.model.MarketIndex
+import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
 import com.fyp.basarattradeinvest.domain.model.watchlist.WatchlistItem
 import com.fyp.basarattradeinvest.feature.markets.adapter.MarketStockAdapter
 import com.fyp.basarattradeinvest.feature.news.adapter.NewsArticleAdapter

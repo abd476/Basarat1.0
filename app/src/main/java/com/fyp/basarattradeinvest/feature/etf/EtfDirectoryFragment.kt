@@ -13,7 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentEtfDirectoryBinding
-import com.fyp.basarattradeinvest.domain.model.EtfItem
+import com.fyp.basarattradeinvest.domain.model.etf.EtfItem
 import com.fyp.basarattradeinvest.feature.etf.adapter.EtfListAdapter
 import kotlinx.coroutines.launch
 

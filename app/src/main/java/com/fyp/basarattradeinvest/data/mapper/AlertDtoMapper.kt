@@ -1,7 +1,7 @@
 package com.fyp.basarattradeinvest.data.mapper
 
 import com.fyp.basarattradeinvest.data.remote.dto.alerts.AlertResponseDto
-import com.fyp.basarattradeinvest.domain.model.AlertItem
+import com.fyp.basarattradeinvest.domain.model.alerts.AlertItem
 
 object AlertDtoMapper {
 

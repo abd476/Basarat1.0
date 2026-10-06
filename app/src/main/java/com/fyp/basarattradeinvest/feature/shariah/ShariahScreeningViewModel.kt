@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.data.repository.ShariahRepositoryImpl
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
-import com.fyp.basarattradeinvest.domain.model.ShariahStock
+import com.fyp.basarattradeinvest.domain.model.shariah.ShariahStock
 import com.fyp.basarattradeinvest.domain.model.live.LiveQuote
 import com.fyp.basarattradeinvest.domain.repository.LiveMarketRepository
 import com.fyp.basarattradeinvest.domain.repository.ShariahRepository

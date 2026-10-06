@@ -3,8 +3,8 @@ package com.fyp.basarattradeinvest.data.repository
 import com.fyp.basarattradeinvest.data.mapper.ForecastDtoMapper
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
 import com.fyp.basarattradeinvest.data.remote.api.ForecastApiService
-import com.fyp.basarattradeinvest.domain.model.ForecastHistory
-import com.fyp.basarattradeinvest.domain.model.StockForecast
+import com.fyp.basarattradeinvest.domain.model.stock.ForecastHistory
+import com.fyp.basarattradeinvest.domain.model.stock.StockForecast
 import com.fyp.basarattradeinvest.domain.repository.ForecastRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

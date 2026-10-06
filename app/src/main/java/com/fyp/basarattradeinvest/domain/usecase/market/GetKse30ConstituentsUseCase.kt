@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.domain.usecase.market
 
-import com.fyp.basarattradeinvest.domain.model.IndexConstituents
+import com.fyp.basarattradeinvest.domain.model.market.IndexConstituents
 import com.fyp.basarattradeinvest.domain.repository.MarketRepository
 
 class GetKse30ConstituentsUseCase(

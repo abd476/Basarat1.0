@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.domain.usecase.stocks
 
-import com.fyp.basarattradeinvest.domain.model.TechnicalAnalysis
+import com.fyp.basarattradeinvest.domain.model.stock.TechnicalAnalysis
 import com.fyp.basarattradeinvest.domain.repository.StockRepository
 
 class GetStockTechnicalIndicatorsUseCase(

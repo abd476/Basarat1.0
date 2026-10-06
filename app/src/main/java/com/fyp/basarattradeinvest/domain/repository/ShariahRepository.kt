@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.domain.repository
 
-import com.fyp.basarattradeinvest.domain.model.ShariahStock
+import com.fyp.basarattradeinvest.domain.model.shariah.ShariahStock
 import com.fyp.basarattradeinvest.domain.model.shariah.DividendPurificationResult
 import com.fyp.basarattradeinvest.domain.model.shariah.Kmi30IndexSummary
 import com.fyp.basarattradeinvest.domain.model.shariah.StockShariahCompliance

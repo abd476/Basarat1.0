@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.ItemConstituentBinding
-import com.fyp.basarattradeinvest.domain.model.IndexConstituent
+import com.fyp.basarattradeinvest.domain.model.market.IndexConstituent
 import java.util.Locale
 
 class ConstituentAdapter(

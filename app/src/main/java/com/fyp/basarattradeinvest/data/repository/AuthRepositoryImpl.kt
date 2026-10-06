@@ -19,9 +19,9 @@ import com.fyp.basarattradeinvest.data.remote.dto.auth.SignupRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.TokenResponse
 import com.fyp.basarattradeinvest.data.remote.dto.auth.VerifyEmailRequest
 import com.fyp.basarattradeinvest.data.remote.dto.auth.VerifyResetCodeRequest
-import com.fyp.basarattradeinvest.domain.model.AuthSession
-import com.fyp.basarattradeinvest.domain.model.User
-import com.fyp.basarattradeinvest.domain.model.VerifyResetCodeResult
+import com.fyp.basarattradeinvest.domain.model.auth.AuthSession
+import com.fyp.basarattradeinvest.domain.model.auth.User
+import com.fyp.basarattradeinvest.domain.model.auth.VerifyResetCodeResult
 import com.fyp.basarattradeinvest.domain.repository.AuthRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers

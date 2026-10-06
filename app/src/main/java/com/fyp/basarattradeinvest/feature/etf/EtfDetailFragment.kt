@@ -18,9 +18,9 @@ import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentEtfDetailBinding
 import com.fyp.basarattradeinvest.databinding.ItemDetailLabelValueBinding
 import com.fyp.basarattradeinvest.databinding.ItemEtfPerformanceRowBinding
-import com.fyp.basarattradeinvest.domain.model.EtfItem
-import com.fyp.basarattradeinvest.domain.model.EtfPerformance
-import com.fyp.basarattradeinvest.domain.model.EtfReturns
+import com.fyp.basarattradeinvest.domain.model.etf.EtfItem
+import com.fyp.basarattradeinvest.domain.model.etf.EtfPerformance
+import com.fyp.basarattradeinvest.domain.model.etf.EtfReturns
 import com.fyp.basarattradeinvest.feature.common.FormatUtils
 import com.fyp.basarattradeinvest.feature.etf.adapter.EtfHistoryAdapter
 import kotlinx.coroutines.launch

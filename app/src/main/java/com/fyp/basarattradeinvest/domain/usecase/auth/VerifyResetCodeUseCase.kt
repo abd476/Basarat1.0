@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.domain.usecase.auth
 
-import com.fyp.basarattradeinvest.domain.model.VerifyResetCodeResult
+import com.fyp.basarattradeinvest.domain.model.auth.VerifyResetCodeResult
 import com.fyp.basarattradeinvest.domain.repository.AuthRepository
 
 class VerifyResetCodeUseCase(private val repository: AuthRepository) {

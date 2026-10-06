@@ -19,11 +19,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.core.notifications.NotificationBadgeState
 import com.fyp.basarattradeinvest.databinding.FragmentMarketDashboardBinding
-import com.fyp.basarattradeinvest.domain.model.IndexConstituent
-import com.fyp.basarattradeinvest.domain.model.MarketIndex
-import com.fyp.basarattradeinvest.domain.model.MarketOverview
-import com.fyp.basarattradeinvest.domain.model.MarketSentiment
-import com.fyp.basarattradeinvest.domain.model.SymbolFilterType
+import com.fyp.basarattradeinvest.domain.model.market.IndexConstituent
+import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
+import com.fyp.basarattradeinvest.domain.model.market.MarketOverview
+import com.fyp.basarattradeinvest.domain.model.sentiment.MarketSentiment
+import com.fyp.basarattradeinvest.domain.model.stock.SymbolFilterType
 import com.fyp.basarattradeinvest.domain.model.live.MarketSessionStatus
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 import com.fyp.basarattradeinvest.feature.markets.adapter.ConstituentAdapter

@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.databinding.ItemStockSearchResultBinding
-import com.fyp.basarattradeinvest.domain.model.StockSearchResult
+import com.fyp.basarattradeinvest.domain.model.stock.StockSearchResult
 
 class StockSearchAdapter(
     private val onStockClick: (StockSearchResult) -> Unit

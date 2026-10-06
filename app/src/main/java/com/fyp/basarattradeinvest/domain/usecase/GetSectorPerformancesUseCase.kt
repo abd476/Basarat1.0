@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.domain.usecase
 
-import com.fyp.basarattradeinvest.domain.model.SectorPerformance
+import com.fyp.basarattradeinvest.domain.model.market.SectorPerformance
 import com.fyp.basarattradeinvest.domain.repository.MarketRepository
 
 class GetSectorPerformancesUseCase(

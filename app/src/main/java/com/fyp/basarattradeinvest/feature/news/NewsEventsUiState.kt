@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.feature.news
 
-import com.fyp.basarattradeinvest.domain.model.NewsArticle
+import com.fyp.basarattradeinvest.domain.model.news.NewsArticle
 
 sealed interface NewsEventsUiState {
     data object Loading : NewsEventsUiState

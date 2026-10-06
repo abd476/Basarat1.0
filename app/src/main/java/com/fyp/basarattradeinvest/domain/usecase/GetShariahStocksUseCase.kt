@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.domain.usecase
 
-import com.fyp.basarattradeinvest.domain.model.ShariahStock
+import com.fyp.basarattradeinvest.domain.model.shariah.ShariahStock
 import com.fyp.basarattradeinvest.domain.repository.ShariahRepository
 
 class GetShariahStocksUseCase(

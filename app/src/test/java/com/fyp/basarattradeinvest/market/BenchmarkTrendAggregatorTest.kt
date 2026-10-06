@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.market
 
-import com.fyp.basarattradeinvest.domain.model.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.market.CandleEntry
 import com.fyp.basarattradeinvest.domain.usecase.market.BenchmarkTrendAggregator
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull

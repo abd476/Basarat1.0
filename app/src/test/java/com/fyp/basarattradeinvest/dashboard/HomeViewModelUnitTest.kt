@@ -1,8 +1,8 @@
 package com.fyp.basarattradeinvest.dashboard
 
-import com.fyp.basarattradeinvest.domain.model.MarketIndex
-import com.fyp.basarattradeinvest.domain.model.MarketStock
-import com.fyp.basarattradeinvest.domain.model.NewsArticle
+import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
+import com.fyp.basarattradeinvest.domain.model.market.MarketStock
+import com.fyp.basarattradeinvest.domain.model.news.NewsArticle
 import com.fyp.basarattradeinvest.feature.dashboard.HomeUiState
 import com.fyp.basarattradeinvest.feature.dashboard.MoversTab
 import com.fyp.basarattradeinvest.feature.dashboard.WatchlistUiState

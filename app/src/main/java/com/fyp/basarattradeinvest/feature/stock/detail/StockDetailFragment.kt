@@ -19,10 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentStockDetailBinding
-import com.fyp.basarattradeinvest.domain.model.CandleEntry
-import com.fyp.basarattradeinvest.domain.model.NewsArticle
-import com.fyp.basarattradeinvest.domain.model.StockDetail
-import com.fyp.basarattradeinvest.domain.model.StockTrade
+import com.fyp.basarattradeinvest.domain.model.market.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.news.NewsArticle
+import com.fyp.basarattradeinvest.domain.model.stock.StockDetail
+import com.fyp.basarattradeinvest.domain.model.stock.StockTrade
 import com.fyp.basarattradeinvest.feature.stock.detail.adapter.TradeAdapter
 import com.fyp.basarattradeinvest.data.repository.NewsRepositoryImpl
 import com.fyp.basarattradeinvest.feature.news.adapter.NewsArticleAdapter

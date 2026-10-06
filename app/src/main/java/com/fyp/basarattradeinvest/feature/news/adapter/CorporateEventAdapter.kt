@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.databinding.ItemCorporateEventBinding
-import com.fyp.basarattradeinvest.domain.model.CorporateEvent
+import com.fyp.basarattradeinvest.domain.model.market.CorporateEvent
 
 class CorporateEventAdapter(
     private val onEventClick: (CorporateEvent) -> Unit = {}

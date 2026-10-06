@@ -1,8 +1,8 @@
 package com.fyp.basarattradeinvest.domain.repository
 
-import com.fyp.basarattradeinvest.domain.model.AuthSession
-import com.fyp.basarattradeinvest.domain.model.User
-import com.fyp.basarattradeinvest.domain.model.VerifyResetCodeResult
+import com.fyp.basarattradeinvest.domain.model.auth.AuthSession
+import com.fyp.basarattradeinvest.domain.model.auth.User
+import com.fyp.basarattradeinvest.domain.model.auth.VerifyResetCodeResult
 
 interface AuthRepository {
 

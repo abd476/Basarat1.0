@@ -10,8 +10,8 @@ import com.fyp.basarattradeinvest.data.repository.MarketRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.NewsRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.StockRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.UsersRepositoryImpl
-import com.fyp.basarattradeinvest.domain.model.MarketIndex
-import com.fyp.basarattradeinvest.domain.model.MarketStock
+import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
+import com.fyp.basarattradeinvest.domain.model.market.MarketStock
 import com.fyp.basarattradeinvest.domain.model.live.LiveQuote
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 import com.fyp.basarattradeinvest.domain.repository.AlertsRepository

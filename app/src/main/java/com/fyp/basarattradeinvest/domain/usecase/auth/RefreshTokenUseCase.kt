@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.domain.usecase.auth
 
-import com.fyp.basarattradeinvest.domain.model.AuthSession
+import com.fyp.basarattradeinvest.domain.model.auth.AuthSession
 import com.fyp.basarattradeinvest.domain.repository.AuthRepository
 
 class RefreshTokenUseCase(private val repository: AuthRepository) {

@@ -4,7 +4,7 @@ import com.fyp.basarattradeinvest.data.mapper.ForecastDtoMapper
 import com.fyp.basarattradeinvest.data.remote.api.ForecastApiService
 import com.fyp.basarattradeinvest.data.remote.dto.forecast.*
 import com.fyp.basarattradeinvest.data.repository.ForecastRepositoryImpl
-import com.fyp.basarattradeinvest.domain.model.ForecastDirection
+import com.fyp.basarattradeinvest.domain.model.stock.ForecastDirection
 import com.fyp.basarattradeinvest.domain.usecase.forecast.GetForecastHistoryUseCase
 import com.fyp.basarattradeinvest.domain.usecase.forecast.GetStockForecastUseCase
 import com.google.gson.Gson

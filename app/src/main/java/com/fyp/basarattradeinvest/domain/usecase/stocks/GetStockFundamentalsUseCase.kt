@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.domain.usecase.stocks
 
-import com.fyp.basarattradeinvest.domain.model.FundamentalMetrics
+import com.fyp.basarattradeinvest.domain.model.stock.FundamentalMetrics
 import com.fyp.basarattradeinvest.domain.repository.StockRepository
 
 class GetStockFundamentalsUseCase(

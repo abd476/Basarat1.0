@@ -17,8 +17,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentChartFullscreenBinding
-import com.fyp.basarattradeinvest.domain.model.CandleEntry
-import com.fyp.basarattradeinvest.domain.model.StockDetail
+import com.fyp.basarattradeinvest.domain.model.market.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.stock.StockDetail
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.CandleStickChart
 import com.github.mikephil.charting.components.LimitLine

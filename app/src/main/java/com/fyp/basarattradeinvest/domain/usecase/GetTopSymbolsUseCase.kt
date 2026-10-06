@@ -1,7 +1,7 @@
 package com.fyp.basarattradeinvest.domain.usecase
 
-import com.fyp.basarattradeinvest.domain.model.MarketStock
-import com.fyp.basarattradeinvest.domain.model.SymbolFilterType
+import com.fyp.basarattradeinvest.domain.model.market.MarketStock
+import com.fyp.basarattradeinvest.domain.model.stock.SymbolFilterType
 import com.fyp.basarattradeinvest.domain.repository.MarketRepository
 
 class GetTopSymbolsUseCase(

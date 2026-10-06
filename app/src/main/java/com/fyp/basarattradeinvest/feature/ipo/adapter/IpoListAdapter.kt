@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.ItemIpoCardBinding
-import com.fyp.basarattradeinvest.domain.model.IpoItem
+import com.fyp.basarattradeinvest.domain.model.ipo.IpoItem
 import com.fyp.basarattradeinvest.feature.common.FormatUtils
 
 class IpoListAdapter(

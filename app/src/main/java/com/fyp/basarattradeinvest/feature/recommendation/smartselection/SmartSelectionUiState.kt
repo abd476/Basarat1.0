@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.feature.recommendation.smartselection
 
-import com.fyp.basarattradeinvest.domain.model.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.market.CandleEntry
 import com.fyp.basarattradeinvest.domain.model.recommendations.StockRecommendation
 import com.fyp.basarattradeinvest.domain.model.recommendations.TargetStop
 

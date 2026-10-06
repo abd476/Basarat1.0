@@ -1,8 +1,8 @@
 package com.fyp.basarattradeinvest.domain.usecase.market
 
-import com.fyp.basarattradeinvest.domain.model.BenchmarkTrend
-import com.fyp.basarattradeinvest.domain.model.BenchmarkTrendPoint
-import com.fyp.basarattradeinvest.domain.model.CandleEntry
+import com.fyp.basarattradeinvest.domain.model.market.BenchmarkTrend
+import com.fyp.basarattradeinvest.domain.model.market.BenchmarkTrendPoint
+import com.fyp.basarattradeinvest.domain.model.market.CandleEntry
 import java.util.Calendar
 
 /**

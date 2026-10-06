@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.feature.shariah
 
-import com.fyp.basarattradeinvest.domain.model.ShariahStock
+import com.fyp.basarattradeinvest.domain.model.shariah.ShariahStock
 
 sealed interface ShariahScreeningUiState {
     data object Loading : ShariahScreeningUiState

@@ -1,6 +1,6 @@
 package com.fyp.basarattradeinvest.domain.usecase.notifications
 
-import com.fyp.basarattradeinvest.domain.model.NotificationFeed
+import com.fyp.basarattradeinvest.domain.model.alerts.NotificationFeed
 import com.fyp.basarattradeinvest.domain.repository.NotificationsRepository
 
 class GetNotificationsUseCase(private val repository: NotificationsRepository) {

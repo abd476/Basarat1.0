@@ -4,7 +4,7 @@ import com.fyp.basarattradeinvest.core.network.NetworkErrorParser
 import com.fyp.basarattradeinvest.data.mapper.ShariahDtoMapper
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
 import com.fyp.basarattradeinvest.data.remote.api.ShariahApiService
-import com.fyp.basarattradeinvest.domain.model.ShariahStock
+import com.fyp.basarattradeinvest.domain.model.shariah.ShariahStock
 import com.fyp.basarattradeinvest.domain.model.shariah.DividendPurificationResult
 import com.fyp.basarattradeinvest.domain.model.shariah.Kmi30IndexSummary
 import com.fyp.basarattradeinvest.domain.model.shariah.StockShariahCompliance

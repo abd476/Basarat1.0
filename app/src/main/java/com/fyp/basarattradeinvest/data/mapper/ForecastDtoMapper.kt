@@ -1,7 +1,14 @@
 package com.fyp.basarattradeinvest.data.mapper
 
 import com.fyp.basarattradeinvest.data.remote.dto.forecast.*
-import com.fyp.basarattradeinvest.domain.model.*
+import com.fyp.basarattradeinvest.domain.model.stock.StockForecast
+import com.fyp.basarattradeinvest.domain.model.stock.ForecastProbabilities
+import com.fyp.basarattradeinvest.domain.model.stock.ForecastModelDetail
+import com.fyp.basarattradeinvest.domain.model.stock.ForecastMarketContext
+import com.fyp.basarattradeinvest.domain.model.stock.ForecastDirection
+import com.fyp.basarattradeinvest.domain.model.stock.ForecastHistory
+import com.fyp.basarattradeinvest.domain.model.stock.ForecastActualOutcome
+import com.fyp.basarattradeinvest.domain.model.stock.ForecastHistoryRecord
 
 /**
  * Mapper between raw Swagger Forecast DTOs and Clean Domain models

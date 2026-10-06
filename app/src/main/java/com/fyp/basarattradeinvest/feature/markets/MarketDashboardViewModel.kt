@@ -6,10 +6,10 @@ import com.fyp.basarattradeinvest.core.session.AuthState
 import com.fyp.basarattradeinvest.core.session.SessionManager
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
 import com.fyp.basarattradeinvest.data.repository.MarketRepositoryImpl
-import com.fyp.basarattradeinvest.domain.model.IndexConstituent
-import com.fyp.basarattradeinvest.domain.model.MarketOverview
-import com.fyp.basarattradeinvest.domain.model.MarketStock
-import com.fyp.basarattradeinvest.domain.model.SymbolFilterType
+import com.fyp.basarattradeinvest.domain.model.market.IndexConstituent
+import com.fyp.basarattradeinvest.domain.model.market.MarketOverview
+import com.fyp.basarattradeinvest.domain.model.market.MarketStock
+import com.fyp.basarattradeinvest.domain.model.stock.SymbolFilterType
 import com.fyp.basarattradeinvest.domain.model.live.LiveQuote
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 import com.fyp.basarattradeinvest.domain.repository.LiveMarketRepository
