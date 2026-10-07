@@ -267,9 +267,12 @@ class RecommendationsRepositoryImpl(
     ): Result<EngineWeights> = withContext(Dispatchers.IO) {
         try {
             val request = EngineWeightsRequestDto(
+                // Send the new ML field and legacy GRU alias with the same UI weight.
                 gruWeight = gruWeight,
+                mlWeight = gruWeight,
                 technicalWeight = technicalWeight,
-                fundamentalWeight = fundamentalWeight
+                fundamentalWeight = fundamentalWeight,
+                sentimentWeight = 0.0
             )
             val response = apiService.setEngineWeights(request)
             if (response.isSuccessful && response.body() != null) {
