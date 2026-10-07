@@ -296,7 +296,11 @@ class ShariahModuleUnitTest {
 
         val summary = repository.getKmi30Constituents()
         assertTrue(summary.isFailure)
-        assertEquals("Internal Error", summary.exceptionOrNull()?.message)
+        // The 500 must reach the caller as a failure; its text is sanitised centrally, so the
+        // server's own body never appears in the UI.
+        val summaryMessage = summary.exceptionOrNull()?.message.orEmpty()
+        assertFalse(summaryMessage.contains("Internal Error"))
+        assertTrue(summaryMessage.contains("500"))
 
         val stocks = repository.getShariahCompliantStocks()
         assertTrue(stocks.isFailure)
