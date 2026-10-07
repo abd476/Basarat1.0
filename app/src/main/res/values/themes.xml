@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- The selected tab is carried by the icon/label tint alone, so the Material pill is
+         deliberately invisible here. -->
     <style name="BasaratBottomNavActiveIndicator">
         <item name="android:width">52dp</item>
         <item name="android:height">52dp</item>
-        <item name="android:color">@color/nav_item_selected_background</item>
-        <item name="shapeAppearance">@style/BasaratBottomNavIndicatorShape</item>
-    </style>
-
-    <style name="BasaratBottomNavIndicatorShape" parent="">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">50%</item>
+        <item name="android:color">@android:color/transparent</item>
     </style>
 
     <style name="BasaratBottomNavLabel" parent="TextAppearance.Material3.LabelSmall">
