@@ -89,12 +89,18 @@ class ShariahRepositoryImpl(
         category: String,
         query: String?
     ): Result<List<ShariahStock>> = withContext(Dispatchers.IO) {
-        getKmi30Constituents().mapCatching { summary ->
-            val allStocks = summary.constituents.map { ShariahDtoMapper.mapConstituentToLegacyStock(it) }
+        val source = if (category.equals(CATEGORY_ALL_STOCKS, ignoreCase = true)) {
+            getAllStocks()
+        } else {
+            getKmi30Constituents().mapCatching { summary ->
+                summary.constituents.map(ShariahDtoMapper::mapConstituentToLegacyStock)
+            }
+        }
 
+        source.mapCatching { stocks ->
             val filteredByCategory = when {
-                category.equals("KMI-30", ignoreCase = true) -> allStocks.filter { it.isKmi30 }
-                else -> allStocks
+                category.equals("KMI-30", ignoreCase = true) -> stocks.filter { it.isKmi30 }
+                else -> stocks
             }
 
             if (query.isNullOrBlank()) {
@@ -106,5 +112,39 @@ class ShariahRepositoryImpl(
                 }
             }
         }
+    }
+
+    private suspend fun getAllStocks(): Result<List<ShariahStock>> {
+        return try {
+            val response = apiService.getAllStocks()
+            val body = response.body()
+            if (response.isSuccessful && body != null) {
+                Result.success(
+                    body.stocks.orEmpty().mapNotNull { quote ->
+                        val symbol = quote.symbol?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
+                        ShariahStock(
+                            symbol = symbol,
+                            companyName = quote.name?.takeIf { it.isNotBlank() } ?: symbol,
+                            // Deliberately null: the backend publishes bulk compliance for KMI-30
+                            // only, so an unscreened row must not render a verdict or a rate.
+                            price = quote.current,
+                            changePercent = quote.changePct,
+                            isCompliant = null,
+                            isKmi30 = false
+                        )
+                    }
+                )
+            } else {
+                Result.failure(Exception(NetworkErrorParser.parseError(response)))
+            }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(Exception(e.message ?: "Unable to load the PSX stock list."))
+        }
+    }
+
+    private companion object {
+        const val CATEGORY_ALL_STOCKS = "All Stocks"
     }
 }

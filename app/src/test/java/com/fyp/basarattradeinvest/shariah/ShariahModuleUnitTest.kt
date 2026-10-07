@@ -2,6 +2,8 @@ package com.fyp.basarattradeinvest.shariah
 
 import com.fyp.basarattradeinvest.data.mapper.ShariahDtoMapper
 import com.fyp.basarattradeinvest.data.remote.api.ShariahApiService
+import com.fyp.basarattradeinvest.data.remote.dto.live.RestQuotesResponseDto
+import com.fyp.basarattradeinvest.data.remote.dto.live.WsQuoteDataDto
 import com.fyp.basarattradeinvest.data.remote.dto.shariah.ShariahCriteriaResponseDto
 import com.fyp.basarattradeinvest.data.remote.dto.shariah.ShariahKmi30ResponseDto
 import com.fyp.basarattradeinvest.data.remote.dto.shariah.ShariahPurificationResponseDto
@@ -144,6 +146,27 @@ class ShariahModuleUnitTest {
             if (shouldFail) return errorResponse(500, """{"detail":"Internal Error"}""")
             return Response.success(
                 Gson().fromJson(KMI30_JSON, ShariahKmi30ResponseDto::class.java)
+            )
+        }
+
+        override suspend fun getAllStocks(
+            limit: Int,
+            offset: Int,
+            sortBy: String,
+            order: String
+        ): Response<RestQuotesResponseDto> {
+            if (shouldFail) return errorResponse(500, """{"detail":"Internal Error"}""")
+            return Response.success(
+                RestQuotesResponseDto(
+                    stocks = listOf(
+                        WsQuoteDataDto(symbol = "SYSTEMS", current = 412.5, ldcp = 410.0, open = null, high = null, low = null, change = 2.5, changePct = 0.61, volume = 1200, asOf = null, name = "Systems Limited", sector = "TECHNOLOGY & COMMUNICATION", marketCapM = null),
+                        WsQuoteDataDto(symbol = "HBL", current = null, ldcp = null, open = null, high = null, low = null, change = null, changePct = null, volume = null, asOf = null, name = null, sector = null, marketCapM = null)
+                    ),
+                    total = 2,
+                    asOf = "2026-10-07T10:53:51+00:00",
+                    isStale = true,
+                    recommendedPollSeconds = 15
+                )
             )
         }
 
@@ -338,6 +361,22 @@ class ShariahModuleUnitTest {
 
         val bySymbol = repository.getShariahCompliantStocks(category = "KMI-30", query = "air").getOrNull()
         assertEquals(listOf("AIRLINK"), bySymbol!!.map { it.symbol })
+    }
+
+    @Test
+    fun allStocksCategory_listsTheWholeBoardWithoutInventingAVerdict() = runBlocking {
+        val stocks = repository.getShariahCompliantStocks(category = "All Stocks").getOrNull()
+        assertNotNull(stocks)
+        assertEquals(listOf("SYSTEMS", "HBL"), stocks!!.map { it.symbol })
+
+        // Bulk compliance is only published for KMI-30, so a board row must stay unscreened
+        // rather than defaulting to compliant or a 0% purification rate.
+        assertTrue(stocks.all { it.isCompliant == null })
+        assertTrue(stocks.all { it.purificationRate == null })
+        assertTrue(stocks.all { !it.isKmi30 })
+
+        assertEquals(412.5, stocks.first { it.symbol == "SYSTEMS" }.price!!, 0.001)
+        assertNull(stocks.first { it.symbol == "HBL" }.price)
     }
 
     @Test
