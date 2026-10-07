@@ -42,17 +42,17 @@ enum class ForecastDirection(val label: String) {
 }
 
 data class ForecastProbabilities(
-    val bullish: Double,
-    val bearish: Double,
-    val sideways: Double
+    val bullish: Double?,
+    val bearish: Double?,
+    val sideways: Double?
 )
 
 data class ForecastModelDetail(
     val direction: String,
-    val bullishPct: Double,
-    val bearishPct: Double,
-    val sidewaysPct: Double,
-    val gapPp: Double
+    val bullishPct: Double?,
+    val bearishPct: Double?,
+    val sidewaysPct: Double?,
+    val gapPp: Double?
 )
 
 data class ForecastMarketContext(

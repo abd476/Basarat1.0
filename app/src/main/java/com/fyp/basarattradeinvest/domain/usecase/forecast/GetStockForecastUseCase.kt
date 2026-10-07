@@ -9,7 +9,7 @@ import com.fyp.basarattradeinvest.domain.repository.ForecastRepository
 class GetStockForecastUseCase(
     private val repository: ForecastRepository
 ) {
-    suspend operator fun invoke(symbol: String, horizon: String = "1D"): Result<StockForecast> {
+    suspend operator fun invoke(symbol: String, horizon: String = "1W"): Result<StockForecast> {
         if (symbol.isBlank()) {
             return Result.failure(IllegalArgumentException("Stock symbol cannot be blank"))
         }
