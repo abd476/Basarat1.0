@@ -126,62 +126,84 @@ class RecommendationsRepositoryImpl(
         }
 
         // 1. Try real recommendation detail API
-        try {
+        val fresh = try {
             val response = apiService.getRecommendationDetail(sym)
             if (response.isSuccessful && response.body() != null) {
-                val mapped = RecommendationsDtoMapper.mapRecommendationDetail(response.body()!!)
-                val stockPrice = livePrice ?: mapped.currentPrice?.takeIf { it > 0.0 }
-                val target = mapped.targetPrice?.takeIf { it > 0.0 }
-                val stop = mapped.stopLoss?.takeIf { it > 0.0 }
+                RecommendationsDtoMapper.mapRecommendationDetail(response.body()!!)
+            } else null
+        } catch (_: Exception) { null }
 
-                return@withContext Result.success(
-                    cacheRecommendationDetail(mapped.copy(
-                        currentPrice = stockPrice,
-                        targetPrice = target,
-                        stopLoss = stop
-                    ))
-                )
-            }
-        } catch (_: Exception) {}
+        val freshMapped = fresh?.let {
+            it.copy(
+                currentPrice = livePrice ?: it.currentPrice?.takeIf { p -> p > 0.0 },
+                targetPrice = it.targetPrice?.takeIf { p -> p > 0.0 },
+                stopLoss = it.stopLoss?.takeIf { p -> p > 0.0 }
+            )
+        }
 
-        // 2. Try finding symbol in live recommendations list
-        try {
-            val listResponse = apiService.getRecommendations(limit = 100)
-            if (listResponse.isSuccessful && listResponse.body() != null) {
-                val match = listResponse.body()!!.recommendations.firstOrNull {
-                    it.symbol?.equals(sym, ignoreCase = true) == true
-                }
-                if (match != null) {
-                    val stockRec = RecommendationsDtoMapper.mapRecommendationItem(match)
-                    val stockPrice = livePrice ?: match.getResolvedCurrentPrice()?.takeIf { it > 0.0 }
-                    val target = stockRec.targetPrice?.takeIf { it > 0.0 }
-                    val stop = stockRec.stopLoss?.takeIf { it > 0.0 }
+        // 2. The per-symbol route recomputes live and withholds its verdict whenever its
+        // indicator inputs lag the quote feed (decision.suppressed), while the list route serves
+        // the engine's last published batch and still carries the signal with its ATR levels.
+        // Take the batch's verdict and levels so this screen agrees with the list, and leave the
+        // suppression reason on screen so the reader can see the live recompute declined.
+        val needsBatch = freshMapped == null || freshMapped.targetPrice == null || freshMapped.stopLoss == null
+        val batch = if (needsBatch) batchRowDetail(sym, livePrice) else null
 
-                    val detail = RecommendationDetail(
-                        symbol = sym,
-                        signal = stockRec.signal,
-                        confidence = stockRec.confidence,
-                        compositeScore = stockRec.compositeScore,
-                        individualSignals = emptyMap(),
-                        targetPrice = target,
-                        stopLoss = stop,
-                        expectedRange = null,
-                        currentPrice = stockPrice,
-                        atr14 = match.risk?.atr14,
-                        reasoning = mapOf(
-                            "ml" to mapOf("direction" to stockRec.summary),
-                            "technical" to mapOf(
-                                "technical_summary" to "Target ${targetLevelText(target)}, Stop ${targetLevelText(stop)}"
-                            )
-                        ),
-                        weights = emptyMap()
+        val merged = when {
+            freshMapped != null && batch != null -> freshMapped.copy(
+                signal = batch.signal,
+                confidence = batch.confidence,
+                compositeScore = batch.compositeScore,
+                targetPrice = batch.targetPrice,
+                stopLoss = batch.stopLoss,
+                currentPrice = batch.currentPrice ?: freshMapped.currentPrice,
+                atr14 = freshMapped.atr14 ?: batch.atr14
+            )
+            freshMapped != null -> freshMapped
+            else -> batch
+        }
+
+        return@withContext if (merged != null) {
+            Result.success(cacheRecommendationDetail(merged))
+        } else {
+            Result.failure(Exception("No recommendation is available for $sym"))
+        }
+    }
+
+    /** The symbol's row from the engine's published recommendation batch, or null when absent. */
+    private suspend fun batchRowDetail(sym: String, livePrice: Double?): RecommendationDetail? = try {
+        val body = apiService.getRecommendations(limit = 100).body()
+        val match = body?.recommendations?.firstOrNull {
+            it.symbol?.equals(sym, ignoreCase = true) == true
+        }
+        if (match == null) {
+            null
+        } else {
+            val stockRec = RecommendationsDtoMapper.mapRecommendationItem(match)
+            val target = stockRec.targetPrice?.takeIf { it > 0.0 }
+            val stop = stockRec.stopLoss?.takeIf { it > 0.0 }
+            RecommendationDetail(
+                symbol = sym,
+                signal = stockRec.signal,
+                confidence = stockRec.confidence,
+                compositeScore = stockRec.compositeScore,
+                individualSignals = emptyMap(),
+                targetPrice = target,
+                stopLoss = stop,
+                expectedRange = null,
+                currentPrice = livePrice ?: stockRec.currentPrice?.takeIf { it > 0.0 },
+                atr14 = match.risk?.atr14,
+                reasoning = mapOf(
+                    "ml" to mapOf("direction" to stockRec.summary),
+                    "technical" to mapOf(
+                        "technical_summary" to "Target ${targetLevelText(target)}, Stop ${targetLevelText(stop)}"
                     )
-                    return@withContext Result.success(cacheRecommendationDetail(detail))
-                }
-            }
-        } catch (_: Exception) {}
-
-        Result.failure(Exception("No recommendation is available for $sym"))
+                ),
+                weights = emptyMap()
+            )
+        }
+    } catch (_: Exception) {
+        null
     }
 
     override suspend fun getTargetStop(symbol: String, knownPrice: Double?): Result<TargetStop> = withContext(Dispatchers.IO) {

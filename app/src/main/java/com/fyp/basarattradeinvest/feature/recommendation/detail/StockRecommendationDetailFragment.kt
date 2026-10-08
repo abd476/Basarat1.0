@@ -221,7 +221,12 @@ class StockRecommendationDetailFragment : Fragment() {
         }
         binding.cardDailyRange.visibility = if (dailyRangeVisible) View.VISIBLE else View.GONE
 
+        // When the live recompute withheld its verdict, the repository falls back to the
+        // engine's published batch, so the levels here are the batch's, not a fresh reading.
+        val levelsFromBatch = detail.isSuppressed && targetStop == null
+
         val riskNote = when {
+            levelsFromBatch && target != null && stop != null -> "Verdict and levels come from the engine's published recommendation batch; the live recompute declined."
             target != null && stop != null -> "Volatility and risk estimates are model guidance, not guaranteed outcomes."
             detail.suppressionReason?.isNotBlank() == true -> "Target and stop levels were not provided: ${detail.suppressionReason}"
             targetStop?.method == "default" || expectedRange?.method == "default" -> "The backend returned a flat default range; no target or stop level is available."
@@ -230,7 +235,7 @@ class StockRecommendationDetailFragment : Fragment() {
         }
         binding.tvRiskNote.apply {
             text = riskNote
-            visibility = if (target == null || stop == null || (atr != null && !dailyRangeVisible)) View.VISIBLE else View.GONE
+            visibility = if (levelsFromBatch || target == null || stop == null || (atr != null && !dailyRangeVisible)) View.VISIBLE else View.GONE
         }
 
         bindEngineSettings(detail)
