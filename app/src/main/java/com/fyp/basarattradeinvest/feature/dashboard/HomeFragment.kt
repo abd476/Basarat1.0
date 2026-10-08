@@ -134,7 +134,7 @@ class HomeFragment : Fragment() {
 
         // 3. Watchlist "View All"
         binding.btnViewWatchlist.setOnClickListener {
-            findNavController().navigate(R.id.nav_markets)
+            findNavController().navigate(R.id.action_home_to_watchlist)
         }
 
         // 4. Movers "View All" -> Markets

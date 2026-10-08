@@ -86,6 +86,12 @@
     <string name="title_notifications">Notifications</string>
     <string name="notifications_inbox">In-App Notifications</string>
 
+    <!-- Watchlist Module -->
+    <plurals name="watchlist_stock_count">
+        <item quantity="one">%d stock tracked</item>
+        <item quantity="other">%d stocks tracked</item>
+    </plurals>
+
     <!-- Shariah Module -->
     <string name="title_shariah">Shariah Screening</string>
     <string name="subtitle_shariah">PSX KMI-30 &amp; AAOIFI Compliance</string>
