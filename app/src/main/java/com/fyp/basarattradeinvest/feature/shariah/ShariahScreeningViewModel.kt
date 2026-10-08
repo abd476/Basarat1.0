@@ -23,9 +23,10 @@ class ShariahScreeningViewModel(
     private val _uiState = MutableStateFlow<ShariahScreeningUiState>(ShariahScreeningUiState.Loading)
     val uiState: StateFlow<ShariahScreeningUiState> = _uiState.asStateFlow()
 
-    private var currentCategory: String = "KMI-30"
+    private var currentCategory: String = "All Stocks"
     private var searchQuery: String = ""
     private var isLiveUpdatesActive = false
+    private val stockCache = mutableMapOf<String, List<ShariahStock>>()
     private val pendingQuotes = mutableMapOf<String, LiveQuote>()
     private var quoteFlushJob: Job? = null
 
@@ -56,20 +57,20 @@ class ShariahScreeningViewModel(
         searchQuery = query
 
         viewModelScope.launch {
+            // The board is ~750 symbols, so it is fetched once per category and filtered in
+            // memory; otherwise every keystroke in search would re-download the whole list.
+            val cached = stockCache[category.lowercase()]
+            if (cached != null) {
+                publish(cached, category, query)
+                return@launch
+            }
+
             _uiState.value = ShariahScreeningUiState.Loading
-            val result = repository.getShariahCompliantStocks(category = currentCategory, query = searchQuery)
+            val result = repository.getShariahCompliantStocks(category = category, query = null)
             result.fold(
                 onSuccess = { list ->
-                    if (list.isEmpty()) {
-                        _uiState.value = ShariahScreeningUiState.Empty
-                    } else {
-                        _uiState.value = ShariahScreeningUiState.Success(
-                            stocks = list.withQuotes(liveMarketRepository.quoteCache.value),
-                            category = currentCategory,
-                            totalCount = list.size
-                        )
-                        updateQuoteSubscriptions(list.map { it.symbol })
-                    }
+                    stockCache[category.lowercase()] = list
+                    publish(list, category, query)
                 },
                 onFailure = { error ->
                     _uiState.value = ShariahScreeningUiState.Error(
@@ -78,6 +79,28 @@ class ShariahScreeningViewModel(
                 }
             )
         }
+    }
+
+    private fun publish(stocks: List<ShariahStock>, category: String, query: String) {
+        val visible = if (query.isBlank()) {
+            stocks
+        } else {
+            stocks.filter {
+                it.symbol.contains(query, ignoreCase = true) ||
+                    it.companyName.contains(query, ignoreCase = true)
+            }
+        }
+
+        if (visible.isEmpty()) {
+            _uiState.value = ShariahScreeningUiState.Empty
+        } else {
+            _uiState.value = ShariahScreeningUiState.Success(
+                stocks = visible.withQuotes(liveMarketRepository.quoteCache.value),
+                category = category,
+                totalCount = stocks.size
+            )
+        }
+        updateQuoteSubscriptions(visible.map { it.symbol })
     }
 
     fun setCategory(category: String) {
@@ -97,9 +120,14 @@ class ShariahScreeningViewModel(
     }
 
     private fun updateQuoteSubscriptions(symbols: Collection<String>) {
+        // The whole board is ~748 symbols and its REST payload already carries price and
+        // change, so ticking every one of them would send an oversized subscribe and rebuild
+        // the list once per flush. Live quotes are only needed for the small KMI-30 screening
+        // list, whose payload has no prices at all.
+        val liveSymbols = if (symbols.size <= MAX_LIVE_SUBSCRIBED) symbols else emptyList()
         liveMarketRepository.setSubscriptions(
             owner = SUBSCRIPTION_OWNER,
-            symbols = if (isLiveUpdatesActive) symbols else emptyList()
+            symbols = if (isLiveUpdatesActive) liveSymbols else emptyList()
         )
     }
 
@@ -124,5 +152,6 @@ class ShariahScreeningViewModel(
     companion object {
         private const val SUBSCRIPTION_OWNER = "shariah"
         private const val QUOTE_FLUSH_INTERVAL_MS = 750L
+        private const val MAX_LIVE_SUBSCRIBED = 50
     }
 }

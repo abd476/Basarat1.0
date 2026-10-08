@@ -22,5 +22,5 @@ data class ForecastHistoryRecord(
 
 data class ForecastActualOutcome(
     val direction: String,
-    val wasCorrect: Boolean
+    val wasCorrect: Boolean?
 )

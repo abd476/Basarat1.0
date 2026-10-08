@@ -101,7 +101,9 @@ class MarketSessionStatusTest {
         val result = dataSourceWith(error).getMarketSessionStatus()
 
         assertTrue(result.isFailure)
-        assertEquals("Service unavailable", result.exceptionOrNull()?.message)
+        val message = result.exceptionOrNull()?.message.orEmpty()
+        assertFalse(message.contains("Service unavailable"))
+        assertTrue(message.contains("503"))
     }
 
     @Test

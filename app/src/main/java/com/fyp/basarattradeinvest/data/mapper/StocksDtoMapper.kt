@@ -187,54 +187,78 @@ object StocksDtoMapper {
         val ratios = dto.ratios ?: dto.financialRatios
         val extras = dto.extras
         val equity = dto.equityProfile
+        val shareStructure = dto.shareStructure
+        val valuation = dto.valuation
+        val profitability = dto.profitability
+        val growth = dto.growth
 
         // Helper to extract metric values from the "metrics" list by key or name
         val metricsMap = dto.metrics?.associate { 
             (it.key ?: it.name ?: "").uppercase().trim() to it 
         } ?: emptyMap()
 
-        val pe = ratios?.peRatio
+        val pe = valuation?.peRatio
+            ?: ratios?.peRatio
             ?: metricsMap["P/E RATIO"]?.getValueAsDouble()
             ?: metricsMap["PE RATIO"]?.getValueAsDouble()
             ?: metricsMap["PE"]?.getValueAsDouble()
 
-        val peg = ratios?.pegRatio
+        val peg = valuation?.pegRatio
+            ?: ratios?.pegRatio
             ?: metricsMap["PEG RATIO"]?.getValueAsDouble()
 
-        val epsVal = ratios?.eps
+        val epsVal = profitability?.eps
+            ?: ratios?.eps
             ?: metricsMap["EPS"]?.getValueAsDouble()
 
-        val divYield = ratios?.dividendYieldPct
+        val divYield = valuation?.dividendYieldPct
+            ?: ratios?.dividendYieldPct
             ?: metricsMap["DIVIDEND YIELD"]?.getValueAsDouble()
 
-        val netMargin = ratios?.netProfitMarginPct
+        val netMargin = profitability?.netProfitMarginPct
+            ?: ratios?.netProfitMarginPct
             ?: extras?.netProfitMarginPct
             ?: metricsMap["NET PROFIT MARGIN"]?.getValueAsDouble()
 
         val de = extras?.debtToEquity
+            ?: ratios?.debtToEquity
             ?: metricsMap["DEBT-TO-EQUITY"]?.getValueAsDouble()
             ?: metricsMap["DEBT TO EQUITY"]?.getValueAsDouble()
 
         val currentRatio = extras?.currentRatio
+            ?: ratios?.currentRatio
             ?: metricsMap["CURRENT RATIO"]?.getValueAsDouble()
 
         val quickRatio = extras?.quickRatio
+            ?: ratios?.quickRatio
             ?: metricsMap["QUICK RATIO"]?.getValueAsDouble()
 
-        val roe = extras?.roePct
+        val roe = profitability?.roePct
+            ?: extras?.roePct
             ?: metricsMap["ROE"]?.getValueAsDouble()
 
-        val roa = extras?.roaPct
+        val roa = profitability?.roaPct
+            ?: extras?.roaPct
             ?: metricsMap["ROA"]?.getValueAsDouble()
 
         val interestCov = extras?.interestCoverage
+            ?: ratios?.interestCoverageRatio
+            ?: ratios?.interestCoverage
             ?: metricsMap["INTEREST COVERAGE"]?.getValueAsDouble()
 
-        val pb = extras?.priceToBook
+        val pb = valuation?.priceToBook
+            ?: extras?.priceToBook
+            ?: ratios?.priceToBook
             ?: metricsMap["PRICE TO BOOK"]?.getValueAsDouble()
             ?: metricsMap["P/B RATIO"]?.getValueAsDouble()
 
         val formattedMarketCap = when {
+            shareStructure?.marketCapPkrM != null && shareStructure.marketCapPkrM > 0 -> {
+                String.format(Locale.US, "%.1fM", shareStructure.marketCapPkrM)
+            }
+            shareStructure?.marketCapPkr != null && shareStructure.marketCapPkr > 0 -> {
+                String.format(Locale.US, "%.1fB", shareStructure.marketCapPkr / 1_000_000_000.0)
+            }
             equity?.marketCapPkrM != null && equity.marketCapPkrM > 0 -> {
                 String.format(Locale.US, "%.1fM", equity.marketCapPkrM)
             }
@@ -244,21 +268,34 @@ object StocksDtoMapper {
             else -> null
         }
 
-        val evEbitda = metricsMap["EV/EBITDA"]?.getValueAsDouble()
+        val evEbitda = valuation?.evToEbitda
+            ?: metricsMap["EV/EBITDA"]?.getValueAsDouble()
             ?: metricsMap["EV EBITDA"]?.getValueAsDouble()
 
         val fwdPe = metricsMap["FORWARD P/E"]?.getValueAsDouble()
             ?: metricsMap["FORWARD PE"]?.getValueAsDouble()
 
-        val revVal = metricsMap["REVENUE"]?.getValueAsString()
+        val financialUnit = dto.financials?.unit?.takeIf { it.isNotBlank() }?.let { " $it" }.orEmpty()
+        val revVal = profitability?.revenue?.let { String.format(Locale.US, "%.2f%s", it, financialUnit) }
+            ?: dto.financials?.annual?.firstOrNull()?.let { item ->
+                (item.revenue ?: item.sales)?.let { String.format(Locale.US, "%.2f%s", it, financialUnit) }
+            }
+            ?: metricsMap["REVENUE"]?.getValueAsString()
             ?: metricsMap["REVENUE TTM"]?.getValueAsString()
             ?: metricsMap["SALES"]?.getValueAsString()
 
-        val netIncVal = metricsMap["NET INCOME"]?.getValueAsString()
+        val netIncVal = profitability?.profitAfterTax?.let { String.format(Locale.US, "%.2f%s", it, financialUnit) }
+            ?: dto.financials?.annual?.firstOrNull()?.let { item ->
+                (item.profitAfterTax ?: item.netProfit)?.let { String.format(Locale.US, "%.2f%s", it, financialUnit) }
+            }
+            ?: metricsMap["NET INCOME"]?.getValueAsString()
             ?: metricsMap["NET INCOME TTM"]?.getValueAsString()
 
         val fcfVal = metricsMap["FREE CASH FLOW"]?.getValueAsString()
             ?: metricsMap["FCF"]?.getValueAsString()
+            ?: dto.cashFlow?.annual?.firstOrNull()?.freeCashFlow?.let {
+                String.format(Locale.US, "%.2f%s", it, financialUnit)
+            }
 
         return FundamentalMetrics(
             peRatio = pe,
@@ -277,9 +314,11 @@ object StocksDtoMapper {
             quickRatio = quickRatio,
             interestCoverage = interestCov,
             revenueTTM = revVal,
-            revenueGrowthYoY = ratios?.epsGrowthPct ?: extras?.epsGrowthPct,
+            revenueGrowthYoY = growth?.revenueGrowthYoyPct
+                ?: ratios?.epsGrowthPct
+                ?: extras?.epsGrowthPct,
             netIncomeTTM = netIncVal,
-            netIncomeGrowthYoY = null,
+            netIncomeGrowthYoY = growth?.profitGrowthYoyPct,
             freeCashFlowTTM = fcfVal
         )
     }

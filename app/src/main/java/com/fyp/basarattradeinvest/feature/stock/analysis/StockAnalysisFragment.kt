@@ -22,6 +22,7 @@ import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentStockAnalysisBinding
 import com.fyp.basarattradeinvest.domain.model.market.CandleEntry
 import com.fyp.basarattradeinvest.domain.model.stock.ForecastDirection
+import com.fyp.basarattradeinvest.domain.model.stock.ForecastHistory
 import com.fyp.basarattradeinvest.domain.model.stock.StockAnalysis
 import com.fyp.basarattradeinvest.domain.model.stock.StockForecast
 import com.fyp.basarattradeinvest.domain.model.stock.TechnicalSignal
@@ -114,10 +115,12 @@ class StockAnalysisFragment : Fragment() {
         // Forecast Horizon selection pills
         binding.btnHorizon1d.setOnClickListener { viewModel.selectHorizon("1D") }
         binding.btnHorizon1w.setOnClickListener { viewModel.selectHorizon("1W") }
+        binding.btnHorizon2w.setOnClickListener { viewModel.selectHorizon("2W") }
         binding.btnHorizon1m.setOnClickListener { viewModel.selectHorizon("1M") }
 
         // Retry buttons
         binding.btnForecastRetry.setOnClickListener { viewModel.retryForecast() }
+        binding.btnForecastHistoryRetry.setOnClickListener { viewModel.retryHistory() }
         binding.btnStockSentimentRetry.setOnClickListener { viewModel.retrySentiment() }
         binding.btnSentimentHistoryRetry.setOnClickListener { viewModel.retrySentiment() }
         binding.btnSentimentNewsRetry.setOnClickListener { viewModel.retrySentiment() }
@@ -185,6 +188,12 @@ class StockAnalysisFragment : Fragment() {
                                 previous.selectedHorizon != state.selectedHorizon
                             ) {
                                 renderForecastSection(state.forecastState, state.selectedHorizon)
+                            }
+                            if (previous == null ||
+                                previous.historyState != state.historyState ||
+                                previous.selectedHorizon != state.selectedHorizon
+                            ) {
+                                renderForecastHistory(state.historyState, state.selectedHorizon)
                             }
                             if (previous == null || previous.sentimentState != state.sentimentState) {
                                 renderStockSentiment(state.sentimentState)
@@ -515,6 +524,9 @@ class StockAnalysisFragment : Fragment() {
         binding.btnHorizon1w.background = if (selectedHorizon == "1W") activeBg else null
         binding.btnHorizon1w.setTextColor(if (selectedHorizon == "1W") primaryText else secondaryText)
 
+        binding.btnHorizon2w.background = if (selectedHorizon == "2W") activeBg else null
+        binding.btnHorizon2w.setTextColor(if (selectedHorizon == "2W") primaryText else secondaryText)
+
         binding.btnHorizon1m.background = if (selectedHorizon == "1M") activeBg else null
         binding.btnHorizon1m.setTextColor(if (selectedHorizon == "1M") primaryText else secondaryText)
 
@@ -574,7 +586,7 @@ class StockAnalysisFragment : Fragment() {
         }
 
         // Signal Rating
-        val signalRating = forecast.signalRating ?: "NEUTRAL"
+        val signalRating = forecast.signalRating?.takeIf { it.isNotBlank() } ?: "N/A"
         binding.tvForecastSignalRating.text = signalRating.uppercase()
         when {
             signalRating.contains("Buy", ignoreCase = true) -> {
@@ -607,8 +619,19 @@ class StockAnalysisFragment : Fragment() {
             ForecastDirection.SIDEWAYS -> "Neutral"
         }
 
-        binding.tvForecastSummary.text = "Overall forecast: $summaryDirection. Target $targetPriceText with $upsideText."
-        binding.tvForecastMeta.text = "Forecast confidence: $confPct% • Target date: ${forecast.targetDate}"
+        val summaryParts = mutableListOf("Forecast: $summaryDirection")
+        forecast.targetPrice?.let { summaryParts += "Target PKR ${String.format(Locale.US, "%.2f", it)}" }
+        forecast.upsidePct?.let {
+            summaryParts += String.format(Locale.US, "%+.1f%%", it)
+        }
+        binding.tvForecastSummary.text = summaryParts.joinToString(" · ")
+        binding.tvForecastMeta.text = listOfNotNull(
+            "${forecast.horizon} outlook",
+            forecast.targetDate.takeIf { it.isNotBlank() }?.let { "Target date: $it" },
+            forecast.asOfDate.takeIf { it.isNotBlank() }?.let { "As of: $it" },
+            forecast.modelVersion?.takeIf { it.isNotBlank() }?.let { "Model: $it" },
+            forecast.gateReason?.takeIf { it.isNotBlank() }
+        ).joinToString(" • ")
 
         // Prices & Targets
         binding.tvForecastTargetPrice.text = targetPriceText
@@ -623,11 +646,131 @@ class StockAnalysisFragment : Fragment() {
         binding.tvForecastRiskReward.text = forecast.riskRewardRatio?.let { String.format(Locale.US, "%.2f", it) } ?: "N/A"
         binding.tvForecastCurrentPrice.text = forecast.currentPrice?.let { String.format(Locale.US, "Ref: PKR %.2f", it) } ?: ""
 
-        // Keep only the user-facing result and key price/risk values. Hide model internals.
-        binding.cardForecastProbabilities.visibility = View.GONE
-        binding.cardModelBreakdown.visibility = View.GONE
+        bindForecastProbabilities(forecast)
+        bindForecastModels(forecast)
         binding.cardMarketContext.visibility = View.GONE
     }
+
+    private fun renderForecastHistory(state: ForecastHistorySectionState, horizon: String) {
+        val card = binding.cardForecastHistory
+        val summary = binding.tvForecastHistorySummary
+        val rows = binding.layoutForecastHistoryRows
+        val retry = binding.btnForecastHistoryRetry
+        rows.removeAllViews()
+        card.visibility = View.VISIBLE
+        retry.visibility = View.GONE
+
+        when (state) {
+            ForecastHistorySectionState.Loading -> {
+                summary.text = "Loading saved forecasts for $horizon…"
+            }
+            ForecastHistorySectionState.Empty -> {
+                summary.text = "No saved forecasts are available for $horizon yet."
+            }
+            is ForecastHistorySectionState.Error -> {
+                summary.text = state.message
+                retry.visibility = View.VISIBLE
+            }
+            is ForecastHistorySectionState.Success -> {
+                val history = state.history
+                val accuracy = history.accuracy?.let { probabilityPercent(it) }
+                    ?.let { String.format(Locale.US, "%.1f%% accuracy", it) }
+                summary.text = listOfNotNull(
+                    "${history.count} saved forecasts",
+                    accuracy
+                ).joinToString(" · ")
+                history.history.take(5).forEach { record ->
+                    val actual = record.actualOutcome
+                    val outcome = when {
+                        actual == null -> "Pending evaluation"
+                        actual.wasCorrect == true -> "Correct · actual ${actual.direction}"
+                        actual.wasCorrect == false -> "Incorrect · actual ${actual.direction}"
+                        actual.direction != "unknown" -> "Actual ${actual.direction}"
+                        else -> "Evaluated"
+                    }
+                    rows.addView(TextView(requireContext()).apply {
+                        text = "${record.predictedAt.ifBlank { "Forecast" }}  ·  ${record.predictedDirection.label}\nTarget ${record.targetDate.ifBlank { "—" }}  ·  $outcome"
+                        textSize = 12f
+                        setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_secondary))
+                        setPadding(0, dp(8), 0, dp(8))
+                    })
+                }
+            }
+        }
+    }
+
+    private fun bindForecastProbabilities(forecast: StockForecast) {
+        val probabilities = forecast.probabilities
+        val bullish = probabilityPercent(probabilities?.bullish)
+        val sideways = probabilityPercent(probabilities?.sideways)
+        val bearish = probabilityPercent(probabilities?.bearish)
+        val hasProbability = listOf(bullish, sideways, bearish).any { it != null }
+        binding.cardForecastProbabilities.visibility = if (hasProbability) View.VISIBLE else View.GONE
+        if (!hasProbability) return
+
+        binding.tvProbBullishVal.text = bullish?.let { String.format(Locale.US, "Bullish: %.1f%%", it) } ?: "Bullish: N/A"
+        binding.tvProbSidewaysVal.text = sideways?.let { String.format(Locale.US, "Sideways: %.1f%%", it) } ?: "Sideways: N/A"
+        binding.tvProbBearishVal.text = bearish?.let { String.format(Locale.US, "Bearish: %.1f%%", it) } ?: "Bearish: N/A"
+
+        val values = listOf(bullish, sideways, bearish)
+        val total = values.filterNotNull().sum().takeIf { it > 0.0 }
+        val bars = listOf(binding.barProbBullish, binding.barProbSideways, binding.barProbBearish)
+        bars.forEachIndexed { index, bar ->
+            val value = values[index]
+            bar.visibility = if (value != null && value > 0.0 && total != null) View.VISIBLE else View.GONE
+            (bar.layoutParams as? LinearLayout.LayoutParams)?.let { params ->
+                params.weight = if (value != null && total != null) value.toFloat() else 0f
+                bar.layoutParams = params
+            }
+        }
+        binding.layoutProbMeter.visibility = if (total != null) View.VISIBLE else View.GONE
+    }
+
+    private fun probabilityPercent(value: Double?): Double? = value?.let {
+        (if (kotlin.math.abs(it) <= 1.0) it * 100.0 else it).coerceIn(0.0, 100.0)
+    }
+
+    private fun bindForecastModels(forecast: StockForecast) {
+        val rows = binding.layoutModelRows
+        rows.removeAllViews()
+        forecast.models.toSortedMap().forEach { (modelName, model) ->
+            val row = LinearLayout(requireContext()).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = android.view.Gravity.CENTER_VERTICAL
+                setPadding(0, dp(6), 0, dp(6))
+            }
+            row.addView(TextView(requireContext()).apply {
+                text = modelName.replace('_', ' ').replaceFirstChar { it.uppercase() }
+                textSize = 13f
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_primary))
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+            }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+            row.addView(TextView(requireContext()).apply {
+                text = model.direction.takeIf { it.isNotBlank() && it != "unknown" }?.uppercase() ?: "N/A"
+                textSize = 12f
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_secondary))
+            })
+            val details = listOfNotNull(
+                model.bullishPct?.let { String.format(Locale.US, "Bull %.1f%%", it) },
+                model.sidewaysPct?.let { String.format(Locale.US, "Sideways %.1f%%", it) },
+                model.bearishPct?.let { String.format(Locale.US, "Bear %.1f%%", it) },
+                model.gapPp?.let { String.format(Locale.US, "Gap %.1f pp", it) }
+            ).joinToString(" · ")
+            if (details.isNotBlank()) {
+                row.addView(TextView(requireContext()).apply {
+                    text = details
+                    textSize = 11f
+                    setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_secondary))
+                    gravity = android.view.Gravity.END
+                    maxWidth = dp(190)
+                }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 2f))
+            }
+            rows.addView(row)
+        }
+        binding.cardModelBreakdown.visibility = if (forecast.models.isNotEmpty()) View.VISIBLE else View.GONE
+    }
+
+    private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
 
     // ─────────────────────────────────────────────────────────────────────────
     //  TAB 4: SENTIMENT

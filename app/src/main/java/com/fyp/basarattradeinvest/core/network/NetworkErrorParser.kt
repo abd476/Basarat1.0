@@ -9,6 +9,13 @@ object NetworkErrorParser {
     private val gson = Gson()
 
     fun parseError(response: Response<*>): String {
+        // A 5xx body from the backend is a server-side traceback (Pydantic response-model
+        // validation text, stack fragments, pydantic.dev links). None of it is actionable for a
+        // user, so keep it out of the UI and offer a retry instead.
+        if (response.code() in 500..599) {
+            return "The server couldn't complete this request (${response.code()}). Please try again."
+        }
+
         val errorBody = response.errorBody()?.string()
         if (errorBody.isNullOrBlank()) {
             return when (response.code()) {
@@ -19,7 +26,6 @@ object NetworkErrorParser {
                 409 -> "An account with these details already exists."
                 422 -> "Validation error. Please check the entered data."
                 429 -> "Too many requests. Please try again in a few moments."
-                in 500..599 -> "Server error. Our engineers have been notified."
                 else -> "An unexpected network error occurred (${response.code()})."
             }
         }

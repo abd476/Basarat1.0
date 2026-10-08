@@ -120,10 +120,6 @@ class ShariahScreeningFragment : Fragment() {
             viewModel.setCategory("KMI-30")
         }
 
-        binding.chipKmiAllShare.setOnClickListener {
-            viewModel.setCategory("KMI All Share")
-        }
-
         // Retry
         binding.btnRetry.setOnClickListener {
             viewModel.loadStocks()
@@ -212,8 +208,7 @@ class ShariahScreeningFragment : Fragment() {
     private fun updateFilterChips(activeCategory: String) {
         val chips = listOf(
             binding.chipAllStocks to "All Stocks",
-            binding.chipKmi30 to "KMI-30",
-            binding.chipKmiAllShare to "KMI All Share"
+            binding.chipKmi30 to "KMI-30"
         )
 
         chips.forEach { (view, category) ->
@@ -225,6 +220,14 @@ class ShariahScreeningFragment : Fragment() {
                 view.setBackgroundResource(R.drawable.bg_chip_filter_unselected)
                 view.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_secondary))
             }
+        }
+
+        // Only KMI-30 ships as a bulk compliance list, so the whole-board view must not claim
+        // its rows are already screened.
+        binding.tvTopSubtitle.text = if (activeCategory.equals("KMI-30", ignoreCase = true)) {
+            "PSX KMI-30 Shariah index"
+        } else {
+            "All PSX stocks — tap one to screen it"
         }
     }
 

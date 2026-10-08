@@ -79,9 +79,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="📈 Stock Idea"
+                    android:text="Stock Idea"
                     android:textColor="@color/color_text_primary"
                     app:chipBackgroundColor="@color/color_surface"
+                    app:chipIcon="@drawable/ic_post_stock_idea"
+                    app:chipIconSize="18dp"
+                    app:chipIconTint="@color/color_text_primary"
+                    app:chipIconVisible="true"
                     app:chipStrokeColor="@color/color_brand_primary"
                     app:chipStrokeWidth="1dp" />
 
@@ -90,9 +94,13 @@
                     style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🌐 General Market"
+                    android:text="General Market"
                     android:textColor="@color/color_text_primary"
                     app:chipBackgroundColor="@color/color_surface"
+                    app:chipIcon="@drawable/ic_post_general_market"
+                    app:chipIconSize="18dp"
+                    app:chipIconTint="@color/color_text_primary"
+                    app:chipIconVisible="true"
                     app:chipStrokeColor="@color/color_border"
                     app:chipStrokeWidth="1dp" />
             </com.google.android.material.chip.ChipGroup>

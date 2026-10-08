@@ -45,10 +45,11 @@ class ForecastRepositoryImpl(
 
     override suspend fun getForecastHistory(
         symbol: String,
+        horizon: String,
         limit: Int
     ): Result<ForecastHistory> = withContext(Dispatchers.IO) {
         try {
-            val response = apiService.getForecastHistory(symbol = symbol, limit = limit)
+            val response = apiService.getForecastHistory(symbol = symbol, horizon = horizon, limit = limit)
             if (response.isSuccessful) {
                 val body = response.body()
                 if (body != null) {

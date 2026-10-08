@@ -17,10 +17,12 @@ data class RecommendationDetailResponseDto(
     @SerializedName("atr_14") val atr14: Double? = null,
     @SerializedName("reasoning") val reasoning: Map<String, Any>? = emptyMap(),
     @SerializedName("weights") val weights: Map<String, Double>? = emptyMap(),
+    @SerializedName("generated_at") val generatedAt: String? = null,
+    @SerializedName("risk_profile") val riskProfile: String? = null,
     @SerializedName("decision") val decision: RecommendationDecisionNestedDto? = null,
     @SerializedName("market_data") val marketData: RecommendationMarketDataNestedDto? = null,
     @SerializedName("risk") val risk: TargetStopRiskDto? = null,
-    @SerializedName("components") val components: Map<String, Any>? = null,
+    @SerializedName("components") val components: Map<String, RecommendationComponentDto>? = null,
     @SerializedName("summary") val summary: String? = null
 ) {
     fun getResolvedSignal(): String = signal ?: decision?.signal ?: "HOLD"
@@ -40,9 +42,14 @@ data class RecommendationDecisionNestedDto(
     @SerializedName("confidence_type") val confidenceType: String? = null,
     @SerializedName("status") val status: String? = null,
     @SerializedName("horizon") val horizon: String? = null,
-    @SerializedName("reason") val reason: String? = null
+    @SerializedName("reason") val reason: String? = null,
+    @SerializedName("suppressed") val suppressed: Boolean? = null,
+    @SerializedName("suppression_reason") val suppressionReason: String? = null
 )
 
 data class RecommendationMarketDataNestedDto(
-    @SerializedName("current_price") val currentPrice: Double? = null
+    @SerializedName("current_price") val currentPrice: Double? = null,
+    @SerializedName("freshness") val freshness: String? = null,
+    @SerializedName("analysis_freshness") val analysisFreshness: String? = null,
+    @SerializedName("analysis_age_trading_days") val analysisAgeTradingDays: Int? = null
 )
