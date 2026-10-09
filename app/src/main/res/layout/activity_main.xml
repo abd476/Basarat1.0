@@ -66,6 +66,7 @@
         android:layout_gravity="start"
         android:background="@color/color_surface_elevated"
         android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.Basarat.Drawer"
         app:headerLayout="@layout/nav_header_drawer"
         app:itemBackground="@drawable/bg_drawer_item"
         app:itemHorizontalPadding="16dp"

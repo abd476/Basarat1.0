@@ -13,6 +13,12 @@
         <item name="android:fontFamily">sans</item>
     </style>
 
+    <!-- Material draws a 1dp rule between menu groups in a NavigationView using
+         ?android:attr/listDivider. The drawer keeps its groups but not the lines. -->
+    <style name="ThemeOverlay.Basarat.Drawer" parent="">
+        <item name="android:listDivider">@android:color/transparent</item>
+    </style>
+
     <!-- Base Application Theme (DayNight) -->
     <style name="Theme.BasaratTradeInvest" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Brand Colors -->
