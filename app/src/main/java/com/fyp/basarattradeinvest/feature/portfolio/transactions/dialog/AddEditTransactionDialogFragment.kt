@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
@@ -44,6 +45,8 @@ class AddEditTransactionDialogFragment : DialogFragment() {
     private lateinit var suggestionAdapter: StockSearchAdapter
     private var verifiedSelectedStock: StockSearchResult? = null
     private var searchJob: Job? = null
+    private var isSubmitting = false
+    private var submitButtonLabel = "Save"
 
     private val currencyFormat = NumberFormat.getNumberInstance(Locale.US).apply {
         minimumFractionDigits = 2
@@ -125,6 +128,8 @@ class AddEditTransactionDialogFragment : DialogFragment() {
         transactionId = arguments?.getString(ARG_TX_ID)
         prefilledSymbol = arguments?.getString(ARG_SYMBOL)
         selectedType = arguments?.getString(ARG_TYPE) ?: "BUY"
+        submitButtonLabel = if (isEditMode) "Save changes" else "Save"
+        binding.btnSubmit.text = submitButtonLabel
 
         setupUI()
         setupListeners()
@@ -352,6 +357,7 @@ class AddEditTransactionDialogFragment : DialogFragment() {
     }
 
     private fun submitForm() {
+        if (isSubmitting) return
         binding.tvFormError.visibility = View.GONE
 
         val symbol = if (isEditMode) {
@@ -384,8 +390,12 @@ class AddEditTransactionDialogFragment : DialogFragment() {
             return
         }
 
+        isSubmitting = true
         binding.btnSubmit.isEnabled = false
+        binding.btnSubmit.text = if (isEditMode) "Updating…" else "Saving…"
         binding.btnCancel.isEnabled = false
+        binding.layoutSavingTransaction.visibility = View.VISIBLE
+        binding.tvSavingTransaction.text = if (isEditMode) "Updating transaction…" else "Saving $selectedType transaction…"
 
         lifecycleScope.launch {
             if (isEditMode) {
@@ -398,11 +408,11 @@ class AddEditTransactionDialogFragment : DialogFragment() {
                     date = date
                 )
                 if (result.isSuccess) {
+                    Toast.makeText(requireContext(), "Transaction updated", Toast.LENGTH_SHORT).show()
                     onTransactionSaved?.invoke()
                     dismiss()
                 } else {
-                    binding.btnSubmit.isEnabled = true
-                    binding.btnCancel.isEnabled = true
+                    resetSubmittingState()
                     showError(result.exceptionOrNull()?.message ?: "Failed to update transaction.")
                 }
             } else {
@@ -415,15 +425,23 @@ class AddEditTransactionDialogFragment : DialogFragment() {
                     date = date
                 )
                 if (result.isSuccess) {
+                    Toast.makeText(requireContext(), "$selectedType transaction saved", Toast.LENGTH_SHORT).show()
                     onTransactionSaved?.invoke()
                     dismiss()
                 } else {
-                    binding.btnSubmit.isEnabled = true
-                    binding.btnCancel.isEnabled = true
+                    resetSubmittingState()
                     showError(result.exceptionOrNull()?.message ?: "Failed to create transaction.")
                 }
             }
         }
+    }
+
+    private fun resetSubmittingState() {
+        isSubmitting = false
+        binding.layoutSavingTransaction.visibility = View.GONE
+        binding.btnSubmit.isEnabled = true
+        binding.btnSubmit.text = submitButtonLabel
+        binding.btnCancel.isEnabled = true
     }
 
     private fun showError(msg: String) {

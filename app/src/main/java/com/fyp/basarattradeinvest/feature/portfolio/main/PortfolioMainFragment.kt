@@ -97,6 +97,15 @@ class PortfolioMainFragment : Fragment() {
         viewModel.ensureLoaded()
     }
 
+    override fun onResume() {
+        super.onResume()
+        val handle = findNavController().currentBackStackEntry?.savedStateHandle ?: return
+        if (handle.get<Boolean>(com.fyp.basarattradeinvest.feature.portfolio.transactions.TransactionDetailFragment.PORTFOLIO_CHANGED_KEY) == true) {
+            handle.remove<Boolean>(com.fyp.basarattradeinvest.feature.portfolio.transactions.TransactionDetailFragment.PORTFOLIO_CHANGED_KEY)
+            viewModel.loadPortfolio(forceRefresh = true)
+        }
+    }
+
     private fun setupRecyclerViews() {
         holdingAdapter = HoldingAdapter { symbol ->
             val bundle = bundleOf("symbol" to symbol)
@@ -450,6 +459,7 @@ class PortfolioMainFragment : Fragment() {
                 binding.scrollContent.visibility = View.VISIBLE
                 binding.layoutLoading.visibility = View.GONE
                 binding.layoutError.visibility = View.GONE
+                binding.layoutRefreshingPortfolio.visibility = if (state.isRefreshing) View.VISIBLE else View.GONE
                 val previous = lastRenderedSuccess
                 if (previous == null || previous.overview != state.overview) {
                     renderOverview(state.overview)
@@ -470,6 +480,7 @@ class PortfolioMainFragment : Fragment() {
             }
             is PortfolioMainUiState.Empty -> {
                 lastRenderedSuccess = null
+                binding.layoutRefreshingPortfolio.visibility = View.GONE
                 binding.scrollContent.visibility = View.VISIBLE
                 binding.layoutLoading.visibility = View.GONE
                 binding.layoutError.visibility = View.GONE
@@ -486,6 +497,7 @@ class PortfolioMainFragment : Fragment() {
             }
             is PortfolioMainUiState.Error -> {
                 lastRenderedSuccess = null
+                binding.layoutRefreshingPortfolio.visibility = View.GONE
                 binding.scrollContent.visibility = View.GONE
                 binding.layoutLoading.visibility = View.GONE
                 binding.layoutError.visibility = View.VISIBLE

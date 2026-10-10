@@ -518,6 +518,30 @@
         android:textColor="@color/color_negative"
         android:visibility="gone" />
 
+    <LinearLayout
+        android:id="@+id/layout_saving_transaction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:indeterminateTint="@color/color_basarat_green" />
+
+        <TextView
+            android:id="@+id/tv_saving_transaction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Saving transaction…"
+            android:textAppearance="@style/TextAppearance.Basarat.Meta"
+            android:textColor="@color/color_text_secondary" />
+    </LinearLayout>
+
     <!-- Action Buttons -->
     <LinearLayout
         android:layout_width="match_parent"

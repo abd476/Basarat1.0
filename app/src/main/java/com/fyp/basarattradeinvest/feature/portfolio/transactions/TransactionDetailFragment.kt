@@ -23,6 +23,10 @@ import java.util.Locale
 
 class TransactionDetailFragment : Fragment() {
 
+    companion object {
+        const val PORTFOLIO_CHANGED_KEY = "portfolio_changed"
+    }
+
     private var _binding: FragmentTransactionDetailBinding? = null
     private val binding get() = _binding!!
 
@@ -77,6 +81,7 @@ class TransactionDetailFragment : Fragment() {
                 date = tx.transactionDate
             )
             dialog.onTransactionSaved = {
+                findNavController().previousBackStackEntry?.savedStateHandle?.set(PORTFOLIO_CHANGED_KEY, true)
                 viewModel.loadTransaction(transactionId)
             }
             dialog.show(childFragmentManager, "edit_transaction")
@@ -101,25 +106,41 @@ class TransactionDetailFragment : Fragment() {
                     when (state) {
                         is TransactionDetailUiState.Loading -> {
                             binding.progressLoading.visibility = View.VISIBLE
+                            setActionButtonsEnabled(false)
+                        }
+                        is TransactionDetailUiState.Deleting -> {
+                            binding.progressLoading.visibility = View.VISIBLE
+                            binding.btnDeleteTransaction.text = "Deleting…"
+                            setActionButtonsEnabled(false)
                         }
                         is TransactionDetailUiState.Success -> {
                             binding.progressLoading.visibility = View.GONE
+                            binding.btnDeleteTransaction.text = "Delete"
+                            setActionButtonsEnabled(true)
                             currentTransaction = state.transaction
                             renderTransaction(state.transaction)
                         }
                         is TransactionDetailUiState.Deleted -> {
                             binding.progressLoading.visibility = View.GONE
+                            findNavController().previousBackStackEntry?.savedStateHandle?.set(PORTFOLIO_CHANGED_KEY, true)
                             Toast.makeText(requireContext(), "Transaction deleted successfully.", Toast.LENGTH_SHORT).show()
                             findNavController().popBackStack()
                         }
                         is TransactionDetailUiState.Error -> {
                             binding.progressLoading.visibility = View.GONE
+                            binding.btnDeleteTransaction.text = "Delete"
+                            setActionButtonsEnabled(true)
                             Toast.makeText(requireContext(), state.message, Toast.LENGTH_LONG).show()
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun setActionButtonsEnabled(enabled: Boolean) {
+        binding.btnDeleteTransaction.isEnabled = enabled
+        binding.btnEditTransaction.isEnabled = enabled
     }
 
     private fun renderTransaction(tx: PortfolioTransaction) {

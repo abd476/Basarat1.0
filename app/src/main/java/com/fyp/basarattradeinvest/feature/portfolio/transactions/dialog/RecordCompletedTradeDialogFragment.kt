@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
@@ -36,6 +37,7 @@ class RecordCompletedTradeDialogFragment : DialogFragment() {
     private lateinit var suggestionAdapter: StockSearchAdapter
     private var verifiedSelectedStock: StockSearchResult? = null
     private var searchJob: Job? = null
+    private var isSubmitting = false
 
     var onTradeRecorded: (() -> Unit)? = null
 
@@ -194,6 +196,7 @@ class RecordCompletedTradeDialogFragment : DialogFragment() {
     }
 
     private fun submitTrade() {
+        if (isSubmitting) return
         binding.tvTradeError.visibility = View.GONE
 
         val symbol = verifiedSelectedStock?.symbol.orEmpty()
@@ -230,6 +233,9 @@ class RecordCompletedTradeDialogFragment : DialogFragment() {
             return
         }
 
+        isSubmitting = true
+        binding.layoutRecordingTrade.visibility = View.VISIBLE
+        binding.btnSubmitTrade.text = "Recording…"
         binding.btnSubmitTrade.isEnabled = false
         binding.btnCancelTrade.isEnabled = false
 
@@ -247,7 +253,9 @@ class RecordCompletedTradeDialogFragment : DialogFragment() {
 
             if (result.isSuccess) {
                 val trade = result.getOrThrow()
+                Toast.makeText(requireContext(), "Completed trade recorded", Toast.LENGTH_SHORT).show()
                 onTradeRecorded?.invoke()
+                binding.layoutRecordingTrade.visibility = View.GONE
 
                 binding.cardTradeResult.visibility = View.VISIBLE
                 val prefix = if (trade.realizedPnl >= 0) "+" else ""
@@ -275,6 +283,9 @@ class RecordCompletedTradeDialogFragment : DialogFragment() {
                 binding.btnCancelTrade.text = "Close"
                 binding.btnCancelTrade.isEnabled = true
             } else {
+                isSubmitting = false
+                binding.layoutRecordingTrade.visibility = View.GONE
+                binding.btnSubmitTrade.text = "Record Trade"
                 binding.btnSubmitTrade.isEnabled = true
                 binding.btnCancelTrade.isEnabled = true
                 showError(result.exceptionOrNull()?.message ?: "Failed to record trade.")

@@ -1,6 +1,5 @@
 package com.fyp.basarattradeinvest.feature.portfolio.transactions.adapter
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -45,10 +44,14 @@ class TransactionAdapter(
             binding.tvBadgeType.text = if (isBuy) "BUY" else "SELL"
             if (isBuy) {
                 binding.tvBadgeType.setBackgroundResource(R.drawable.bg_badge_buy)
-                binding.tvBadgeType.setTextColor(Color.parseColor("#18B981"))
+                binding.tvBadgeType.setTextColor(
+                    ContextCompat.getColor(binding.root.context, R.color.color_positive)
+                )
             } else {
                 binding.tvBadgeType.setBackgroundResource(R.drawable.bg_badge_sell)
-                binding.tvBadgeType.setTextColor(Color.parseColor("#EF4444"))
+                binding.tvBadgeType.setTextColor(
+                    ContextCompat.getColor(binding.root.context, R.color.color_negative)
+                )
             }
 
             binding.tvTxSymbol.text = item.symbol
