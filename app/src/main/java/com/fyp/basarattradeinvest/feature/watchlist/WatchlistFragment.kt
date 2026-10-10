@@ -11,7 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentWatchlistBinding
 import kotlinx.coroutines.launch
@@ -44,11 +44,11 @@ class WatchlistFragment : Fragment() {
             onRemoveClick = { item -> viewModel.remove(item.symbol, item.watchlistId) }
         )
 
-        binding.rvWatchlist.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvWatchlist.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.rvWatchlist.adapter = adapter
 
         binding.ivBack.setOnClickListener { findNavController().popBackStack() }
-        binding.btnAddStock.setOnClickListener { openStockSearch() }
+        binding.btnAddStocks.setOnClickListener { openStockSearch() }
         binding.btnEmptyAdd.setOnClickListener { openStockSearch() }
         binding.btnRetry.setOnClickListener { viewModel.load() }
         binding.swipeRefresh.setOnRefreshListener { viewModel.load() }
@@ -72,6 +72,7 @@ class WatchlistFragment : Fragment() {
                             binding.layoutEmpty.visibility = View.GONE
                             binding.layoutError.visibility = View.GONE
                             binding.rvWatchlist.visibility = View.GONE
+                            binding.btnAddStocks.visibility = View.GONE
                             binding.tvWatchlistCount.text = "Loading…"
                         }
                         is WatchlistScreenUiState.Error -> {
@@ -80,6 +81,7 @@ class WatchlistFragment : Fragment() {
                             binding.layoutEmpty.visibility = View.GONE
                             binding.layoutError.visibility = View.VISIBLE
                             binding.rvWatchlist.visibility = View.GONE
+                            binding.btnAddStocks.visibility = View.GONE
                             binding.tvErrorMessage.text = state.message
                             binding.tvWatchlistCount.text = "Not available"
                         }
@@ -90,6 +92,7 @@ class WatchlistFragment : Fragment() {
                             val isEmpty = state.items.isEmpty()
                             binding.layoutEmpty.visibility = if (isEmpty) View.VISIBLE else View.GONE
                             binding.rvWatchlist.visibility = if (isEmpty) View.GONE else View.VISIBLE
+                            binding.btnAddStocks.visibility = if (isEmpty) View.GONE else View.VISIBLE
                             adapter.submitList(state.items, state.pendingRemovals)
                             binding.tvWatchlistCount.text = resources.getQuantityString(
                                 R.plurals.watchlist_stock_count,
