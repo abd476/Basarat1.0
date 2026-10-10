@@ -22,7 +22,7 @@
 
     <!-- Typography Hierarchy -->
     <dimen name="text_financial_hero">30sp</dimen>
-    <dimen name="text_screen_title">22sp</dimen>
+    <dimen name="text_screen_title">24sp</dimen>
     <dimen name="text_section_title">18sp</dimen>
     <dimen name="text_card_title">16sp</dimen>
     <dimen name="text_body">14sp</dimen>

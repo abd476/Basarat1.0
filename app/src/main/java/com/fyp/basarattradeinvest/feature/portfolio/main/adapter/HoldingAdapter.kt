@@ -1,8 +1,8 @@
 package com.fyp.basarattradeinvest.feature.portfolio.main.adapter
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -78,9 +78,13 @@ class HoldingAdapter(
             )
 
             if (pnl >= 0) {
-                binding.tvHoldingPnl.setTextColor(Color.parseColor("#18B981"))
+                binding.tvHoldingPnl.setTextColor(
+                    ContextCompat.getColor(binding.root.context, R.color.color_positive)
+                )
             } else {
-                binding.tvHoldingPnl.setTextColor(Color.parseColor("#EF4444"))
+                binding.tvHoldingPnl.setTextColor(
+                    ContextCompat.getColor(binding.root.context, R.color.color_negative)
+                )
             }
 
             binding.root.setOnClickListener {
