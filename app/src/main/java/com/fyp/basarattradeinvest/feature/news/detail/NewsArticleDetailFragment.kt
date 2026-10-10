@@ -1,7 +1,6 @@
 package com.fyp.basarattradeinvest.feature.news.detail
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -136,10 +135,10 @@ class NewsArticleDetailFragment : Fragment() {
         if (targetUrl != null) {
             binding.btnReadSource.visibility = View.VISIBLE
             binding.btnReadSource.setOnClickListener {
-                try {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(targetUrl))
-                    startActivity(intent)
-                } catch (_: Exception) {}
+                findNavController().navigate(
+                    R.id.newsWebViewFragment,
+                    Bundle().apply { putString("url", targetUrl) }
+                )
             }
         } else {
             binding.btnReadSource.visibility = View.GONE

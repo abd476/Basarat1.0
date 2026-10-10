@@ -197,6 +197,16 @@
     </fragment>
 
     <fragment
+        android:id="@+id/newsWebViewFragment"
+        android:name="com.fyp.basarattradeinvest.feature.news.webview.NewsWebViewFragment"
+        android:label="Source Article"
+        tools:layout="@layout/fragment_news_web_view">
+        <argument
+            android:name="url"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
         android:id="@+id/stockDetailFragment"
         android:name="com.fyp.basarattradeinvest.feature.stock.detail.StockDetailFragment"
         android:label="Stock Detail"
