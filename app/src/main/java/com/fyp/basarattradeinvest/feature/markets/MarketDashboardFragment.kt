@@ -170,7 +170,7 @@ class MarketDashboardFragment : Fragment() {
         }
 
         binding.fabChatAssistant.setOnClickListener {
-            findNavController().navigate(R.id.assistantConversationsFragment)
+            findNavController().navigate(R.id.assistantChatFragment)
         }
     }
 
