@@ -12,11 +12,13 @@ import com.fyp.basarattradeinvest.domain.model.market.MarketStock
 import com.fyp.basarattradeinvest.domain.model.market.SectorPerformance
 import com.fyp.basarattradeinvest.domain.model.stock.SymbolFilterType
 import com.fyp.basarattradeinvest.domain.repository.MarketRepository
+import com.fyp.basarattradeinvest.domain.repository.WatchlistRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class MarketRepositoryImpl(
-    private val apiService: MarketApiService = NetworkClient.marketApiService
+    private val apiService: MarketApiService = NetworkClient.marketApiService,
+    private val watchlistRepository: WatchlistRepository = NetworkClient.watchlistRepository
 ) : MarketRepository {
 
     companion object {
@@ -225,7 +227,23 @@ class MarketRepositoryImpl(
                 }
             }
             SymbolFilterType.WATCHLIST -> {
-                Result.success(getFallbackSymbols(SymbolFilterType.WATCHLIST))
+                if (IS_MOCK_MODE) {
+                    Result.success(emptyList())
+                } else {
+                    watchlistRepository.getDefaultWatchlist().map { watchlist ->
+                        watchlist.items.mapIndexed { index, item ->
+                            MarketStock(
+                                rank = index + 1,
+                                symbol = item.symbol,
+                                companyName = item.name ?: item.symbol,
+                                sectorCode = "",
+                                price = item.currentPrice ?: 0.0,
+                                change = item.change ?: 0.0,
+                                changePercent = item.changePercent ?: 0.0
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -311,11 +329,7 @@ class MarketRepositoryImpl(
                 MarketStock(4, "BOP", "Bank of Punjab", "Commercial Banks", 8.42, 0.72, 9.35, "18.5M"),
                 MarketStock(5, "SILK", "Silkbank Limited", "Commercial Banks", 1.05, -0.08, -7.08, "14.5M")
             )
-            SymbolFilterType.WATCHLIST -> listOf(
-                MarketStock(1, "SYS", "Systems Limited", "Technology", 412.50, 12.30, 3.07, "2.4M"),
-                MarketStock(2, "LUCK", "Lucky Cement Ltd", "Cement", 795.00, 15.00, 1.92, "1.2M"),
-                MarketStock(3, "MEBL", "Meezan Bank Ltd", "Commercial Banks", 225.80, 4.20, 1.90, "3.1M")
-            )
+            SymbolFilterType.WATCHLIST -> emptyList()
         }
     }
 

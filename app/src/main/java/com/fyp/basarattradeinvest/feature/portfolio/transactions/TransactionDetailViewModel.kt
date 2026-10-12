@@ -54,8 +54,9 @@ class TransactionDetailViewModel(
     }
 
     fun deleteTransaction(transactionId: String) {
+        if (_uiState.value is TransactionDetailUiState.Deleting) return
         viewModelScope.launch {
-            _uiState.value = TransactionDetailUiState.Loading
+            _uiState.value = TransactionDetailUiState.Deleting
             val result = deleteUseCase(transactionId)
             if (result.isSuccess) {
                 _uiState.value = TransactionDetailUiState.Deleted

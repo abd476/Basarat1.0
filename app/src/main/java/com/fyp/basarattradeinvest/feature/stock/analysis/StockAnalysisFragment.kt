@@ -561,7 +561,10 @@ class StockAnalysisFragment : Fragment() {
         val context = requireContext()
 
         // Dates
-        binding.tvForecastDates.text = "Target: ${forecast.targetDate} (As of ${forecast.asOfDate})"
+        binding.tvForecastDates.apply {
+            text = forecast.targetDate.takeIf { it.isNotBlank() }?.let { "Target: $it" }.orEmpty()
+            visibility = if (text.isNotBlank()) View.VISIBLE else View.GONE
+        }
 
         val displayDirection = when (forecast.direction) {
             ForecastDirection.SIDEWAYS -> "Neutral"
@@ -605,7 +608,7 @@ class StockAnalysisFragment : Fragment() {
 
         // Confidence
         val confPct = (forecast.confidence * 100).toInt()
-        binding.tvForecastConfidence.text = "$confPct% Confidence"
+        binding.tvForecastConfidence.text = "Confidence: $confPct%"
 
         val targetPriceText = forecast.targetPrice?.let { String.format(Locale.US, "PKR %.2f", it) } ?: "N/A"
         val upsideText = forecast.upsidePct?.let {
@@ -627,10 +630,7 @@ class StockAnalysisFragment : Fragment() {
         binding.tvForecastSummary.text = summaryParts.joinToString(" · ")
         binding.tvForecastMeta.text = listOfNotNull(
             "${forecast.horizon} outlook",
-            forecast.targetDate.takeIf { it.isNotBlank() }?.let { "Target date: $it" },
             forecast.asOfDate.takeIf { it.isNotBlank() }?.let { "As of: $it" },
-            forecast.modelVersion?.takeIf { it.isNotBlank() }?.let { "Model: $it" },
-            forecast.gateReason?.takeIf { it.isNotBlank() }
         ).joinToString(" • ")
 
         // Prices & Targets
@@ -647,7 +647,9 @@ class StockAnalysisFragment : Fragment() {
         binding.tvForecastCurrentPrice.text = forecast.currentPrice?.let { String.format(Locale.US, "Ref: PKR %.2f", it) } ?: ""
 
         bindForecastProbabilities(forecast)
-        bindForecastModels(forecast)
+        // Per-model names and scores are implementation details, so keep the internal
+        // breakdown out of the investor-facing forecast screen.
+        binding.cardModelBreakdown.visibility = View.GONE
         binding.cardMarketContext.visibility = View.GONE
     }
 
@@ -728,46 +730,6 @@ class StockAnalysisFragment : Fragment() {
 
     private fun probabilityPercent(value: Double?): Double? = value?.let {
         (if (kotlin.math.abs(it) <= 1.0) it * 100.0 else it).coerceIn(0.0, 100.0)
-    }
-
-    private fun bindForecastModels(forecast: StockForecast) {
-        val rows = binding.layoutModelRows
-        rows.removeAllViews()
-        forecast.models.toSortedMap().forEach { (modelName, model) ->
-            val row = LinearLayout(requireContext()).apply {
-                orientation = LinearLayout.HORIZONTAL
-                gravity = android.view.Gravity.CENTER_VERTICAL
-                setPadding(0, dp(6), 0, dp(6))
-            }
-            row.addView(TextView(requireContext()).apply {
-                text = modelName.replace('_', ' ').replaceFirstChar { it.uppercase() }
-                textSize = 13f
-                setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_primary))
-                setTypeface(typeface, android.graphics.Typeface.BOLD)
-            }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
-            row.addView(TextView(requireContext()).apply {
-                text = model.direction.takeIf { it.isNotBlank() && it != "unknown" }?.uppercase() ?: "N/A"
-                textSize = 12f
-                setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_secondary))
-            })
-            val details = listOfNotNull(
-                model.bullishPct?.let { String.format(Locale.US, "Bull %.1f%%", it) },
-                model.sidewaysPct?.let { String.format(Locale.US, "Sideways %.1f%%", it) },
-                model.bearishPct?.let { String.format(Locale.US, "Bear %.1f%%", it) },
-                model.gapPp?.let { String.format(Locale.US, "Gap %.1f pp", it) }
-            ).joinToString(" · ")
-            if (details.isNotBlank()) {
-                row.addView(TextView(requireContext()).apply {
-                    text = details
-                    textSize = 11f
-                    setTextColor(ContextCompat.getColor(requireContext(), R.color.color_text_secondary))
-                    gravity = android.view.Gravity.END
-                    maxWidth = dp(190)
-                }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 2f))
-            }
-            rows.addView(row)
-        }
-        binding.cardModelBreakdown.visibility = if (forecast.models.isNotEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()

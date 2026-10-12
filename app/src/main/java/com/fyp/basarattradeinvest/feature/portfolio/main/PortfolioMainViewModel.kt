@@ -67,6 +67,7 @@ class PortfolioMainViewModel(
     private var lastSuccessfulFetchAt: Long = 0L
     private val freshnessWindowMs = 5 * 60 * 1000L
     private var isPortfolioLoading = false
+    private var pendingForcedRefresh = false
     private var accountGeneration = 0
     private var currentAccountKey: String? = accountKeyForCurrentSession()
     private var portfolioLoadJob: Job? = null
@@ -82,6 +83,7 @@ class PortfolioMainViewModel(
                 portfolioLoadJob?.cancel()
                 portfolioLoadJob = null
                 isPortfolioLoading = false
+                pendingForcedRefresh = false
                 lastSuccessfulFetchAt = 0L
                 _uiState.value = PortfolioMainUiState.Loading
 
@@ -126,7 +128,15 @@ class PortfolioMainViewModel(
             _uiState.value = PortfolioMainUiState.Loading
             return
         }
-        if (isPortfolioLoading) return
+        if (isPortfolioLoading) {
+            if (forceRefresh) {
+                pendingForcedRefresh = true
+                (_uiState.value as? PortfolioMainUiState.Success)?.let {
+                    _uiState.value = it.copy(isRefreshing = true)
+                }
+            }
+            return
+        }
 
         val currentState = _uiState.value
         val hasUsableData = currentState is PortfolioMainUiState.Success
@@ -134,6 +144,11 @@ class PortfolioMainViewModel(
         if (shouldSkip) return
 
         isPortfolioLoading = true
+        if (forceRefresh) {
+            (_uiState.value as? PortfolioMainUiState.Success)?.let {
+                _uiState.value = it.copy(isRefreshing = true)
+            }
+        }
         val loadGeneration = accountGeneration
         portfolioLoadJob = viewModelScope.launch {
             try {
@@ -172,12 +187,14 @@ class PortfolioMainViewModel(
                         return@coroutineScope
                     }
 
+                    val existing = _uiState.value as? PortfolioMainUiState.Success
                     _uiState.value = PortfolioMainUiState.Success(
                         overview = overview,
-                        pnl = null,
-                        allocation = null,
-                        performance = null,
-                        recentTransactions = emptyList()
+                        pnl = existing?.pnl,
+                        allocation = existing?.allocation,
+                        performance = existing?.performance,
+                        recentTransactions = existing?.recentTransactions.orEmpty(),
+                        isRefreshing = forceRefresh || existing?.isRefreshing == true
                     )
 
                     launch {
@@ -215,6 +232,13 @@ class PortfolioMainViewModel(
                 if (loadGeneration == accountGeneration) {
                     isPortfolioLoading = false
                     portfolioLoadJob = null
+                    (_uiState.value as? PortfolioMainUiState.Success)?.let {
+                        _uiState.value = it.copy(isRefreshing = false)
+                    }
+                    if (pendingForcedRefresh) {
+                        pendingForcedRefresh = false
+                        loadPortfolio(forceRefresh = true)
+                    }
                 }
             }
         }

@@ -47,6 +47,15 @@ class TransactionHistoryFragment : Fragment() {
         observeState()
     }
 
+    override fun onResume() {
+        super.onResume()
+        val handle = findNavController().currentBackStackEntry?.savedStateHandle ?: return
+        if (handle.get<Boolean>(TransactionDetailFragment.PORTFOLIO_CHANGED_KEY) == true) {
+            handle.remove<Boolean>(TransactionDetailFragment.PORTFOLIO_CHANGED_KEY)
+            viewModel.loadTransactions()
+        }
+    }
+
     private fun setupRecyclerView() {
         adapter = TransactionAdapter { txId ->
             val bundle = bundleOf("transaction_id" to txId)

@@ -47,7 +47,13 @@ object GoogleSignInLauncher {
         } catch (cancelled: GetCredentialCancellationException) {
             Result.success(null)
         } catch (noCredential: NoCredentialException) {
-            Result.failure(Exception("No Google account is available to sign in with."))
+            // Play Services also raises this when it refuses the caller outright, i.e. the app's
+            // package + signing fingerprint are not registered as an OAuth client for the
+            // configured ID. Blaming the device's Google accounts sends people the wrong way.
+            Result.failure(
+                Exception("Google does not recognise this app build — its package name and SHA-1 " +
+                    "must be registered as an OAuth client for the configured client ID.")
+            )
         } catch (error: GetCredentialException) {
             Result.failure(Exception(error.message ?: "Google Sign-In failed. Please try again."))
         } catch (error: Exception) {

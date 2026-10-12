@@ -102,6 +102,17 @@ class StockDetailViewModel(
                 _uiState.value = current.copy(wsConnectionState = connectionState)
             }
         }
+        // The heart must follow watchlist edits made on other screens; without this the
+        // detail page keeps showing the membership it checked on first entry.
+        viewModelScope.launch {
+            watchlistRepository.watchlistUpdates.collect { watchlist ->
+                val symbol = checkedWatchlistSymbol ?: return@collect
+                val isSaved = watchlist.items.any { it.symbol.equals(symbol, ignoreCase = true) }
+                _watchlistFavoriteState.value = if (isSaved) {
+                    WatchlistFavoriteUiState.Saved(listOf(watchlist.id))
+                } else WatchlistFavoriteUiState.NotSaved
+            }
+        }
     }
 
     fun setLiveUpdatesActive(active: Boolean) {

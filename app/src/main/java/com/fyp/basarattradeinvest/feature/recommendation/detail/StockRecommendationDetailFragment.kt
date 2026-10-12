@@ -145,7 +145,7 @@ class StockRecommendationDetailFragment : Fragment() {
 
         val sign = if (detail.compositeScore >= 0) "+" else ""
         binding.tvCompositeScore.text = String.format(Locale.US, "Score: %s%.2f", sign, detail.compositeScore)
-        binding.tvConfidenceLabel.text = String.format(Locale.US, "Engine Confidence: %d%%", (detail.confidence * 100).toInt())
+        binding.tvConfidenceLabel.text = String.format(Locale.US, "Signal confidence: %d%%", (detail.confidence * 100).toInt())
 
         if (detail.currentPrice != null) {
             binding.tvCurrentPrice.text = String.format(Locale.US, "Current Market Price: PKR %.2f", detail.currentPrice)
@@ -156,7 +156,8 @@ class StockRecommendationDetailFragment : Fragment() {
         }
 
         val horizon = detail.horizon?.takeIf { it.isNotBlank() }?.let { "Outlook: $it" }
-        val reason = (detail.suppressionReason ?: detail.decisionReason)?.takeIf { it.isNotBlank() }
+        val reason = (detail.suppressionReason ?: detail.decisionReason)
+            ?.takeIf { it.isNotBlank() && !containsInternalModelName(it) }
         binding.tvDecisionReason.text = listOfNotNull(horizon, reason).joinToString("\n")
         binding.cardDecisionReason.visibility =
             if (binding.tvDecisionReason.text.isNotBlank()) View.VISIBLE else View.GONE
@@ -226,9 +227,9 @@ class StockRecommendationDetailFragment : Fragment() {
         val levelsFromBatch = detail.isSuppressed && targetStop == null
 
         val riskNote = when {
-            levelsFromBatch && target != null && stop != null -> "Verdict and levels come from the engine's published recommendation batch; the live recompute declined."
-            target != null && stop != null -> "Volatility and risk estimates are model guidance, not guaranteed outcomes."
-            detail.suppressionReason?.isNotBlank() == true -> "Target and stop levels were not provided: ${detail.suppressionReason}"
+            levelsFromBatch && target != null && stop != null -> "The latest published recommendation is shown; a refreshed signal is not available."
+            target != null && stop != null -> "Risk estimates are for decision support and are not guaranteed outcomes."
+            detail.suppressionReason?.isNotBlank() == true && !containsInternalModelName(detail.suppressionReason) -> "Target and stop levels were not provided: ${detail.suppressionReason}"
             targetStop?.method == "default" || expectedRange?.method == "default" -> "The backend returned a flat default range; no target or stop level is available."
             atr != null && !dailyRangeVisible -> "ATR-14: PKR ${String.format(Locale.US, "%.2f", atr)}. Volatility guide, not a target or stop-loss."
             else -> "Target and stop levels were not provided by the backend."
@@ -304,7 +305,7 @@ class StockRecommendationDetailFragment : Fragment() {
         titleLine.addView(
             text(
                 score?.let { String.format(Locale.US, "%+.2f", it) }
-                    ?: component.status?.uppercase(Locale.ROOT) ?: "N/A",
+                    ?: component.status?.takeUnless(::containsInternalModelName)?.uppercase(Locale.ROOT) ?: "N/A",
                 14f,
                 when {
                     score == null -> R.color.color_text_tertiary
@@ -341,13 +342,14 @@ class StockRecommendationDetailFragment : Fragment() {
         }
 
         val evidence = component.details
+            .filterNot { (key, value) -> containsInternalModelName(key) || containsInternalModelName(value) }
             .map { (key, value) ->
                 val rendered = compactNumber(value)
                 // The backend already names the field inside its own values (`rsi` -> "RSI=34.8"),
                 // so prefixing it again reads as noise.
                 if (rendered.startsWith(key, ignoreCase = true)) rendered else "${humanise(key)}: $rendered"
             }
-            .ifEmpty { listOfNotNull(component.availabilityReason?.takeIf { it.isNotBlank() }) }
+            .ifEmpty { listOfNotNull(component.availabilityReason?.takeIf { it.isNotBlank() && !containsInternalModelName(it) }) }
         if (evidence.isNotEmpty()) {
             // The engine returns up to ten raw fields per component, which buries the signal.
             // Show the first few and let the rest expand in place — nothing is dropped.
@@ -381,16 +383,20 @@ class StockRecommendationDetailFragment : Fragment() {
         return row
     }
 
-    private fun componentLabel(key: String): String = when (key.lowercase(Locale.ROOT)) {
-        "ml", "gru" -> "Forecast model"
-        "technical" -> "Technical"
-        "fundamental" -> "Fundamentals"
-        "sentiment" -> "News sentiment"
+    private fun componentLabel(key: String): String = when {
+        containsInternalModelName(key) -> "Price outlook"
+        key.lowercase(Locale.ROOT) in setOf("ml", "gru") -> "Price outlook"
+        key.equals("technical", ignoreCase = true) -> "Technical"
+        key.equals("fundamental", ignoreCase = true) -> "Fundamentals"
+        key.equals("sentiment", ignoreCase = true) -> "News sentiment"
         else -> humanise(key)
     }
 
     private fun humanise(key: String): String =
         key.replace('_', ' ').trim().replaceFirstChar { it.titlecase(Locale.ROOT) }
+
+    private fun containsInternalModelName(value: String): Boolean =
+        INTERNAL_MODEL_NAMES.any { modelName -> Regex("\\b${Regex.escape(modelName)}\\b", RegexOption.IGNORE_CASE).containsMatchIn(value) }
 
     /** Gson renders every JSON number as a Double, so `38.0` and `0.56` need tidying before display. */
     private fun compactNumber(value: String): String {
@@ -431,6 +437,7 @@ class StockRecommendationDetailFragment : Fragment() {
         val WEIGHTED_COMPONENTS = WEIGHT_ORDER.keys
 
         const val EVIDENCE_PREVIEW = 3
+        val INTERNAL_MODEL_NAMES = listOf("gru", "xgboost", "lstm", "random forest")
     }
 
     override fun onDestroyView() {

@@ -72,10 +72,10 @@
     <string name="or_divider">OR</string>
     <string name="continue_with_google">Continue with Google</string>
     <string name="continue_with_apple">Continue with Apple</string>
-    <!-- Google OAuth "Web application" client ID. Its audience must match what
-         POST /api/v1/auth/google accepts. Left empty, the button reports that
-         Google Sign-In is not configured instead of launching a doomed flow. -->
-    <string name="google_web_client_id" translatable="false"></string>
+    <!-- Google OAuth "Web application" client ID. Its audience must match the backend's
+         GOOGLE_CLIENT_ID, which verifies the ID token sent to POST /api/v1/auth/google.
+         A public client ID (not a secret) — it is embedded in the APK by design. -->
+    <string name="google_web_client_id" translatable="false">586469027718-nleodpccu7dmbkj18i58cmqpqkqalpum.apps.googleusercontent.com</string>
     <string name="dont_have_account">Don\'t have an account?</string>
     <string name="already_have_account">Already have an account?</string>
 
@@ -85,6 +85,12 @@
     <!-- Notifications Module -->
     <string name="title_notifications">Notifications</string>
     <string name="notifications_inbox">In-App Notifications</string>
+
+    <!-- Watchlist Module -->
+    <plurals name="watchlist_stock_count">
+        <item quantity="one">%d stock tracked</item>
+        <item quantity="other">%d stocks tracked</item>
+    </plurals>
 
     <!-- Shariah Module -->
     <string name="title_shariah">Shariah Screening</string>
@@ -150,4 +156,7 @@
     <string name="benchmark_trend_caption">Equal-weight proxy · %1$d constituents · %2$s – %3$s</string>
     <string name="benchmark_trend_loading">Building the trend from constituent price history…</string>
     <string name="benchmark_trend_empty">No trend available for this index</string>
+
+    <!-- News — source article reader -->
+    <string name="news_webview_opened_externally">This source can\'t be verified by this device\'s browser engine, so the article opened in your browser instead.</string>
 </resources>

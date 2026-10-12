@@ -68,6 +68,30 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/layout_refreshing_portfolio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ProgressBar
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:indeterminateTint="@color/color_basarat_green" />
+
+                <TextView
+                    android:id="@+id/tv_refreshing_portfolio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Updating portfolio…"
+                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
+                    android:textColor="@color/color_text_secondary" />
+            </LinearLayout>
+
             <!-- 2. Current Balance Section (Matching Reference Screenshot) -->
             <TextView
                 android:id="@+id/tv_balance_label"
@@ -798,6 +822,11 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:autoSizeMaxTextSize="18sp"
+                        android:autoSizeMinTextSize="14sp"
+                        android:autoSizeStepGranularity="1sp"
+                        android:autoSizeTextType="uniform"
+                        android:maxLines="1"
                         android:text="Recent Activity"
                         android:textColor="@color/color_text_primary" />
 
