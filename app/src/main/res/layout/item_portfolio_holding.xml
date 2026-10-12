@@ -54,7 +54,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/color_text_secondary"
-            app:layout_constraintEnd_toStartOf="@id/tv_holding_current_price"
+            app:layout_constraintEnd_toStartOf="@id/tv_holding_market_value"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_holding_symbol"
             tools:text="Lucky Cement Limited • Cement" />
@@ -71,10 +71,15 @@
 
         <TextView
             android:id="@+id/tv_holding_market_value"
-            android:textAppearance="@style/TextAppearance.Basarat.Meta"
+            android:textAppearance="@style/TextAppearance.Basarat.Number.Meta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
+            android:autoSizeMaxTextSize="12sp"
+            android:autoSizeMinTextSize="10sp"
+            android:autoSizeStepGranularity="1sp"
+            android:autoSizeTextType="uniform"
+            android:maxLines="1"
             android:textColor="@color/color_text_secondary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_holding_current_price"
@@ -90,23 +95,28 @@
 
         <TextView
             android:id="@+id/tv_holding_shares_cost"
-            android:textAppearance="@style/TextAppearance.Basarat.Meta"
-            android:layout_width="wrap_content"
+            android:textAppearance="@style/TextAppearance.Basarat.Number.Meta"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textColor="@color/color_text_secondary"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider_holding"
             tools:text="500 shares • Avg: PKR 380.00" />
 
         <TextView
             android:id="@+id/tv_holding_pnl"
-            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
-            android:layout_width="wrap_content"
+            android:textAppearance="@style/TextAppearance.Basarat.Number.Body.Small.Strong"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="4dp"
+            android:gravity="end"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider_holding"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_holding_shares_cost"
             tools:text="+PKR 16,250 (+8.55%)" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -35,7 +35,7 @@ class StockAnalysisViewModel(
 
     private var currentSymbol: String = ""
     private var currentTab: AnalysisTab = AnalysisTab.TECHNICAL
-    private var currentHorizon: String = "1D"
+    private var currentHorizon: String = "1W"
     private var currentPriceRange: String = "1M"
     private var lastSuccessfulFetchAt: Long = 0L
     private val freshnessWindowMs = 5 * 60 * 1000L
@@ -80,7 +80,7 @@ class StockAnalysisViewModel(
                 loadPriceHistory(symbol, currentPriceRange)
                 // Preload forecast data
                 loadForecast(symbol, currentHorizon)
-                loadForecastHistory(symbol)
+                loadForecastHistory(symbol, currentHorizon)
                 // Preload sentiment data
                 loadSentiment(symbol)
             } else {
@@ -108,7 +108,7 @@ class StockAnalysisViewModel(
                         loadForecast(currentSymbol, currentHorizon)
                     }
                     if (currentState.historyState is ForecastHistorySectionState.Error || currentState.historyState is ForecastHistorySectionState.Loading) {
-                        loadForecastHistory(currentSymbol)
+                        loadForecastHistory(currentSymbol, currentHorizon)
                     }
                 }
                 AnalysisTab.SENTIMENT -> {
@@ -153,9 +153,11 @@ class StockAnalysisViewModel(
         if (currentState is StockAnalysisUiState.Success) {
             _uiState.value = currentState.copy(
                 selectedHorizon = horizon,
-                forecastState = ForecastSectionState.Loading
+                forecastState = ForecastSectionState.Loading,
+                historyState = ForecastHistorySectionState.Loading
             )
             loadForecast(currentSymbol, horizon)
+            loadForecastHistory(currentSymbol, horizon)
         }
     }
 
@@ -175,7 +177,7 @@ class StockAnalysisViewModel(
             if (currentState is StockAnalysisUiState.Success) {
                 _uiState.value = currentState.copy(historyState = ForecastHistorySectionState.Loading)
             }
-            loadForecastHistory(currentSymbol)
+            loadForecastHistory(currentSymbol, currentHorizon)
         }
     }
 
@@ -241,9 +243,9 @@ class StockAnalysisViewModel(
         }
     }
 
-    private fun loadForecastHistory(symbol: String) {
+    private fun loadForecastHistory(symbol: String, horizon: String) {
         viewModelScope.launch {
-            val result = getForecastHistoryUseCase(symbol, limit = 30)
+            val result = getForecastHistoryUseCase(symbol, horizon = horizon, limit = 30)
             val currentState = _uiState.value
             if (currentState is StockAnalysisUiState.Success) {
                 if (result.isSuccess) {

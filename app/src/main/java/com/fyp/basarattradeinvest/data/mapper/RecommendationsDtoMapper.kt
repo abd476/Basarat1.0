@@ -7,6 +7,7 @@ import com.fyp.basarattradeinvest.data.remote.dto.recommendations.TargetStopResp
 import com.fyp.basarattradeinvest.domain.model.recommendations.EngineWeights
 import com.fyp.basarattradeinvest.domain.model.recommendations.ExpectedPriceRange
 import com.fyp.basarattradeinvest.domain.model.recommendations.RecommendationDetail
+import com.fyp.basarattradeinvest.domain.model.recommendations.RecommendationComponent
 import com.fyp.basarattradeinvest.domain.model.recommendations.RecommendationSignal
 import com.fyp.basarattradeinvest.domain.model.recommendations.StockRecommendation
 import com.fyp.basarattradeinvest.domain.model.recommendations.TargetStop
@@ -72,14 +73,46 @@ object RecommendationsDtoMapper {
             signal = RecommendationSignal.fromString(dto.getResolvedSignal()),
             confidence = dto.getResolvedConfidence(),
             compositeScore = dto.getResolvedCompositeScore(),
-            individualSignals = dto.signals ?: emptyMap(),
+            individualSignals = dto.signals.orEmpty().ifEmpty {
+                dto.components.orEmpty().mapNotNull { (name, component) ->
+                    component.score?.let { name to it }
+                }.toMap()
+            },
             targetPrice = dto.getResolvedTargetPrice(),
             stopLoss = dto.getResolvedStopLoss(),
             expectedRange = range,
             currentPrice = dto.getResolvedCurrentPrice(),
             atr14 = dto.getResolvedAtr14(),
-            reasoning = mappedReasoning,
-            weights = dto.weights ?: emptyMap()
+            reasoning = mappedReasoning.also { reasons ->
+                dto.components.orEmpty().forEach { (name, component) ->
+                    val details = component.details.orEmpty().mapValues { (_, value) -> value.toString() }
+                    if (details.isNotEmpty()) reasons[name] = details
+                    component.availabilityReason?.takeIf { it.isNotBlank() }?.let {
+                        reasons.putIfAbsent(name, mapOf("availability" to it))
+                    }
+                }
+            },
+            weights = dto.weights?.takeIf { it.isNotEmpty() } ?: dto.components.orEmpty().mapNotNull { (key, component) ->
+                (component.effectiveWeight ?: component.configuredWeight)?.let { key to it }
+            }.toMap(),
+            name = dto.name,
+            sector = dto.sector,
+            horizon = dto.decision?.horizon,
+            decisionReason = dto.decision?.reason ?: dto.summary,
+            suppressionReason = dto.decision?.suppressionReason,
+            isSuppressed = dto.decision?.suppressed == true,
+            components = dto.components.orEmpty().map { (key, component) ->
+                RecommendationComponent(
+                    key = key,
+                    score = component.score,
+                    status = component.status,
+                    configuredWeight = component.configuredWeight,
+                    effectiveWeight = component.effectiveWeight,
+                    availabilityReason = component.availabilityReason,
+                    details = component.details.orEmpty().mapValues { (_, value) -> value.toString() }
+                )
+            }.sortedBy { listOf("ml", "technical", "fundamental", "sentiment").indexOf(it.key).let { index -> if (index < 0) Int.MAX_VALUE else index } },
+            riskProfile = dto.riskProfile
         )
     }
 
@@ -112,9 +145,9 @@ object RecommendationsDtoMapper {
 
     fun mapEngineWeights(dto: EngineWeightsResponseDto): EngineWeights {
         return EngineWeights(
-            gruWeight = dto.gruWeight,
-            technicalWeight = dto.technicalWeight,
-            fundamentalWeight = dto.fundamentalWeight
+            gruWeight = dto.weights?.get("ml") ?: dto.gruWeight,
+            technicalWeight = dto.weights?.get("technical") ?: dto.technicalWeight,
+            fundamentalWeight = dto.weights?.get("fundamental") ?: dto.fundamentalWeight
         )
     }
 }

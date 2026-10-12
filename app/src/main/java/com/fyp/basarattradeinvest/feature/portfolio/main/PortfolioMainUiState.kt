@@ -13,7 +13,8 @@ sealed interface PortfolioMainUiState {
         val pnl: PortfolioPnL?,
         val allocation: PortfolioAllocation?,
         val performance: PortfolioPerformance?,
-        val recentTransactions: List<PortfolioTransaction>
+        val recentTransactions: List<PortfolioTransaction>,
+        val isRefreshing: Boolean = false
     ) : PortfolioMainUiState
     data object Empty : PortfolioMainUiState
     data class Error(val message: String) : PortfolioMainUiState

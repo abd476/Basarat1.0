@@ -106,6 +106,9 @@
             android:id="@+id/action_home_to_notifications"
             app:destination="@id/notificationsFragment" />
         <action
+            android:id="@+id/action_home_to_watchlist"
+            app:destination="@id/watchlistFragment" />
+        <action
             android:id="@+id/action_home_to_assistantChat"
             app:destination="@id/assistantChatFragment" />
         <action
@@ -190,6 +193,16 @@
         tools:layout="@layout/fragment_news_article_detail">
         <argument
             android:name="articleId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newsWebViewFragment"
+        android:name="com.fyp.basarattradeinvest.feature.news.webview.NewsWebViewFragment"
+        android:label="Source Article"
+        tools:layout="@layout/fragment_news_web_view">
+        <argument
+            android:name="url"
             app:argType="string" />
     </fragment>
 
@@ -499,6 +512,12 @@
         android:name="com.fyp.basarattradeinvest.feature.notifications.NotificationsFragment"
         android:label="Notifications"
         tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/watchlistFragment"
+        android:name="com.fyp.basarattradeinvest.feature.watchlist.WatchlistFragment"
+        android:label="Watchlist"
+        tools:layout="@layout/fragment_watchlist" />
 
     <!-- Community Destinations -->
     <fragment

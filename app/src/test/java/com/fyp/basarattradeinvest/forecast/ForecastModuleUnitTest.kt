@@ -181,7 +181,7 @@ class ForecastModuleUnitTest {
     }
 
     @Test
-    fun testForecastDtoMapperResolvesNullTargetsForSideways() {
+    fun testForecastDtoMapper_leavesLevelsNullWhenBackendWithholdsThem() {
         // Reproduces the exact backend scenario from user screenshot:
         // direction is "sideways", gateReason is "near_tie", confidence 61%, target_price/stop_loss are null
         val dto = ForecastResponseDto(
@@ -202,18 +202,14 @@ class ForecastModuleUnitTest {
 
         val domain = ForecastDtoMapper.mapToDomain(dto)
 
-        assertNotNull("Target price should be dynamically resolved instead of null", domain.targetPrice)
-        assertNotNull("Stop loss should be dynamically resolved instead of null", domain.stopLoss)
-        assertNotNull("Upside pct should be calculated", domain.upsidePct)
-        assertNotNull("Downside pct should be calculated", domain.downsidePct)
-        assertNotNull("Risk/reward should be calculated", domain.riskRewardRatio)
-
-        // For 106.99 with slight bullish tilt, target should be above currentPrice, stop loss below currentPrice
-        assertTrue(domain.targetPrice!! > 106.99)
-        assertTrue(domain.stopLoss!! < 106.99)
-        assertTrue(domain.upsidePct!! > 0.0)
-        assertTrue(domain.downsidePct!! < 0.0)
-        assertTrue(domain.riskRewardRatio!! > 0.0)
+        // The mapper used to synthesise a target/stop from direction, horizon and confidence.
+        // Those were invented figures, so they are gone: absent levels stay absent.
+        assertNull(domain.targetPrice)
+        assertNull(domain.stopLoss)
+        assertNull(domain.upsidePct)
+        assertNull(domain.downsidePct)
+        assertNull(domain.riskRewardRatio)
+        assertEquals(106.99, domain.currentPrice!!, 0.001)
     }
 
     @Test
@@ -236,10 +232,9 @@ class ForecastModuleUnitTest {
 
         val recalculated = ForecastDtoMapper.recalculateTargets(initialDomain, livePrice = 420.00)
         assertEquals(420.00, recalculated.currentPrice ?: 0.0, 0.01)
-        assertNotNull(recalculated.targetPrice)
-        assertNotNull(recalculated.stopLoss)
-        assertTrue(recalculated.targetPrice!! > 420.00)
-        assertTrue(recalculated.stopLoss!! < 420.00)
+        // Only the quote is filled in from the live price; the levels come from the API or not at all.
+        assertNull(recalculated.targetPrice)
+        assertNull(recalculated.stopLoss)
     }
 
     // 3. Repository Tests
@@ -259,7 +254,7 @@ class ForecastModuleUnitTest {
                 )
             }
 
-            override suspend fun getForecastHistory(symbol: String, limit: Int?): Response<ForecastHistoryResponseDto> {
+            override suspend fun getForecastHistory(symbol: String, horizon: String?, limit: Int?): Response<ForecastHistoryResponseDto> {
                 return Response.success(
                     ForecastHistoryResponseDto(
                         symbol = symbol,
@@ -287,7 +282,7 @@ class ForecastModuleUnitTest {
         assertEquals("LUCK", forecast.symbol)
         assertEquals(ForecastDirection.BULLISH, forecast.direction)
 
-        val historyResult = repo.getForecastHistory("LUCK", 30)
+        val historyResult = repo.getForecastHistory("LUCK", horizon = "1W", limit = 30)
         assertTrue(historyResult.isSuccess)
         val history = historyResult.getOrThrow()
         assertEquals(1, history.count)
@@ -302,7 +297,7 @@ class ForecastModuleUnitTest {
                 return Response.error(401, errorBody)
             }
 
-            override suspend fun getForecastHistory(symbol: String, limit: Int?): Response<ForecastHistoryResponseDto> {
+            override suspend fun getForecastHistory(symbol: String, horizon: String?, limit: Int?): Response<ForecastHistoryResponseDto> {
                 val errorBody = "{\"message\":\"Not found\"}".toResponseBody("application/json".toMediaType())
                 return Response.error(404, errorBody)
             }
@@ -314,7 +309,7 @@ class ForecastModuleUnitTest {
         assertTrue(forecastResult.isFailure)
         assertTrue(forecastResult.exceptionOrNull()?.message?.contains("Session expired") == true)
 
-        val historyResult = repo.getForecastHistory("UNKNOWN", 30)
+        val historyResult = repo.getForecastHistory("UNKNOWN", horizon = "1W", limit = 30)
         assertTrue(historyResult.isFailure)
         assertTrue(historyResult.exceptionOrNull()?.message?.contains("not found") == true)
     }
@@ -336,7 +331,7 @@ class ForecastModuleUnitTest {
                 )
             }
 
-            override suspend fun getForecastHistory(symbol: String, limit: Int?): Response<ForecastHistoryResponseDto> {
+            override suspend fun getForecastHistory(symbol: String, horizon: String?, limit: Int?): Response<ForecastHistoryResponseDto> {
                 return Response.success(
                     ForecastHistoryResponseDto(
                         symbol = symbol,

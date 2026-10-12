@@ -1613,7 +1613,7 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <!-- 6A. HORIZON SELECTOR (1D | 1W | 1M) -->
+                <!-- Forecast horizons supported by the API -->
                 <LinearLayout
                     android:id="@+id/layout_horizon_selector"
                     android:layout_width="match_parent"
@@ -1641,29 +1641,40 @@
 
                         <TextView
                             android:id="@+id/btn_horizon_1d"
-                            android:layout_width="44dp"
+                            android:layout_width="40dp"
                             android:layout_height="match_parent"
-                            android:background="@drawable/bg_segmented_tab_active"
+                            android:background="@color/transparent"
                             android:gravity="center"
                             android:text="1D"
-                            android:textColor="@color/color_text_primary"
+                            android:textColor="@color/color_text_secondary"
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/btn_horizon_1w"
-                            android:layout_width="44dp"
+                            android:layout_width="40dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_segmented_tab_active"
+                            android:gravity="center"
+                            android:text="1W"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/btn_horizon_2w"
+                            android:layout_width="40dp"
                             android:layout_height="match_parent"
                             android:background="@color/transparent"
                             android:gravity="center"
-                            android:text="1W"
+                            android:text="2W"
                             android:textColor="@color/color_text_secondary"
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/btn_horizon_1m"
-                            android:layout_width="44dp"
+                            android:layout_width="40dp"
                             android:layout_height="match_parent"
                             android:background="@color/transparent"
                             android:gravity="center"
@@ -1694,7 +1705,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Loading ML forecast..."
+                        android:text="Loading price outlook…"
                         android:textColor="@color/color_text_secondary"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -1760,7 +1771,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Price Prediction"
+                                android:text="Price outlook"
                                 android:textColor="@color/color_text_primary"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
@@ -1769,9 +1780,11 @@
                                 android:id="@+id/tv_forecast_dates"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:textColor="@color/color_text_secondary"
                                 android:textSize="11sp"
-                                tools:text="Target: 2026-09-28 (As of 2026-09-25)" />
+                                tools:text="Target: 2026-09-28" />
                         </LinearLayout>
 
                         <!-- Direction & Signal Badges -->
@@ -1817,7 +1830,7 @@
                                 android:textColor="@color/color_text_primary"
                                 android:textSize="13sp"
                                 android:textStyle="bold"
-                                tools:text="82% Confidence" />
+                                tools:text="Confidence: 82%" />
                         </LinearLayout>
 
                         <TextView
@@ -1837,7 +1850,7 @@
                             android:layout_marginTop="2dp"
                             android:textColor="@color/color_text_secondary"
                             android:textSize="11sp"
-                            tools:text="Forecast confidence: 82% • Target date: 2026-09-28" />
+                            tools:text="5 trading days outlook • As of: 2026-09-25" />
 
                         <View
                             android:layout_width="match_parent"
@@ -1869,6 +1882,13 @@
                                     android:id="@+id/tv_forecast_target_price"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:autoSizeMaxTextSize="16sp"
+                                    android:autoSizeMinTextSize="13sp"
+                                    android:autoSizeStepGranularity="1sp"
+                                    android:autoSizeTextType="uniform"
+                                    android:fontFeatureSettings="tnum"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
                                     android:textColor="@color/color_positive"
                                     android:textSize="16sp"
                                     android:textStyle="bold"
@@ -1878,6 +1898,8 @@
                                     android:id="@+id/tv_forecast_upside_pct"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:fontFeatureSettings="tnum"
+                                    android:includeFontPadding="false"
                                     android:textColor="@color/color_positive"
                                     android:textSize="11sp"
                                     tools:text="+7.8% upside" />
@@ -1900,6 +1922,13 @@
                                     android:id="@+id/tv_forecast_stop_loss"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:autoSizeMaxTextSize="16sp"
+                                    android:autoSizeMinTextSize="13sp"
+                                    android:autoSizeStepGranularity="1sp"
+                                    android:autoSizeTextType="uniform"
+                                    android:fontFeatureSettings="tnum"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
                                     android:textColor="@color/color_negative"
                                     android:textSize="16sp"
                                     android:textStyle="bold"
@@ -1909,6 +1938,8 @@
                                     android:id="@+id/tv_forecast_downside_pct"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:fontFeatureSettings="tnum"
+                                    android:includeFontPadding="false"
                                     android:textColor="@color/color_negative"
                                     android:textSize="11sp"
                                     tools:text="-3.6% risk" />
@@ -1931,6 +1962,13 @@
                                     android:id="@+id/tv_forecast_risk_reward"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:autoSizeMaxTextSize="16sp"
+                                    android:autoSizeMinTextSize="13sp"
+                                    android:autoSizeStepGranularity="1sp"
+                                    android:autoSizeTextType="uniform"
+                                    android:fontFeatureSettings="tnum"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
                                     android:textColor="@color/color_text_primary"
                                     android:textSize="16sp"
                                     android:textStyle="bold"
@@ -1941,7 +1979,9 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/color_text_secondary"
-                                    android:textSize="10sp"
+                                    android:fontFeatureSettings="tnum"
+                                    android:includeFontPadding="false"
+                                    android:textSize="11sp"
                                     tools:text="Ref: PKR 412.80" />
                             </LinearLayout>
                         </LinearLayout>
@@ -1963,7 +2003,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Probability Distribution"
+                            android:text="Forecast scenarios"
                             android:textColor="@color/color_text_primary"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -2054,84 +2094,17 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Model Ensemble Breakdown"
+                            android:text="Forecast details"
                             android:textColor="@color/color_text_primary"
                             android:textSize="14sp"
                             android:textStyle="bold" />
 
-                        <!-- GRU Model Row -->
                         <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="70dp"
-                                android:layout_height="wrap_content"
-                                android:text="GRU"
-                                android:textColor="@color/color_text_primary"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:id="@+id/tv_gru_direction"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/color_positive"
-                                android:textSize="12sp"
-                                android:textStyle="bold"
-                                tools:text="BULLISH" />
-
-                            <TextView
-                                android:id="@+id/tv_gru_pcts"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_weight="1"
-                                android:gravity="end"
-                                android:textColor="@color/color_text_secondary"
-                                android:textSize="11sp"
-                                tools:text="72% Bull • 28% Bear" />
-                        </LinearLayout>
-
-                        <!-- XGBoost Model Row -->
-                        <LinearLayout
+                            android:id="@+id/layout_model_rows"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="70dp"
-                                android:layout_height="wrap_content"
-                                android:text="XGBoost"
-                                android:textColor="@color/color_text_primary"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:id="@+id/tv_xgb_direction"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/color_positive"
-                                android:textSize="12sp"
-                                android:textStyle="bold"
-                                tools:text="BULLISH" />
-
-                            <TextView
-                                android:id="@+id/tv_xgb_pcts"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_weight="1"
-                                android:gravity="end"
-                                android:textColor="@color/color_text_secondary"
-                                android:textSize="11sp"
-                                tools:text="68% Bull • 32% Bear" />
-                        </LinearLayout>
+                            android:orientation="vertical" />
                     </LinearLayout>
 
                     <!-- MARKET CONTEXT CARD -->
@@ -2211,10 +2184,55 @@
                         android:layout_marginHorizontal="16dp"
                         android:layout_marginTop="16dp"
                         android:lineSpacingExtra="2dp"
-                        android:text="Notice: AI predictions are probabilistic projections generated by deep learning models for decision-support purposes only. They do not constitute guaranteed outcomes or registered financial advice."
+                        android:text="Forecasts are estimates for decision support. They are not financial advice or guaranteed outcomes."
                         android:textColor="@color/color_text_tertiary"
                         android:textSize="11sp" />
 
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/card_forecast_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_card_clean"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Forecast Track Record"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_forecast_history_summary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="12sp" />
+
+                    <LinearLayout
+                        android:id="@+id/layout_forecast_history_rows"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_forecast_history_retry"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:layout_marginTop="8dp"
+                        android:text="Retry history"
+                        android:textAllCaps="false"
+                        android:textSize="11sp"
+                        android:visibility="gone"
+                        app:cornerRadius="6dp" />
                 </LinearLayout>
             </LinearLayout>
 

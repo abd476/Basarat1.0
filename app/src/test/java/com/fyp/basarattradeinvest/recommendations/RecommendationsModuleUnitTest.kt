@@ -166,6 +166,74 @@ class RecommendationsModuleUnitTest {
     }
 
     @Test
+    fun testRecommendationDetail_suppressedRecompute_fallsBackToThePublishedBatch() = runBlocking {
+        // Mirrors the live contract: /recommendations/{symbol} recomputes and withholds both
+        // its verdict and its levels when its indicator inputs lag the quote feed, while
+        // /recommendations serves the engine's last batch with the BUY and its ATR levels.
+        val detailDto = gson.fromJson(
+            """
+            {
+                "symbol": "FFL",
+                "decision": {
+                    "signal": "HOLD",
+                    "confidence": 0.5,
+                    "composite_score": 0.32,
+                    "suppressed": true,
+                    "suppression_reason": "BUY suppressed because model inputs are 5 trading days old"
+                },
+                "market_data": { "current_price": 13.99 },
+                "risk": { "atr_14": 0.28, "target_price": null, "stop_loss": null }
+            }
+            """.trimIndent(),
+            RecommendationDetailResponseDto::class.java
+        )
+        val listDto = gson.fromJson(
+            """
+            {
+                "count": 1,
+                "recommendations": [
+                    {
+                        "symbol": "FFL",
+                        "decision": { "signal": "BUY", "confidence": 0.24, "composite_score": 0.16 },
+                        "market_data": { "current_price": 14.68 },
+                        "risk": { "atr_14": 0.28, "target_price": 15.79, "stop_loss": 13.94 }
+                    }
+                ]
+            }
+            """.trimIndent(),
+            RecommendationsListResponseDto::class.java
+        )
+
+        val mockApi = object : RecommendationsApiService {
+            override suspend fun getRecommendations(riskProfile: String?, sector: String?, limit: Int) =
+                Response.success(listDto)
+
+            override suspend fun getEngineWeights(): Response<EngineWeightsResponseDto> =
+                Response.error(500, "unused".toResponseBody())
+
+            override suspend fun setEngineWeights(request: EngineWeightsRequestDto): Response<EngineWeightsResponseDto> =
+                Response.error(500, "unused".toResponseBody())
+
+            override suspend fun getRecommendationDetail(symbol: String) = Response.success(detailDto)
+
+            override suspend fun getTargetStop(symbol: String): Response<TargetStopResponseDto> =
+                Response.error(500, "unused".toResponseBody())
+        }
+
+        val detail = RecommendationsRepositoryImpl(mockApi)
+            .getRecommendationDetail("ffl", knownPrice = 13.99)
+            .getOrThrow()
+
+        assertEquals(RecommendationSignal.BUY, detail.signal)
+        assertEquals(15.79, detail.targetPrice!!, 0.001)
+        assertEquals(13.94, detail.stopLoss!!, 0.001)
+        // The live quote wins over the batch's older price, and the reason stays on screen.
+        assertEquals(13.99, detail.currentPrice!!, 0.001)
+        assertTrue(detail.isSuppressed)
+        assertEquals("BUY suppressed because model inputs are 5 trading days old", detail.suppressionReason)
+    }
+
+    @Test
     fun testRecommendationsRepositoryImpl_failsHonestlyWhenBackendUnavailable() = runBlocking {
         val mockApi = object : RecommendationsApiService {
             override suspend fun getRecommendations(riskProfile: String?, sector: String?, limit: Int): Response<RecommendationsListResponseDto> {

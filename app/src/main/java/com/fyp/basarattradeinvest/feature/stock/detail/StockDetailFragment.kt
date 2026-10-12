@@ -69,12 +69,14 @@ class StockDetailFragment : Fragment() {
         setupCharts()
         setupListeners()
         observeUiState()
+        observeWatchlistState()
 
         // Load from navigation arguments
         currentSymbol = arguments?.getString("symbol") ?: "SARCO"
         binding.tvTopSymbol.text = currentSymbol
         binding.tvTopCode.text = currentSymbol
         viewModel.ensureLoaded(currentSymbol)
+        viewModel.ensureWatchlistMembership(currentSymbol)
     }
 
     override fun onStart() {
@@ -196,7 +198,7 @@ class StockDetailFragment : Fragment() {
 
         // Favorite
         binding.ivFavorite.setOnClickListener {
-            Toast.makeText(requireContext(), "Added to watchlist", Toast.LENGTH_SHORT).show()
+            viewModel.toggleWatchlist(currentSymbol)
         }
 
         // AI Recommendation
@@ -255,6 +257,35 @@ class StockDetailFragment : Fragment() {
     // ───────────────────────────────
     //  STATE OBSERVER
     // ───────────────────────────────
+
+    private fun observeWatchlistState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.watchlistFavoriteState.collect { state ->
+                        val isSaved = state is WatchlistFavoriteUiState.Saved
+                        binding.ivFavorite.setImageResource(
+                            if (isSaved) R.drawable.ic_favorite_filled else R.drawable.ic_favorite_outline
+                        )
+                        binding.ivFavorite.imageTintList = ContextCompat.getColorStateList(
+                            requireContext(),
+                            if (isSaved) R.color.color_basarat_green else R.color.color_text_secondary
+                        )
+                        binding.ivFavorite.alpha =
+                            if (state == WatchlistFavoriteUiState.Updating) 0.5f else 1f
+                        binding.ivFavorite.contentDescription =
+                            if (isSaved) "Remove $currentSymbol from watchlist"
+                            else "Add $currentSymbol to watchlist"
+                    }
+                }
+                launch {
+                    viewModel.watchlistMessages.collect { message ->
+                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+    }
 
     private fun observeUiState() {
         viewLifecycleOwner.lifecycleScope.launch {

@@ -52,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
-                android:text="Shariah Compliant Companies"
+                android:text="All PSX stocks — tap one to screen it"
                 android:textColor="@color/color_text_secondary" />
         </LinearLayout>
 
@@ -171,19 +171,6 @@
             android:paddingHorizontal="16dp"
             android:text="KMI-30"
             android:textColor="@color/color_text_secondary" />
-
-        <!-- KMI All Share -->
-        <TextView
-            android:id="@+id/chip_kmi_all_share"
-            android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/bg_chip_filter_unselected"
-            android:gravity="center"
-            android:paddingHorizontal="14dp"
-            android:text="KMI All Share"
-            android:textColor="@color/color_text_secondary" />
     </LinearLayout>
 
     <!-- Table Header Row (4 Columns matching screenshot) -->
@@ -283,7 +270,7 @@
             android:textAppearance="@style/TextAppearance.Basarat.Body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No PSX Shariah Compliant Stocks Found"
+            android:text="No stocks match this search"
             android:textColor="@color/color_text_secondary" />
     </LinearLayout>
 

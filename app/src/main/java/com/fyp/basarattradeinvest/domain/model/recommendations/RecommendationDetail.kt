@@ -12,7 +12,25 @@ data class RecommendationDetail(
     val currentPrice: Double?,
     val atr14: Double?,
     val reasoning: Map<String, Map<String, String>>,
-    val weights: Map<String, Double>
+    val weights: Map<String, Double>,
+    val name: String? = null,
+    val sector: String? = null,
+    val horizon: String? = null,
+    val decisionReason: String? = null,
+    val suppressionReason: String? = null,
+    val isSuppressed: Boolean = false,
+    val components: List<RecommendationComponent> = emptyList(),
+    val riskProfile: String? = null
+)
+
+data class RecommendationComponent(
+    val key: String,
+    val score: Double?,
+    val status: String?,
+    val configuredWeight: Double?,
+    val effectiveWeight: Double?,
+    val availabilityReason: String?,
+    val details: Map<String, String>
 )
 
 data class ExpectedPriceRange(

@@ -35,20 +35,29 @@
         <TextView
             android:id="@+id/tv_tx_symbol"
             android:textAppearance="@style/TextAppearance.Basarat.Title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textColor="@color/color_text_primary"
             app:layout_constraintBottom_toBottomOf="@id/tv_badge_type"
+            app:layout_constraintEnd_toStartOf="@id/tv_tx_total"
             app:layout_constraintStart_toEndOf="@id/tv_badge_type"
             app:layout_constraintTop_toTopOf="@id/tv_badge_type"
             tools:text="OGDC" />
 
         <TextView
             android:id="@+id/tv_tx_total"
-            android:textAppearance="@style/TextAppearance.Basarat.Title"
+            android:textAppearance="@style/TextAppearance.Basarat.Number.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:autoSizeMaxTextSize="16sp"
+            android:autoSizeMinTextSize="12sp"
+            android:autoSizeStepGranularity="1sp"
+            android:autoSizeTextType="uniform"
+            android:maxLines="1"
             android:textColor="@color/color_text_primary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -56,7 +65,7 @@
 
         <TextView
             android:id="@+id/tv_tx_details"
-            android:textAppearance="@style/TextAppearance.Basarat.Meta"
+            android:textAppearance="@style/TextAppearance.Basarat.Number.Meta"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
@@ -69,7 +78,7 @@
 
         <TextView
             android:id="@+id/tv_tx_fee"
-            android:textAppearance="@style/TextAppearance.Basarat.Meta"
+            android:textAppearance="@style/TextAppearance.Basarat.Number.Meta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/color_text_secondary"

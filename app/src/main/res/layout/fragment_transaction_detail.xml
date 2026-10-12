@@ -230,27 +230,54 @@
             android:layout_weight="1" />
 
         <!-- Edit & Delete Buttons -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_edit_transaction"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:backgroundTint="@color/color_button_primary_bg"
-            android:text="Edit Transaction"
-            android:textColor="@color/color_button_primary_text"
-            android:textSize="14sp"
-            app:cornerRadius="10dp" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_delete_transaction"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="10dp"
-            android:text="Delete Transaction"
-            android:textColor="@color/color_negative"
-            android:textSize="14sp"
-            app:cornerRadius="10dp"
-            app:strokeColor="@color/color_negative" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_edit_transaction"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="3"
+                android:backgroundTint="@color/color_button_primary_bg"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:letterSpacing="0.02"
+                android:text="Edit"
+                android:textColor="@color/color_button_primary_text"
+                android:textSize="15sp"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_edit"
+                app:iconGravity="textStart"
+                app:iconPadding="10dp"
+                app:iconSize="19dp"
+                app:iconTint="@color/color_button_primary_text"
+                app:rippleColor="@color/color_button_primary_ripple" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_delete_transaction"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_marginStart="6dp"
+                android:layout_weight="2"
+                android:backgroundTint="@color/color_negative_bg"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:letterSpacing="0.02"
+                android:text="Delete"
+                android:textColor="@color/color_negative"
+                android:textSize="15sp"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_delete"
+                app:iconGravity="textStart"
+                app:iconPadding="10dp"
+                app:iconSize="19dp"
+                app:iconTint="@color/color_negative"
+                app:rippleColor="@color/color_button_danger_ripple" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
