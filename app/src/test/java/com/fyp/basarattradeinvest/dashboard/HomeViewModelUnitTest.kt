@@ -1,10 +1,9 @@
 package com.fyp.basarattradeinvest.dashboard
 
 import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
-import com.fyp.basarattradeinvest.domain.model.market.MarketStock
 import com.fyp.basarattradeinvest.domain.model.news.NewsArticle
+import com.fyp.basarattradeinvest.domain.model.sentiment.MarketSentiment
 import com.fyp.basarattradeinvest.feature.dashboard.HomeUiState
-import com.fyp.basarattradeinvest.feature.dashboard.MoversTab
 import com.fyp.basarattradeinvest.feature.dashboard.WatchlistUiState
 import com.fyp.basarattradeinvest.domain.model.watchlist.Watchlist
 import com.fyp.basarattradeinvest.domain.model.watchlist.WatchlistItem
@@ -32,10 +31,7 @@ class HomeViewModelUnitTest {
     }
 
     @Test
-    fun testHomeUiStateMoversResolution() {
-        val gainers = listOf(MarketStock(1, "DSIL", "DSIL Corp", "TEXTILE", 10.58, 1.0, 10.44))
-        val losers = listOf(MarketStock(1, "BUXL", "Buxly Paints", "CHEMICAL", 502.62, -55.85, -10.0))
-        val spikes = listOf(MarketStock(1, "CNERGY", "Cnergyico PK", "REFINERY", 4.15, -0.18, -4.15))
+    fun testHomeUiStateSuccessProperties() {
         val watchlist = Watchlist(
             id = "watchlist-1",
             name = "Default",
@@ -68,10 +64,6 @@ class HomeViewModelUnitTest {
             selectedBenchmarkIndex = indices[0],
             selectedTimeframe = "1D",
             watchlist = WatchlistUiState.Success(watchlist),
-            topGainers = gainers,
-            topLosers = losers,
-            volumeSpikes = spikes,
-            selectedMoversTab = MoversTab.GAINERS,
             recentNews = news,
             activeAlertsCount = 2
         )
@@ -84,14 +76,23 @@ class HomeViewModelUnitTest {
         assertEquals(1, (state.watchlist as WatchlistUiState.Success).watchlist.items.size)
         assertEquals(2, state.activeAlertsCount)
 
-        // 2. Verify currentMovers dynamically resolves based on selectedMoversTab
-        assertEquals("DSIL", state.currentMovers[0].symbol)
+        // 2. Verify breadth stays hidden rather than guessed until the endpoint answers
+        assertNull(state.sentiment)
 
-        val stateLosers = state.copy(selectedMoversTab = MoversTab.LOSERS)
-        assertEquals("BUXL", stateLosers.currentMovers[0].symbol)
-
-        val stateSpikes = state.copy(selectedMoversTab = MoversTab.MOST_ACTIVE)
-        assertEquals("CNERGY", stateSpikes.currentMovers[0].symbol)
+        val sentiment = MarketSentiment(
+            overallScore = 61,
+            sentimentLabel = "Bullish",
+            positivePercent = 45,
+            neutralPercent = 15,
+            negativePercent = 40,
+            advanceDeclineRatio = 1.42,
+            advancing = 195,
+            declining = 137,
+            unchanged = 68
+        )
+        val withSentiment = state.copy(sentiment = sentiment)
+        assertEquals(195, withSentiment.sentiment?.advancing)
+        assertEquals(1.42, withSentiment.sentiment?.advanceDeclineRatio ?: 0.0, 0.0)
 
         // 3. Verify backward compatibility defaults
         assertEquals("04182-PSX", state.subAccount)

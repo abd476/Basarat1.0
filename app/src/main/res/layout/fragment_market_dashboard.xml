@@ -401,190 +401,7 @@
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- 4. Market Overview Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="vertical"
-            android:paddingHorizontal="16dp">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/tv_overview_header"
-                    android:textAppearance="@style/TextAppearance.Basarat.Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Market Overview"
-                    android:textColor="@color/color_text_primary"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tv_total_stocks"
-                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Total 374 \u203A"
-                    android:textColor="@color/color_text_secondary"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <!-- 3 Column Metrics (Value, Volume, Trades) -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:orientation="horizontal"
-                android:weightSum="3">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_overview_label_1"
-                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="A/D Ratio"
-                        android:textColor="@color/color_text_secondary" />
-
-                    <TextView
-                        android:id="@+id/tv_overview_value"
-                        android:textAppearance="@style/TextAppearance.Basarat.Number.Title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        tools:text="1.42x"
-                        android:textColor="@color/color_text_primary" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_overview_label_2"
-                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Advancing"
-                        android:textColor="@color/color_text_secondary" />
-
-                    <TextView
-                        android:id="@+id/tv_overview_volume"
-                        android:textAppearance="@style/TextAppearance.Basarat.Number.Title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        tools:text="195"
-                        android:textColor="@color/color_positive" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="end"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_overview_label_3"
-                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Declining"
-                        android:textColor="@color/color_text_secondary" />
-
-                    <TextView
-                        android:id="@+id/tv_overview_trades"
-                        android:textAppearance="@style/TextAppearance.Basarat.Number.Title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        tools:text="137"
-                        android:textColor="@color/color_negative" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Advance / Decline Sentiment Breadth Bar -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="6dp"
-                android:layout_marginTop="14dp"
-                android:orientation="horizontal"
-                android:weightSum="374">
-
-                <View
-                    android:id="@+id/bar_up"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="65"
-                    android:background="@color/color_positive" />
-
-                <View
-                    android:id="@+id/bar_unchanged"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="2dp"
-                    android:layout_weight="55"
-                    android:background="@color/color_neutral" />
-
-                <View
-                    android:id="@+id/bar_down"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="254"
-                    android:background="@color/color_negative" />
-            </LinearLayout>
-
-            <!-- Advance / Decline Labels -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tv_up_count"
-                    android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="\u25B2 Up 65"
-                    android:textColor="@color/color_positive" />
-
-                <TextView
-                    android:id="@+id/tv_unchanged_count"
-                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Unchanged 55"
-                    android:textColor="@color/color_text_secondary" />
-
-                <TextView
-                    android:id="@+id/tv_down_count"
-                    android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="\u25BC Down 254"
-                    android:textColor="@color/color_negative" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- 5. Quick Access Horizontal Categories -->
+        <!-- 4. Quick Access Horizontal Categories -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -850,129 +667,7 @@
             </LinearLayout>
         </HorizontalScrollView>
 
-        <!-- 6. Market Sentiment Section (Blueprint Section 16) -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/card_market_sentiment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/bg_sentiment_card"
-            android:padding="16dp">
-
-            <TextView
-                android:id="@+id/tv_sentiment_header"
-                android:textAppearance="@style/TextAppearance.Basarat.Title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Market Sentiment"
-                android:textColor="@color/color_text_primary"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <!-- AI Pill Badge -->
-
-            <!-- Sentiment Score and Label -->
-            <TextView
-                android:id="@+id/tv_sentiment_score"
-                android:textAppearance="@style/TextAppearance.Basarat.Number.Heading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/color_text_primary"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_sentiment_header"
-                tools:text="68 / 100" />
-
-            <TextView
-                android:id="@+id/tv_sentiment_label"
-                android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_badge_positive"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="3dp"
-                android:textColor="@color/color_positive"
-                app:layout_constraintBottom_toBottomOf="@id/tv_sentiment_score"
-                app:layout_constraintStart_toEndOf="@id/tv_sentiment_score"
-                app:layout_constraintTop_toTopOf="@id/tv_sentiment_score"
-                tools:text="Bullish" />
-
-            <!-- 3-Segment Sentiment Bar -->
-            <LinearLayout
-                android:id="@+id/layout_sentiment_bar"
-                android:layout_width="match_parent"
-                android:layout_height="6dp"
-                android:layout_marginTop="12dp"
-                android:orientation="horizontal"
-                android:weightSum="100"
-                app:layout_constraintTop_toBottomOf="@id/tv_sentiment_score">
-
-                <View
-                    android:id="@+id/bar_sentiment_positive"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="62"
-                    android:background="@color/color_positive" />
-
-                <View
-                    android:id="@+id/bar_sentiment_neutral"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="2dp"
-                    android:layout_weight="23"
-                    android:background="@color/color_neutral" />
-
-                <View
-                    android:id="@+id/bar_sentiment_negative"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="15"
-                    android:background="@color/color_negative" />
-            </LinearLayout>
-
-            <!-- Sentiment Percent Labels -->
-            <LinearLayout
-                android:id="@+id/layout_sentiment_labels"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/layout_sentiment_bar">
-
-                <TextView
-                    android:id="@+id/tv_sentiment_pos"
-                    android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Pos 62%"
-                    android:textColor="@color/color_positive" />
-
-                <TextView
-                    android:id="@+id/tv_sentiment_neu"
-                    android:textAppearance="@style/TextAppearance.Basarat.Caption"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Neu 23%"
-                    android:textColor="@color/color_text_secondary" />
-
-                <TextView
-                    android:id="@+id/tv_sentiment_neg"
-                    android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Neg 15%"
-                    android:textColor="@color/color_negative" />
-            </LinearLayout>
-
-            <!-- AI News Summary -->
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <!-- 7. Top Symbols Section (PSX Blueprint) -->
+        <!-- 5. Top Symbols Section (PSX Blueprint) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -994,10 +689,22 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_top_symbols_count"
+                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="10 symbols"
+                    android:textColor="@color/color_text_secondary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- PSX Blueprint Filter Pills: Gainers, Losers, Most Active, Volume Spikes, Watchlist -->
+            <!-- Single selector row: index constituents and ranked filters share one table -->
             <HorizontalScrollView
+                android:id="@+id/scroll_selector_tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -1010,6 +717,42 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tab_kse100"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_market_tab_unselected"
+                        android:gravity="center"
+                        android:paddingHorizontal="14dp"
+                        android:text="KSE-100"
+                        android:textColor="@color/color_text_primary" />
+
+                    <TextView
+                        android:id="@+id/tab_kse30"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_market_tab_unselected"
+                        android:gravity="center"
+                        android:paddingHorizontal="14dp"
+                        android:text="KSE-30"
+                        android:textColor="@color/color_text_primary" />
+
+                    <TextView
+                        android:id="@+id/tab_kmi30"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_market_tab_unselected"
+                        android:gravity="center"
+                        android:paddingHorizontal="14dp"
+                        android:text="KMI-30"
+                        android:textColor="@color/color_text_primary" />
 
                     <TextView
                         android:id="@+id/tab_gainers"
@@ -1036,18 +779,6 @@
                         android:textColor="@color/color_text_primary" />
 
                     <TextView
-                        android:id="@+id/tab_most_active"
-                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
-                        android:layout_width="wrap_content"
-                        android:layout_height="32dp"
-                        android:layout_marginEnd="8dp"
-                        android:background="@drawable/bg_market_tab_unselected"
-                        android:gravity="center"
-                        android:paddingHorizontal="14dp"
-                        android:text="Most Active"
-                        android:textColor="@color/color_text_primary" />
-
-                    <TextView
                         android:id="@+id/tab_volume_spikes"
                         android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="wrap_content"
@@ -1060,17 +791,147 @@
                         android:textColor="@color/color_text_primary" />
 
                     <TextView
-                        android:id="@+id/tab_watchlist"
+                        android:id="@+id/tab_most_active"
                         android:textAppearance="@style/TextAppearance.Basarat.Meta"
                         android:layout_width="wrap_content"
                         android:layout_height="32dp"
                         android:background="@drawable/bg_market_tab_unselected"
                         android:gravity="center"
                         android:paddingHorizontal="14dp"
-                        android:text="Watchlist"
+                        android:text="Most Active"
                         android:textColor="@color/color_text_primary" />
                 </LinearLayout>
             </HorizontalScrollView>
+
+            <!-- Skeleton rows hold the table's place while a cold selector fetches -->
+            <LinearLayout
+                android:id="@+id/layout_symbols_skeleton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="10dp">
+
+                    <View
+                        android:layout_width="62dp"
+                        android:layout_height="12dp"
+                        android:background="@drawable/bg_skeleton" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1" />
+
+                    <View
+                        android:layout_width="54dp"
+                        android:layout_height="13dp"
+                        android:background="@drawable/bg_skeleton" />
+
+                    <View
+                        android:layout_width="44dp"
+                        android:layout_height="13dp"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/bg_skeleton" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="10dp">
+
+                    <View
+                        android:layout_width="78dp"
+                        android:layout_height="12dp"
+                        android:background="@drawable/bg_skeleton" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1" />
+
+                    <View
+                        android:layout_width="48dp"
+                        android:layout_height="13dp"
+                        android:background="@drawable/bg_skeleton" />
+
+                    <View
+                        android:layout_width="40dp"
+                        android:layout_height="13dp"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/bg_skeleton" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="10dp">
+
+                    <View
+                        android:layout_width="56dp"
+                        android:layout_height="12dp"
+                        android:background="@drawable/bg_skeleton" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1" />
+
+                    <View
+                        android:layout_width="58dp"
+                        android:layout_height="13dp"
+                        android:background="@drawable/bg_skeleton" />
+
+                    <View
+                        android:layout_width="46dp"
+                        android:layout_height="13dp"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/bg_skeleton" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="10dp">
+
+                    <View
+                        android:layout_width="70dp"
+                        android:layout_height="12dp"
+                        android:background="@drawable/bg_skeleton" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1" />
+
+                    <View
+                        android:layout_width="50dp"
+                        android:layout_height="13dp"
+                        android:background="@drawable/bg_skeleton" />
+
+                    <View
+                        android:layout_width="42dp"
+                        android:layout_height="13dp"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/bg_skeleton" />
+                </LinearLayout>
+            </LinearLayout>
 
             <!-- Table Header: Symbol | Price | %Chg -->
             <LinearLayout
@@ -1115,7 +976,7 @@
                 tools:listitem="@layout/item_market_stock" />
         </LinearLayout>
 
-        <!-- 8. Sector Performance Section (Blueprint Section 16 - Horizontal Scroll) -->
+        <!-- 6. Sector Performance Section (Blueprint Section 16 - Horizontal Scroll) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -1159,150 +1020,6 @@
                 android:orientation="horizontal"
                 android:paddingHorizontal="16dp"
                 tools:listitem="@layout/item_sector_performance" />
-        </LinearLayout>
-
-        <!-- 9. Index Constituents Section (PSX Blueprint) -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="26dp"
-            android:orientation="vertical">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="16dp">
-
-                <TextView
-                    android:id="@+id/tv_constituents_header"
-                    android:textAppearance="@style/TextAppearance.Basarat.Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Index Constituents \u203A"
-                    android:textColor="@color/color_text_primary"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tv_constituents_count"
-                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Constituents"
-                    android:textColor="@color/color_text_secondary"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <!-- Index Selector Tabs: KSE-100, KSE-30, KMI-30 -->
-            <LinearLayout
-                android:id="@+id/layout_constituent_tabs"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal"
-                android:paddingHorizontal="16dp">
-
-                <TextView
-                    android:id="@+id/tab_constituent_kse100"
-                    android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/bg_market_tab_selected"
-                    android:gravity="center"
-                    android:paddingHorizontal="14dp"
-                    android:text="KSE-100"
-                    android:textColor="@color/white" />
-
-                <TextView
-                    android:id="@+id/tab_constituent_kse30"
-                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/bg_market_tab_unselected"
-                    android:gravity="center"
-                    android:paddingHorizontal="14dp"
-                    android:text="KSE-30"
-                    android:textColor="@color/color_text_primary" />
-
-                <TextView
-                    android:id="@+id/tab_constituent_kmi30"
-                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:background="@drawable/bg_market_tab_unselected"
-                    android:gravity="center"
-                    android:paddingHorizontal="14dp"
-                    android:text="KMI-30 (Shariah)"
-                    android:textColor="@color/color_text_primary" />
-            </LinearLayout>
-
-            <!-- Table Header: Symbol | Price | %Chg -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:orientation="horizontal"
-                android:paddingHorizontal="16dp">
-
-                <TextView
-                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Symbol"
-                    android:textColor="@color/color_text_tertiary" />
-
-                <TextView
-                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
-                    android:layout_width="85dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:text="Price"
-                    android:textColor="@color/color_text_tertiary" />
-
-                <TextView
-                    android:textAppearance="@style/TextAppearance.Basarat.Meta"
-                    android:layout_width="75dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:text="%Chg"
-                    android:textColor="@color/color_text_tertiary" />
-            </LinearLayout>
-
-            <!-- Constituents RecyclerView -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_constituents"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                tools:itemCount="5"
-                tools:listitem="@layout/item_constituent" />
-
-            <!-- Constituents Empty / Loading View -->
-            <ProgressBar
-                android:id="@+id/pb_constituents_loading"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_gravity="center"
-                android:layout_marginVertical="16dp"
-                android:indeterminateTint="@color/color_basarat_green"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/tv_constituents_empty"
-                android:textAppearance="@style/TextAppearance.Basarat.Body.Small"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="16dp"
-                android:gravity="center"
-                android:text="No constituents available"
-                android:textColor="@color/color_text_tertiary"
-                android:visibility="gone" />
         </LinearLayout>
 
     </LinearLayout>

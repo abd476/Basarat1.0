@@ -81,6 +81,21 @@ class BenchmarkTrendAggregatorTest {
     }
 
     @Test
+    fun `a session barely any constituent reports does not veto the window`() {
+        val history = buildMap {
+            repeat(6) { i -> put("S$i", candles(100.0 + i, 101.0 + i, 102.0 + i, 103.0 + i)) }
+            // An ex-date alias that carries one stray session no other constituent traded.
+            put("OGDCXD", listOf(CandleEntry(session(4), 50f, 50f, 50f, 50f, 1L)))
+        }
+
+        val trend = BenchmarkTrendAggregator.build("KSE100", "3M", history)
+
+        assertEquals(4, trend?.points?.size)
+        assertEquals(session(3), trend?.lastSessionTimestamp)
+        assertEquals(6, trend?.stockCount)
+    }
+
+    @Test
     fun `one constituent is not an index`() {
         val trend = BenchmarkTrendAggregator.build("KSE100", "3M", mapOf("SYS" to candles(100.0, 110.0)))
         assertNull(trend)

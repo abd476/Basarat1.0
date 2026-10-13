@@ -395,8 +395,9 @@
                     android:layout_marginTop="14dp"
                     android:background="@drawable/bg_card_clean"
                     android:orientation="vertical"
-                    android:padding="14dp">
+                    android:padding="16dp">
 
+                    <!-- Identity row: index mark, name, and the live session state -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -411,96 +412,87 @@
 
                             <TextView
                                 android:id="@+id/tv_benchmark_title"
-                                android:textAppearance="@style/TextAppearance.Basarat.Meta"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="KSE-100 Benchmark"
-                                android:textColor="@color/color_text_secondary" />
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:text="KSE-100"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                tools:text="KSE-100" />
 
-                            <LinearLayout
+                            <TextView
+                                android:id="@+id/tv_benchmark_subtitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:id="@+id/tv_benchmark_points"
-                                    android:textAppearance="@style/TextAppearance.Basarat.Number.Subheading"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textColor="@color/color_text_primary"
-                                    tools:text="170,498.94" />
-
-                                <TextView
-                                    android:id="@+id/tv_benchmark_change"
-                                    android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="8dp"
-                                    android:textColor="@color/color_positive"
-                                    tools:text="+1.28%" />
-                            </LinearLayout>
+                                android:layout_marginTop="1dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:text="@string/benchmark_subtitle"
+                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
+                                android:textColor="@color/color_text_tertiary" />
                         </LinearLayout>
 
-                        <!-- Timeframe selector pills -->
-                        <LinearLayout
-                            android:id="@+id/layout_timeframes"
+                        <TextView
+                            android:id="@+id/tv_benchmark_status_chip"
                             android:layout_width="wrap_content"
-                            android:layout_height="28dp"
-                            android:background="@drawable/bg_segmented_container"
-                            android:orientation="horizontal"
-                            android:padding="2dp">
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_badge_neutral"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp"
+                            android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
+                            android:textColor="@color/color_neutral"
+                            tools:text="Closed" />
+                    </LinearLayout>
 
-                            <TextView
-                                android:id="@+id/tab_timeframe_1d"
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:background="@drawable/bg_pill_chart_toggle_selected"
-                                android:gravity="center"
-                                android:paddingHorizontal="8dp"
-                                android:text="1D"
-                                android:textColor="@color/color_text_primary" />
+                    <TextView
+                        android:id="@+id/tv_benchmark_points"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:fontFeatureSettings="tnum"
+                        android:includeFontPadding="false"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        tools:text="170,498.94" />
 
-                            <TextView
-                                android:id="@+id/tab_timeframe_1w"
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:paddingHorizontal="8dp"
-                                android:text="1W"
-                                android:textColor="@color/color_text_secondary" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/tab_timeframe_1m"
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:paddingHorizontal="8dp"
-                                android:text="1M"
-                                android:textColor="@color/color_text_secondary" />
+                        <ImageView
+                            android:id="@+id/iv_benchmark_arrow"
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_trend_up"
+                            app:tint="@color/color_positive" />
 
-                            <TextView
-                                android:id="@+id/tab_timeframe_3m"
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:paddingHorizontal="8dp"
-                                android:text="3M"
-                                android:textColor="@color/color_text_secondary" />
-                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/tv_benchmark_change"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:fontFeatureSettings="tnum"
+                            android:textAppearance="@style/TextAppearance.Basarat.Body.Small.Strong"
+                            android:textColor="@color/color_positive"
+                            tools:text="+1,245.60 (+0.76%)" />
                     </LinearLayout>
 
                     <!-- Chart Container -->
                     <com.github.mikephil.charting.charts.LineChart
                         android:id="@+id/chart_market_trend"
                         android:layout_width="match_parent"
-                        android:layout_height="120dp"
-                        android:layout_marginTop="8dp" />
+                        android:layout_height="150dp"
+                        android:layout_marginTop="10dp" />
 
                     <!-- Provenance of the derived trend line -->
                     <TextView
@@ -509,7 +501,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:textColor="@color/color_text_secondary"
+                        android:textColor="@color/color_text_tertiary"
                         android:visibility="gone"
                         tools:text="Equal-weight proxy · 100 stocks · 3 Sep – 1 Oct"
                         tools:visibility="visible" />
@@ -518,7 +510,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="6dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
@@ -528,7 +520,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:textColor="@color/color_text_secondary"
+                            android:textColor="@color/color_text_tertiary"
                             tools:text="Day High: 172,491.16" />
 
                         <TextView
@@ -536,12 +528,361 @@
                             android:textAppearance="@style/TextAppearance.Basarat.Caption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/color_text_secondary"
+                            android:textColor="@color/color_text_tertiary"
                             tools:text="Day Low: 170,418.38" />
+                    </LinearLayout>
+
+                    <!-- Timeframe selector: one chip per range -->
+                    <LinearLayout
+                        android:id="@+id/layout_timeframes"
+                        android:layout_width="match_parent"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tab_timeframe_1d"
+                            android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="3dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_pill_range_selected"
+                            android:gravity="center"
+                            android:text="1D"
+                            android:textColor="@color/color_surface" />
+
+                        <TextView
+                            android:id="@+id/tab_timeframe_1w"
+                            android:textAppearance="@style/TextAppearance.Basarat.Caption"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginHorizontal="3dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_timeframe_chip_unselected"
+                            android:gravity="center"
+                            android:text="1W"
+                            android:textColor="@color/color_text_secondary" />
+
+                        <TextView
+                            android:id="@+id/tab_timeframe_1m"
+                            android:textAppearance="@style/TextAppearance.Basarat.Caption"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginHorizontal="3dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_timeframe_chip_unselected"
+                            android:gravity="center"
+                            android:text="1M"
+                            android:textColor="@color/color_text_secondary" />
+
+                        <TextView
+                            android:id="@+id/tab_timeframe_3m"
+                            android:textAppearance="@style/TextAppearance.Basarat.Caption"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="3dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_timeframe_chip_unselected"
+                            android:gravity="center"
+                            android:text="3M"
+                            android:textColor="@color/color_text_secondary" />
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- 5. Watchlist Preview Section -->
+                <!-- 5. Market Overview (moved from the Markets screen) -->
+                <LinearLayout
+                    android:id="@+id/layout_market_overview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:orientation="vertical">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/tv_overview_header"
+                            android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="MARKET OVERVIEW"
+                            android:textColor="@color/color_text_primary"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_total_stocks"
+                            android:textAppearance="@style/TextAppearance.Basarat.Meta"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="Total 601 ›"
+                            android:textColor="@color/color_text_secondary"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <!-- 3 Column Metrics (A/D Ratio, Advancing, Declining) -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:textAppearance="@style/TextAppearance.Basarat.Meta"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="A/D Ratio"
+                                android:textColor="@color/color_text_secondary" />
+
+                            <TextView
+                                android:id="@+id/tv_overview_value"
+                                android:textAppearance="@style/TextAppearance.Basarat.Number.Title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                tools:text="1.42x"
+                                android:textColor="@color/color_text_primary" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:textAppearance="@style/TextAppearance.Basarat.Meta"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Advancing"
+                                android:textColor="@color/color_text_secondary" />
+
+                            <TextView
+                                android:id="@+id/tv_overview_volume"
+                                android:textAppearance="@style/TextAppearance.Basarat.Number.Title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                tools:text="195"
+                                android:textColor="@color/color_positive" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="end"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:textAppearance="@style/TextAppearance.Basarat.Meta"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Declining"
+                                android:textColor="@color/color_text_secondary" />
+
+                            <TextView
+                                android:id="@+id/tv_overview_trades"
+                                android:textAppearance="@style/TextAppearance.Basarat.Number.Title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                tools:text="137"
+                                android:textColor="@color/color_negative" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Advance / Decline Breadth Bar: the ViewModel assigns the real counts as
+                         weights, so no weightSum here — a fixed sum makes the first segment
+                         overflow and push the other two off-screen. -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="6dp"
+                        android:layout_marginTop="14dp"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:id="@+id/bar_up"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@color/color_positive" />
+
+                        <View
+                            android:id="@+id/bar_unchanged"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginHorizontal="2dp"
+                            android:layout_weight="1"
+                            android:background="@color/color_neutral" />
+
+                        <View
+                            android:id="@+id/bar_down"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@color/color_negative" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_up_count"
+                            android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="▲ Up 262"
+                            android:textColor="@color/color_positive" />
+
+                        <TextView
+                            android:id="@+id/tv_unchanged_count"
+                            android:textAppearance="@style/TextAppearance.Basarat.Meta"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            tools:text="Unchanged 68"
+                            android:textColor="@color/color_text_secondary" />
+
+                        <TextView
+                            android:id="@+id/tv_down_count"
+                            android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="▼ Down 271"
+                            android:textColor="@color/color_negative" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- 6. Market Sentiment (moved from the Markets screen) -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/card_market_sentiment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/bg_sentiment_card"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tv_sentiment_header"
+                        android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="MARKET SENTIMENT"
+                        android:textColor="@color/color_text_primary"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_sentiment_score"
+                        android:textAppearance="@style/TextAppearance.Basarat.Number.Heading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/color_text_primary"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_sentiment_header"
+                        tools:text="68 / 100" />
+
+                    <TextView
+                        android:id="@+id/tv_sentiment_label"
+                        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_badge_neutral"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="3dp"
+                        android:textColor="@color/color_text_secondary"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_sentiment_score"
+                        app:layout_constraintStart_toEndOf="@id/tv_sentiment_score"
+                        app:layout_constraintTop_toTopOf="@id/tv_sentiment_score"
+                        tools:text="Bullish" />
+
+                    <LinearLayout
+                        android:id="@+id/layout_sentiment_bar"
+                        android:layout_width="match_parent"
+                        android:layout_height="6dp"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal"
+                        app:layout_constraintTop_toBottomOf="@id/tv_sentiment_score">
+
+                        <View
+                            android:id="@+id/bar_sentiment_positive"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@color/color_positive" />
+
+                        <View
+                            android:id="@+id/bar_sentiment_neutral"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginHorizontal="2dp"
+                            android:layout_weight="1"
+                            android:background="@color/color_neutral" />
+
+                        <View
+                            android:id="@+id/bar_sentiment_negative"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@color/color_negative" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_sentiment_labels"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:orientation="horizontal"
+                        app:layout_constraintTop_toBottomOf="@id/layout_sentiment_bar">
+
+                        <TextView
+                            android:id="@+id/tv_sentiment_pos"
+                            android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="Pos 43%"
+                            android:textColor="@color/color_positive" />
+
+                        <TextView
+                            android:id="@+id/tv_sentiment_neu"
+                            android:textAppearance="@style/TextAppearance.Basarat.Caption"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            tools:text="Neu 12%"
+                            android:textColor="@color/color_text_secondary" />
+
+                        <TextView
+                            android:id="@+id/tv_sentiment_neg"
+                            android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="Neg 45%"
+                            android:textColor="@color/color_negative" />
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- 7. Watchlist Preview Section -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -834,131 +1175,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- 6. Market Movers Section -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:textAppearance="@style/TextAppearance.Basarat.Body.Strong"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="MARKET MOVERS"
-                        android:textColor="@color/color_text_primary" />
-
-                    <TextView
-                        android:id="@+id/btn_view_market_movers"
-                        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackground"
-                        android:padding="4dp"
-                        android:text="View All →"
-                        android:textColor="@color/color_basarat_green" />
-                </LinearLayout>
-
-                <!-- Filter Pills: Gainers | Losers | Most Active -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_segmented_container"
-                    android:orientation="horizontal"
-                    android:padding="2dp">
-
-                    <TextView
-                        android:id="@+id/btn_tab_gainers"
-                        android:textAppearance="@style/TextAppearance.Basarat.Meta.Strong"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_pill_chart_toggle_selected"
-                        android:gravity="center"
-                        android:text="Gainers"
-                        android:textColor="@color/color_text_primary" />
-
-                    <TextView
-                        android:id="@+id/btn_tab_losers"
-                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="Losers"
-                        android:textColor="@color/color_text_secondary" />
-
-                    <TextView
-                        android:id="@+id/btn_tab_active"
-                        android:textAppearance="@style/TextAppearance.Basarat.Meta"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="Most Active"
-                        android:textColor="@color/color_text_secondary" />
-                </LinearLayout>
-
-                <!-- Market Movers RecyclerView -->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:cardBackgroundColor="@color/color_surface"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="0dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <!-- Column headings aligned with item_market_stock (Price 90dp / Change 80dp) -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:paddingHorizontal="16dp"
-                            android:paddingTop="12dp"
-                            android:paddingBottom="6dp">
-
-                            <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Symbol"
-                                android:textColor="@color/color_text_tertiary" />
-
-                            <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
-                                android:layout_width="90dp"
-                                android:layout_height="wrap_content"
-                                android:gravity="end"
-                                android:text="Price"
-                                android:textColor="@color/color_text_tertiary" />
-
-                            <TextView
-                                android:textAppearance="@style/TextAppearance.Basarat.Caption.Strong"
-                                android:layout_width="80dp"
-                                android:layout_height="wrap_content"
-                                android:gravity="end"
-                                android:text="Change"
-                                android:textColor="@color/color_text_tertiary" />
-                        </LinearLayout>
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/rv_market_movers"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:nestedScrollingEnabled="false" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!-- 7. Market News Preview Section -->
+                <!-- 8. Market News Preview Section -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

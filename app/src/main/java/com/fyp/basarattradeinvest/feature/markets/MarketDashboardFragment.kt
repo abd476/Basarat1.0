@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -19,14 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.core.notifications.NotificationBadgeState
 import com.fyp.basarattradeinvest.databinding.FragmentMarketDashboardBinding
-import com.fyp.basarattradeinvest.domain.model.market.IndexConstituent
 import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
-import com.fyp.basarattradeinvest.domain.model.market.MarketOverview
-import com.fyp.basarattradeinvest.domain.model.sentiment.MarketSentiment
-import com.fyp.basarattradeinvest.domain.model.stock.SymbolFilterType
 import com.fyp.basarattradeinvest.domain.model.live.MarketSessionStatus
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
-import com.fyp.basarattradeinvest.feature.markets.adapter.ConstituentAdapter
 import com.fyp.basarattradeinvest.feature.markets.adapter.MarketStockAdapter
 import com.fyp.basarattradeinvest.feature.markets.adapter.SectorPerformanceAdapter
 import kotlinx.coroutines.launch
@@ -43,11 +36,6 @@ class MarketDashboardFragment : Fragment() {
 
     private val stockAdapter = MarketStockAdapter { stock ->
         val bundle = Bundle().apply { putString("symbol", stock.symbol) }
-        findNavController().navigate(R.id.stockDetailFragment, bundle)
-    }
-
-    private val constituentAdapter = ConstituentAdapter { constituent ->
-        val bundle = Bundle().apply { putString("symbol", constituent.symbol) }
         findNavController().navigate(R.id.stockDetailFragment, bundle)
     }
 
@@ -81,11 +69,6 @@ class MarketDashboardFragment : Fragment() {
             adapter = stockAdapter
         }
 
-        binding.rvConstituents.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = constituentAdapter
-        }
-
         binding.rvSectors.apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             adapter = sectorAdapter
@@ -100,31 +83,13 @@ class MarketDashboardFragment : Fragment() {
     }
 
     private fun setupTabListeners() {
-        binding.tabGainers.setOnClickListener {
-            viewModel.setFilter(SymbolFilterType.GAINERS)
-        }
-        binding.tabLosers.setOnClickListener {
-            viewModel.setFilter(SymbolFilterType.LOSERS)
-        }
-        binding.tabMostActive.setOnClickListener {
-            viewModel.setFilter(SymbolFilterType.MOST_ACTIVE)
-        }
-        binding.tabVolumeSpikes.setOnClickListener {
-            viewModel.setFilter(SymbolFilterType.VOLUME_SPIKES)
-        }
-        binding.tabWatchlist.setOnClickListener {
-            viewModel.setFilter(SymbolFilterType.WATCHLIST)
-        }
-
-        binding.tabConstituentKse100.setOnClickListener {
-            viewModel.selectConstituentIndex("KSE-100")
-        }
-        binding.tabConstituentKse30.setOnClickListener {
-            viewModel.selectConstituentIndex("KSE-30")
-        }
-        binding.tabConstituentKmi30.setOnClickListener {
-            viewModel.selectConstituentIndex("KMI-30")
-        }
+        binding.tabKse100.setOnClickListener { viewModel.setSelection(MarketListSelection.KSE_100) }
+        binding.tabKse30.setOnClickListener { viewModel.setSelection(MarketListSelection.KSE_30) }
+        binding.tabKmi30.setOnClickListener { viewModel.setSelection(MarketListSelection.KMI_30) }
+        binding.tabGainers.setOnClickListener { viewModel.setSelection(MarketListSelection.GAINERS) }
+        binding.tabLosers.setOnClickListener { viewModel.setSelection(MarketListSelection.LOSERS) }
+        binding.tabVolumeSpikes.setOnClickListener { viewModel.setSelection(MarketListSelection.VOLUME_SPIKES) }
+        binding.tabMostActive.setOnClickListener { viewModel.setSelection(MarketListSelection.MOST_ACTIVE) }
 
         binding.ivQuoteBannerClose.setOnClickListener {
             binding.bannerRealtimeQuotes.visibility = View.GONE
@@ -221,30 +186,17 @@ class MarketDashboardFragment : Fragment() {
                             if (previous == null || previous.indices != state.indices) {
                                 bindIndices(state.indices)
                             }
-                            if (previous == null || previous.overview != state.overview) {
-                                bindOverview(state.overview)
-                            }
-                            if (previous == null || previous.sentiment != state.sentiment) {
-                                bindSentiment(state.sentiment)
-                            }
                             if (previous == null || previous.sectors != state.sectors) {
                                 sectorAdapter.submitList(state.sectors.toList())
                             }
-                            if (previous?.selectedFilter != state.selectedFilter) {
-                                bindFilterTabs(state.selectedFilter)
+                            if (previous == null || previous.selection != state.selection) {
+                                binding.tvTopSymbolsHeader.text = state.selection.headerTitle
+                                bindSelectorTabs(state.selection)
                             }
-                            if (previous == null || previous.topSymbols != state.topSymbols) {
-                                stockAdapter.submitList(state.topSymbols.toList())
-                            }
-                            if (previous == null || previous.constituents != state.constituents ||
-                                previous.selectedConstituentIndex != state.selectedConstituentIndex ||
-                                previous.isConstituentsLoading != state.isConstituentsLoading
+                            if (previous == null || previous.rows != state.rows ||
+                                previous.isRowsLoading != state.isRowsLoading
                             ) {
-                                bindConstituents(
-                                    state.constituents,
-                                    state.selectedConstituentIndex,
-                                    state.isConstituentsLoading
-                                )
+                                bindRows(state)
                             }
                             lastRenderedSuccess = state
                         }
@@ -253,7 +205,6 @@ class MarketDashboardFragment : Fragment() {
                             lastRenderedSuccess = null
                             bindMarketSession(null)
                             stockAdapter.submitList(emptyList())
-                            constituentAdapter.submitList(emptyList())
                         }
                         is MarketDashboardUiState.Error -> {
                             binding.swipeRefreshLayout.isRefreshing = false
@@ -348,60 +299,15 @@ class MarketDashboardFragment : Fragment() {
         }
     }
 
-    private fun bindOverview(overview: MarketOverview) {
-        binding.tvOverviewValue.text = overview.tradedValue
-        binding.tvOverviewVolume.text = overview.tradedVolume
-        binding.tvOverviewTrades.text = overview.totalTrades
-        binding.tvTotalStocks.text = "Total ${overview.totalStocks} \u203A"
-
-        // Advance / Decline breadth bar weights
-        val total = (overview.upCount + overview.unchangedCount + overview.downCount).toFloat()
-        if (total > 0) {
-            (binding.barUp.layoutParams as LinearLayout.LayoutParams).weight = overview.upCount.toFloat()
-            (binding.barUnchanged.layoutParams as LinearLayout.LayoutParams).weight = overview.unchangedCount.toFloat()
-            (binding.barDown.layoutParams as LinearLayout.LayoutParams).weight = overview.downCount.toFloat()
-            binding.barUp.requestLayout()
-        }
-
-        binding.tvUpCount.text = "\u25B2 Up ${overview.upCount}"
-        binding.tvUnchangedCount.text = "Unchanged ${overview.unchangedCount}"
-        binding.tvDownCount.text = "\u25BC Down ${overview.downCount}"
-    }
-
-    private fun bindSentiment(sentiment: MarketSentiment) {
-        binding.tvSentimentScore.text = "${sentiment.overallScore} / 100"
-        binding.tvSentimentLabel.text = sentiment.sentimentLabel
-
-        val isBullish = sentiment.sentimentLabel.contains("Bull", ignoreCase = true)
-        val isBearish = sentiment.sentimentLabel.contains("Bear", ignoreCase = true)
-        val labelColor = when {
-            isBullish -> R.color.color_positive
-            isBearish -> R.color.color_negative
-            else -> R.color.color_neutral
-        }
-        binding.tvSentimentLabel.setTextColor(ContextCompat.getColor(requireContext(), labelColor))
-
-        // Set 3-segment bar weights
-        val total = (sentiment.positivePercent + sentiment.neutralPercent + sentiment.negativePercent).toFloat()
-        if (total > 0) {
-            (binding.barSentimentPositive.layoutParams as LinearLayout.LayoutParams).weight = sentiment.positivePercent.toFloat()
-            (binding.barSentimentNeutral.layoutParams as LinearLayout.LayoutParams).weight = sentiment.neutralPercent.toFloat()
-            (binding.barSentimentNegative.layoutParams as LinearLayout.LayoutParams).weight = sentiment.negativePercent.toFloat()
-            binding.barSentimentPositive.requestLayout()
-        }
-
-        binding.tvSentimentPos.text = "Pos ${sentiment.positivePercent}%"
-        binding.tvSentimentNeu.text = "Neu ${sentiment.neutralPercent}%"
-        binding.tvSentimentNeg.text = "Neg ${sentiment.negativePercent}%"
-    }
-
-    private fun bindFilterTabs(selected: SymbolFilterType) {
+    private fun bindSelectorTabs(selected: MarketListSelection) {
         val tabs = listOf(
-            binding.tabGainers to SymbolFilterType.GAINERS,
-            binding.tabLosers to SymbolFilterType.LOSERS,
-            binding.tabMostActive to SymbolFilterType.MOST_ACTIVE,
-            binding.tabVolumeSpikes to SymbolFilterType.VOLUME_SPIKES,
-            binding.tabWatchlist to SymbolFilterType.WATCHLIST
+            binding.tabKse100 to MarketListSelection.KSE_100,
+            binding.tabKse30 to MarketListSelection.KSE_30,
+            binding.tabKmi30 to MarketListSelection.KMI_30,
+            binding.tabGainers to MarketListSelection.GAINERS,
+            binding.tabLosers to MarketListSelection.LOSERS,
+            binding.tabVolumeSpikes to MarketListSelection.VOLUME_SPIKES,
+            binding.tabMostActive to MarketListSelection.MOST_ACTIVE
         )
 
         val selectedBg = R.drawable.bg_market_tab_selected
@@ -409,8 +315,8 @@ class MarketDashboardFragment : Fragment() {
         val selectedTextColor = ContextCompat.getColor(requireContext(), R.color.white)
         val unselectedTextColor = ContextCompat.getColor(requireContext(), R.color.color_text_primary)
 
-        tabs.forEach { (tabView, type) ->
-            if (type == selected) {
+        tabs.forEach { (tabView, selection) ->
+            if (selection == selected) {
                 tabView.setBackgroundResource(selectedBg)
                 tabView.setTextColor(selectedTextColor)
             } else {
@@ -420,40 +326,17 @@ class MarketDashboardFragment : Fragment() {
         }
     }
 
-    private fun bindConstituents(
-        constituents: List<IndexConstituent>,
-        selectedTab: String,
-        isLoading: Boolean
-    ) {
-        binding.pbConstituentsLoading.visibility = if (isLoading) View.VISIBLE else View.GONE
-        binding.tvConstituentsCount.text = "${constituents.size} Stocks"
-
-        if (!isLoading && constituents.isEmpty()) {
-            binding.tvConstituentsEmpty.visibility = View.VISIBLE
-            binding.rvConstituents.visibility = View.GONE
+    private fun bindRows(state: MarketDashboardUiState.Success) {
+        binding.layoutSymbolsSkeleton.visibility =
+            if (state.isRowsLoading && state.rows.isEmpty()) View.VISIBLE else View.GONE
+        binding.rvTopSymbols.visibility =
+            if (state.isRowsLoading && state.rows.isEmpty()) View.GONE else View.VISIBLE
+        binding.tvTopSymbolsCount.text = if (state.rows.isEmpty()) {
+            ""
         } else {
-            binding.tvConstituentsEmpty.visibility = View.GONE
-            binding.rvConstituents.visibility = View.VISIBLE
-            constituentAdapter.submitList(constituents)
+            "${state.rows.size} symbols"
         }
-
-        val selectedBg = R.drawable.bg_market_tab_selected
-        val unselectedBg = R.drawable.bg_market_tab_unselected
-        val selectedTextColor = ContextCompat.getColor(requireContext(), R.color.white)
-        val unselectedTextColor = ContextCompat.getColor(requireContext(), R.color.color_text_primary)
-
-        val isKse100 = selectedTab.contains("100", ignoreCase = true)
-        val isKse30 = selectedTab.contains("KSE-30", ignoreCase = true) || selectedTab.equals("KSE30", ignoreCase = true)
-        val isKmi30 = selectedTab.contains("KMI", ignoreCase = true)
-
-        binding.tabConstituentKse100.setBackgroundResource(if (isKse100) selectedBg else unselectedBg)
-        binding.tabConstituentKse100.setTextColor(if (isKse100) selectedTextColor else unselectedTextColor)
-
-        binding.tabConstituentKse30.setBackgroundResource(if (isKse30) selectedBg else unselectedBg)
-        binding.tabConstituentKse30.setTextColor(if (isKse30) selectedTextColor else unselectedTextColor)
-
-        binding.tabConstituentKmi30.setBackgroundResource(if (isKmi30) selectedBg else unselectedBg)
-        binding.tabConstituentKmi30.setTextColor(if (isKmi30) selectedTextColor else unselectedTextColor)
+        stockAdapter.submitList(state.rows.toList())
     }
 
     override fun onDestroyView() {

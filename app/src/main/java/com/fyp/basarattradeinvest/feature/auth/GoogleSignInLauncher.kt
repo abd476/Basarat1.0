@@ -37,9 +37,14 @@ object GoogleSignInLauncher {
 
         return try {
             val credential = CredentialManager.create(activity).getCredential(activity, request).credential
-            when (credential) {
-                is GoogleIdTokenCredential -> Result.success(credential.idToken)
-                is CustomCredential -> Result.failure(
+            when {
+                // Credential Manager wraps Google ID tokens in a CustomCredential; the token
+                // itself is parsed out of its data bundle. Expecting GoogleIdTokenCredential
+                // directly never matches and misreports every sign-in as unsupported.
+                credential is CustomCredential &&
+                    credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL ->
+                    Result.success(GoogleIdTokenCredential.createFrom(credential.data).idToken)
+                credential is CustomCredential -> Result.failure(
                     Exception("Google returned an unsupported credential (${credential.type}).")
                 )
                 else -> Result.failure(Exception("Google Sign-In did not return an ID token."))
