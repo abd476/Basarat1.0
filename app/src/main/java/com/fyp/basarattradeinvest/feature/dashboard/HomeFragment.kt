@@ -1,11 +1,13 @@
 package com.fyp.basarattradeinvest.feature.dashboard
 
 import android.content.res.ColorStateList
-import android.graphics.Color
+import android.graphics.DashPathEffect
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -18,18 +20,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.fyp.basarattradeinvest.R
 import com.fyp.basarattradeinvest.databinding.FragmentHomeBinding
 import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
+import com.fyp.basarattradeinvest.domain.model.sentiment.MarketSentiment
 import com.fyp.basarattradeinvest.domain.model.watchlist.WatchlistItem
-import com.fyp.basarattradeinvest.feature.markets.adapter.MarketStockAdapter
 import com.fyp.basarattradeinvest.feature.news.adapter.NewsArticleAdapter
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import kotlin.math.roundToInt
 
 class HomeFragment : Fragment() {
 
@@ -50,13 +55,6 @@ class HomeFragment : Fragment() {
 
     private val trendSessionFormat = SimpleDateFormat("d MMM", Locale.US)
 
-    private val marketStockAdapter by lazy {
-        MarketStockAdapter { stock ->
-            val bundle = Bundle().apply { putString("symbol", stock.symbol) }
-            findNavController().navigate(R.id.stockDetailFragment, bundle)
-        }
-    }
-
     private val newsArticleAdapter by lazy {
         NewsArticleAdapter { article ->
             val bundle = Bundle().apply { putString("articleId", article.id) }
@@ -64,6 +62,7 @@ class HomeFragment : Fragment() {
         }
     }
     private var lastBoundSuccess: HomeUiState.Success? = null
+    private var hasPlottedTrend = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -84,12 +83,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupRecyclerViews() {
-        binding.rvMarketMovers.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = marketStockAdapter
-            isNestedScrollingEnabled = false
-        }
-
         binding.rvMarketNews.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = newsArticleAdapter
@@ -137,22 +130,12 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.action_home_to_watchlist)
         }
 
-        // 4. Movers "View All" -> Markets
-        binding.btnViewMarketMovers.setOnClickListener {
-            findNavController().navigate(R.id.nav_markets)
-        }
-
-        // 5. News "View All" -> News & Events
+        // 4. News "View All" -> News & Events
         binding.btnViewMarketNews.setOnClickListener {
             findNavController().navigate(R.id.newsEventsFragment)
         }
 
-        // 7. Movers Filter Tabs
-        binding.btnTabGainers.setOnClickListener { viewModel.selectMoversTab(MoversTab.GAINERS) }
-        binding.btnTabLosers.setOnClickListener { viewModel.selectMoversTab(MoversTab.LOSERS) }
-        binding.btnTabActive.setOnClickListener { viewModel.selectMoversTab(MoversTab.MOST_ACTIVE) }
-
-        // 8. Timeframe Selector Pills for Benchmark
+        // 5. Timeframe Selector Pills for Benchmark
         binding.tabTimeframe1d.setOnClickListener { viewModel.selectTimeframe("1D") }
         binding.tabTimeframe1w.setOnClickListener { viewModel.selectTimeframe("1W") }
         binding.tabTimeframe1m.setOnClickListener { viewModel.selectTimeframe("1M") }
@@ -160,6 +143,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupBenchmarkChart() {
+        val axisColor = ContextCompat.getColor(requireContext(), R.color.color_text_tertiary)
         binding.chartMarketTrend.apply {
             description.isEnabled = false
             legend.isEnabled = false
@@ -168,11 +152,37 @@ class HomeFragment : Fragment() {
             setScaleEnabled(false)
             setPinchZoom(false)
             setDrawGridBackground(false)
-            xAxis.isEnabled = false
-            axisLeft.isEnabled = false
-            axisRight.isEnabled = false
-            setViewPortOffsets(0f, 0f, 0f, 0f)
             setNoDataText("")
+            // Gridlines mirror the reference chart: dashed horizontals only, no frame lines.
+            axisLeft.apply {
+                isEnabled = true
+                setDrawAxisLine(false)
+                setDrawGridLines(true)
+                gridColor = axisColor
+                gridLineWidth = 0.8f
+                setGridDashedLine(DashPathEffect(floatArrayOf(6f, 6f), 0f))
+                textColor = axisColor
+                textSize = 9f
+                setLabelCount(4, false)
+                valueFormatter = object : ValueFormatter() {
+                    override fun getFormattedValue(value: Float): String =
+                        String.format(Locale.US, "%+.1f%%", value)
+                }
+            }
+            axisRight.isEnabled = false
+            xAxis.apply {
+                isEnabled = true
+                position = XAxis.XAxisPosition.BOTTOM
+                setDrawAxisLine(false)
+                setDrawGridLines(false)
+                textColor = axisColor
+                textSize = 9f
+                setLabelCount(5, false)
+                // Ticks may only land on whole sessions, otherwise a short window renders the
+                // same date twice at neighbouring fractional positions.
+                granularity = 1f
+            }
+            setExtraOffsets(2f, 8f, 4f, 0f)
         }
     }
 
@@ -246,6 +256,11 @@ class HomeFragment : Fragment() {
                 ContextCompat.getColor(context, R.color.color_neutral)
             }
             binding.dotMarketStatus.backgroundTintList = ColorStateList.valueOf(statusColor)
+            // The benchmark card's corner chip mirrors the same live session state.
+            binding.tvBenchmarkStatusChip.visibility =
+                if (state.marketStatus == null) View.GONE else View.VISIBLE
+            binding.tvBenchmarkStatusChip.text = state.marketStatus
+            binding.tvBenchmarkStatusChip.setTextColor(statusColor)
         }
 
         // Notification Badge
@@ -271,14 +286,15 @@ class HomeFragment : Fragment() {
             bindBenchmarkTrend(state.benchmarkTrend)
         }
 
-        // 4. Watchlist Preview
-        if (previous == null || previous.watchlist != state.watchlist) {
-            bindWatchlist(state.watchlist)
+        // 4. Market Overview + Sentiment (moved from the Markets screen)
+        if (previous == null || previous.sentiment != state.sentiment) {
+            bindBreadth(state.sentiment)
+            bindSentiment(state.sentiment)
         }
 
-        // 5. Market Movers
-        if (previous == null || previous.currentMovers != state.currentMovers || previous.selectedMoversTab != state.selectedMoversTab) {
-            bindMarketMovers(state)
+        // 5. Watchlist Preview
+        if (previous == null || previous.watchlist != state.watchlist) {
+            bindWatchlist(state.watchlist)
         }
 
         // 6. Market News
@@ -345,7 +361,7 @@ class HomeFragment : Fragment() {
         val context = requireContext()
 
         if (benchmark != null) {
-            binding.tvBenchmarkTitle.text = "${benchmark.name} Benchmark"
+            binding.tvBenchmarkTitle.text = benchmark.name
             binding.tvBenchmarkPoints.text = indexFormat.format(benchmark.currentPoints)
 
             val isPos = benchmark.changePercent >= 0
@@ -359,6 +375,10 @@ class HomeFragment : Fragment() {
                 if (isPos) R.color.color_positive else R.color.color_negative
             )
             binding.tvBenchmarkChange.setTextColor(trendColor)
+            binding.ivBenchmarkArrow.setImageResource(
+                if (isPos) R.drawable.ic_trend_up else R.drawable.ic_trend_down
+            )
+            binding.ivBenchmarkArrow.imageTintList = ColorStateList.valueOf(trendColor)
 
             if (benchmark.high > 0.0) {
                 binding.tvBenchmarkHigh.text = "Day High: ${indexFormat.format(benchmark.high)}"
@@ -382,10 +402,10 @@ class HomeFragment : Fragment() {
         )
         pills.forEach { (view, tf) ->
             if (tf == state.selectedTimeframe) {
-                view.setBackgroundResource(R.drawable.bg_pill_chart_toggle_selected)
-                view.setTextColor(ContextCompat.getColor(context, R.color.color_text_primary))
+                view.setBackgroundResource(R.drawable.bg_pill_range_selected)
+                view.setTextColor(ContextCompat.getColor(context, R.color.color_surface))
             } else {
-                view.setBackgroundColor(Color.TRANSPARENT)
+                view.setBackgroundResource(R.drawable.bg_timeframe_chip_unselected)
                 view.setTextColor(ContextCompat.getColor(context, R.color.color_text_secondary))
             }
         }
@@ -399,15 +419,17 @@ class HomeFragment : Fragment() {
     private fun bindBenchmarkTrend(trendState: BenchmarkTrendUiState) {
         val trend = (trendState as? BenchmarkTrendUiState.Success)?.trend
         if (trend == null || trend.points.size < 2) {
+            // A build in flight keeps the line already on screen; a pill with nothing to plot
+            // collapses the chart instead of borrowing the previous pill's line.
+            if (trendState == BenchmarkTrendUiState.Loading && hasPlottedTrend) return
+            hasPlottedTrend = false
             binding.chartMarketTrend.clear()
-            binding.tvBenchmarkTrendCaption.text = when (trendState) {
-                BenchmarkTrendUiState.Loading -> getString(R.string.benchmark_trend_loading)
-                is BenchmarkTrendUiState.Error -> trendState.message
-                else -> getString(R.string.benchmark_trend_empty)
-            }
-            binding.tvBenchmarkTrendCaption.visibility = View.VISIBLE
+            binding.chartMarketTrend.visibility = View.GONE
+            binding.tvBenchmarkTrendCaption.visibility = View.GONE
             return
         }
+        hasPlottedTrend = true
+        binding.chartMarketTrend.visibility = View.VISIBLE
 
         val isUp = trend.points.last().changePct >= 0f
         val trendColor = ContextCompat.getColor(
@@ -424,8 +446,19 @@ class HomeFragment : Fragment() {
             setDrawValues(false)
             mode = LineDataSet.Mode.CUBIC_BEZIER
             setDrawFilled(true)
-            fillColor = trendColor
-            fillAlpha = 35
+            fillDrawable = GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                intArrayOf(trendColor and 0x00FFFFFF or 0x40000000, trendColor and 0x00FFFFFF)
+            )
+        }
+        // Ticks land on fractional indices for short windows, so round to the nearest session —
+        // every label is a real trading date at (approximately) that x position.
+        val sessionLabels = trend.points.map { trendSessionFormat.format(Date(it.timestamp)) }
+        binding.chartMarketTrend.xAxis.valueFormatter = object : ValueFormatter() {
+            override fun getFormattedValue(value: Float): String {
+                val index = value.roundToInt()
+                return if (index in sessionLabels.indices) sessionLabels[index] else ""
+            }
         }
         binding.chartMarketTrend.data = LineData(dataSet)
         binding.chartMarketTrend.invalidate()
@@ -538,33 +571,77 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun bindMarketMovers(state: HomeUiState.Success) {
-        val context = requireContext()
-
-        // Tab selection styles
-        val moverTabs = listOf(
-            Triple(binding.btnTabGainers, MoversTab.GAINERS, "Gainers"),
-            Triple(binding.btnTabLosers, MoversTab.LOSERS, "Losers"),
-            Triple(binding.btnTabActive, MoversTab.MOST_ACTIVE, "Most Active")
-        )
-
-        moverTabs.forEach { (view, tab, _) ->
-            if (tab == state.selectedMoversTab) {
-                view.setBackgroundResource(R.drawable.bg_pill_chart_toggle_selected)
-                view.setTextColor(ContextCompat.getColor(context, R.color.color_text_primary))
-            } else {
-                view.setBackgroundColor(Color.TRANSPARENT)
-                view.setTextColor(ContextCompat.getColor(context, R.color.color_text_secondary))
-            }
+    /**
+     * Advance/decline breadth. Both moved cards stay hidden until /market/sentiment-overview
+     * answers rather than painting an empty bar that reads as a flat market.
+     */
+    private fun bindBreadth(sentiment: MarketSentiment?) {
+        if (sentiment == null) {
+            binding.layoutMarketOverview.visibility = View.GONE
+            return
         }
+        binding.layoutMarketOverview.visibility = View.VISIBLE
 
-        // Submit list to RecyclerView
-        marketStockAdapter.submitList(state.currentMovers)
+        val total = sentiment.advancing + sentiment.declining + sentiment.unchanged
+        binding.tvTotalStocks.text = if (total > 0) "Total $total \u203A" else "Total -- \u203A"
+        binding.tvOverviewValue.text = if (total > 0)
+            String.format(Locale.US, "%.2fx", sentiment.advanceDeclineRatio) else "--"
+        binding.tvOverviewVolume.text = sentiment.advancing.toString()
+        binding.tvOverviewTrades.text = sentiment.declining.toString()
+
+        // Raw counts as weights: a zero total collapses the bar instead of leaving the XML's
+        // equal-thirds default, which would read as a balanced market.
+        (binding.barUp.layoutParams as LinearLayout.LayoutParams).weight =
+            sentiment.advancing.toFloat()
+        (binding.barUnchanged.layoutParams as LinearLayout.LayoutParams).weight =
+            sentiment.unchanged.toFloat()
+        (binding.barDown.layoutParams as LinearLayout.LayoutParams).weight =
+            sentiment.declining.toFloat()
+        binding.barUp.requestLayout()
+
+        binding.tvUpCount.text = "\u25B2 Up ${sentiment.advancing}"
+        binding.tvUnchangedCount.text = "Unchanged ${sentiment.unchanged}"
+        binding.tvDownCount.text = "\u25BC Down ${sentiment.declining}"
+    }
+
+    private fun bindSentiment(sentiment: MarketSentiment?) {
+        if (sentiment == null) {
+            binding.cardMarketSentiment.visibility = View.GONE
+            return
+        }
+        binding.cardMarketSentiment.visibility = View.VISIBLE
+
+        binding.tvSentimentScore.text = "${sentiment.overallScore} / 100"
+        binding.tvSentimentLabel.text = sentiment.sentimentLabel
+
+        val isBullish = sentiment.sentimentLabel.contains("Bull", ignoreCase = true)
+        val isBearish = sentiment.sentimentLabel.contains("Bear", ignoreCase = true)
+        val labelColor = when {
+            isBullish -> R.color.color_positive
+            isBearish -> R.color.color_negative
+            else -> R.color.color_neutral
+        }
+        binding.tvSentimentLabel.setTextColor(ContextCompat.getColor(requireContext(), labelColor))
+
+        // Percentages as weights so the three segments split the track by their real share; a
+        // zero total collapses the bar rather than leaving the XML's equal-thirds default.
+        (binding.barSentimentPositive.layoutParams as LinearLayout.LayoutParams).weight =
+            sentiment.positivePercent.toFloat()
+        (binding.barSentimentNeutral.layoutParams as LinearLayout.LayoutParams).weight =
+            sentiment.neutralPercent.toFloat()
+        (binding.barSentimentNegative.layoutParams as LinearLayout.LayoutParams).weight =
+            sentiment.negativePercent.toFloat()
+        binding.barSentimentPositive.requestLayout()
+
+        binding.tvSentimentPos.text = "Pos ${sentiment.positivePercent}%"
+        binding.tvSentimentNeu.text = "Neu ${sentiment.neutralPercent}%"
+        binding.tvSentimentNeg.text = "Neg ${sentiment.negativePercent}%"
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         lastBoundSuccess = null
+        hasPlottedTrend = false
         _binding = null
     }
 }

@@ -1,17 +1,18 @@
 package com.fyp.basarattradeinvest.feature.dashboard
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fyp.basarattradeinvest.core.session.AuthState
 import com.fyp.basarattradeinvest.core.session.SessionManager
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
 import com.fyp.basarattradeinvest.data.repository.AlertsRepositoryImpl
+import com.fyp.basarattradeinvest.data.repository.BenchmarkTrendCache
 import com.fyp.basarattradeinvest.data.repository.MarketRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.NewsRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.StockRepositoryImpl
 import com.fyp.basarattradeinvest.data.repository.UsersRepositoryImpl
 import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
-import com.fyp.basarattradeinvest.domain.model.market.MarketStock
 import com.fyp.basarattradeinvest.domain.model.live.LiveQuote
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
 import com.fyp.basarattradeinvest.domain.repository.AlertsRepository
@@ -42,13 +43,13 @@ class HomeViewModel(
         marketRepository = marketRepository,
         stockRepository = StockRepositoryImpl()
     ),
+    private val appContext: Context? = SessionManager.applicationContext(),
     private val autoLoad: Boolean = true
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
-    private var currentMoversTab: MoversTab = MoversTab.GAINERS
     private var currentTimeframe: String = "1D"
     private var currentBenchmarkCode: String? = null
     private var benchmarkTrendJob: Job? = null
@@ -67,8 +68,7 @@ class HomeViewModel(
 
     init {
         // Quote ticks arrive one per symbol, so a single snapshot would otherwise rebuild the
-        // watchlist and all three movers lists once per symbol. Accumulate and publish once
-        // per flush window instead.
+        // watchlist once per symbol. Accumulate and publish once per flush window instead.
         viewModelScope.launch {
             liveMarketRepository.quoteUpdates.collect { quote ->
                 pendingQuotes[quote.symbol.uppercase()] = quote
@@ -143,16 +143,6 @@ class HomeViewModel(
         pendingQuotes.clear()
         val current = _uiState.value as? HomeUiState.Success ?: return
 
-        fun updateStocks(stocks: List<MarketStock>) = stocks.map { stock ->
-            val quote = batch[stock.symbol.uppercase()] ?: return@map stock
-            stock.copy(
-                price = quote.current ?: stock.price,
-                change = quote.change ?: stock.change,
-                changePercent = quote.changePct ?: stock.changePercent,
-                volume = quote.volume?.toString() ?: stock.volume
-            )
-        }
-
         val watchlist = current.watchlist as? WatchlistUiState.Success
         val updatedWatchlist = watchlist?.let { success ->
             WatchlistUiState.Success(
@@ -170,10 +160,7 @@ class HomeViewModel(
 
         _uiState.value = current.copy(
             liveQuotes = current.liveQuotes.toMutableMap().apply { putAll(batch) },
-            watchlist = updatedWatchlist,
-            topGainers = updateStocks(current.topGainers),
-            topLosers = updateStocks(current.topLosers),
-            volumeSpikes = updateStocks(current.volumeSpikes)
+            watchlist = updatedWatchlist
         )
     }
 
@@ -182,7 +169,6 @@ class HomeViewModel(
             ?: HomeUiState.Success(
                 userName = "Investor",
                 selectedTimeframe = currentTimeframe,
-                selectedMoversTab = currentMoversTab,
                 liveQuotes = liveMarketRepository.quoteCache.value,
                 wsConnectionState = liveMarketRepository.connectionState.value
             )
@@ -246,17 +232,6 @@ class HomeViewModel(
             owner = "home",
             symbols = if (isLiveUpdatesActive) symbols else emptyList()
         )
-    }
-
-    private fun applyCachedQuotes(stocks: List<MarketStock>): List<MarketStock> = stocks.map { stock ->
-        liveMarketRepository.getCachedQuote(stock.symbol)?.let { quote ->
-            stock.copy(
-                price = quote.current ?: stock.price,
-                change = quote.change ?: stock.change,
-                changePercent = quote.changePct ?: stock.changePercent,
-                volume = quote.volume?.toString() ?: stock.volume
-            )
-        } ?: stock
     }
 
     private fun mergeCachedQuotes(watchlist: com.fyp.basarattradeinvest.domain.model.watchlist.Watchlist) =
@@ -329,24 +304,8 @@ class HomeViewModel(
                     }
 
                     launch {
-                        val gainers = applyCachedQuotes(marketRepository.getTopGainers(5).getOrNull() ?: emptyList())
-                        applyPartialState(loadGeneration) {
-                            copy(topGainers = gainers, selectedMoversTab = currentMoversTab)
-                        }
-                    }
-
-                    launch {
-                        val losers = applyCachedQuotes(marketRepository.getTopLosers(5).getOrNull() ?: emptyList())
-                        applyPartialState(loadGeneration) {
-                            copy(topLosers = losers, selectedMoversTab = currentMoversTab)
-                        }
-                    }
-
-                    launch {
-                        val volumeSpikes = applyCachedQuotes(marketRepository.getVolumeSpikes(5).getOrNull() ?: emptyList())
-                        applyPartialState(loadGeneration) {
-                            copy(volumeSpikes = volumeSpikes, selectedMoversTab = currentMoversTab)
-                        }
+                        val sentiment = marketRepository.getMarketSentimentOverview().getOrNull()
+                        applyPartialState(loadGeneration) { copy(sentiment = sentiment) }
                     }
 
                     launch {
@@ -437,20 +396,13 @@ class HomeViewModel(
         }
     }
 
-    fun selectMoversTab(tab: MoversTab) {
-        if (currentMoversTab == tab) return
-        currentMoversTab = tab
-        val current = _uiState.value
-        if (current is HomeUiState.Success) {
-            _uiState.value = current.copy(selectedMoversTab = tab)
-        }
-    }
-
     fun selectTimeframe(timeframe: String) {
         if (currentTimeframe == timeframe) return
         currentTimeframe = timeframe
         val current = _uiState.value
         if (current is HomeUiState.Success) {
+            // Loading keeps the plotted line on screen; only a build that comes back with nothing
+            // for this pill collapses the chart, so switching pills never blanks the card.
             _uiState.value = current.copy(
                 selectedTimeframe = timeframe,
                 benchmarkTrend = BenchmarkTrendUiState.Loading
@@ -467,19 +419,26 @@ class HomeViewModel(
         }
         benchmarkTrendJob?.cancel()
         val requestGeneration = generation
+        val context = appContext
+        if (context != null) {
+            BenchmarkTrendCache.read(context, indexCode, timeframe)?.let { seeded ->
+                applyPartialState(requestGeneration) {
+                    copy(benchmarkTrend = BenchmarkTrendUiState.Success(seeded))
+                }
+            }
+        }
         benchmarkTrendJob = viewModelScope.launch {
             val result = buildBenchmarkTrend(indexCode, timeframe)
+            val trend = result.getOrNull()
+            if (trend == null) {
+                // Nothing real to plot for this pill: say so instead of leaving the previous
+                // pill's line under the new label.
+                applyPartialState(requestGeneration) { copy(benchmarkTrend = BenchmarkTrendUiState.Empty) }
+                return@launch
+            }
+            context?.let { BenchmarkTrendCache.write(it, trend) }
             applyPartialState(requestGeneration) {
-                copy(
-                    benchmarkTrend = result.fold(
-                        onSuccess = { BenchmarkTrendUiState.Success(it) },
-                        onFailure = {
-                            BenchmarkTrendUiState.Error(
-                                it.message ?: "Unable to build the benchmark trend."
-                            )
-                        }
-                    )
-                )
+                copy(benchmarkTrend = BenchmarkTrendUiState.Success(trend))
             }
         }
     }

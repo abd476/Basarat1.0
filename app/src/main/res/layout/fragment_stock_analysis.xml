@@ -493,15 +493,15 @@
                         android:textSize="13sp"
                         android:textStyle="bold" />
 
-                    <!-- Visual Signal Meter Bar -->
+                    <!-- Visual Signal Meter Bar: the fragment assigns the real counts as weights,
+                         so no weightSum — a fixed sum makes the first segment overflow the track -->
                     <LinearLayout
                         android:id="@+id/layout_meter_bar"
                         android:layout_width="match_parent"
                         android:layout_height="8dp"
                         android:layout_marginTop="12dp"
                         android:clipToOutline="true"
-                        android:orientation="horizontal"
-                        android:weightSum="3">
+                        android:orientation="horizontal">
 
                         <View
                             android:id="@+id/bar_buy"
