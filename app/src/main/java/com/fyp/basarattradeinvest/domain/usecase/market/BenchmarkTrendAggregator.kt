@@ -4,6 +4,7 @@ import com.fyp.basarattradeinvest.domain.model.market.BenchmarkTrend
 import com.fyp.basarattradeinvest.domain.model.market.BenchmarkTrendPoint
 import com.fyp.basarattradeinvest.domain.model.market.CandleEntry
 import java.util.Calendar
+import kotlin.math.ceil
 
 /**
  * Turns constituents' real daily closes into the series the Home benchmark chart plots.
@@ -21,6 +22,10 @@ internal object BenchmarkTrendAggregator {
     private const val MAX_PLOTTED_SESSIONS = 260
     private val WINDOW_DAYS = mapOf("1W" to 7, "1M" to 31, "3M" to 92)
 
+    // Share of constituents that must report a bar for that session to be plottable.
+    private const val MIN_SESSION_COVERAGE = 0.5
+    private const val MIN_BASKET_SESSIONS = 2
+
     fun build(
         indexCode: String,
         timeframe: String,
@@ -28,18 +33,15 @@ internal object BenchmarkTrendAggregator {
     ): BenchmarkTrend? {
         if (historyBySymbol.isEmpty()) return null
 
-        val sessions = selectWindow(
-            timeframe = timeframe,
-            sessions = historyBySymbol.values.flatten()
-                .map { it.timestamp }
-                .distinct()
-                .sorted()
-        ) ?: return null
-        if (sessions.size < 2) return null
-
         val closesBySymbol = historyBySymbol.mapValues { (_, candles) ->
             candles.associate { it.timestamp to it.close }
         }
+        val sessions = selectWindow(
+            timeframe = timeframe,
+            sessions = wellCoveredSessions(closesBySymbol)
+        ) ?: return null
+        if (sessions.size < 2) return null
+
         // A stock quoted on every session of the window, with a usable opening price. Dropping
         // halted or newly listed names keeps the average over a fixed basket instead of letting
         // the line bend where a constituent simply has no bar.
@@ -70,6 +72,22 @@ internal object BenchmarkTrendAggregator {
             firstSessionTimestamp = sessions.first(),
             lastSessionTimestamp = sessions.last()
         )
+    }
+
+    /**
+     * Sessions at least half of the constituents actually report. Ex-date aliases arrive in the
+     * constituents list carrying two or three bars for the whole year, and the feed occasionally
+     * drops a session for most symbols; kept in the window they make the all-sessions rule above
+     * unmeetable, which is why the 3M pill used to resolve to an empty basket and plot nothing.
+     */
+    private fun wellCoveredSessions(closesBySymbol: Map<String, Map<Long, Float>>): List<Long> {
+        if (closesBySymbol.isEmpty()) return emptyList()
+        val floor = maxOf(MIN_BASKET_SESSIONS, ceil(closesBySymbol.size * MIN_SESSION_COVERAGE).toInt())
+        val coverage = HashMap<Long, Int>()
+        closesBySymbol.values.forEach { closes ->
+            closes.keys.forEach { session -> coverage[session] = (coverage[session] ?: 0) + 1 }
+        }
+        return coverage.filter { (_, count) -> count >= floor }.keys.sorted()
     }
 
     /** The real trading sessions to plot for [timeframe], or null when the range is unknown. */
