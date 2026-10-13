@@ -7,7 +7,7 @@ import com.fyp.basarattradeinvest.core.session.SessionManager
 import com.fyp.basarattradeinvest.data.remote.NetworkClient
 import com.fyp.basarattradeinvest.data.repository.MarketRepositoryImpl
 import com.fyp.basarattradeinvest.domain.model.market.IndexConstituent
-import com.fyp.basarattradeinvest.domain.model.market.MarketOverview
+import com.fyp.basarattradeinvest.domain.model.market.IndexConstituents
 import com.fyp.basarattradeinvest.domain.model.market.MarketStock
 import com.fyp.basarattradeinvest.domain.model.stock.SymbolFilterType
 import com.fyp.basarattradeinvest.domain.model.live.LiveQuote
@@ -19,7 +19,6 @@ import com.fyp.basarattradeinvest.domain.usecase.market.GetSectorPerformancesUse
 import com.fyp.basarattradeinvest.domain.usecase.market.GetKmi30ConstituentsUseCase
 import com.fyp.basarattradeinvest.domain.usecase.market.GetKse100ConstituentsUseCase
 import com.fyp.basarattradeinvest.domain.usecase.market.GetKse30ConstituentsUseCase
-import com.fyp.basarattradeinvest.domain.usecase.market.GetMarketSentimentOverviewUseCase
 import com.fyp.basarattradeinvest.domain.usecase.market.GetTopGainersUseCase
 import com.fyp.basarattradeinvest.domain.usecase.market.GetTopLosersUseCase
 import com.fyp.basarattradeinvest.domain.usecase.market.GetVolumeSpikesUseCase
@@ -37,7 +36,6 @@ import java.util.Locale
 class MarketDashboardViewModel(
     private val repository: MarketRepository = MarketRepositoryImpl(),
     private val getMarketIndicesUseCase: GetMarketIndicesUseCase = GetMarketIndicesUseCase(repository),
-    private val getMarketSentimentOverviewUseCase: GetMarketSentimentOverviewUseCase = GetMarketSentimentOverviewUseCase(repository),
     private val getTopGainersUseCase: GetTopGainersUseCase = GetTopGainersUseCase(repository),
     private val getTopLosersUseCase: GetTopLosersUseCase = GetTopLosersUseCase(repository),
     private val getVolumeSpikesUseCase: GetVolumeSpikesUseCase = GetVolumeSpikesUseCase(repository),
@@ -51,8 +49,10 @@ class MarketDashboardViewModel(
     private val _uiState = MutableStateFlow<MarketDashboardUiState>(MarketDashboardUiState.Loading)
     val uiState: StateFlow<MarketDashboardUiState> = _uiState.asStateFlow()
 
-    private var currentFilter = SymbolFilterType.GAINERS
-    private var currentConstituentIndex = "KSE-100"
+    private var currentSelection = MarketListSelection.GAINERS
+    // Switching chips re-reads from here so a known list paints immediately instead of waiting
+    // on another round trip; refresh drops it so the next read is live.
+    private val rowCache = mutableMapOf<MarketListSelection, List<MarketStock>>()
     private var lastSuccessfulFetchAt: Long = 0L
     private val freshnessWindowMs = 5 * 60 * 1000L
     private var isMarketDataLoading = false
@@ -60,6 +60,7 @@ class MarketDashboardViewModel(
     private var accountGeneration = 0
     private var currentAccountKey: String? = accountKeyForCurrentSession()
     private var marketDataJob: Job? = null
+    private var rowsJob: Job? = null
     private val pendingQuotes = mutableMapOf<String, LiveQuote>()
     private var quoteFlushJob: Job? = null
 
@@ -95,12 +96,15 @@ class MarketDashboardViewModel(
                 accountGeneration++
                 marketDataJob?.cancel()
                 marketDataJob = null
+                rowsJob?.cancel()
+                rowsJob = null
                 pendingQuotes.clear()
                 quoteFlushJob?.cancel()
                 quoteFlushJob = null
                 isMarketDataLoading = false
                 lastSuccessfulFetchAt = 0L
-                currentFilter = SymbolFilterType.GAINERS
+                currentSelection = MarketListSelection.GAINERS
+                rowCache.clear()
                 _uiState.value = MarketDashboardUiState.Loading
                 updateMarketSubscriptions()
 
@@ -124,6 +128,7 @@ class MarketDashboardViewModel(
     fun loadMarketData(isRefresh: Boolean = false) {
         if (isMarketDataLoading) return
         isMarketDataLoading = true
+        if (isRefresh) rowCache.clear()
         val loadGeneration = accountGeneration
         marketDataJob = viewModelScope.launch {
             try {
@@ -136,85 +141,48 @@ class MarketDashboardViewModel(
                 }
 
                 val indicesDeferred = async { getMarketIndicesUseCase() }
-                val sentimentDeferred = async { getMarketSentimentOverviewUseCase() }
-                val topSymbolsDeferred = async { fetchSymbolsForFilter(currentFilter) }
+                val rowsDeferred = async { fetchRows(currentSelection) }
                 val sectorsDeferred = async { getSectorPerformancesUseCase() }
-                val constituentsDeferred = async { fetchConstituentsForIndex(currentConstituentIndex) }
                 val sessionDeferred = async { liveMarketRepository.getMarketSessionStatus() }
 
                 // Await only the above-the-fold data first so the dashboard paints as soon as
-                // indices/sentiment/top symbols are ready. Sectors and constituents are
-                // secondary and fill in progressively below.
+                // indices and the selected symbol list are ready. Sectors are secondary and
+                // fill in progressively below.
                 val indicesResult = indicesDeferred.await()
-                val sentimentResult = sentimentDeferred.await()
-                val topSymbolsResult = topSymbolsDeferred.await()
+                val rowsResult = rowsDeferred.await()
                 val marketSession = sessionDeferred.await().getOrNull()
                 if (loadGeneration != accountGeneration) return@launch
 
-                if (indicesResult.isSuccess || sentimentResult.isSuccess) {
+                if (indicesResult.isSuccess || rowsResult.isSuccess) {
                     val indices = indicesResult.getOrDefault(emptyList())
-                    val sentiment = sentimentResult.getOrNull()
-                    val topSymbols = topSymbolsResult.getOrDefault(emptyList())
-
-                    val upCount = sentiment?.advancing ?: 0
-                    val downCount = sentiment?.declining ?: 0
-                    val unchangedCount = sentiment?.unchanged ?: 0
-                    val totalStocks = upCount + downCount + unchangedCount
-
-                    val adRatioFormatted = String.format(Locale.US, "%.2fx", sentiment?.advanceDeclineRatio ?: 0.0)
-                    val advancingFormatted = upCount.toString()
-                    val decliningFormatted = downCount.toString()
-
-                    val overview = MarketOverview(
-                        tradedValue = adRatioFormatted,
-                        tradedVolume = advancingFormatted,
-                        totalTrades = decliningFormatted,
-                        totalStocks = if (totalStocks > 0) totalStocks else 374,
-                        upCount = upCount,
-                        downCount = downCount,
-                        unchangedCount = unchangedCount
-                    )
+                    val rows = rowsResult.getOrDefault(emptyList())
+                    if (rowsResult.isSuccess) rowCache[currentSelection] = rows
 
                     val currentTime = SimpleDateFormat("HH:mm", Locale.US).format(Date())
                     lastSuccessfulFetchAt = System.currentTimeMillis()
 
-                    if (sentiment != null) {
-                        _uiState.value = MarketDashboardUiState.Success(
-                            indices = indices,
-                            overview = overview,
-                            topSymbols = applyCachedMarketStocks(topSymbols),
-                            selectedFilter = currentFilter,
-                            sentiment = sentiment,
-                            sectors = emptyList(),
-                            selectedConstituentIndex = currentConstituentIndex,
-                            constituents = emptyList(),
-                            isConstituentsLoading = true,
-                            lastUpdated = currentTime,
-                            liveQuotes = liveMarketRepository.quoteCache.value,
-                            wsConnectionState = liveMarketRepository.connectionState.value,
-                            marketSession = marketSession
-                        )
-                    } else {
-                        _uiState.value = MarketDashboardUiState.Empty
-                    }
+                    _uiState.value = MarketDashboardUiState.Success(
+                        indices = indices,
+                        rows = applyCachedMarketStocks(rows),
+                        selection = currentSelection,
+                        sectors = emptyList(),
+                        lastUpdated = currentTime,
+                        liveQuotes = liveMarketRepository.quoteCache.value,
+                        wsConnectionState = liveMarketRepository.connectionState.value,
+                        marketSession = marketSession
+                    )
                     updateMarketSubscriptions()
 
-                    // Secondary sections: fill in once they arrive without blocking first paint.
+                    // Secondary section: fill in once it arrives without blocking first paint.
                     val sectors = sectorsDeferred.await().getOrDefault(emptyList())
-                    val constituents = constituentsDeferred.await().getOrDefault(emptyList())
                     if (loadGeneration != accountGeneration) return@launch
                     val stateAfterSecondary = _uiState.value
                     if (stateAfterSecondary is MarketDashboardUiState.Success) {
-                        _uiState.value = stateAfterSecondary.copy(
-                            sectors = sectors,
-                            constituents = applyCachedConstituents(constituents),
-                            isConstituentsLoading = false
-                        )
-                        updateMarketSubscriptions()
+                        _uiState.value = stateAfterSecondary.copy(sectors = sectors)
                     }
                 } else {
                     val errorMsg = indicesResult.exceptionOrNull()?.message
-                        ?: sentimentResult.exceptionOrNull()?.message
+                        ?: rowsResult.exceptionOrNull()?.message
                         ?: "Unable to load market data. Please check connection."
                     _uiState.value = MarketDashboardUiState.Error(errorMsg)
                 }
@@ -240,14 +208,13 @@ class MarketDashboardViewModel(
         val quoteFor: (String) -> LiveQuote? = { symbol -> batch[symbol.uppercase()] }
         val quotes = current.liveQuotes.toMutableMap()
         quotes.putAll(batch)
+        val updatedRows = current.rows.map { stock ->
+            quoteFor(stock.symbol)?.let { stock.withQuote(it) } ?: stock
+        }
+        if (current.selection in rowCache) rowCache[current.selection] = updatedRows
         _uiState.value = current.copy(
             liveQuotes = quotes,
-            topSymbols = current.topSymbols.map { stock ->
-                quoteFor(stock.symbol)?.let { stock.withQuote(it) } ?: stock
-            },
-            constituents = current.constituents.map { constituent ->
-                quoteFor(constituent.symbol)?.let { constituent.withQuote(it) } ?: constituent
-            }
+            rows = updatedRows
         )
     }
 
@@ -260,89 +227,96 @@ class MarketDashboardViewModel(
     private fun updateMarketSubscriptions() {
         val state = _uiState.value as? MarketDashboardUiState.Success
         val symbols = if (isLiveUpdatesActive) {
-            (state?.topSymbols.orEmpty().map { it.symbol } + state?.constituents.orEmpty().map { it.symbol }).toSet()
+            state?.rows.orEmpty().map { it.symbol }.toSet()
         } else {
             emptySet()
         }
         liveMarketRepository.setSubscriptions("markets", symbols)
     }
 
-    fun setFilter(filterType: SymbolFilterType) {
-        if (currentFilter == filterType && _uiState.value is MarketDashboardUiState.Success) return
-        currentFilter = filterType
+    fun setSelection(selection: MarketListSelection) {
+        if (currentSelection == selection && _uiState.value is MarketDashboardUiState.Success) return
+        currentSelection = selection
+        rowsJob?.cancel()
 
-        // 1. Immediately update UI state so selectedFilter changes without delay
+        val cached = rowCache[selection]
         val stateBefore = _uiState.value
         if (stateBefore is MarketDashboardUiState.Success) {
-            _uiState.value = stateBefore.copy(selectedFilter = filterType)
+            _uiState.value = if (cached != null) {
+                stateBefore.copy(
+                    selection = selection,
+                    rows = cached,
+                    isRowsLoading = false
+                )
+            } else {
+                // Blank the table instead of leaving the previous selection's rows on screen
+                // under the new chip's label while the cold fetch runs.
+                stateBefore.copy(
+                    selection = selection,
+                    rows = emptyList(),
+                    isRowsLoading = true
+                )
+            }
+        }
+        if (cached != null) {
+            updateMarketSubscriptions()
+            return
         }
 
-        viewModelScope.launch {
+        rowsJob = viewModelScope.launch {
             val requestGeneration = accountGeneration
-            val topSymbolsResult = fetchSymbolsForFilter(filterType)
-            if (requestGeneration != accountGeneration || currentFilter != filterType) return@launch
+            val result = fetchRows(selection)
+            if (requestGeneration != accountGeneration || currentSelection != selection) return@launch
+            val rows = result.getOrDefault(emptyList())
+            if (result.isSuccess) rowCache[selection] = rows
             val currentState = _uiState.value
             if (currentState is MarketDashboardUiState.Success) {
-                val symbols = topSymbolsResult.getOrDefault(emptyList())
                 _uiState.value = currentState.copy(
-                    topSymbols = symbols,
-                    selectedFilter = filterType
+                    selection = selection,
+                    rows = applyCachedMarketStocks(rows),
+                    isRowsLoading = false
                 )
             }
             updateMarketSubscriptions()
         }
     }
 
-    fun selectConstituentIndex(indexName: String) {
-        if (currentConstituentIndex == indexName && _uiState.value is MarketDashboardUiState.Success) return
-        currentConstituentIndex = indexName
+    private suspend fun fetchRows(selection: MarketListSelection): Result<List<MarketStock>> = when (selection) {
+        MarketListSelection.GAINERS -> getTopGainersUseCase(ROW_LIMIT)
+        MarketListSelection.LOSERS -> getTopLosersUseCase(ROW_LIMIT)
+        MarketListSelection.VOLUME_SPIKES -> getVolumeSpikesUseCase(ROW_LIMIT)
+        // The repository's top-movers branch reads the real most-active list; reusing the
+        // volume-spikes use case here would make two chips show identical rows.
+        MarketListSelection.MOST_ACTIVE -> repository.getTopSymbols(SymbolFilterType.MOST_ACTIVE)
+        MarketListSelection.KSE_100 -> fetchConstituentRows { getKse100ConstituentsUseCase() }
+        MarketListSelection.KSE_30 -> fetchConstituentRows { getKse30ConstituentsUseCase() }
+        MarketListSelection.KMI_30 -> fetchConstituentRows { getKmi30ConstituentsUseCase() }
+    }
 
-        val currentState = _uiState.value
-        if (currentState is MarketDashboardUiState.Success) {
-            _uiState.value = currentState.copy(
-                selectedConstituentIndex = indexName,
-                isConstituentsLoading = true
-            )
-        }
-
-        viewModelScope.launch {
-            val requestGeneration = accountGeneration
-            val result = fetchConstituentsForIndex(indexName)
-            if (requestGeneration != accountGeneration || currentConstituentIndex != indexName) return@launch
-            val updatedState = _uiState.value
-            if (updatedState is MarketDashboardUiState.Success) {
-                _uiState.value = updatedState.copy(
-                    selectedConstituentIndex = indexName,
-                    constituents = result.getOrDefault(emptyList()),
-                    isConstituentsLoading = false
-                )
-            }
-            updateMarketSubscriptions()
+    private suspend fun fetchConstituentRows(
+        load: suspend () -> Result<IndexConstituents>
+    ): Result<List<MarketStock>> = load().map { constituents ->
+        constituents.constituents.mapIndexed { index, constituent ->
+            constituent.toMarketStock(index + 1)
         }
     }
 
-    private suspend fun fetchSymbolsForFilter(filterType: SymbolFilterType): Result<List<MarketStock>> = when (filterType) {
-        SymbolFilterType.GAINERS -> getTopGainersUseCase(10)
-        SymbolFilterType.LOSERS -> getTopLosersUseCase(10)
-        SymbolFilterType.VOLUME_SPIKES -> getVolumeSpikesUseCase(10)
-        SymbolFilterType.MOST_ACTIVE -> getVolumeSpikesUseCase(10)
-        SymbolFilterType.WATCHLIST -> repository.getTopSymbols(SymbolFilterType.WATCHLIST)
-    }
-
-    private suspend fun fetchConstituentsForIndex(indexName: String): Result<List<IndexConstituent>> {
-        val result = when (indexName.uppercase()) {
-            "KSE-30", "KSE30" -> getKse30ConstituentsUseCase()
-            "KMI-30", "KMI30" -> getKmi30ConstituentsUseCase()
-            else -> getKse100ConstituentsUseCase()
-        }
-        return result.map { it.constituents }
-    }
+    private fun IndexConstituent.toMarketStock(rank: Int) = MarketStock(
+        rank = rank,
+        symbol = symbol,
+        companyName = name,
+        sectorCode = if (weightPct > 0.0) {
+            "$name \u2022 Wt: ${String.format(Locale.US, "%.2f", weightPct)}%"
+        } else {
+            name
+        },
+        price = current,
+        change = change,
+        changePercent = changePct,
+        volume = if (volume > 0L) volume.toString() else ""
+    )
 
     private fun applyCachedMarketStocks(stocks: List<MarketStock>): List<MarketStock> = stocks.map { stock ->
-        liveMarketRepository.getCachedQuote(stock.symbol)?.let { quote -> stock.withQuote(quote) } ?: stock
-    }
-
-    private fun applyCachedConstituents(stocks: List<IndexConstituent>): List<IndexConstituent> = stocks.map { stock ->
         liveMarketRepository.getCachedQuote(stock.symbol)?.let { quote -> stock.withQuote(quote) } ?: stock
     }
 
@@ -351,13 +325,6 @@ class MarketDashboardViewModel(
         change = quote.change ?: change,
         changePercent = quote.changePct ?: changePercent,
         volume = quote.volume?.toString() ?: volume
-    )
-
-    private fun IndexConstituent.withQuote(quote: LiveQuote) = copy(
-        current = quote.current ?: current,
-        change = quote.change ?: change,
-        changePct = quote.changePct ?: changePct,
-        volume = quote.volume ?: volume
     )
 
     private fun accountKeyForCurrentSession(): String? = accountKeyFor(SessionManager.authState.value)
@@ -371,5 +338,6 @@ class MarketDashboardViewModel(
 
     companion object {
         private const val QUOTE_FLUSH_INTERVAL_MS = 750L
+        private const val ROW_LIMIT = 10
     }
 }
