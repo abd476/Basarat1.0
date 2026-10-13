@@ -3,7 +3,6 @@ package com.fyp.basarattradeinvest.feature.dashboard
 import com.fyp.basarattradeinvest.domain.model.alerts.AlertItem
 import com.fyp.basarattradeinvest.domain.model.market.BenchmarkTrend
 import com.fyp.basarattradeinvest.domain.model.market.MarketIndex
-import com.fyp.basarattradeinvest.domain.model.market.MarketStock
 import com.fyp.basarattradeinvest.domain.model.news.NewsArticle
 import com.fyp.basarattradeinvest.domain.model.live.LiveQuote
 import com.fyp.basarattradeinvest.domain.model.live.WsConnectionState
@@ -12,13 +11,8 @@ import com.fyp.basarattradeinvest.domain.model.portfolio.PerformancePoint
 import com.fyp.basarattradeinvest.domain.model.portfolio.PortfolioAllocation
 import com.fyp.basarattradeinvest.domain.model.portfolio.PortfolioOverview
 import com.fyp.basarattradeinvest.domain.model.risk.PortfolioVaR
+import com.fyp.basarattradeinvest.domain.model.sentiment.MarketSentiment
 import com.fyp.basarattradeinvest.domain.model.watchlist.Watchlist
-
-enum class MoversTab {
-    GAINERS,
-    LOSERS,
-    MOST_ACTIVE
-}
 
 sealed interface HomeUiState {
     data object Loading : HomeUiState
@@ -36,10 +30,9 @@ sealed interface HomeUiState {
         // benchmark's headline numbers.
         val benchmarkTrend: BenchmarkTrendUiState = BenchmarkTrendUiState.Empty,
         val watchlist: WatchlistUiState = WatchlistUiState.Loading,
-        val topGainers: List<MarketStock> = emptyList(),
-        val topLosers: List<MarketStock> = emptyList(),
-        val volumeSpikes: List<MarketStock> = emptyList(),
-        val selectedMoversTab: MoversTab = MoversTab.GAINERS,
+        // Null until /market/sentiment-overview answers; both moved cards hide rather
+        // than painting placeholder breadth or sentiment figures.
+        val sentiment: MarketSentiment? = null,
         val recentNews: List<NewsArticle> = emptyList(),
         val activeAlertsCount: Int = 0,
         val unresolvedAlerts: List<AlertItem> = emptyList(),
@@ -54,14 +47,7 @@ sealed interface HomeUiState {
         val riskSummary: PortfolioVaR? = null,
         val liveQuotes: Map<String, LiveQuote> = emptyMap(),
         val wsConnectionState: WsConnectionState = WsConnectionState.Idle
-    ) : HomeUiState {
-        val currentMovers: List<MarketStock>
-            get() = when (selectedMoversTab) {
-                MoversTab.GAINERS -> topGainers
-                MoversTab.LOSERS -> topLosers
-                MoversTab.MOST_ACTIVE -> volumeSpikes
-            }
-    }
+    ) : HomeUiState
 
     data class Error(val message: String) : HomeUiState
 }
@@ -73,9 +59,13 @@ sealed interface WatchlistUiState {
     data class Error(val message: String) : WatchlistUiState
 }
 
+/**
+ * [Loading] means a build for the selected pill is in flight, so the line already on screen stays
+ * there instead of leaving a hole in a card the rest of which has finished loading. [Empty] means
+ * this pill has nothing to plot, and a pill with no data must not borrow another pill's line.
+ */
 sealed interface BenchmarkTrendUiState {
     data object Loading : BenchmarkTrendUiState
     data class Success(val trend: BenchmarkTrend) : BenchmarkTrendUiState
     data object Empty : BenchmarkTrendUiState
-    data class Error(val message: String) : BenchmarkTrendUiState
 }
