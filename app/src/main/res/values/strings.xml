@@ -75,7 +75,7 @@
     <!-- Google OAuth "Web application" client ID. Its audience must match the backend's
          GOOGLE_CLIENT_ID, which verifies the ID token sent to POST /api/v1/auth/google.
          A public client ID (not a secret) — it is embedded in the APK by design. -->
-    <string name="google_web_client_id" translatable="false">586469027718-nleodpccu7dmbkj18i58cmqpqkqalpum.apps.googleusercontent.com</string>
+    <string name="google_web_client_id" translatable="false">586469027718-milfd2ank76en660pdgce1esrver6q37.apps.googleusercontent.com</string>
     <string name="dont_have_account">Don\'t have an account?</string>
     <string name="already_have_account">Already have an account?</string>
 
