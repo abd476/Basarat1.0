@@ -18,11 +18,11 @@ import java.util.concurrent.TimeUnit
 
 object NetworkClient {
 
-    // Live backend host (AWS EC2 FastAPI backend)
-    const val BASE_URL = "http://193.123.84.223:8000/"
+    // Live backend host (AWS EC2 FastAPI backend, fronted by the domain)
+    const val BASE_URL = "https://api.basarat.live/"
 
     // Live PSX Market API host (Real-time Market quotes, gainers, losers, volume spikes, indices, sectors)
-    const val MARKET_BASE_URL = "http://193.123.84.223:8000/"
+    const val MARKET_BASE_URL = "https://api.basarat.live/"
 
     // Sanitized logging interceptor: redacts sensitive Authorization headers & tokens.
     // BASIC (method/url/code/duration) avoids buffering every full response body, which
