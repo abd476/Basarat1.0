@@ -19,3 +19,10 @@ local.properties
 !app/google-services.json
 *.ps1
 *.py
+
+# Internal agent & development tracking docs (not for public release)
+CODE_MAP.md
+AGENTS.md
+.github/
+.kiro/
+.scratch/

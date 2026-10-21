@@ -1,236 +1,215 @@
-# BASARAT (بصيرة) 📈
-### AI-Powered Trade Recommendation & Assistance System for Pakistan Stock Exchange (PSX)
+# BASARAT
+
+**AI-Powered Trade Recommendation & Assistance System for Pakistan Stock Exchange (PSX)**
 
 [![Platform](https://img.shields.io/badge/Platform-Android%20Native-3DDC84?logo=android&logoColor=white)](#)
 [![Language](https://img.shields.io/badge/Language-Kotlin-7F52FF?logo=kotlin&logoColor=white)](#)
 [![Architecture](https://img.shields.io/badge/Architecture-Clean%20%2B%20MVVM-blue)](#)
 [![Target SDK](https://img.shields.io/badge/Target%20SDK-35-orange)](#)
 [![Min SDK](https://img.shields.io/badge/Min%20SDK-24-informational)](#)
-[![Market](https://img.shields.io/badge/Exchange-PSX%20(KSE--100%2C%20KMI--30)-00B894)](#)
+[![Market](https://img.shields.io/badge/Exchange-PSX%20(KSE-100,%20KMI-30)-00B894)](#)
 
 ---
 
-## 🌟 1. Project North Star & Overview
+## 1. Project Overview
 
-**BASARAT** is a mobile-first, decision-support financial intelligence platform tailored specifically for the **Pakistan Stock Exchange (PSX)**. It combines deep quantitative market analysis, machine learning forecasts, financial news sentiment, comprehensive Shariah compliance screening, portfolio risk analytics, and community-driven trader insights.
+**BASARAT** is a mobile-first financial decision-support platform for investors and traders on the Pakistan Stock Exchange (PSX). It combines quantitative market analysis, machine-learning forecasts, financial news sentiment, Shariah compliance screening, portfolio risk analytics, and community-driven trader insights.
 
-> **Important Boundary Rule**: The Android application functions strictly as the **presentation layer**. The client consumes processed data and ML predictions via secure REST/WebSocket APIs; it does not perform raw web scraping, GRU training, FinBERT inference, or database management on-device.
+The Android client functions strictly as the **presentation layer**. It consumes processed data and ML predictions via secure REST/WebSocket APIs; it does not perform raw web scraping, model training, or database management on-device.
 
 ---
 
-## 🏛️ 2. High-Level System Architecture
+## 2. Features
 
-The following flowchart illustrates the entire computation and data processing pipeline across the BASARAT ecosystem—from raw financial feeds to the Android client UI:
+| Category | Capabilities |
+|---|---|
+| **Stock Analysis** | Technical indicators (RSI, MACD, Bollinger, SMA, ADX), price history charts, fundamental ratios (P/E, P/B, ROE, EPS, dividend yield) |
+| **ML Forecasting** | Deep-learning price forecasts with target price, stop-loss, upside/downside, confidence scoring |
+| **Sentiment Analysis** | FinBERT news sentiment, market mood overview, sentiment history charts |
+| **Shariah Screening** | KMI-30 compliance, debt & income ratio screening |
+| **Portfolio Analytics** | Holdings, transactions, VaR, Sharpe ratio, max drawdown, Monte Carlo risk simulation |
+| **Recommendations** | AI stock picks, engine signal breakdown, target/stop levels |
+| **Community** | Posts, comments, sentiment-tagged news, moderation hub (admin reports & audit log) |
+| **Alerts** | Price alert rules with notification delivery |
+| **Live Market** | Real-time PSX tickers via WebSocket, indices, sector performance |
 
-```mermaid
-flowchart TD
-    %% Source Nodes
-    subgraph S1 ["1. Data Acquisition Layer"]
-        PSX["PSX Data Feeds & Tickers"]
-        SBP["State Bank of Pakistan (SBP) Macro"]
-        NEWS["News Portals & Financial Press"]
-        COMM["Community & Trader Sentiment"]
-    end
+---
 
-    %% Storage Layer
-    subgraph S2 ["2. Data Storage & Caching"]
-        PG[("PostgreSQL\n(Historical EOD, Financials, Users)")]
-        REDIS[("Redis\n(Real-Time Tickers, Session Cache)")]
-    end
+## 3. Technology Stack
 
-    %% Analytics & ML Engines
-    subgraph S3 ["3. Analytics & Machine Learning Core"]
-        TECH["Technical Analysis Engine\n(RSI, MACD, SMA, Bollinger)"]
-        GRU["GRU Deep Learning Model\n(Stock Price Forecasting)"]
-        FINBERT["FinBERT NLP Engine\n(Financial News Sentiment)"]
-        SHARIAH["Shariah Screening Engine\n(KMI-30 Criteria, Debt & Income Ratios)"]
-        RISK["Portfolio Risk Engine\n(VaR, Sharpe, Max Drawdown)"]
-        REC["Recommendation Synthesis Engine\n(Decision Matrix: Buy/Sell/Hold)"]
-    end
+| Dimension | Technology | Purpose |
+|---|---|---|
+| Language | Kotlin | Null-safe, coroutine-first development |
+| UI | Native Android XML + Material 3 | Strictly XML layouts (no Jetpack Compose) |
+| Architecture | Clean Architecture + MVVM | Separation of Presentation / Domain / Data |
+| State Management | Kotlin Coroutines + `StateFlow` | Immutable, reactive unidirectional UI state |
+| View Binding | Jetpack ViewBinding | Type-safe, null-safe view references |
+| Navigation | Jetpack Navigation Component | Single-Activity architecture (`NavHostFragment`) |
+| Networking | Retrofit 2 + OkHttp 3 + Gson | REST API consumption & JSON serialization |
+| Charting | MPAndroidChart | Candlestick, line, bar charts |
+| Async / Push | WorkManager + Firebase Cloud Messaging | Background job scheduling & push notifications |
+| Build | Gradle Kotlin DSL | Compile SDK 35, Min SDK 24, Target SDK 35, Java 17 |
 
-    %% Backend Services
-    subgraph S4 ["4. Backend & API Services"]
-        FASTAPI["FastAPI ML Service\n(Inference & Prediction Endpoints)"]
-        NODE["Node.js Middleware & Auth\n(Business Logic, WebSocket Gateway)"]
-    end
+---
 
-    %% Presentation Layer
-    subgraph S5 ["5. Android Frontend (Clean Architecture + MVVM)"]
-        UI["Android Client (Kotlin + Material Design)\nStock Charts • Shariah • Dashboard • Feed"]
-    end
+## 4. Architecture
 
-    %% Connections
-    PSX --> S2
-    SBP --> S2
-    NEWS --> S2
-    COMM --> S2
+The codebase follows **Clean Architecture** with a strict one-way dependency rule:
 
-    PG --> S3
-    REDIS --> S3
+```
+feature/  (UI)  -->  domain/  (business logic)  <--  data/  (backend)
+```
 
-    TECH --> FASTAPI
-    GRU --> FASTAPI
-    FINBERT --> FASTAPI
-    SHARIAH --> FASTAPI
-    RISK --> NODE
-    REC --> NODE
+- **`core/`** — Cross-cutting infrastructure: auth interceptor, token refresh, secure encrypted token storage (Android Keystore), notification channels, WorkManager workers, custom chart views.
+- **`domain/`** — Pure Kotlin with **zero Android imports**. Contains domain models, repository interfaces, and use cases. Runs on a bare JVM — all unit tests run without an emulator.
+- **`data/`** — Backend integration: Retrofit API interfaces, DTOs, mappers, repository implementations. All network calls run on `Dispatchers.IO` and return `Result<T>`.
+- **`feature/`** — 20 UI packages. Each screen follows a 3-file convention: `Fragment` + `ViewModel` + `UiState` (sealed `Loading`/`Success`/`Empty`/`Error` states).
 
-    FASTAPI --> NODE
-    NODE -->|REST / WebSockets| UI
+### Data Flow
+
+```
+User action
+    ↓
+Fragment collects ViewModel StateFlow
+    ↓
+ViewModel orchestrates use cases via viewModelScope
+    ↓
+Use case calls Repository interface (domain layer)
+    ↓
+Repository impl calls Retrofit service (data layer)
+    ↓
+AuthInterceptor attaches Bearer token
+    ↓
+═════════ HTTP Request to Backend ═════════
+        ↓
+Gson deserializes JSON → DTO
+    ↓
+Mapper converts DTO → Domain model
+    ↓
+Result<T> flows back to ViewModel
+    ↓
+ViewModel emits new UI state
+    ↓
+Fragment renders via ViewBinding
 ```
 
 ---
 
-## 📱 3. Android Client Architecture
-
-The mobile client is engineered according to **Clean Architecture** principles and the **MVVM (Model-View-ViewModel)** design pattern. It enforces strict separation of concerns, unidirectional data flow, and immutable state representation.
-
-```mermaid
-flowchart TB
-    subgraph PresentationLayer ["Presentation Layer (UI)"]
-        Fragment["Fragments (XML + ViewBinding)\n- StockDetailFragment\n- ShariahScreeningFragment\n- MarketDashboardFragment"]
-        ViewModel["ViewModels (Lifecycle-Aware)\n- Exposes StateFlow<UiState>"]
-        UiState["UI State Sealed Interface\n- Loading\n- Success\n- Empty\n- Error"]
-    end
-
-    subgraph DomainLayer ["Domain Layer (Business Rules)"]
-        UseCase["Use Cases / Interactors\n- GetStockDetailUseCase\n- GetShariahStocksUseCase\n- SearchStocksUseCase"]
-        DomainModel["Domain Models\n- Stock, StockDetail, CandleEntry\n- ShariahStatus, ComplianceMetric"]
-        RepoInterface["Repository Interfaces\n- StockRepository\n- ShariahRepository"]
-    end
-
-    subgraph DataLayer ["Data Layer (Data Access & Persistence)"]
-        RepoImpl["Repository Implementations\n- StockRepositoryImpl\n- ShariahRepositoryImpl"]
-        Remote["Remote Data Source\n- Retrofit API Interfaces\n- DTO Models & JSON Mappers"]
-        Local["Local Data Source\n- Room / SharedPreferences / Cache"]
-    end
-
-    %% Flow interactions
-    Fragment -->|User Actions / Observe| ViewModel
-    ViewModel -->|Emits State| UiState
-    UiState -.->|Render UI| Fragment
-
-    ViewModel -->|Invokes| UseCase
-    UseCase -->|Executes with| RepoInterface
-    UseCase -.->|Returns Domain Models| ViewModel
-
-    RepoImpl -.->|Implements| RepoInterface
-    RepoImpl -->|Network Requests| Remote
-    RepoImpl -->|Local Query/Cache| Local
-    Remote -.->|Map DTO to Domain| RepoImpl
-```
-
-### Unidirectional Data Flow & State Contract
-Every network-backed or data-driven screen strictly adheres to a finite state contract:
-
-```kotlin
-sealed interface UiState<out T> {
-    data object Loading : UiState<Nothing>
-    data class Success<T>(val data: T) : UiState<T>
-    data object Empty : UiState<Nothing>
-    data class Error(val message: String) : UiState<Nothing>
-}
-```
-
----
-
-## 👥 4. Team Ownership & Responsibilities
-
-| Contributor | Focus Areas & Assigned Responsibilities |
-| :--- | :--- |
-| **Abdul Rehman** | **Stock Analysis & Detailed Charts**, **User Dashboard**, **Sentiment Analysis**, **Community Trading Hub** |
-| **Ahmed Khan** | **User Management & Auth**, **Risk Analytics (VaR/Sharpe)**, **ML Price Forecasting (GRU)**, **Recommendation Engine**, **Personal AI Assistant** |
-| **Talal Umar** | **Market Dashboard**, **Portfolio Management**, **News & Events Intelligence**, **Shariah Compliance Screening**, **Web Scraping & Ingestion** |
-
----
-
-## 🎨 5. Design System & Financial UI Standards
-
-BASARAT uses a clean, modern, light-first financial design inspired by world-class investment terminals, while upholding specific PSX market semantics.
-
-### Color Palette
-
-| Token | Hex | Role | Usage |
-| :--- | :--- | :--- | :--- |
-| `Background` | `#FFFFFF` | Core Background | Main activity & screen canvas |
-| `Surface` | `#F7F9F8` | Surface Background | Subtle background cards, chips |
-| `Primary Text` | `#111827` | High Emphasis Text | Financial numbers, stock symbols, titles |
-| `Secondary Text`| `#667085` | Medium Emphasis | Captions, timestamps, descriptions |
-| `BASARAT Green`| `#00B894` | Brand Accent | Active indicators, brand highlights |
-| `Positive/Bull`| `#18B981` | Financial Semantic | Price gains, bullish badges, Buy signals |
-| `Negative/Bear`| `#EF4444` | Financial Semantic | Price losses, bearish badges, Sell signals |
-| `Shariah Teal` | `#14A89B` | Compliance Semantic| Halal status, compliance tags |
-| `AI Blue/Purple`| `#4F7CFF` / `#7C6FE8` | Intelligence | AI forecast horizon, sentiment gauges |
-| `Gold Accent`  | `#D4A84F` | Premium Accent | Watchlist highlights, key badges |
-
-### Layout & Typography Guidelines
-- **Spacing Grid**: Strict 8dp incremental system (`4dp`, `8dp`, `12dp`, `16dp`, `24dp`, `32dp`).
-- **Typography Hierarchy**: Financial prices (`30–36sp Bold`), Section headers (`16–18sp Semibold`), Body (`14–16sp Regular`), Captions (`12sp Medium`).
-- **Touch Targets**: Minimum `48dp` for all actionable buttons, tabs, and interactive chart chips.
-- **Card Corners**: Standardized `12dp` to `16dp` radius with subtle borders/elevations.
-
----
-
-## 📁 6. Project Directory Structure
-
-```text
-com.fyp.basarattradeinvest/
-│
-├── MainActivity.kt                 # Single Activity Host (NavHostFragment & BottomNav)
-│
-├── core/                           # Shared foundational utilities & base classes
-│   ├── navigation/                 # Navigation graphs & routing helpers
-│   ├── network/                    # Retrofit clients, interceptors & error handlers
-│   ├── theme/                      # App theme helpers & color definitions
-│   └── utils/                      # Formatting extensions (PKR currency, dates, percentages)
-│
-├── domain/                         # Pure business logic layer (No Android dependencies)
-│   ├── model/                      # Domain entities (Stock, CandleEntry, ShariahStock, etc.)
-│   └── repository/                 # Repository interface definitions
-│
-├── data/                           # Concrete data implementations
-│   ├── mock/                       # Local deterministic mock data generators
-│   ├── remote/                     # Retrofit API services and DTOs
-│   └── repository/                 # Repository implementations (e.g. StockRepositoryImpl)
-│
-└── feature/                        # Feature-first modular presentation packages
-    ├── splash/                     # Animated splash & bootstrap flow
-    ├── onboarding/                 # User intro & value proposition walkthroughs
-    ├── auth/                       # Authentication, registration & reset flows
-    ├── dashboard/                  # Home dashboard (KSE-100, gainers, losers, sentiment)
-    ├── markets/                    # Market overview, sector breakdown, search
-    ├── stock/                      # Comprehensive stock deep-dive module
-    │   ├── detail/                 # StockDetailFragment, MPAndroidChart Candlesticks
-    │   └── adapter/                # News, quote metrics, and timeframe adapters
-    └── shariah/                    # Shariah compliance screening (KMI-30, debt ratios)
-```
-
----
-
-## 🚀 7. Getting Started & Development
+## 5. Getting Started
 
 ### Prerequisites
-- **Android Studio**: Ladybug (2024.2.1) or newer
-- **JDK**: Java 17 (configured under Gradle JDK)
-- **Android SDK**: Compile SDK `35`, Min SDK `24`
 
-### Building the Project
-Clone the repository and build via Gradle:
+- Android Studio (latest stable)
+- Android SDK 35
+- Java 17 (JDK 17)
+- A running BASARAT backend instance (the app targets `http://193.123.84.223:8000/` by default)
+
+### Build
+
 ```bash
-# Clone the repository
-git clone https://github.com/abd476/Basarat1.0.git
-
-# Navigate to project root
+# Clone
+git clone <repository-url>
 cd BasaratTradeInvest
 
-# Build debug APK
+# Debug build
 ./gradlew assembleDebug
 
-# Run unit tests
+# Run unit tests (JVM only, no emulator required)
 ./gradlew testDebugUnitTest
 ```
 
+### Environment
+
+Create `app/local.properties` (gitignored) pointing to your Android SDK:
+
+```properties
+sdk.dir=C:\\Users\\<your-username>\\AppData\\Local\\Android\\Sdk
+```
+
 ---
 
-## ⚖️ 8. Disclaimer
-BASARAT is a quantitative and computational decision-support tool created for educational and informational analysis of the Pakistan Stock Exchange (PSX). It is **not** a certified financial advisory service or a SECP-licensed brokerage. Predictions, Shariah compliance indicators, and technical recommendations are probabilistic models and should not be construed as guaranteed investment advice.
+## 6. Project Structure
+
+```
+app/src/main/java/com/fyp/basarattradeinvest/
+├── BasaratApplication.kt        Application entry point
+├── MainActivity.kt              Single Activity host
+├── core/                        Cross-cutting infrastructure (17 files)
+│   ├── network/                 Auth interceptor, token refresh, error parser
+│   ├── session/                 Session manager, encrypted token storage
+│   ├── notifications/           FCM service, WorkManager registration worker
+│   └── ui/                      Custom chart views
+├── data/                        Backend integration (109 files)
+│   ├── remote/                  NetworkClient, Retrofit API interfaces, DTOs
+│   ├── repository/              Repository implementations (21)
+│   └── mapper/                  DTO → Domain model mappers (12)
+├── domain/                      Pure business logic (113 files)
+│   ├── model/                   Domain models (42, zero Android imports)
+│   ├── repository/              Repository interfaces (20)
+│   └── usecase/                 Use cases (51, one per operation)
+└── feature/                     20 UI packages (170 files)
+    ├── stock/                   Stock detail, analysis, chart, search
+    ├── community/               Posts, comments, moderation hub
+    ├── portfolio/               Holdings, transactions, risk analytics
+    ├── recommendation/          AI picks, settings, smart selection
+    ├── sentiment/               News & market sentiment
+    ├── etf/ ipo/ alerts/ news/ shariah/ risk/ dashboard/ auth/ onboarding/
+```
+
+---
+
+## 7. API & Backend
+
+The app consumes **121 REST endpoints** across 21 Retrofit service interfaces:
+
+| Service | Endpoints | Purpose |
+|---|---|---|
+| Community | 20 | Posts, comments, moderation |
+| Market | 13 | Indices, sectors, movers, constituents |
+| Auth | 11 | Login, signup, password reset, refresh |
+| Portfolio | 12 | Holdings, transactions |
+| News | 8 | Financial news & events |
+| Assistant | 8 | AI chat assistant |
+| Stocks | 5 | Search, overview, price history, technical indicators, fundamentals |
+| Users | 5 | Profile, preferences |
+| Recommendations | 5 | AI picks, engine weights |
+| ETF / IPO / Risk / Sentiment / Shariah / Forecast | ~4 each | Feature-specific data |
+
+Real-time market data arrives via WebSocket (`/api/v1/ws/market`).
+
+---
+
+## 8. Testing
+
+All unit tests run on the **plain JVM** (no emulator required) because the `domain/` layer has no Android dependencies.
+
+```bash
+./gradlew testDebugUnitTest
+```
+
+Test coverage includes DTO→domain mapping, ViewModel logic, use-case validation, and repository behavior with fake repositories.
+
+---
+
+## 9. Security Notes
+
+- Access tokens and refresh tokens are encrypted at rest using **AES-256-GCM** with keys stored in the **Android Keystore** hardware-backed storage.
+- All network requests carry `Authorization: Bearer <token>`; auth endpoints are explicitly excluded.
+- Token refresh on 401 is thread-safe with a `synchronized` lock and retry-count protection to prevent refresh stampedes.
+- No credentials are logged — HTTP interceptors redact `Authorization`, `Cookie`, and `Set-Cookie` headers.
+
+---
+
+## 10. Financial Disclaimer
+
+BASARAT is a **decision-support tool**, not financial advice. All predictions, signals, and analytics are probabilistic outputs generated by machine-learning models and quantitative algorithms. They do not constitute guaranteed outcomes or registered financial advice. Users should consult a qualified financial advisor before making investment decisions.
+
+---
+
+## 11. License
+
+[Specify your license here — e.g., MIT, Apache-2.0, or proprietary]
+
+---
+
+*Built for the Pakistan Stock Exchange (PSX) market. Data sourced from backend ML services; not affiliated with PSX or any regulator.*
